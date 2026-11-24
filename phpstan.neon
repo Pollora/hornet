@@ -1,0 +1,16 @@
+includes:
+    - vendor/pollora/harness/presets/phpstan/base.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+    # The WordPress stubs are only read, not run: illuminate/support (dev) declares helpers of its own,
+    # and running the stubs after them could end in a "Cannot redeclare".
+    bootstrapFiles!:
+        - vendor/szepeviktor/phpstan-wordpress/bootstrap.php
+    scanFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+        - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+        # The contract of pollora/framework's doctor, which this package does not require (see the file)
+        - tests/Stubs/doctor.php

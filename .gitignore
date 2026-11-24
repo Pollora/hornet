@@ -1,0 +1,8 @@
+# Pollora harness reports
+/.harness/
+/vendor/
+/.phpunit.cache/
+/.phpunit.result.cache
+/.idea/
+/.DS_Store
+/composer.lock
