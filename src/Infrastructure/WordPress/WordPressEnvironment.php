@@ -144,6 +144,20 @@ final class WordPressEnvironment implements Environment
         };
     }
 
+    public function usersWithoutTwoFactor(): ?array
+    {
+        $enrollment = new TwoFactorEnrollment;
+
+        if (! $enrollment->available()) {
+            return null;
+        }
+
+        $roles = $this->settings instanceof Settings && $this->settings->accounts->requireRoles !== [] ? $this->settings->accounts->requireRoles : ['administrator'];
+        $ids = get_users(['role__in' => $roles, 'fields' => 'ID', 'number' => 500]);
+
+        return array_values(array_filter(array_map(intval(...), $ids), static fn (int $id): bool => ! $enrollment->enrolled($id)));
+    }
+
     public function loginThrottleProblem(): ?string
     {
         return (new ThrottleProblemNote)->read();

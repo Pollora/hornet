@@ -4,6 +4,12 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Third milestone (0.3), third part: account rules.
+
+- `passwords.check_breached` (Have I Been Pwned, k-anonymity with padding, fails open, opt-in), `session` lifetimes, `two_factor.require_roles` and `enforce_after` (an enrollment gate in the dashboard, not a login gate); all off by default.
+- New check `two-factor-coverage` (accounts named by number).
+- `HttpClient` gains `get()` with a size limit and a timeout.
+
 Third milestone (0.3), second part: the login throttle.
 
 - `login` settings (`throttle`, `max_attempts`, `window`, `lockout`, `allow_ips`) and `network` settings (`trusted_proxies`, `forwarded_header`); off by default.

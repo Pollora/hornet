@@ -14,6 +14,14 @@ final class FakeWpError
         private readonly string $message = '',
     ) {}
 
+    /** @var list<array{string, string}> */
+    public array $added = [];
+
+    public function add(string $code, string $message): void
+    {
+        $this->added[] = [$code, $message];
+    }
+
     public function get_error_code(): string
     {
         return $this->code;

@@ -14,6 +14,7 @@ use Pollora\Hornet\Domain\Audit\Checks\LoginProtectionCheck;
 use Pollora\Hornet\Domain\Audit\Checks\PhpVersionCheck;
 use Pollora\Hornet\Domain\Audit\Checks\SaltsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCheck;
+use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCoverageCheck;
 use Pollora\Hornet\Domain\Audit\Checks\UserEnumerationCheck;
 use Pollora\Hornet\Domain\Audit\Checks\WordPressUpdateCheck;
 use Pollora\Hornet\Domain\Audit\Checks\XmlRpcCheck;
@@ -225,6 +226,25 @@ describe('accounts and login', function (): void {
 
     it('prefers portcullis to the throttle', function (): void {
         expect(verdict(new LoginProtectionCheck, new FakeEnvironment(active: [Component::Portcullis, Component::HornetThrottle], throttleProblem: 'shared'))[0])->toBe(Outcome::Pass);
+    });
+
+    it('names the administrators who have no second factor, by number', function (): void {
+        $finding = (new TwoFactorCoverageCheck)->run(new FakeEnvironment(withoutTwoFactor: [3, 9]));
+
+        expect($finding->outcome)->toBe(Outcome::Fail)->and($finding->severity)->toBe(Severity::Medium)->and($finding->summary)->toBe('2 administrators have not set up two-factor authentication.')
+            ->and($finding->details)->toBe(['user #3', 'user #9'])->and($finding->fix)->toContain('two_factor.require_roles');
+        expect((new TwoFactorCoverageCheck)->run(new FakeEnvironment(withoutTwoFactor: [3]))->summary)->toBe('1 administrator has not set up two-factor authentication.');
+    });
+
+    it('lists five and counts the rest, and passes when all are covered, and cannot tell without the plugin', function (): void {
+        expect((new TwoFactorCoverageCheck)->run(new FakeEnvironment(withoutTwoFactor: range(1, 8)))->details)->toHaveCount(6)
+            ->and((new TwoFactorCoverageCheck)->run(new FakeEnvironment(withoutTwoFactor: range(1, 8)))->details[5])->toBe('and 3 more')
+            ->and(verdict(new TwoFactorCoverageCheck, new FakeEnvironment(withoutTwoFactor: []))[0])->toBe(Outcome::Pass)
+            ->and(verdict(new TwoFactorCoverageCheck, new FakeEnvironment(withoutTwoFactor: null))[0])->toBe(Outcome::Unknown);
+    });
+
+    it('never puts a login or an address in the finding', function (): void {
+        expect(json_encode((new TwoFactorCoverageCheck)->run(new FakeEnvironment(withoutTwoFactor: [3]))->toArray()))->not->toContain('@')->toContain('user #3');
     });
 
     it('recognises the Two-Factor plugin', function (): void {

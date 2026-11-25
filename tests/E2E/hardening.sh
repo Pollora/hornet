@@ -170,6 +170,58 @@ check "HORNET_DISABLED switches the lock off" logged_in
 wp config delete HORNET_DISABLED >/dev/null 2>&1
 cli hornet unlock --all >/dev/null
 
+# --- 7. accounts: the two-factor gate, and how long a login lasts ------------------------------------------
+echo "7. accounts"
+cli hornet unlock --all >/dev/null 2>&1
+location() { curl -s -o /dev/null -D - -b "$JAR" --max-time 20 "$1" | grep -i '^location:' | tr -d '\r'; }
+
+configure "array('two_factor' => array('require_roles' => array('administrator')))"
+login
+check "a user of the role can still log in with the password: the gate is not on login" sh -c "grep -q wordpress_logged_in '$JAR'"
+check "every dashboard page sends them to their profile"       sh -c "curl -s -o /dev/null -D - -b '$JAR' '$BASE/wp-admin/' | grep -i '^location:' | grep -q 'profile.php?hornet_2fa=required'"
+check "plugins.php too"                                          sh -c "curl -s -o /dev/null -D - -b '$JAR' '$BASE/wp-admin/plugins.php' | grep -i '^location:' | grep -q 'profile.php?hornet_2fa=required'"
+check "the profile stays open"                                   status_is 200 -b "$JAR" "$BASE/wp-admin/profile.php"
+check "the profile says why"                                     sh -c "curl -s -b '$JAR' '$BASE/wp-admin/profile.php' | grep -q 'must set up two-factor authentication'"
+check "admin-ajax stays open"                                    status_is 200 -b "$JAR" "$BASE/wp-admin/admin-ajax.php?action=rest-nonce"
+check "the REST API is not touched"                              status_is 200 "$BASE/wp-json/wp/v2/posts"
+check "the audit names the account by number"                    sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'two-factor-coverage.*1 administrator has not set up'"
+
+configure "array('two_factor' => array('require_roles' => array('administrator'), 'enforce_after' => '2999-01-01'))"
+check "before the date there is a notice and no redirect"        status_is 200 -b "$JAR" "$BASE/wp-admin/"
+check "the notice gives the date"                                sh -c "curl -s -b '$JAR' '$BASE/wp-admin/' | grep -q 'before 1 January 2999'"
+
+configure "array('two_factor' => array('require_roles' => array('administrator'), 'enforce_after' => '2000-01-01'))"
+check "after the date the redirect is back"                      sh -c "curl -s -o /dev/null -D - -b '$JAR' '$BASE/wp-admin/' | grep -i '^location:' | grep -q 'hornet_2fa=required'"
+
+configure "array('two_factor' => array('require_roles' => array('editor')))"
+check "another role is not concerned"                            status_is 200 -b "$JAR" "$BASE/wp-admin/"
+
+configure "array('two_factor' => array('require_roles' => array('administrator')))"
+cli eval 'Two_Factor_Core::enable_provider_for_user(1, "Two_Factor_Email");' >/dev/null
+check "once a method is set up the dashboard opens"             status_is 200 -b "$JAR" "$BASE/wp-admin/"
+check "the audit sees it"                                        sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'pass.*two-factor-coverage'"
+cli eval 'delete_user_meta(1, "_two_factor_enabled_providers"); delete_user_meta(1, "_two_factor_provider");' >/dev/null
+
+configure "array('two_factor' => array('require_roles' => array('administrator')))"
+wp config set HORNET_DISABLED true --raw >/dev/null
+check "HORNET_DISABLED opens the dashboard again"               status_is 200 -b "$JAR" "$BASE/wp-admin/"
+wp config delete HORNET_DISABLED >/dev/null 2>&1
+
+# The login cookie holds the time it expires: name|expiration|token|hash
+cookie_expiry() { awk '/wordpress_logged_in/ { print $7 }' "$JAR" | head -1 | sed 's/%7C/|/g' | cut -d'|' -f2; }
+expires_in() { echo $(( $(cookie_expiry) - $(date +%s) )); }
+in_range() { [ "$1" -ge "$2" ] && [ "$1" -le "$3" ]; }
+
+configure "array('session' => array('lifetime' => 3600, 'remember_lifetime' => 7200))"
+login
+check "a login lasts the hour the owner chose (not WordPress's two days)" in_range "$(expires_in)" 3500 3660
+rm -f "$JAR"
+curl -s -o /dev/null -c "$JAR" -b 'wordpress_test_cookie=WP%20Cookie%20check' --max-time 20 --data 'log=admin&pwd=pass&rememberme=forever&wp-submit=Log+In&testcookie=1' "$BASE/wp-login.php"
+check "a remembered login lasts the two hours chosen"                 in_range "$(expires_in)" 7100 7260
+reset
+login
+check "without the setting WordPress's own duration is back"          in_range "$(expires_in)" 100000 200000
+
 reset
 echo
 if [ "$failed" -eq 0 ]; then echo "All assertions passed."; else echo "Some assertions failed."; fi
