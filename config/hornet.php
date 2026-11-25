@@ -53,6 +53,24 @@ return [
         // 'csp' => ['mode' => 'report-only', 'policy' => "default-src 'self'; img-src 'self' data: https:", 'report_uri' => 'https://example.report-uri.com/r/d/csp/reportOnly', 'admin' => false],
     ],
 
+    // The proxies in front of the site (a load balancer, a CDN). A forwarding header is believed only from these addresses.
+    // On Pollora the address comes from Laravel's request, which has its own trusted-proxies setting: leave this empty there.
+    'network' => [
+        // 'trusted_proxies' => ['10.0.0.0/8'],
+        // 'forwarded_header' => 'X-Forwarded-For',   // or CF-Connecting-IP, X-Real-IP
+    ],
+
+    // A fallback login throttle, for a site without pollora/portcullis. Off until you turn it on.
+    // It never locks an address that many visitors share: behind a proxy, declare it above first.
+    // `wp hornet unlock <ip>` and `wp hornet unlock --all` let addresses back in.
+    'login' => [
+        'throttle' => false,
+        // 'max_attempts' => 5,
+        // 'window' => 900,
+        // 'lockout' => 900,
+        // 'allow_ips' => [],
+    ],
+
     // Tell someone when the audit finds something new. Nothing is sent until a channel is listed.
     // A secret (a webhook URL, a token, a signing key) is read from the environment: never write it in this file.
     'notifications' => [

@@ -4,7 +4,7 @@ Security for WordPress, from Pollora. Hornet audits the configuration of a site,
 
 It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on Laravel. By default it changes nothing on your site: it reads, and it tells you. Hardening and headers do nothing until you turn each one on.
 
-> **Status: 0.3 (in progress).** The audit of the configuration, the notifications, the hardening and the security headers are in. The login throttle, the password and session rules, the file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come next. Nothing here is a firewall.
+> **Status: 0.3 (in progress).** The audit of the configuration, the notifications, the hardening, the security headers and the login throttle are in. The password and session rules, the file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come next. Nothing here is a firewall.
 
 ## What it checks
 
@@ -95,6 +95,39 @@ define('HORNET_CONFIG', [
 - `user_enumeration` blocks `?author=N` before WordPress turns it into `/author/<login>/`, and takes the user routes away from visitors only: a logged-in user keeps them.
 - `file_editor` does what `DISALLOW_FILE_EDIT` does, which a plugin cannot define (`wp-config.php` loads first).
 - Each piece is a filter that is safe to add twice, so it does not matter that `pollora/headless` may do the same.
+
+## Login throttle
+
+A fallback for a site that does not run [pollora/portcullis](https://github.com/Pollora/portcullis), which already guards the login (secret URL, brute-force lockout, account enumeration) and which Hornet never doubles. **Off until you turn it on.**
+
+```php
+define('HORNET_CONFIG', [
+    'network' => ['trusted_proxies' => ['10.0.0.0/8']],   // the proxies in front of the site
+    'login' => [
+        'throttle' => true,
+        'max_attempts' => 5,           // failures ...
+        'window' => 900,               // ... within this many seconds lock the address ...
+        'lockout' => 900,              // ... for this long, doubling each time the same address earns another (up to a day)
+        'allow_ips' => ['203.0.113.50'],   // never counted, never locked
+    ],
+]);
+```
+
+- **Per address only, never per user name**: locking a user name would let anyone lock the owner out.
+- **It cannot be undone by WordPress.** The lock runs late on `authenticate`, after WordPress's own checks, and turns even a valid user into an error. Failures of application passwords (REST, XML-RPC) count too; a success forgets the failures.
+- **It never locks an address that many visitors share.** Behind a proxy or a load balancer that is not in `network.trusted_proxies`, every visitor would have the proxy's address and one attacker could lock everybody out. Hornet then steps aside, writes a note, and the audit raises a **high** finding. Declare the proxy: a forwarding header (`X-Forwarded-For`, `CF-Connecting-IP` or `X-Real-IP`, set with `network.forwarded_header`) is believed **only** when the connection comes from a listed proxy, and is read from the right, skipping the trusted proxies, so a forged left part counts for nothing.
+- **Adding a header does not dodge the lock.** A forwarding header from an address that is not a trusted proxy is ignored and the request is counted under the address that opened the connection. If a header arrives that way, the audit says so: if the site is behind a CDN, list it in `network.trusted_proxies`, or visitors behind the same edge address can lock each other out.
+- **On Pollora, the address is the one Laravel's request reports**, which already knows the proxies the application trusts: no second list to keep in step.
+- Addresses are stored as an HMAC, never in clear. With a persistent object cache (Redis, Memcached: [pollora/object-cache](https://github.com/Pollora/object-cache)) the counters live in the cache; without one they are transients, which are rows of the options table, so a flood of different addresses writes as many rows.
+
+**The way back in.** A lock is never a one-way door:
+
+```bash
+wp hornet unlock 203.0.113.7   # let one address back in
+wp hornet unlock --all         # let everybody back in
+```
+
+The command line is never locked. `define('HORNET_DISABLED', true);` in `wp-config.php` switches Hornet off altogether.
 
 ## Security headers
 

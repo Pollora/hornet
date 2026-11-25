@@ -6,10 +6,14 @@ use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Outcome;
+use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Pollora\Hornet\Domain\Login\Attempts;
 use Pollora\Hornet\Infrastructure\Config\Settings;
+use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
 use Pollora\Hornet\Infrastructure\WordPress\HardeningModule;
+use Pollora\Hornet\Infrastructure\WordPress\ThrottleProblemNote;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressHooks;
 
@@ -171,4 +175,88 @@ it('judges the state a site is really in: XML-RPC closed by someone else passes'
     $finding = (new Auditor(DefaultChecks::all()))->run(new WordPressEnvironment)->find('xml-rpc');
 
     expect($finding?->outcome)->toBe(Outcome::Pass);
+});
+
+describe('login attempts', function (): void {
+    afterEach(function (): void {
+        global $wpdb;
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%hornet\\_lg\\_%' OR option_name LIKE 'hornet\\_lockouts' OR option_name LIKE 'hornet\\_throttle\\_problem'");
+        wp_cache_flush();
+    });
+
+    it('keeps the failures of an address and forgets them', function (): void {
+        $store = new TransientAttemptStore;
+        $key = str_repeat('a', 64);
+
+        expect($store->get($key)->failures)->toBe(0);
+
+        $store->put($key, new Attempts(2, time(), 0, 0), 900);
+
+        expect($store->get($key)->failures)->toBe(2);
+
+        $store->forget($key);
+
+        expect($store->get($key)->failures)->toBe(0);
+    });
+
+    it('lists the lockouts so that all of them can be lifted, and counts the locked ones', function (): void {
+        $store = new TransientAttemptStore;
+        $store->put(str_repeat('a', 64), new Attempts(0, 0, time() + 900, 1), 900);
+        $store->put(str_repeat('b', 64), new Attempts(0, 0, time() + 900, 1), 900);
+        $store->put(str_repeat('c', 64), new Attempts(1, time(), 0, 0), 900);
+
+        expect($store->forgetAll())->toBe(2)->and($store->get(str_repeat('a', 64))->lockedUntil)->toBe(0)->and(get_option('hornet_lockouts'))->toBeFalse();
+    });
+
+    it('does not keep an index entry for an address that is no longer locked', function (): void {
+        $store = new TransientAttemptStore;
+        $store->put(str_repeat('a', 64), new Attempts(0, 0, time() + 900, 1), 900);
+        $store->forget(str_repeat('a', 64));
+
+        expect(get_option('hornet_lockouts'))->toBeFalse();
+    });
+
+    it('ignores a damaged index', function (): void {
+        update_option('hornet_lockouts', ['not-a-hash' => 1, str_repeat('a', 64) => 'x', 5 => 5], false);
+
+        expect((new TransientAttemptStore)->forgetAll())->toBe(0);
+    });
+
+    it('writes a note about a request it could not trust, once an hour, and lets it age out', function (): void {
+        $note = new ThrottleProblemNote;
+
+        expect($note->read())->toBeNull();
+
+        $note->record('shared');
+        $first = get_option('hornet_throttle_problem');
+        $note->record('shared');
+
+        expect($note->read())->toBe('shared')->and(get_option('hornet_throttle_problem'))->toBe($first);
+
+        $note->record('forwarded-untrusted');
+
+        expect($note->read())->toBe('forwarded-untrusted');
+
+        update_option('hornet_throttle_problem', ['reason' => 'shared', 'at' => time() - 700000], false);
+
+        expect($note->read())->toBeNull();
+
+        update_option('hornet_throttle_problem', ['reason' => 'something else', 'at' => time()], false);
+
+        expect($note->read())->toBeNull();
+    });
+
+    it('turns a note into a finding of the audit', function (): void {
+        (new ThrottleProblemNote)->record('shared');
+        $settings = Settings::fromArray(['login' => ['throttle' => true]]);
+        $finding = (new Auditor(DefaultChecks::all()))->run(new WordPressEnvironment($settings))->find('login-protection');
+
+        expect($finding?->outcome)->toBe(Outcome::Fail)->and($finding?->severity)->toBe(Severity::High);
+    });
+
+    it('knows the throttle is on only when the settings say so', function (): void {
+        expect((new WordPressEnvironment)->isActive(Component::HornetThrottle))->toBeFalse()
+            ->and((new WordPressEnvironment(Settings::fromArray([])))->isActive(Component::HornetThrottle))->toBeFalse()
+            ->and((new WordPressEnvironment(Settings::fromArray(['login' => ['throttle' => true]])))->isActive(Component::HornetThrottle))->toBeTrue();
+    });
 });
