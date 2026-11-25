@@ -11,6 +11,9 @@ final class InMemoryScanStore implements ScanStore
 {
     public int $saves = 0;
 
+    /** @var list<ScanSnapshot> every snapshot that was saved, in order */
+    public array $history = [];
+
     public function __construct(public ?ScanSnapshot $snapshot = null) {}
 
     public function last(): ?ScanSnapshot
@@ -22,5 +25,6 @@ final class InMemoryScanStore implements ScanStore
     {
         $this->snapshot = $snapshot;
         $this->saves++;
+        $this->history[] = $snapshot;
     }
 }

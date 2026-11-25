@@ -26,6 +26,7 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `two-factor-coverage` | the administrators who have not set up a second factor, named by number |
 | `core-integrity` | what the last [scan](#scan-the-files) found about the WordPress core files (it reads the result: it never scans) |
 | `plugin-integrity` | what the last scan found about the files of the plugins |
+| `suspicious-files` | what the last scan found in the content folder (scripts in the uploads, web shells) |
 
 A check reads and never writes, and never asks the network. A scan is another thing: see below. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 
@@ -246,7 +247,7 @@ function verify(rawBody, headers, secret) {
 wp hornet scan                        # compare the core files with WordPress.org
 wp hornet scan --format=json          # for a script or a pipeline
 wp hornet scan --fail-on=medium       # exit 1 from a medium finding up (default: high)
-wp hornet scan --repin                # accept the allowed core files, and the plugins' first look, as they are now
+wp hornet scan --repin                # accept the allowed core files and the plugins' first look as they are now, and walk the content folder again from the start
 ```
 
 A scan reads the disk, and asks `api.wordpress.org` for the checksums of the release you run (only the version and the locale are sent: not the address of the site). It runs when you ask, from WP-CLI, and never inside a page request. It **never deletes, repairs or quarantines a file**: it tells you, and you decide.
@@ -271,7 +272,25 @@ An allowed file is not trusted for good: its hash is pinned the first time it is
 
 A plugin WordPress.org has no list for (a premium plugin, one installed from elsewhere, a version it never had) has no reference. Its files are hashed **the first time they are seen** and compared afterwards; a plugin that was bad from the very first look cannot be told from a good one, and the finding says "first look kept" rather than "ok". An update is a new version, so a new first look. After you reinstall a plugin on purpose, `wp hornet scan --repin` takes the plugins as they are now. The first looks are kept in one option without autoload (`hornet_baseline`); a plugin of more than 5000 files is not kept. The scan stops asking after four minutes and names the plugins it did not reach. A plugin that is a single file (`hello.php`) is not looked at.
 
-What it cannot do, so you know: a core that was changed **before** the first scan with a file you allowed is pinned as it is; a compromised WordPress.org answer would be believed (the request is over HTTPS and nothing is cached); the themes (WordPress.org publishes no checksums for them) and the suspicious files in the content folder are not scanned yet.
+**Suspicious files.** The content folder (uploads, themes, mu-plugins, drop-ins; the plugins are left to the plugin scan, and `node_modules`, `.git` and cache folders are skipped) is walked for:
+
+| Signal | Severity |
+| --- | --- |
+| a PHP file in the uploads folder (WordPress's "Silence is golden" `index.php` files are not) | high |
+| an `.htaccess` that makes files run as PHP, or a `.user.ini` that runs a file before or after every script (high in the uploads, medium elsewhere) | high / medium |
+| a PHP file that reads like a web shell: `eval`, commands, decoders, backticks, `preg_replace` with `/e`, a very long blob, and above all request input reaching one of them (score 7 or more) | high |
+| the same with a lower score (5 or 6) | medium |
+| a name with a PHP extension in the middle (`shell.php.jpg`), which some servers run; a hidden PHP file (`.cache.php`) | medium |
+
+The rules are Hornet's own, read from the PHP tokens of the file (`token_get_all`: nothing to install, nothing run): the rule sets that exist are under licences a MIT package cannot take. No rule is enough alone, because legitimate code uses `eval`, `base64_decode` or a variable function now and then; points add up. A file larger than 512 KB is not scored. Expect some false positives (a page builder, an obfuscated but honest plugin): `scanner.ignore_paths` lists files and folders, relative to the content folder, to leave alone. It is **not** a replacement for a malware scanner with a signature database: a payload that avoids these rules is not seen.
+
+**Schedule.** Off until you ask: `'scanner' => ['schedule' => 'daily']` (or `hourly`, `twicedaily`) puts the scan in WP-Cron. WP-Cron runs in a web request, so the scan keeps to its time limit: the whole run is held to the PHP `max_execution_time` less a margin, and never more than 45 seconds; the plugin scan gets half of it (`Not checked: … (out of time)` names what it did not reach) and the walk of the content folder a quarter. The walk is the one that goes on: it stops, keeps its cursor and what it found (a failure found earlier stays visible meanwhile), and a minute later a run of **that walk only** (not the core, not the plugins) continues from there. Each task is saved when it is done, so a run that is cut loses the task it was in and not the others. Two runs never overlap: the second steps aside. On a network the main site runs the scan, once: the files are shared.
+
+On a large site (many plugins, a large uploads folder) use `wp hornet scan` from the system cron instead, with `DISABLE_WP_CRON`: there is no time limit there, and the walk is made in one go. The audit, which tells the channels what is new, reads the result of the scan at its own turn.
+
+**Shells.** Besides the usual signs, the rules know a function named by the request (`$_POST['a']($_POST['b'])`), a callback handed the request (`call_user_func($_GET['f'])`, `array_map('assert', $_POST)`, `assert($_POST['x'])`) and an `include` of a file the request names: each is 7 points, high on its own. The "Silence is golden" exemption is decided on the PHP tokens, so a comment that is followed by code on the same line is not silence.
+
+What it cannot do, so you know: a core that was changed **before** the first scan with a file you allowed is pinned as it is; a compromised WordPress.org answer would be believed (the request is over HTTPS and nothing is cached); the integrity of the themes (WordPress.org publishes no checksums for them) and the probes of the web server (a reachable `.env`, PHP that runs in the uploads) are not done yet.
 
 ## Design
 

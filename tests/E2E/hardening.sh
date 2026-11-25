@@ -55,7 +55,10 @@ reset
 
 (cd "$WP_DIR" && php -d opcache.enable=0 -S "127.0.0.1:$PORT" -t "$WP_DIR" "$PKG/tests/E2E/router.php" >/tmp/e2e-server.log 2>&1 &)
 (cd "$WP_DIR" && E2E_HTTPS=1 php -d opcache.enable=0 -S "127.0.0.1:$SECURE_PORT" -t "$WP_DIR" "$PKG/tests/E2E/router.php" >/tmp/e2e-secure.log 2>&1 &)
-for i in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null "$BASE/" && break; sleep 1; done
+# A server with the time limit of a web request, for the real WP-Cron (wp-cron.php) in section 8c
+CRON_PORT=${CRON_PORT:-8084}
+(cd "$WP_DIR" && php -d opcache.enable=0 -d max_execution_time=20 -S "127.0.0.1:$CRON_PORT" -t "$WP_DIR" "$PKG/tests/E2E/router.php" >/tmp/e2e-cron.log 2>&1 &)
+for i in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null "$BASE/" && curl -s -o /dev/null "http://127.0.0.1:$CRON_PORT/" && break; sleep 1; done
 
 # --- 1. nothing configured: nothing changes ----------------------------------------------------------------
 echo "1. Hornet installed, nothing turned on: the site is as WordPress made it"
@@ -286,6 +289,47 @@ check "--repin takes the plugin as it is now"                        scan_says '
 check "and the scan after it is clean"                               scan_says '2 plugin(s) match WordPress.org, 1 match what was first seen.'
 rm -rf "$WP_DIR/wp-content/plugins/hornet-e2e-premium"
 cli option delete hornet_baseline >/dev/null 2>&1
+
+# --- 8c. the files of the content folder, and the schedule ----------------------------------------------------
+echo "8c. suspicious files"
+content="$WP_DIR/wp-content"
+mkdir -p "$content/uploads/2026/11" "$content/themes/e2e"
+check "a fresh content folder has nothing suspicious"                scan_says 'Nothing found'
+echo '<?php echo "hello";' > "$content/uploads/2026/11/logo.php"
+echo 'x' > "$content/uploads/2026/11/pic.php.jpg"
+printf 'AddHandler application/x-httpd-php .jpg\n' > "$content/uploads/.htaccess"
+printf '<?php eval($_POST["x"]);' > "$content/themes/e2e/inc.php"
+check "a script in the uploads fails the scan"                       scan_fails_with 'uploads/2026/11/logo.php: a PHP file in the uploads folder'
+check "a name with a PHP extension in the middle is told"            grep -q 'pic.php.jpg' /tmp/hornet-scan.out
+check "a server setting that runs pictures as PHP is told"           grep -q 'uploads/.htaccess' /tmp/hornet-scan.out
+check "a web shell in a theme is told, with its score"               grep -q 'themes/e2e/inc.php: reads like a web shell (score 7)' /tmp/hornet-scan.out
+check "the audit shows it"                                           sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'suspicious-files'"
+check "nothing was deleted"                                          sh -c "test -f '$content/uploads/2026/11/logo.php' && test -f '$content/themes/e2e/inc.php'"
+configure "array('scanner' => array('ignore_paths' => array('uploads', 'themes/e2e')))"
+check "folders the owner leaves alone are left alone"                scan_says 'Nothing found'
+reset
+
+configure "array('scanner' => array('schedule' => 'daily'))"
+check "the schedule puts the scan in the cron"                       sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' cron event list --format=csv | grep -q 'pollora/hornet/scheduled_scan'"
+cli option delete hornet_scan >/dev/null 2>&1
+# The event is made due, and WordPress's own cron entry point runs it, over HTTP, under a PHP that stops a request at 20 seconds.
+# WordPress starts the cron with a request to its own address: the site is pointed at the limited server for the time of this test, so that all the work is done there.
+CRON_BASE="http://127.0.0.1:$CRON_PORT"
+cli option update home "$CRON_BASE" >/dev/null
+cli option update siteurl "$CRON_BASE" >/dev/null
+cli eval 'wp_clear_scheduled_hook("pollora/hornet/scheduled_scan"); wp_schedule_event(time() - 60, "daily", "pollora/hornet/scheduled_scan");' >/dev/null
+check "wp-cron.php answers"                                          status_is 200 --max-time 120 "http://127.0.0.1:$CRON_PORT/wp-cron.php?doing_wp_cron=1"
+lock_gone() { n=0; while php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" option get hornet_scan_lock >/dev/null 2>&1; do n=$((n + 1)); [ "$n" -gt 30 ] && { echo "        | the lock is still held after 60 seconds"; tail -5 /tmp/e2e-cron.log | sed 's/^/        | /'; return 1; }; sleep 2; done; }
+check "the scan lets go of its lock"                                 lock_gone
+scan_covered() { out=$(php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" hornet status --all --fail-on=none 2>&1); for id in core-integrity plugin-integrity suspicious-files; do echo "$out" | grep "$id" | grep -qE 'never scanned|did not cover' && { echo "        | $id has no result"; echo "$out" | grep -E 'core-integrity|plugin-integrity|suspicious-files' | cut -c1-160 | sed 's/^/        | /'; tail -15 /tmp/e2e-cron.log | sed 's/^/        | log: /'; php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" cron event list --format=csv 2>&1 | grep -i hornet | sed 's/^/        | cron: /'; return 1; }; done; echo "$out" | grep -q 'suspicious-files'; }
+check "the scheduled scan, under a 20 second PHP, stored a result for every scan" scan_covered
+cli option update home "$BASE" >/dev/null
+cli option update siteurl "$BASE" >/dev/null
+configure "array('scanner' => array('schedule' => 'off'))"
+check "turned off, the scan leaves the cron"                         sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' cron event list --format=csv | grep -q 'pollora/hornet/scheduled_scan'"
+reset
+rm -rf "$content/uploads/2026" "$content/uploads/.htaccess" "$content/themes/e2e"
+cli option delete hornet_scan >/dev/null 2>&1
 
 wp config set HORNET_DISABLED true --raw >/dev/null
 check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'

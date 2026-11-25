@@ -16,11 +16,13 @@ final readonly class ScanSnapshot
     /**
      * @param  array<string, Finding>  $findings  by the id of the scan task
      * @param  array<string, Pins>  $pins  by the id of the scan task
+     * @param  list<string>  $unfinished  ids of the tasks that stopped on their time budget and go on at the next run
      */
     public function __construct(
         public DateTimeImmutable $at,
         public array $findings,
         public array $pins = [],
+        public array $unfinished = [],
     ) {}
 
     public function finding(string $taskId): ?Finding
@@ -34,7 +36,7 @@ final readonly class ScanSnapshot
     }
 
     /**
-     * @return array{at: int, findings: array<string, array<string, mixed>>, pins: array<string, array{scope: string, hashes: array<string, string>}>}
+     * @return array{at: int, findings: array<string, array<string, mixed>>, pins: array<string, array{scope: string, hashes: array<string, string>}>, unfinished: list<string>}
      */
     public function toArray(): array
     {
@@ -42,6 +44,7 @@ final readonly class ScanSnapshot
             'at' => $this->at->getTimestamp(),
             'findings' => array_map(static fn (Finding $finding): array => $finding->toArray(), $this->findings),
             'pins' => array_map(static fn (Pins $pins): array => $pins->toArray(), $this->pins),
+            'unfinished' => $this->unfinished,
         ];
     }
 
@@ -74,6 +77,8 @@ final readonly class ScanSnapshot
             }
         }
 
-        return new self((new DateTimeImmutable('@'.$value['at']))->setTimezone(new DateTimeZone('UTC')), $findings, $pins);
+        $unfinished = array_values(array_filter(is_array($value['unfinished'] ?? null) ? $value['unfinished'] : [], is_string(...)));
+
+        return new self((new DateTimeImmutable('@'.$value['at']))->setTimezone(new DateTimeZone('UTC')), $findings, $pins, $unfinished);
     }
 }

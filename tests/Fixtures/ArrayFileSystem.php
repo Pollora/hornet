@@ -58,6 +58,20 @@ final class ArrayFileSystem implements FileSystem
         return $contents === null ? null : md5($contents);
     }
 
+    public function read(string $path, int $maxBytes): ?string
+    {
+        $contents = $this->files[$path] ?? null;
+
+        return $contents === null ? null : substr($contents, 0, $maxBytes);
+    }
+
+    public function size(string $path): ?int
+    {
+        $contents = $this->files[$path] ?? null;
+
+        return $contents === null ? null : strlen($contents);
+    }
+
     public function sha256(string $path): ?string
     {
         $contents = $this->files[$path] ?? null;

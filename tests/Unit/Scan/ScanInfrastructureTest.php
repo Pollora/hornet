@@ -63,6 +63,31 @@ describe('the disk', function (): void {
         remove($root);
     });
 
+    it('reads the start of a file and its size, and nothing outside the root', function (): void {
+        $root = folder(['a.txt' => 'hello world']);
+        $files = NativeFileSystem::at($root);
+
+        expect($files?->read('a.txt', 5))->toBe('hello')
+            ->and($files?->read('a.txt', 100))->toBe('hello world')
+            ->and($files?->size('a.txt'))->toBe(11)
+            ->and($files?->sha256('a.txt'))->toBe(hash('sha256', 'hello world'))
+            ->and($files?->read('gone.txt', 5))->toBeNull()
+            ->and($files?->size('gone.txt'))->toBeNull()
+            ->and($files?->sha256('gone.txt'))->toBeNull()
+            ->and($files?->read('../a.txt', 5))->toBeNull()
+            ->and($files?->size('../a.txt'))->toBeNull();
+
+        remove($root);
+    });
+
+    it('lists the files by bytes, as the cursor of a walk compares them', function (): void {
+        $root = folder(['10.php' => 'a', '9.php' => 'b', 'B.php' => 'c', 'a.php' => 'd']);
+
+        expect(NativeFileSystem::at($root)?->files('', false))->toBe(['10.php', '9.php', 'B.php', 'a.php']);
+
+        remove($root);
+    });
+
     it('hashes a file, and says nothing of a file that is not there or not a plain path', function (): void {
         $root = folder(['index.php' => 'index']);
         $files = NativeFileSystem::at($root);
@@ -216,6 +241,13 @@ describe('the settings', function (): void {
             ->and(ScannerSettings::none()->allowModified)->toBe([]);
     });
 
+    it('reads the schedule, and the folders left alone', function (): void {
+        $settings = Settings::fromArray(['scanner' => ['schedule' => 'daily', 'ignore_paths' => ['uploads/known/', 'themes/t/vendor']]], new ArraySecrets)->scanner;
+
+        expect($settings->schedule)->toBe('daily')->and($settings->ignorePaths)->toBe(['uploads/known', 'themes/t/vendor'])
+            ->and(ScannerSettings::none()->schedule)->toBe('off')->and(ScannerSettings::none()->ignorePaths)->toBe([]);
+    });
+
     it('reads the files that may differ', function (): void {
         $settings = Settings::fromArray(['scanner' => ['allow_modified' => ['wp-includes/l10n.php']]], new ArraySecrets);
 
@@ -231,6 +263,10 @@ describe('the settings', function (): void {
         'a keyed array' => [['allow_modified' => ['a' => 'wp-includes/l10n.php']], 'scanner.allow_modified'],
         'a path that leaves the install' => [['allow_modified' => ['../wp-config.php']], 'scanner.allow_modified'],
         'an absolute path' => [['allow_modified' => ['/var/www/index.php']], 'scanner.allow_modified'],
+        'a schedule that does not exist' => [['schedule' => 'weekly'], 'scanner.schedule'],
+        'a schedule that is not a string' => [['schedule' => true], 'scanner.schedule'],
+        'ignored paths that leave the content folder' => [['ignore_paths' => ['../x']], 'scanner.ignore_paths'],
+        'ignored paths that are not a list' => [['ignore_paths' => 'uploads'], 'scanner.ignore_paths'],
         'something that is not a path' => [['allow_modified' => [12]], 'scanner.allow_modified'],
     ]);
 });

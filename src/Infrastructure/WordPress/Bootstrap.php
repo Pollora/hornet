@@ -10,6 +10,7 @@ use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Password\BreachCheck;
+use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
@@ -125,6 +126,17 @@ final class Bootstrap
                 );
             }
 
+            // The files are shared by every site of a network: the main site schedules the scan, once.
+            // Turned off, the scan still has to take its own event out of the cron: the module is attached while one is left.
+            if (self::ownsScan() && ($settings->scanner->schedule !== 'off' || (function_exists('wp_next_scheduled') && wp_next_scheduled(ScanModule::SCAN_HOOK) !== false))) {
+                $modules[] = new ScanModule(
+                    static fn (): ?Scanner => ScannerFactory::forWordPress($settings, true),
+                    $settings->scanner->schedule,
+                    new OptionRunLock('hornet_scan_lock'),
+                    static fn (): array => (new OptionScanStore)->last()->unfinished ?? [],
+                );
+            }
+
             if ($settings->notifications->channels !== []) {
                 // Built once to be sure the settings hold together; the cron builds its own when it runs
                 $factory = NotificationFactory::forWordPress();
@@ -136,5 +148,13 @@ final class Bootstrap
         }
 
         return $modules;
+    }
+
+    /**
+     * Whether this site runs the scheduled scan: a single site, or the main site of a network.
+     */
+    private static function ownsScan(): bool
+    {
+        return ! function_exists('is_multisite') || ! is_multisite() || is_main_site();
     }
 }

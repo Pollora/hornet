@@ -22,7 +22,8 @@
     "require": {
         "php": "^8.3",
         "ext-json": "*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-tokenizer": "*"
     },
     "require-dev": {
         "antecedent/patchwork": "^2.2",

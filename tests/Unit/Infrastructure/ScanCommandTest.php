@@ -37,7 +37,7 @@ it('scans, says all is well, and keeps the result for the audit', function (): v
     expect($output->successes)->toBe(['Nothing found.'])
         ->and($output->rows[0]['status'])->toBe('pass')
         ->and($output->rows[0]['check'])->toBe('core-integrity')
-        ->and($store->saves)->toBe(1);
+        ->and($store->saves)->toBe(2);
 });
 
 it('lists what it found with the files, and fails on a high finding by default', function (): void {

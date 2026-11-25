@@ -94,6 +94,12 @@ return [
         // Each is pinned the first time it is seen: a later change is reported. On Pollora and Bedrock the files that the
         // patches of patches.lock.json change are allowed by themselves; list here what Hornet cannot find out.
         // 'allow_modified' => ['wp-includes/l10n.php'],
+
+        // Files and folders of the content folder that the suspicious-files scan leaves alone (your false positives), relative to wp-content.
+        // 'ignore_paths' => ['uploads/known-legacy', 'themes/mine/vendor'],
+
+        // Scan from WP-Cron: off, hourly, twicedaily or daily. Off until you ask. On a large site, run `wp hornet scan` from the system cron instead.
+        // 'schedule' => 'daily',
     ],
 
     // Tell someone when the audit finds something new. Nothing is sent until a channel is listed.
