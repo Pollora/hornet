@@ -8,13 +8,12 @@ use Closure;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
-use Pollora\Hornet\Application\Auditor;
-use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Http\SecurityHeaders;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Login\ClientAddress;
+use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Throwable;
@@ -117,6 +116,6 @@ final class HornetServiceProvider extends ServiceProvider
     {
         $settings = $this->settings();
 
-        return (new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment($settings));
+        return AuditorFactory::forWordPress($settings)->run(new WordPressEnvironment($settings));
     }
 }

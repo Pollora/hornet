@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Infrastructure\Notification;
 
 use Pollora\Hornet\Application\Auditor;
-use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Notification\ChannelInfo;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Notification\Notifier;
@@ -20,6 +19,7 @@ use Pollora\Hornet\Domain\Notification\RetryQueue;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
 use Pollora\Hornet\Infrastructure\Config\Settings;
+use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
 use Pollora\Hornet\Infrastructure\WordPress\OptionNotificationState;
 use Pollora\Hornet\Infrastructure\WordPress\OptionRetryQueue;
 use Pollora\Hornet\Infrastructure\WordPress\OptionRunLock;
@@ -50,10 +50,11 @@ final readonly class NotificationFactory
 
     /**
      * @param  string  $siteName  the name of the site, as WordPress knows it
+     * @param  Auditor|null  $auditor  the auditor to use; by default the one of the site, which reads from the database what was set aside from the screen
      *
      * @throws \InvalidArgumentException when the settings name a check that does not exist
      */
-    public function service(Settings $settings, Environment $environment, string $siteName, string $siteUrl): NotificationService
+    public function service(Settings $settings, Environment $environment, string $siteName, string $siteUrl, ?Auditor $auditor = null): NotificationService
     {
         $channels = (new ChannelFactory($this->http, $this->mailer, $this->clock))->build($settings->notifications->channels);
 
@@ -69,7 +70,7 @@ final readonly class NotificationFactory
         );
 
         return new NotificationService(
-            new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored),
+            $auditor ?? AuditorFactory::forWordPress($settings),
             $environment,
             $notifier,
             $this->lock,

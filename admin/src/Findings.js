@@ -1,22 +1,31 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, useState } from '@wordpress/element';
-import { Button, Modal, SearchControl, SelectControl } from '@wordpress/components';
+import { Button, Modal, Notice, SearchControl, SelectControl, TextareaControl } from '@wordpress/components';
 import { statusLabel, severityLabel, SEVERITIES } from './util';
 import { filterFindings, pageOf } from './findings-view';
 import { SeverityBadge, StatusBadge } from './Severity';
+import { restoreFinding, setAside } from './api';
+import { whenLabel } from './util';
 
 const PER_PAGE = 15;
+
+/** The shortest reason the server accepts (see SetAsideService::MIN_REASON). */
+const MIN_REASON = 8;
 
 /**
  * The findings as a table of plain components. Only the public parts of @wordpress/components are used (never a private API of the
  * block editor), so that the screen does not break when WordPress is updated, and runs from WordPress 6.9.
  */
-export default function Findings( { findings } ) {
+export default function Findings( { findings, onChanged } ) {
 	const [ search, setSearch ] = useState( '' );
 	const [ status, setStatus ] = useState( 'attention' );
 	const [ severity, setSeverity ] = useState( 'all' );
 	const [ page, setPage ] = useState( 1 );
 	const [ shown, setShown ] = useState( null );
+	const [ reason, setReason ] = useState( '' );
+	const [ asking, setAsking ] = useState( false );
+	const [ busy, setBusy ] = useState( false );
+	const [ problem, setProblem ] = useState( null );
 
 	const filtered = useMemo(
 		() => filterFindings( findings, { search, status, severity } ),
@@ -28,6 +37,27 @@ export default function Findings( { findings } ) {
 	const change = ( setter ) => ( value ) => {
 		setter( value );
 		setPage( 1 );
+	};
+
+	const close = () => {
+		setShown( null );
+		setAsking( false );
+		setReason( '' );
+		setProblem( null );
+	};
+
+	// Sets the finding aside, or brings it back, then reads the status again: the counts and the table change
+	const act = async ( action ) => {
+		setBusy( true );
+		setProblem( null );
+		try {
+			await action();
+			close();
+			await onChanged?.();
+		} catch ( failure ) {
+			setProblem( failure?.message ?? __( 'That could not be done.', 'pollora-hornet' ) );
+		}
+		setBusy( false );
 	};
 
 	return (
@@ -115,7 +145,7 @@ export default function Findings( { findings } ) {
 			) }
 
 			{ shown && (
-				<Modal title={ shown.label } onRequestClose={ () => setShown( null ) }>
+				<Modal title={ shown.label } onRequestClose={ close }>
 					<p>
 						<StatusBadge status={ shown.status } />{ ' ' }
 						{ shown.outcome === 'fail' && <SeverityBadge severity={ shown.severity } /> }
@@ -136,11 +166,65 @@ export default function Findings( { findings } ) {
 					{ shown.ignored && (
 						<p>
 							<strong>{ __( 'Set aside, because:', 'pollora-hornet' ) }</strong> { shown.ignored }
+							<br />
+							<em>
+								{ shown.ignored_by === 'file'
+									? __( 'Set in the settings file: change it there.', 'pollora-hornet' )
+									: sprintf(
+											/* translators: 1: an account name, 2: a date */
+											__( 'By %1$s, %2$s.', 'pollora-hornet' ),
+											shown.ignored_login || '—',
+											whenLabel( shown.ignored_at )
+									  ) }
+							</em>
 						</p>
 					) }
-					<Button variant="secondary" onClick={ () => setShown( null ) }>
-						{ __( 'Close', 'pollora-hornet' ) }
-					</Button>
+					{ problem && (
+						<Notice status="error" isDismissible={ false }>
+							{ problem }
+						</Notice>
+					) }
+					{ asking && (
+						<TextareaControl
+							__nextHasNoMarginBottom
+							label={ __( 'Why is this acceptable on this site?', 'pollora-hornet' ) }
+							help={ __( 'It is kept with your name and the date, and said in the journal.', 'pollora-hornet' ) }
+							value={ reason }
+							maxLength={ 300 }
+							onChange={ setReason }
+						/>
+					) }
+					<div className="hornet-actions">
+						{ asking ? (
+							<Button
+								variant="primary"
+								isBusy={ busy }
+								disabled={ busy || reason.trim().length < MIN_REASON }
+								onClick={ () => act( () => setAside( shown.check, reason.trim() ) ) }
+							>
+								{ __( 'Set it aside', 'pollora-hornet' ) }
+							</Button>
+						) : (
+							shown.can_set_aside && (
+								<Button variant="secondary" onClick={ () => setAsking( true ) }>
+									{ __( 'Set aside…', 'pollora-hornet' ) }
+								</Button>
+							)
+						) }
+						{ shown.can_restore && (
+							<Button
+								variant="secondary"
+								isBusy={ busy }
+								disabled={ busy }
+								onClick={ () => act( () => restoreFinding( shown.check ) ) }
+							>
+								{ __( 'Bring it back', 'pollora-hornet' ) }
+							</Button>
+						) }
+						<Button variant="tertiary" onClick={ close }>
+							{ __( 'Close', 'pollora-hornet' ) }
+						</Button>
+					</div>
 				</Modal>
 			) }
 		</div>

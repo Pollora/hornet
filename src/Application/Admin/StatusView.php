@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Report;
+use Pollora\Hornet\Domain\Audit\SetAside;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Domain\Scan\ScanState;
 
@@ -21,11 +22,13 @@ final class StatusView
     /**
      * @param  array<string, string>  $labels  the name of each check, by id
      * @param  list<string>  $scanTasks  the ids of the tasks of the scan, in the order they run
+     * @param  array<string, SetAside>  $setAside  the findings set aside from the screen, by check
+     * @param  list<string>  $inFile  the checks that the settings file sets aside: they win, and the screen cannot change them
      * @return array<string, mixed>
      */
-    public static function build(Report $report, array $labels, ?ScanSnapshot $scan, ScanState $state, DateTimeImmutable $now, array $scanTasks): array
+    public static function build(Report $report, array $labels, ?ScanSnapshot $scan, ScanState $state, DateTimeImmutable $now, array $scanTasks, array $setAside = [], array $inFile = []): array
     {
-        $findings = array_map(static fn (Finding $finding): array => self::finding($finding, $labels), $report->findings);
+        $findings = array_map(static fn (Finding $finding): array => self::finding($finding, $labels, $setAside, $inFile), $report->findings);
 
         // What asks for attention first: the open ones, the worst first; then what could not be verified; then the rest
         usort($findings, static fn (array $a, array $b): int => [self::order($a['status']), -self::rank($a['severity'])] <=> [self::order($b['status']), -self::rank($b['severity'])]);
@@ -50,20 +53,32 @@ final class StatusView
 
     /**
      * @param  array<string, string>  $labels
-     * @return array{check: string, label: string, status: string, outcome: string, severity: string, summary: string, details: list<string>, fix: ?string, ignored: ?string}
+     * @param  array<string, SetAside>  $setAside
+     * @param  list<string>  $inFile
+     * @return array<string, mixed>
      */
-    private static function finding(Finding $finding, array $labels): array
+    private static function finding(Finding $finding, array $labels, array $setAside, array $inFile): array
     {
+        $status = self::status($finding);
+        $locked = in_array($finding->checkId, $inFile, true);
+        $aside = $setAside[$finding->checkId] ?? null;
+
         return [
             'check' => $finding->checkId,
             'label' => $labels[$finding->checkId] ?? $finding->checkId,
-            'status' => self::status($finding),
+            'status' => $status,
             'outcome' => $finding->outcome->value,
             'severity' => $finding->severity->value,
             'summary' => $finding->summary,
             'details' => $finding->details,
             'fix' => $finding->fix,
             'ignored' => $finding->ignoredReason,
+            // Who set it aside, and where: the file wins over the screen
+            'ignored_by' => $finding->isIgnored() ? ($locked ? 'file' : 'screen') : null,
+            'ignored_login' => $finding->isIgnored() && ! $locked && $aside instanceof SetAside ? $aside->login : null,
+            'ignored_at' => $finding->isIgnored() && ! $locked && $aside instanceof SetAside ? $aside->at : null,
+            'can_set_aside' => $status === 'open' && ! $locked,
+            'can_restore' => $finding->isIgnored() && ! $locked && $aside instanceof SetAside,
         ];
     }
 

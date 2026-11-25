@@ -19,3 +19,30 @@ export const testChannel = ( channel ) =>
 		method: 'POST',
 		data: { channel },
 	} );
+
+/** One page of the journal, the newest first. Empty values are left out of the query. */
+export const getJournal = ( { type = '', source = '', page = 1, perPage = 25 } = {} ) => {
+	const query = new URLSearchParams( { page: String( page ), per_page: String( perPage ) } );
+	if ( type ) {
+		query.set( 'type', type );
+	}
+	if ( source ) {
+		query.set( 'source', source );
+	}
+	return apiFetch( { path: `${ ROOT }/journal?${ query.toString() }` } );
+};
+
+/** Sets a finding aside, on a reason that the person wrote. */
+export const setAside = ( check, reason ) =>
+	apiFetch( {
+		path: `${ ROOT }/findings/${ encodeURIComponent( check ) }/ignore`,
+		method: 'POST',
+		data: { reason },
+	} );
+
+/** Brings a finding set aside from the screen back. */
+export const restoreFinding = ( check ) =>
+	apiFetch( {
+		path: `${ ROOT }/findings/${ encodeURIComponent( check ) }/ignore`,
+		method: 'DELETE',
+	} );

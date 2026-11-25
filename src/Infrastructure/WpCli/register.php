@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use Pollora\Hornet\Application\Auditor;
-use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Login\Unlocker;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Scan\Scanner;
@@ -13,6 +11,7 @@ use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
 use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
+use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalSchema;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
 use Pollora\Hornet\Infrastructure\WordPress\ScannerFactory;
@@ -35,7 +34,7 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
         static function (): Report {
             $settings = SettingsLoader::load(get_current_blog_id());
 
-            return (new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment($settings));
+            return AuditorFactory::forWordPress($settings)->run(new WordPressEnvironment($settings));
         },
         new WpCliOutput,
     ));

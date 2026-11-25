@@ -6,6 +6,7 @@ import Overview from './Overview';
 import Findings from './Findings';
 import Settings from './Settings';
 import Notifications from './Notifications';
+import Journal from './Journal';
 
 /** How often a scan that is running is asked about, in milliseconds. */
 const POLL = 3000;
@@ -88,6 +89,7 @@ export default function App() {
 		},
 		{ name: 'settings', title: __( 'Settings', 'pollora-hornet' ) },
 		{ name: 'notifications', title: __( 'Notifications', 'pollora-hornet' ) },
+		{ name: 'journal', title: __( 'Journal', 'pollora-hornet' ) },
 	];
 
 	return (
@@ -95,9 +97,11 @@ export default function App() {
 			{ ( tab ) => {
 				switch ( tab.name ) {
 					case 'findings':
-						return <Findings findings={ status.findings } />;
+						return <Findings findings={ status.findings } onChanged={ load } />;
 					case 'settings':
 						return <Settings settings={ status.settings } />;
+					case 'journal':
+						return <Journal enabled={ status.journal.enabled } />;
 					case 'notifications':
 						return <Notifications channels={ status.channels } />;
 					default:

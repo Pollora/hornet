@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Pollora\Hornet\Application\Admin\StatusView;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Report;
+use Pollora\Hornet\Domain\Audit\SetAside;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Domain\Scan\ScanState;
@@ -75,4 +76,26 @@ it('keeps the text of a finding as text: it holds what the site wrote, and is ne
     $view = StatusView::build($report, [], null, ScanState::idle(), new DateTimeImmutable('2026-11-25 UTC'), []);
 
     expect($view['findings'][0]['summary'])->toBe('<img src=x onerror=alert(1)>')->and(json_encode($view))->toBeString();
+});
+
+it('says who set a finding aside, and where, and what the screen may do with it', function (): void {
+    $report = new Report([
+        Finding::fail('xml-rpc', Severity::Medium, 'XML-RPC answers.'),
+        Finding::fail('file-mods', Severity::Low, 'Updates from the dashboard.')->ignoredFor('In the file.'),
+        Finding::fail('https', Severity::High, 'No https.')->ignoredFor('From the screen, for now.'),
+        Finding::pass('salts', 'Fine.'),
+        Finding::unknown('core-integrity', 'Never scanned.'),
+    ]);
+    $aside = ['https' => new SetAside('https', 'From the screen, for now.', 7, 'olivier', 1795600000), 'file-mods' => new SetAside('file-mods', 'Older, from the screen.', 7, 'olivier', 1)];
+
+    $view = StatusView::build($report, [], null, ScanState::idle(), new DateTimeImmutable('2026-11-25 UTC'), [], $aside, ['file-mods']);
+    $by = array_column($view['findings'], null, 'check');
+
+    // The file wins over the screen: its reason is the one shown, and the screen cannot touch it
+    expect($by['xml-rpc'])->toMatchArray(['ignored_by' => null, 'can_set_aside' => true, 'can_restore' => false])
+        ->and($by['file-mods'])->toMatchArray(['ignored_by' => 'file', 'ignored_login' => null, 'can_set_aside' => false, 'can_restore' => false])
+        ->and($by['https'])->toMatchArray(['ignored_by' => 'screen', 'ignored_login' => 'olivier', 'ignored_at' => 1795600000, 'can_set_aside' => false, 'can_restore' => true])
+        // Nothing to hide in what passes, and what is not known cannot be set aside either
+        ->and($by['salts'])->toMatchArray(['can_set_aside' => false, 'can_restore' => false])
+        ->and($by['core-integrity'])->toMatchArray(['can_set_aside' => false]);
 });

@@ -2,18 +2,27 @@
 
 declare(strict_types=1);
 
+use Pollora\Hornet\Application\Journal\JournalRecorder;
 use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Application\Scan\Scanner;
+use Pollora\Hornet\Domain\Audit\SetAside;
+use Pollora\Hornet\Domain\Journal\JournalQuery;
+use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Domain\Scan\ScanState;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminAccess;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
+use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalSchema;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\WpRequestContext;
 use Pollora\Hornet\Infrastructure\WordPress\OptionRunLock;
 use Pollora\Hornet\Infrastructure\WordPress\OptionScanStateStore;
 use Pollora\Hornet\Infrastructure\WordPress\OptionScanStore;
+use Pollora\Hornet\Infrastructure\WordPress\OptionSetAsideStore;
 use Pollora\Hornet\Infrastructure\WordPress\ScanModule;
 use Pollora\Hornet\Infrastructure\WordPress\ScannerFactory;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
@@ -26,6 +35,12 @@ use Pollora\Hornet\Infrastructure\WordPress\WordPressHooks;
  */
 function bootAdmin(array $config = []): void
 {
+    // A second boot must not stack on the first: the routes of the first one would answer
+    if (isset($GLOBALS['hornet_test_hooks'])) {
+        // Copies: a boot adds to the hooks it finds, and the saved ones must stay as they were
+        $GLOBALS['wp_filter'] = array_map(static fn (WP_Hook $hook): WP_Hook => clone $hook, $GLOBALS['hornet_test_hooks']);
+    }
+
     $settings = Settings::fromArray([...$config, 'site_health' => false]);
     Bootstrap::boot($settings, new WordPressHooks, new WordPressEnvironment($settings));
     $GLOBALS['wp_rest_server'] = null;
@@ -43,15 +58,10 @@ function restAs(?int $user, string $method, string $route, array $params = []): 
     return rest_do_request($request);
 }
 
-const HOOKS = ['rest_api_init', 'admin_menu', 'admin_enqueue_scripts', 'admin_init', 'init', 'pollora/hornet/scan_now', 'pollora/hornet/scheduled_scan', 'pollora/hornet/continue_scan'];
-
 beforeEach(function (): void {
-    // WordPress and its other plugins have hooks of their own on these: put back what was there, and not an empty list
-    $this->hooks = [];
-
-    foreach (HOOKS as $hook) {
-        $this->hooks[$hook] = isset($GLOBALS['wp_filter'][$hook]) ? clone $GLOBALS['wp_filter'][$hook] : null;
-    }
+    // Hornet is booted again by these tests, with the journal on in some: every hook is put back as it was, whatever Hornet attached to it
+    $this->hooks = array_map(static fn (WP_Hook $hook): WP_Hook => clone $hook, $GLOBALS['wp_filter']);
+    $GLOBALS['hornet_test_hooks'] = array_map(static fn (WP_Hook $hook): WP_Hook => clone $hook, $GLOBALS['wp_filter']);
 
     require_once ABSPATH.'wp-admin/includes/user.php';
     $this->subscriber = wp_insert_user(['user_login' => 'hornet-subscriber-'.wp_generate_password(6, false), 'user_pass' => wp_generate_password(), 'role' => 'subscriber']);
@@ -60,9 +70,7 @@ beforeEach(function (): void {
 afterEach(function (): void {
     wp_set_current_user(0);
     wp_delete_user($this->subscriber);
-    foreach ($this->hooks as $hook => $saved) {
-        $saved === null ? remove_all_actions($hook) : $GLOBALS['wp_filter'][$hook] = $saved;
-    }
+    $GLOBALS['wp_filter'] = $this->hooks;
 
     wp_clear_scheduled_hook(ScanModule::NOW_HOOK);
     delete_option(OptionScanStateStore::OPTION);
@@ -376,4 +384,171 @@ describe('the page', function (): void {
 
 it('has the routes under one namespace', function (): void {
     expect(AdminRestModule::NAMESPACE)->toBe('hornet/v1');
+});
+
+describe('setting a finding aside from the screen', function (): void {
+    beforeEach(function (): void {
+        bootAdmin();
+        delete_option(OptionSetAsideStore::OPTION);
+    });
+
+    afterEach(function (): void {
+        delete_option(OptionSetAsideStore::OPTION);
+    });
+
+    /** The check that is open on this site: the address is http. */
+    function findingOf(string $check): array
+    {
+        $found = array_values(array_filter(restAs(1, 'GET', '/hornet/v1/status')->get_data()['findings'], static fn (array $finding): bool => $finding['check'] === $check));
+
+        return $found[0] ?? [];
+    }
+
+    it('sets it aside on a reason, and the audit sees it set aside with that reason', function (): void {
+        $before = findingOf('https');
+
+        $response = restAs(1, 'POST', '/hornet/v1/findings/https/ignore', ['reason' => 'This is a test site, on purpose.']);
+        $after = findingOf('https');
+
+        expect($before)->toMatchArray(['status' => 'open', 'can_set_aside' => true])
+            ->and($response->get_status())->toBe(200)
+            ->and($after)->toMatchArray(['status' => 'ignored', 'ignored' => 'This is a test site, on purpose.', 'ignored_by' => 'screen', 'can_restore' => true, 'can_set_aside' => false])
+            ->and($after['ignored_login'])->not->toBeNull()
+            ->and(restAs(1, 'GET', '/hornet/v1/status')->get_data()['counts']['ignored'])->toBe(1);
+    });
+
+    it('brings it back', function (): void {
+        restAs(1, 'POST', '/hornet/v1/findings/https/ignore', ['reason' => 'This is a test site, on purpose.']);
+
+        $response = restAs(1, 'DELETE', '/hornet/v1/findings/https/ignore');
+
+        expect($response->get_status())->toBe(200)->and(findingOf('https'))->toMatchArray(['status' => 'open', 'ignored_by' => null])
+            ->and(get_option(OptionSetAsideStore::OPTION))->toBe('[]');
+    });
+
+    it('asks for a reason, and says what it refuses', function (): void {
+        $post = static fn (string $check, string $reason): WP_REST_Response => restAs(1, 'POST', '/hornet/v1/findings/'.$check.'/ignore', ['reason' => $reason]);
+
+        expect($post('https', 'no')->get_status())->toBe(422)->and($post('https', 'no')->get_data()['kind'])->toBe('reason')
+            ->and($post('nothing-like-it', 'A reason that is long enough.')->get_status())->toBe(404)
+            // What passes has nothing to hide
+            ->and($post('salts', 'A reason that is long enough.')->get_status())->toBeIn([200, 409])
+            ->and(get_option(OptionSetAsideStore::OPTION))->toBeFalse();
+    });
+
+    it('is for the people who may see the screen, and nobody else', function (): void {
+        expect(restAs($this->subscriber, 'POST', '/hornet/v1/findings/https/ignore', ['reason' => 'A reason that is long enough.'])->get_status())->toBe(403)
+            ->and(restAs(null, 'POST', '/hornet/v1/findings/https/ignore', ['reason' => 'A reason that is long enough.'])->get_status())->toBeIn([401, 403])
+            ->and(restAs($this->subscriber, 'DELETE', '/hornet/v1/findings/https/ignore')->get_status())->toBe(403)
+            ->and(get_option(OptionSetAsideStore::OPTION))->toBeFalse();
+    });
+
+    it('does not let a check id into the route that is not a plain one', function (string $check): void {
+        expect(restAs(1, 'POST', '/hornet/v1/findings/'.$check.'/ignore', ['reason' => 'A reason that is long enough.'])->get_status())->toBe(404);
+    })->with(['../options', 'a b', 'UPPER', '-start', 'a/b']);
+
+    it('says it in the journal when there is one, with the reason and who did it', function (): void {
+        JournalSchema::drop();
+        JournalSchema::ensure();
+        bootAdmin(['journal' => ['enabled' => true]]);
+
+        restAs(1, 'POST', '/hornet/v1/findings/https/ignore', ['reason' => 'This is a test site, on purpose.']);
+        restAs(1, 'DELETE', '/hornet/v1/findings/https/ignore');
+
+        $events = (new TableJournal)->find(new JournalQuery('hornet.', limit: 10));
+        $types = array_map(static fn ($event): string => $event->type, $events);
+
+        JournalSchema::drop();
+
+        expect($types)->toBe(['hornet.finding_restored', 'hornet.finding_set_aside'])
+            ->and($events[1])->toMatchObject(['subject' => 'check:https', 'userId' => 1, 'details' => ['reason' => 'This is a test site, on purpose.']]);
+    });
+
+    it('still works, and remembers who and when, when the journal is off', function (): void {
+        restAs(1, 'POST', '/hornet/v1/findings/https/ignore', ['reason' => 'This is a test site, on purpose.']);
+
+        $stored = (new OptionSetAsideStore)->all()['https'];
+
+        expect($stored->userId)->toBe(1)->and($stored->login)->not->toBe('')->and($stored->at)->toBeGreaterThan(time() - 60);
+    });
+
+    it('lets the settings file win: what it sets aside keeps its reason and cannot be changed from the screen', function (): void {
+        bootAdmin(['ignore' => [['check' => 'https', 'reason' => 'Set in the file.']]]);
+
+        expect(findingOf('https'))->toMatchArray(['status' => 'ignored', 'ignored' => 'Set in the file.', 'ignored_by' => 'file', 'can_set_aside' => false, 'can_restore' => false])
+            ->and(restAs(1, 'POST', '/hornet/v1/findings/https/ignore', ['reason' => 'A reason that is long enough.'])->get_status())->toBe(409)
+            ->and(restAs(1, 'DELETE', '/hornet/v1/findings/https/ignore')->get_status())->toBe(409);
+
+        // Set aside from the screen earlier, then in the file: the file's reason is the one that stands
+        (new OptionSetAsideStore)->put(new SetAside('https', 'From the screen.', 1, 'admin', time()));
+
+        expect(findingOf('https')['ignored'])->toBe('Set in the file.');
+    });
+
+    it('does not make the audit refuse an id that no longer exists: a check set aside and then turned off', function (): void {
+        (new OptionSetAsideStore)->put(new SetAside('vulnerabilities', 'From the screen, earlier.', 1, 'admin', time()));
+        (new OptionSetAsideStore)->put(new SetAside('removed-check', 'From an older version.', 1, 'admin', time()));
+
+        $auditor = AuditorFactory::forWordPress(Settings::fromArray([]));
+
+        expect(fn () => $auditor->run(new WordPressEnvironment))->not->toThrow(Throwable::class)->and(array_map(static fn ($check): string => $check->id(), $auditor->checks()))->not->toContain('vulnerabilities');
+    });
+
+    it('is what the other surfaces see too: Site Health and the command line audit set it aside', function (): void {
+        restAs(1, 'POST', '/hornet/v1/findings/https/ignore', ['reason' => 'This is a test site, on purpose.']);
+
+        $report = AuditorFactory::forWordPress(Settings::fromArray([]))->run(new WordPressEnvironment);
+
+        expect($report->find('https')?->ignoredReason)->toBe('This is a test site, on purpose.')->and($report->find('https')?->isOpen())->toBeFalse();
+    });
+});
+
+describe('the journal on the screen', function (): void {
+    beforeEach(function (): void {
+        JournalSchema::drop();
+        JournalSchema::ensure();
+    });
+
+    afterEach(function (): void {
+        JournalSchema::drop();
+    });
+
+    it('says it is off, and gives nothing, when the owner has not turned it on', function (): void {
+        bootAdmin();
+
+        $data = restAs(1, 'GET', '/hornet/v1/journal')->get_data();
+
+        expect($data)->toMatchArray(['enabled' => false, 'events' => [], 'total' => 0]);
+    });
+
+    it('gives the events, the newest first, a page at a time, and narrows them', function (): void {
+        bootAdmin(['journal' => ['enabled' => true]]);
+        $recorder = new JournalRecorder(new TableJournal, new WpRequestContext(static fn (): ClientIp => new ClientIp('203.0.113.50', '203.0.113.50')), new SystemClock);
+
+        foreach (range(1, 30) as $n) {
+            $recorder->record('plugin.activated', 'plugin:p'.$n, [], 1, 'admin');
+        }
+
+        $recorder->record('login.failed', 'user:1', ['reason' => 'incorrect_password'], 0, '');
+
+        $first = restAs(1, 'GET', '/hornet/v1/journal', ['per_page' => 10])->get_data();
+        $third = restAs(1, 'GET', '/hornet/v1/journal', ['per_page' => 10, 'page' => 4])->get_data();
+        $logins = restAs(1, 'GET', '/hornet/v1/journal', ['type' => 'login.'])->get_data();
+
+        expect($first)->toMatchArray(['enabled' => true, 'total' => 31, 'page' => 1, 'pages' => 4])->and($first['events'])->toHaveCount(10)
+            ->and($first['events'][0])->toMatchArray(['type' => 'login.failed', 'subject' => 'user:1', 'ip' => '203.0.113.0'])
+            ->and($third['events'])->toHaveCount(1)
+            ->and($logins['total'])->toBe(1)->and($first['types'])->toContain('login')->toContain('plugin');
+    });
+
+    it('refuses a filter that it does not know, and is for the people who may see the screen', function (): void {
+        bootAdmin(['journal' => ['enabled' => true]]);
+
+        expect(restAs(1, 'GET', '/hornet/v1/journal', ['type' => 'login.exploded'])->get_status())->toBe(400)
+            ->and(restAs(1, 'GET', '/hornet/v1/journal', ['type' => "x' OR 1=1 -- "])->get_status())->toBe(400)
+            ->and(restAs(1, 'GET', '/hornet/v1/journal', ['source' => 'mars'])->get_status())->toBe(400)
+            ->and(restAs(1, 'GET', '/hornet/v1/journal', ['per_page' => 5000])->get_status())->toBe(400)
+            ->and(restAs($this->subscriber, 'GET', '/hornet/v1/journal')->get_status())->toBe(403)
+            ->and(restAs(null, 'GET', '/hornet/v1/journal')->get_status())->toBeIn([401, 403]);
+    });
 });

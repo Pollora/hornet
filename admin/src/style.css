@@ -105,3 +105,14 @@
 .hornet-empty {
 	margin: 24px 0;
 }
+
+.hornet-actions {
+	display: flex;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.hornet-details-inline {
+	color: #646970;
+	font-size: 12px;
+}
