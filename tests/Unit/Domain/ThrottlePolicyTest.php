@@ -51,12 +51,26 @@ it('does not stretch a lock that is on', function (): void {
     expect($again)->toEqual($locked);
 });
 
-it('forgets the failures after a success but not the history of lockouts', function (): void {
-    $policy = new ThrottlePolicy(2, 900, 600);
-    $attempts = $policy->failed($policy->failed(new Attempts, 1000), 1001);
-    $after = $policy->succeeded(new Attempts(1, 1500, 0, $attempts->lockouts));
+it('forgets nothing after a success: a login of one\'s own between guesses does not buy more guesses', function (): void {
+    $policy = new ThrottlePolicy(5, 900, 600);
+    $attempts = new Attempts;
 
-    expect($after->failures)->toBe(0)->and($after->windowStart)->toBe(0)->and($after->lockedUntil)->toBe(0)->and($after->lockouts)->toBe(1);
+    // Four wrong guesses, one login with an account of one's own, four more...: the fifth failure of the window still locks
+    foreach ([1000, 1001, 1002, 1003] as $at) {
+        $attempts = $policy->failed($attempts, $at);
+    }
+
+    $attempts = $policy->succeeded($attempts);
+    $attempts = $policy->failed($attempts, 1005);
+
+    expect($policy->isLocked($attempts, 1006))->toBeTrue()->and($attempts->lockouts)->toBe(1);
+});
+
+it('lets the failures end with their window', function (): void {
+    $policy = new ThrottlePolicy(5, 900, 600);
+    $attempts = $policy->succeeded($policy->failed($policy->failed(new Attempts, 1000), 1001));
+
+    expect($policy->failed($attempts, 1000 + 901)->failures)->toBe(1);
 });
 
 it('reads a stored record, and a damaged one as nothing', function (): void {

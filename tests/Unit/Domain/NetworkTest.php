@@ -114,3 +114,11 @@ describe('client address', function (): void {
             ->and((new ClientIp('::ffff:203.0.113.7', '::ffff:203.0.113.7'))->key('salt'))->toBe($ip->key('salt'));
     });
 });
+
+it('counts an IPv6 network as one address: the /64 an attacker owns is not a fresh start for each of its addresses', function (): void {
+    $key = static fn (string $address): string => (new ClientIp($address, $address))->key('salt');
+
+    expect($key('2001:db8:1:2::1'))->toBe($key('2001:db8:1:2:ffff:ffff:ffff:ffff'))
+        ->and($key('2001:db8:1:2::1'))->not->toBe($key('2001:db8:1:3::1'))
+        ->and($key('203.0.113.7'))->not->toBe($key('203.0.113.8'));
+});

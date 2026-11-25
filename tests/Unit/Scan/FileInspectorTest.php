@@ -71,8 +71,8 @@ it('reports a server setting that runs code that is not the site\'s', function (
     'a comment that says it' => ['.htaccess', "# AddHandler is not used here\n", null, null],
 ]);
 
-it('does not read a script larger than it reads', function (): void {
-    expect(inspected('themes/t/lib.php', '<?php eval($_POST["x"]); '.str_repeat('// padding'.PHP_EOL, 60000)))->toBeNull();
+it('reads the first part of a script that is larger than it reads: a shell is not excused by its size', function (): void {
+    expect(inspected('themes/t/lib.php', '<?php eval($_POST["x"]); '.str_repeat('// padding'.PHP_EOL, 60000)))->not->toBeNull();
 });
 
 it('gives the suspicion as a line and as an array', function (): void {
