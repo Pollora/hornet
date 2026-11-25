@@ -14,6 +14,9 @@ declare(strict_types=1);
 */
 
 return [
+    // The Tools > Security screen, and the REST routes it asks (hornet/v1). `false` removes both.
+    'admin' => true,
+
     // Kill switch. `false` attaches nothing. On a classic site, define('HORNET_DISABLED', true) does the same.
     'enabled' => env('HORNET_ENABLED', true),
 

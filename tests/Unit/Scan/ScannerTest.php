@@ -193,3 +193,16 @@ it('saves after each task, with the old date until the last one is done, so that
         ->and($afterTwo->at->format('Y-m-d'))->toBe('2026-11-20')
         ->and($final->at->format('Y-m-d'))->toBe('2026-11-25');
 });
+
+it('says which task it is about to run, before each one', function (): void {
+    $seen = [];
+    $scanner = new Scanner([fixedTask('one', new TaskResult(Finding::pass('one', 'fine'))), fixedTask('two', new TaskResult(Finding::pass('two', 'fine')))], new InMemoryScanStore, new FakeClock, [], static function (string $id) use (&$seen): void {
+        $seen[] = $id;
+    });
+
+    $scanner->run(false, ['two']);
+    $scanner->run();
+
+    // On a continuation, a task that is not run again is not announced
+    expect($seen)->toBe(['one', 'two', 'one', 'two']);
+});

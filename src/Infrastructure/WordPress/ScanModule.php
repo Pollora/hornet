@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
-use Closure;
-use Pollora\Hornet\Application\Notification\RunLock;
-use Pollora\Hornet\Application\Scan\Scanner;
+use Pollora\Hornet\Application\Scan\ScanJob;
 
 /**
- * Runs the scan on a schedule, when the owner asked for one (`scanner.schedule`; off by default).
+ * Runs the scan when it is time: on a schedule, when the owner asked for one (`scanner.schedule`; off by default), and when the
+ * administration screen says "scan now".
  *
  * It rides on WP-Cron, which only runs when a page is visited and has the time limit of a web request: the walk of the content
- * folder stops on a budget and goes on a minute later (that run does only the walk), but the plugin scan is not cut in pieces. On a large site, run `wp hornet scan`
- * from the system cron (with `DISABLE_WP_CRON`). Two runs never overlap: the second steps aside.
+ * folder stops on a budget and goes on a minute later (that run does only the walk), but the plugin scan is not cut in pieces.
+ * On a large site, run `wp hornet scan` from the system cron (with `DISABLE_WP_CRON`). Two runs never overlap: the second steps aside.
  * The result is read by the audit, which tells the channels what is new at its own turn.
  */
 final readonly class ScanModule implements Module
@@ -22,25 +21,25 @@ final readonly class ScanModule implements Module
 
     public const string CONTINUE_HOOK = 'pollora/hornet/continue_scan';
 
+    /** The scan that someone asked for from the administration screen, once. */
+    public const string NOW_HOOK = 'pollora/hornet/scan_now';
+
     /** Seconds before a walk that did not finish goes on. */
     private const int CONTINUE_AFTER = 60;
 
     /**
-     * @param  Closure(): ?Scanner  $scanner  built when it is needed: a request that does not run the cron builds nothing
-     * @param  string  $schedule  hourly, twicedaily or daily
-     * @param  Closure(): list<string>  $unfinished  the tasks that stopped on their budget at the last run
+     * @param  string  $schedule  off, hourly, twicedaily or daily
      */
     public function __construct(
-        private Closure $scanner,
+        private ScanJob $job,
         private string $schedule,
-        private RunLock $lock,
-        private Closure $unfinished,
     ) {}
 
     public function register(HookRegistrar $hooks): void
     {
         $hooks->addAction('init', $this->plan(...));
         $hooks->addAction(self::SCAN_HOOK, fn () => $this->scan());
+        $hooks->addAction(self::NOW_HOOK, fn () => $this->scan());
         $hooks->addAction(self::CONTINUE_HOOK, $this->continue(...));
     }
 
@@ -70,7 +69,7 @@ final readonly class ScanModule implements Module
      */
     public function continue(): void
     {
-        $unfinished = ($this->unfinished)();
+        $unfinished = $this->job->unfinished();
 
         if ($unfinished !== []) {
             $this->scan($unfinished);
@@ -82,18 +81,8 @@ final readonly class ScanModule implements Module
      */
     public function scan(?array $only = null): void
     {
-        if (! $this->lock->acquire()) {
-            return;
-        }
-
-        try {
-            $scanner = ($this->scanner)();
-
-            if ($scanner instanceof Scanner && $scanner->run(false, $only)->unfinished !== [] && wp_next_scheduled(self::CONTINUE_HOOK) === false) {
-                wp_schedule_single_event(time() + self::CONTINUE_AFTER, self::CONTINUE_HOOK);
-            }
-        } finally {
-            $this->lock->release();
+        if ($this->job->run($only) && wp_next_scheduled(self::CONTINUE_HOOK) === false) {
+            wp_schedule_single_event(time() + self::CONTINUE_AFTER, self::CONTINUE_HOOK);
         }
     }
 }

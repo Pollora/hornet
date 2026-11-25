@@ -6,19 +6,25 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Closure;
 use InvalidArgumentException;
+use Pollora\Hornet\Application\Admin\StatusView;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Password\BreachCheck;
+use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
+use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
 use Pollora\Hornet\Infrastructure\Login\ClientAddress;
 use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
+use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
+use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
+use Pollora\Hornet\Infrastructure\WordPress\Admin\SettingsView;
 
 /**
  * Starts the package: builds the modules the settings ask for and attaches them.
@@ -126,15 +132,36 @@ final class Bootstrap
                 );
             }
 
-            // The files are shared by every site of a network: the main site schedules the scan, once.
-            // Turned off, the scan still has to take its own event out of the cron: the module is attached while one is left.
-            if (self::ownsScan() && ($settings->scanner->schedule !== 'off' || (function_exists('wp_next_scheduled') && wp_next_scheduled(ScanModule::SCAN_HOOK) !== false))) {
-                $modules[] = new ScanModule(
-                    static fn (): ?Scanner => ScannerFactory::forWordPress($settings, true),
-                    $settings->scanner->schedule,
+            // The files are shared by every site of a network: the main site schedules the scan, and runs it, once.
+            if (self::ownsScan()) {
+                $job = new ScanJob(
+                    static fn (Closure $progress): ?Scanner => ScannerFactory::forWordPress($settings, true, $progress),
                     new OptionRunLock('hornet_scan_lock'),
+                    new OptionScanStateStore,
+                    new SystemClock,
                     static fn (): array => (new OptionScanStore)->last()->unfinished ?? [],
                 );
+
+                // The scan listens for the cron when it is scheduled, when its event is still there (turned off, it takes it out), and
+                // when the screen can ask for one: on the administration and on the cron, not on a visitor's page
+                if ($settings->scanner->schedule !== 'off' || (function_exists('wp_next_scheduled') && wp_next_scheduled(ScanModule::SCAN_HOOK) !== false) || ($settings->admin && self::inAdminOrCron())) {
+                    $modules[] = new ScanModule($job, $settings->scanner->schedule);
+                }
+
+                if ($settings->admin) {
+                    // The routes cost one hook on every request: a REST request is only known after this point
+                    $modules[] = new AdminRestModule(
+                        static fn (): array => self::adminStatus($settings, $environment, $job),
+                        $job,
+                        static fn (string $channel): ?array => self::testChannel($settings, $environment, $channel),
+                    );
+
+                    if (function_exists('is_admin') && is_admin()) {
+                        $modules[] = new AdminPageModule(is_multisite(), dirname(__DIR__, 3).'/assets/admin', static function (): never {
+                            exit;
+                        });
+                    }
+                }
             }
 
             if ($settings->notifications->channels !== []) {
@@ -148,6 +175,53 @@ final class Bootstrap
         }
 
         return $modules;
+    }
+
+    /**
+     * Whether the request is one of the administration or of the cron: where a scan that was asked for from the screen is run.
+     */
+    private static function inAdminOrCron(): bool
+    {
+        return function_exists('is_admin') && (is_admin() || (function_exists('wp_doing_cron') && wp_doing_cron()));
+    }
+
+    /**
+     * What the screen shows: the audit, the last scan, the settings, the channels. It runs the audit, which is not instant.
+     *
+     * @return array<string, mixed>
+     */
+    private static function adminStatus(Settings $settings, Environment $environment, ScanJob $job): array
+    {
+        $auditor = new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored);
+        $labels = [];
+
+        foreach ($auditor->checks() as $check) {
+            $labels[$check->id()] = $check->label();
+        }
+
+        $view = StatusView::build($auditor->run($environment), $labels, (new OptionScanStore)->last(), $job->state(), (new SystemClock)->now(), ScannerFactory::forWordPress($settings)?->tasks() ?? []);
+
+        return [
+            ...$view,
+            'settings' => SettingsView::build($settings),
+            // By name and kind only: where a channel goes is a secret
+            'channels' => array_map(static fn (ChannelSpec $channel): array => ['name' => $channel->name, 'type' => $channel->type->value, 'min_severity' => $channel->minSeverity->value], $settings->notifications->channels),
+            'network' => is_multisite(),
+        ];
+    }
+
+    /**
+     * @return array{status: string, reason: string}|null null when there is no such channel
+     */
+    private static function testChannel(Settings $settings, Environment $environment, string $name): ?array
+    {
+        if (! in_array($name, array_map(static fn (ChannelSpec $channel): string => $channel->name, $settings->notifications->channels), true)) {
+            return null;
+        }
+
+        $outcome = NotificationFactory::forWordPress()->service($settings, $environment, get_bloginfo('name'), home_url())->test($name);
+
+        return ['status' => $outcome->status->value, 'reason' => $outcome->reason];
     }
 
     /**

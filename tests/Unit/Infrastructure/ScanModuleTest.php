@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Brain\Monkey\Functions;
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
+use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Application\Scan\ScanTask;
 use Pollora\Hornet\Application\Scan\TaskResult;
@@ -12,6 +13,7 @@ use Pollora\Hornet\Domain\Scan\Pins;
 use Pollora\Hornet\Infrastructure\WordPress\ScanModule;
 use Pollora\Hornet\Tests\Fixtures\ArrayLock;
 use Pollora\Hornet\Tests\Fixtures\FakeClock;
+use Pollora\Hornet\Tests\Fixtures\InMemoryScanStateStore;
 use Pollora\Hornet\Tests\Fixtures\InMemoryScanStore;
 use Pollora\Hornet\Tests\Fixtures\RecordingHooks;
 
@@ -38,18 +40,20 @@ function scanTask(bool $unfinished): ScanTask
  */
 function scanModule(bool $unfinished, ArrayLock $lock, string $schedule = 'daily', int &$built = 0, array $left = []): ScanModule
 {
-    return new ScanModule(function () use ($unfinished, &$built): Scanner {
+    $job = new ScanJob(function (Closure $progress) use ($unfinished, &$built): Scanner {
         $built++;
 
-        return new Scanner([scanTask($unfinished)], new InMemoryScanStore, new FakeClock);
-    }, $schedule, $lock, static fn (): array => $left);
+        return new Scanner([scanTask($unfinished)], new InMemoryScanStore, new FakeClock, [], $progress);
+    }, $lock, new InMemoryScanStateStore, new FakeClock, static fn (): array => $left);
+
+    return new ScanModule($job, $schedule);
 }
 
 it('attaches the init hook, the scan and its continuation', function (): void {
     $hooks = new RecordingHooks;
     scanModule(false, new ArrayLock)->register($hooks);
 
-    expect(array_column($hooks->registered, 'hook'))->toBe(['init', 'pollora/hornet/scheduled_scan', 'pollora/hornet/continue_scan']);
+    expect(array_column($hooks->registered, 'hook'))->toBe(['init', 'pollora/hornet/scheduled_scan', 'pollora/hornet/scan_now', 'pollora/hornet/continue_scan']);
 });
 
 it('schedules the scan once, ten minutes from now', function (): void {
@@ -119,7 +123,7 @@ it('steps aside when another run holds the lock', function (): void {
 
 it('lets go of the lock when the scan fails', function (): void {
     $lock = new ArrayLock;
-    $module = new ScanModule(static fn (): never => throw new RuntimeException('boom'), 'daily', $lock, static fn (): array => []);
+    $module = new ScanModule(new ScanJob(static fn (): never => throw new RuntimeException('boom'), $lock, new InMemoryScanStateStore, new FakeClock, static fn (): array => []), 'daily');
 
     expect(fn () => $module->scan())->toThrow(RuntimeException::class)->and($lock->held)->toBeFalse();
 });
@@ -127,7 +131,7 @@ it('lets go of the lock when the scan fails', function (): void {
 it('does not build a scanner that is not there (Hornet off, folders unreadable)', function (): void {
     $lock = new ArrayLock;
 
-    (new ScanModule(static fn (): ?Scanner => null, 'daily', $lock, static fn (): array => []))->scan();
+    (new ScanModule(new ScanJob(static fn (): ?Scanner => null, $lock, new InMemoryScanStateStore, new FakeClock, static fn (): array => []), 'daily'))->scan();
 
     expect($lock->held)->toBeFalse()->and($lock->released)->toBe(1);
 });

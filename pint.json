@@ -5,6 +5,8 @@
     },
     "exclude": [
         ".github/",
-        "vendor/"
+        "vendor/",
+        "node_modules/",
+        "assets/"
     ]
 }

@@ -1,0 +1,25 @@
+{
+    "name": "pollora-hornet-admin",
+    "version": "0.0.0",
+    "private": true,
+    "description": "The Tools > Security screen of Pollora Hornet. Built with @wordpress/scripts into assets/admin, which is tracked in git: nothing runs npm on a site.",
+    "license": "MIT",
+    "scripts": {
+        "build": "wp-scripts build admin/src/index.js --output-path=assets/admin",
+        "start": "wp-scripts start admin/src/index.js --output-path=assets/admin",
+        "test": "jest --config admin/jest.config.js",
+        "check-build": "npm run build && git diff --exit-code -- assets/admin"
+    },
+    "devDependencies": {
+        "@wordpress/babel-preset-default": "10.2.0",
+        "@wordpress/scripts": "37.2.0",
+        "babel-jest": "30.5.2",
+        "jest": "30.5.2"
+    },
+    "dependencies": {
+        "@wordpress/dataviews": "22.1.0"
+    },
+    "overrides": {
+        "serialize-javascript": "^7.1.4"
+    }
+}
