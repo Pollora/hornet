@@ -120,7 +120,7 @@ final readonly class ScanCommand
     private function say(Report $report): void
     {
         foreach ($report->findings as $finding) {
-            foreach ($finding->outcome === Outcome::Pass ? [] : $finding->details as $detail) {
+            foreach ($finding->details as $detail) {
                 $this->output->line('  '.$detail);
             }
         }

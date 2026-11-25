@@ -25,6 +25,7 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `two-factor` | whether the official Two-Factor plugin is active |
 | `two-factor-coverage` | the administrators who have not set up a second factor, named by number |
 | `core-integrity` | what the last [scan](#scan-the-files) found about the WordPress core files (it reads the result: it never scans) |
+| `plugin-integrity` | what the last scan found about the files of the plugins |
 
 A check reads and never writes, and never asks the network. A scan is another thing: see below. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 
@@ -245,7 +246,7 @@ function verify(rawBody, headers, secret) {
 wp hornet scan                        # compare the core files with WordPress.org
 wp hornet scan --format=json          # for a script or a pipeline
 wp hornet scan --fail-on=medium       # exit 1 from a medium finding up (default: high)
-wp hornet scan --repin                # accept the allowed files as they are now
+wp hornet scan --repin                # accept the allowed core files, and the plugins' first look, as they are now
 ```
 
 A scan reads the disk, and asks `api.wordpress.org` for the checksums of the release you run (only the version and the locale are sent: not the address of the site). It runs when you ask, from WP-CLI, and never inside a page request. It **never deletes, repairs or quarantines a file**: it tells you, and you decide.
@@ -266,7 +267,11 @@ The result is kept (in one option that WordPress does not load on every page; on
 
 An allowed file is not trusted for good: its hash is pinned the first time it is seen, and a later change is reported (the one file that may differ would otherwise be the best place to hide in). A pin belongs to one release of the core: an update pins again. After you change a patch on purpose, `wp hornet scan --repin` accepts the files as they are.
 
-What it cannot do, so you know: a core that was changed **before** the first scan with a file you allowed is pinned as it is; a compromised WordPress.org answer would be believed (the request is over HTTPS and nothing is cached); the plugins, the themes and the suspicious files in the content folder are not scanned yet.
+**Plugins.** Each plugin that has a folder of its own (active or not) is compared with the list that `downloads.wordpress.org` publishes for its slug and version: SHA-256 of every file, one request per plugin, and only the slug and the version are sent. A file that differs, a file that is gone and a **script that is not in the list** are reported; other unlisted files (logs, caches, uploads) and the `node_modules` and `.git` folders are not, so that the one that matters is not lost in noise.
+
+A plugin WordPress.org has no list for (a premium plugin, one installed from elsewhere, a version it never had) has no reference. Its files are hashed **the first time they are seen** and compared afterwards; a plugin that was bad from the very first look cannot be told from a good one, and the finding says "first look kept" rather than "ok". An update is a new version, so a new first look. After you reinstall a plugin on purpose, `wp hornet scan --repin` takes the plugins as they are now. The first looks are kept in one option without autoload (`hornet_baseline`); a plugin of more than 5000 files is not kept. The scan stops asking after four minutes and names the plugins it did not reach. A plugin that is a single file (`hello.php`) is not looked at.
+
+What it cannot do, so you know: a core that was changed **before** the first scan with a file you allowed is pinned as it is; a compromised WordPress.org answer would be believed (the request is over HTTPS and nothing is cached); the themes (WordPress.org publishes no checksums for them) and the suspicious files in the content folder are not scanned yet.
 
 ## Design
 

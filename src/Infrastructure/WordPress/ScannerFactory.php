@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
+use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
 use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Application\Scan\ScanTask;
+use Pollora\Hornet\Domain\Scan\PluginIntegrity;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Pollora\CorePatches;
@@ -31,7 +33,14 @@ final class ScannerFactory
         // What `wp core verify-checksums` reads too: a core downloaded in another language is compared with that language
         $locale = $GLOBALS['wp_local_package'] ?? null;
 
-        $tasks = [new CoreIntegrityTask(new WordPressCoreChecksums(new WpHttpClient), $files, wp_get_wp_version(), is_string($locale) && $locale !== '' ? $locale : 'en_US', array_values(array_unique([...$settings->scanner->allowModified, ...CorePatches::files()])))];
+        $plugins = NativeFileSystem::at(WP_PLUGIN_DIR);
+        $http = new WpHttpClient;
+        $tasks = [new CoreIntegrityTask(new WordPressCoreChecksums($http), $files, wp_get_wp_version(), is_string($locale) && $locale !== '' ? $locale : 'en_US', array_values(array_unique([...$settings->scanner->allowModified, ...CorePatches::files()])))];
+
+        // The plugins directory may be elsewhere than the WordPress root (Bedrock, Pollora)
+        if ($plugins instanceof NativeFileSystem) {
+            $tasks[] = new PluginIntegrityTask(new WpPluginInventory, new WordPressPluginChecksums($http), new PluginIntegrity($plugins), new OptionBaselineStore, new SystemClock);
+        }
 
         // A scan that is disabled does not run, and asks nothing of the network
         $tasks = array_values(array_filter($tasks, static fn (ScanTask $task): bool => ! in_array($task->id(), $settings->disabledChecks, true)));

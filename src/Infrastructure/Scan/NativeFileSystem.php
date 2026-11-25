@@ -79,6 +79,19 @@ final readonly class NativeFileSystem implements FileSystem
         return $hash === false ? null : $hash;
     }
 
+    public function sha256(string $path): ?string
+    {
+        $file = $this->resolve($path);
+
+        if ($file === null || ! is_file($file) || ! is_readable($file)) {
+            return null;
+        }
+
+        $hash = hash_file('sha256', $file);
+
+        return $hash === false ? null : $hash;
+    }
+
     /**
      * @return string|null null for a path that is not a plain relative one: nothing outside the root is ever read
      */
