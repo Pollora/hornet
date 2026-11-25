@@ -22,6 +22,7 @@ use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
 use Pollora\Hornet\Infrastructure\Login\ClientAddress;
 use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
+use Pollora\Hornet\Infrastructure\WordPress\Abilities\AbilitiesModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminBackend;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
@@ -162,8 +163,12 @@ final class Bootstrap
 
                 // The scan listens for the cron when it is scheduled, when its event is still there (turned off, it takes it out), and
                 // when the screen can ask for one: on the administration and on the cron, not on a visitor's page
-                if ($settings->scanner->schedule !== 'off' || (function_exists('wp_next_scheduled') && wp_next_scheduled(ScanModule::SCAN_HOOK) !== false) || ($settings->admin && self::inAdminOrCron())) {
+                if ($settings->scanner->schedule !== 'off' || (function_exists('wp_next_scheduled') && wp_next_scheduled(ScanModule::SCAN_HOOK) !== false) || (($settings->admin || $settings->abilities->writes) && self::inAdminOrCron())) {
                     $modules[] = new ScanModule($job, $settings->scanner->schedule);
+                }
+
+                if ($settings->abilities->enabled) {
+                    $modules[] = new AbilitiesModule(new AdminBackend($settings, $environment, $job, $recorder), $settings->abilities->writes, $recorder, new CacheWindowCounter);
                 }
 
                 if ($settings->admin) {

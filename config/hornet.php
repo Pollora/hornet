@@ -21,6 +21,14 @@ return [
         // 'retention_days' => 90,
     ],
 
+    // What an AI agent may ask, through the Abilities API of WordPress (WordPress 6.9 and later), and the MCP Adapter plugin on top of it.
+    // `enabled`: the agent reads the audit, the findings, how to fix one, the journal. `writes`: it may also start a scan, set a finding aside
+    // (on a written reason) and bring it back; at most 20 an hour per person, each said in the journal. Nothing here changes a setting.
+    'abilities' => [
+        // 'enabled' => true,
+        // 'writes' => false,
+    ],
+
     // The Tools > Security screen, and the REST routes it asks (hornet/v1). `false` removes both.
     'admin' => true,
 

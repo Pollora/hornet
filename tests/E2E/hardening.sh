@@ -469,6 +469,44 @@ reset
 check "after the drop, the option is gone"                            sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_journal_schema >/dev/null 2>&1"
 check "and so is the table"                                          sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'require \"$PKG/tests/E2E/journal-table.php\";' | grep -q '^none\$'"
 
+# --- 10. abilities for AI agents: real requests to the Abilities API, with an application password -----------
+echo "10. abilities"
+wp config set WP_ENVIRONMENT_TYPE local >/dev/null 2>&1
+cli user create e2e-sub e2e-sub@example.test --role=subscriber >/dev/null 2>&1
+ADMINPW=$(cli user application-password create admin e2e-agent --porcelain 2>/dev/null)
+SUBPW=$(cli user application-password create e2e-sub e2e-agent --porcelain 2>/dev/null)
+AB="$BASE/wp-json/wp-abilities/v1/abilities"
+code() { curl -s -o /dev/null -w '%{http_code}' "$@"; }
+body() { curl -s "$@"; }
+reset
+check "off by default: the ability does not exist"                      sh -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -u 'admin:$ADMINPW' '$AB/hornet/get-status')\" = 404 ]"
+configure "array('abilities' => array('enabled' => true), 'journal' => array('enabled' => true))"
+check "reading on: the administrator reads the status"                  sh -c "curl -s -u 'admin:$ADMINPW' '$AB/hornet/get-status/run' | grep -q '\"counts\"'"
+check "the status carries no setting and no channel"                    sh -c "! curl -s -u 'admin:$ADMINPW' '$AB/hornet/get-status/run' | grep -qE 'settings|channels|hooks'"
+check "nobody at all is refused"                                       sh -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' '$AB/hornet/get-status/run')\" = 401 ]"
+check "a subscriber with an application password is refused"          sh -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -u 'e2e-sub:$SUBPW' '$AB/hornet/get-status/run')\" = 403 ]"
+check "the findings are listed, at most the bound"                      sh -c "curl -s -u 'admin:$ADMINPW' -G '$AB/hornet/list-findings/run' --data-urlencode 'input[show]=all' --data-urlencode 'input[limit]=50' | grep -q '\"items\"'"
+check "a limit over the bound is refused"                              sh -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -u 'admin:$ADMINPW' -G '$AB/hornet/list-findings/run' --data-urlencode 'input[limit]=51')\" = 400 ]"
+check "the journal ability answers, with a shortened network"           sh -c "curl -s -u 'admin:$ADMINPW' -G '$AB/hornet/read-journal/run' --data-urlencode 'input[limit]=5' | grep -q '\"events\"'"
+check "a hostile id is refused, not looked up"                          sh -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -u 'admin:$ADMINPW' -G '$AB/hornet/get-remediation/run' --data-urlencode 'input[check]=../options')\" != 200 ]"
+check "the writing abilities are not even declared"                     sh -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -u 'admin:$ADMINPW' '$AB/hornet/run-scan')\" = 404 ]"
+check "the MCP flag and the truthful hint are published"                sh -c "curl -s -u 'admin:$ADMINPW' '$AB/hornet/get-status' | grep -q '\"readonly\":true' && curl -s -u 'admin:$ADMINPW' '$AB/hornet/get-status' | grep -q '\"public\":true'"
+configure "array('abilities' => array('enabled' => true, 'writes' => true), 'journal' => array('enabled' => true))"
+check "writing on: a finding is set aside on a reason"                  sh -c "curl -s -u 'admin:$ADMINPW' -H 'Content-Type: application/json' --data '{\"input\":{\"check\":\"file-editor\",\"reason\":\"E2E: an agent said so, on purpose.\"}}' '$AB/hornet/set-aside-finding/run' | grep -q 'set_aside'"
+check "the audit (WP-CLI) now shows it ignored"              sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none 2>&1 | grep -qE ' [1-9][0-9]* ignored'"
+check "and the journal says who, and what"                              sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=hornet.finding_set_aside --format=csv | grep -q 'rest.*admin.*check:file-editor'"
+check "a reason that is too short is refused"                           sh -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -u 'admin:$ADMINPW' -H 'Content-Type: application/json' --data '{\"input\":{\"check\":\"file-editor\",\"reason\":\"no\"}}' '$AB/hornet/set-aside-finding/run')\" = 422 ]"
+check "a subscriber cannot write either"                                sh -c "[ \"\$(curl -s -o /dev/null -w '%{http_code}' -u 'e2e-sub:$SUBPW' -X DELETE -G --data-urlencode 'input[check]=file-editor' '$AB/hornet/restore-finding/run')\" = 403 ]"
+check "the finding is brought back"                                    sh -c "curl -s -u 'admin:$ADMINPW' -X DELETE -G --data-urlencode 'input[check]=file-editor' '$AB/hornet/restore-finding/run' | grep -q 'restored'"
+check "a scan is asked for, and is told in the journal"                 sh -c "curl -s -u 'admin:$ADMINPW' -X POST -H 'Content-Type: application/json' --data '{}' '$AB/hornet/run-scan/run' | grep -q 'queued' && php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=hornet.scan_requested --format=csv | grep -q 'hornet.scan_requested'"
+cli cron event run --due-now >/dev/null 2>&1
+cli option delete hornet_scan_state >/dev/null 2>&1
+cli option delete hornet_set_aside >/dev/null 2>&1
+cli user delete e2e-sub --yes >/dev/null 2>&1
+wp config delete WP_ENVIRONMENT_TYPE >/dev/null 2>&1
+journal drop --yes >/dev/null 2>&1
+reset
+
 wp config set HORNET_DISABLED true --raw >/dev/null
 check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'
 wp config delete HORNET_DISABLED >/dev/null 2>&1

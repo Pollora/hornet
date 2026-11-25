@@ -17,6 +17,7 @@ use Pollora\Hornet\Domain\Journal\Event;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Domain\Journal\Source;
+use Pollora\Hornet\Domain\Scan\ScanState;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
 use Pollora\Hornet\Infrastructure\Config\Settings;
@@ -25,6 +26,7 @@ use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
 use Pollora\Hornet\Infrastructure\WordPress\OptionScanStore;
 use Pollora\Hornet\Infrastructure\WordPress\OptionSetAsideStore;
+use Pollora\Hornet\Infrastructure\WordPress\ScanModule;
 use Pollora\Hornet\Infrastructure\WordPress\ScannerFactory;
 
 /**
@@ -100,21 +102,40 @@ final readonly class AdminBackend
     }
 
     /**
-     * @throws SetAsideException
+     * Asks for a scan, which the cron runs: it does not wait for it.
+     *
+     * @return array{queued: bool, reason?: string, state: array<string, mixed>}
      */
-    public function setAside(string $check, string $reason): SetAside
+    public function requestScan(): array
     {
-        $user = wp_get_current_user();
+        if ($this->job->state()->isActive(time())) {
+            return ['queued' => false, 'reason' => 'A scan is already in progress.', 'state' => $this->job->state()->toArray()];
+        }
 
-        return $this->service()->setAside($check, $reason, $user->ID, $user->user_login);
+        $this->job->queued();
+        wp_schedule_single_event(time(), ScanModule::NOW_HOOK);
+        // The cron is started now rather than at the next visit; with DISABLE_WP_CRON the system cron picks the event up
+        spawn_cron();
+
+        return ['queued' => true, 'state' => ScanState::fromArray($this->job->state()->toArray())->toArray()];
     }
 
     /**
      * @throws SetAsideException
      */
-    public function restore(string $check): void
+    public function setAside(string $check, string $reason, string $via = ''): SetAside
     {
-        $this->service()->restore($check);
+        $user = wp_get_current_user();
+
+        return $this->service($via)->setAside($check, $reason, $user->ID, $user->user_login);
+    }
+
+    /**
+     * @throws SetAsideException
+     */
+    public function restore(string $check, string $via = ''): void
+    {
+        $this->service($via)->restore($check);
     }
 
     /**
@@ -131,7 +152,7 @@ final readonly class AdminBackend
         return ['status' => $outcome->status->value, 'reason' => $outcome->reason];
     }
 
-    private function service(): SetAsideService
+    private function service(string $via = ''): SetAsideService
     {
         $auditor = AuditorFactory::forWordPress($this->settings);
 
@@ -141,7 +162,7 @@ final readonly class AdminBackend
             static fn (): array => array_map(static fn (Check $check): string => $check->id(), $auditor->checks()),
             fn (): array => array_map(static fn (Finding $finding): string => $finding->checkId, $auditor->run($this->environment)->open()),
             fn (): array => array_keys($this->settings->ignored),
-            fn (string $type, string $subject, array $details): bool => $this->recorder?->record($type, $subject, $details) ?? false,
+            fn (string $type, string $subject, array $details): bool => $this->recorder?->record($type, $subject, $via === '' ? $details : [...$details, 'via' => $via]) ?? false,
         );
     }
 }
