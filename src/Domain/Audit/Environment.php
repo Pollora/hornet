@@ -38,8 +38,16 @@ interface Environment
 
     public function userExists(string $login): bool;
 
-    /** Whether XML-RPC answers, once every filter has run. */
-    public function xmlRpcEnabled(): bool;
+    /** What XML-RPC answers, once every filter has run. */
+    public function xmlRpcState(): XmlRpcState;
+
+    /** Whether the theme and plugin editor is refused to everyone (`DISALLOW_FILE_EDIT`, `DISALLOW_FILE_MODS`, or a filter), once every filter has run. */
+    public function fileEditingBlocked(): bool;
+
+    /**
+     * Whether an anonymous visitor gets the list of users from the REST API. Null when it could not be found out.
+     */
+    public function usersListedToVisitors(): ?bool;
 
     public function isActive(Component $component): bool;
 

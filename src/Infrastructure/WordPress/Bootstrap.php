@@ -77,6 +77,14 @@ final class Bootstrap
                 $modules[] = new SiteHealthModule(new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored), $environment);
             }
 
+            if ($settings->hardening->isActive()) {
+                $modules[] = new HardeningModule($settings->hardening);
+            }
+
+            if ($settings->headers->isActive()) {
+                $modules[] = new HeadersModule($settings->headers);
+            }
+
             if ($settings->notifications->channels !== []) {
                 // Built once to be sure the settings hold together; the cron builds its own when it runs
                 $factory = NotificationFactory::forWordPress();

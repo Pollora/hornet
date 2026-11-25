@@ -8,6 +8,7 @@ use Pollora\Hornet\Domain\Audit\Checks\SaltsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\XmlRpcCheck;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\Audit\XmlRpcState;
 use Pollora\Hornet\Infrastructure\WordPress\SettingsErrorModule;
 use Pollora\Hornet\Infrastructure\WordPress\SiteHealthModule;
 use Pollora\Hornet\Tests\Fixtures\FakeEnvironment;
@@ -38,8 +39,8 @@ it('answers a test with the finding of its check', function (): void {
 
     expect($result['status'])->toBe('recommended')
         ->and($result['badge'])->toBe(['label' => 'Security', 'color' => 'orange'])
-        ->and($result['description'])->toContain('XML-RPC is enabled')
-        ->and($result['actions'])->toContain('xmlrpc_enabled');
+        ->and($result['description'])->toContain('XML-RPC is open')
+        ->and($result['actions'])->toContain('xmlrpc');
 });
 
 it('runs the audit once for all the tests of a request', function (): void {
@@ -47,11 +48,11 @@ it('runs the audit once for all the tests of a request', function (): void {
     {
         public int $reads = 0;
 
-        public function xmlRpcEnabled(): bool
+        public function xmlRpcState(): XmlRpcState
         {
             $this->reads++;
 
-            return parent::xmlRpcEnabled();
+            return parent::xmlRpcState();
         }
     };
 

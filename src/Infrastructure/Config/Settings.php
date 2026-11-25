@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Infrastructure\Config;
 
 use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
+use Pollora\Hornet\Domain\Http\SecurityHeaders;
 
 /**
  * The settings of the package, checked once and read as an object.
@@ -13,7 +14,7 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
  */
 final readonly class Settings
 {
-    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications'];
+    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications', 'hardening', 'headers'];
 
     /**
      * @param  list<string>  $disabledChecks  ids of the checks that do not run
@@ -25,6 +26,8 @@ final readonly class Settings
         public array $ignored,
         public bool $siteHealth,
         public NotificationSettings $notifications,
+        public HardeningSettings $hardening,
+        public SecurityHeaders $headers,
     ) {}
 
     /**
@@ -46,6 +49,8 @@ final readonly class Settings
             self::ignored($config['ignore'] ?? []),
             self::boolean($config, 'site_health', true),
             array_key_exists('notifications', $config) ? NotificationSettings::fromArray($config['notifications'], $secrets ?? new EnvironmentSecrets) : NotificationSettings::none(),
+            array_key_exists('hardening', $config) ? HardeningSettings::fromArray($config['hardening']) : HardeningSettings::none(),
+            array_key_exists('headers', $config) ? HeaderSettings::fromArray($config['headers']) : new SecurityHeaders,
         );
     }
 

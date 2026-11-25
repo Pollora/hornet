@@ -14,11 +14,13 @@ use Pollora\Hornet\Domain\Audit\Checks\LoginProtectionCheck;
 use Pollora\Hornet\Domain\Audit\Checks\PhpVersionCheck;
 use Pollora\Hornet\Domain\Audit\Checks\SaltsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCheck;
+use Pollora\Hornet\Domain\Audit\Checks\UserEnumerationCheck;
 use Pollora\Hornet\Domain\Audit\Checks\WordPressUpdateCheck;
 use Pollora\Hornet\Domain\Audit\Checks\XmlRpcCheck;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\Audit\XmlRpcState;
 use Pollora\Hornet\Tests\Fixtures\FakeEnvironment;
 
 /**
@@ -108,6 +110,11 @@ describe('https', function (): void {
 });
 
 describe('file editor and file mods', function (): void {
+    it('reads whether the editor is refused, whoever refused it', function (): void {
+        expect(verdict(new FileEditorCheck, new FakeEnvironment(editingBlocked: true))[0])->toBe(Outcome::Pass)
+            ->and(verdict(new FileEditorCheck, new FakeEnvironment(editingBlocked: false)))->toBe([Outcome::Fail, Severity::Medium]);
+    });
+
     it('passes when DISALLOW_FILE_EDIT or DISALLOW_FILE_MODS is true', function (): void {
         expect(verdict(new FileEditorCheck, FakeEnvironment::with(['DISALLOW_FILE_EDIT' => true]))[0])->toBe(Outcome::Pass);
         expect(verdict(new FileEditorCheck, FakeEnvironment::with(['DISALLOW_FILE_MODS' => true]))[0])->toBe(Outcome::Pass);
@@ -186,9 +193,20 @@ describe('accounts and login', function (): void {
         expect(verdict(new AdminAccountCheck, new FakeEnvironment)[0])->toBe(Outcome::Pass);
     });
 
-    it('reads the effective state of XML-RPC', function (): void {
-        expect(verdict(new XmlRpcCheck, new FakeEnvironment(xmlRpc: true)))->toBe([Outcome::Fail, Severity::Medium]);
-        expect(verdict(new XmlRpcCheck, new FakeEnvironment)[0])->toBe(Outcome::Pass);
+    it('reads what XML-RPC answers: open, refusing logins only, or closed', function (): void {
+        expect(verdict(new XmlRpcCheck, new FakeEnvironment(xmlRpc: XmlRpcState::Open)))->toBe([Outcome::Fail, Severity::Medium])
+            ->and(verdict(new XmlRpcCheck, new FakeEnvironment(xmlRpc: XmlRpcState::LoginDisabled)))->toBe([Outcome::Fail, Severity::Low])
+            ->and(verdict(new XmlRpcCheck, new FakeEnvironment(xmlRpc: XmlRpcState::Closed))[0])->toBe(Outcome::Pass);
+    });
+
+    it('does not call XML-RPC closed when only the logins are refused', function (): void {
+        expect((new XmlRpcCheck)->run(new FakeEnvironment(xmlRpc: XmlRpcState::LoginDisabled))->summary)->toContain('pingbacks');
+    });
+
+    it('reads whether visitors can list the users', function (): void {
+        expect(verdict(new UserEnumerationCheck, new FakeEnvironment(usersListed: true)))->toBe([Outcome::Fail, Severity::Medium])
+            ->and(verdict(new UserEnumerationCheck, new FakeEnvironment(usersListed: false))[0])->toBe(Outcome::Pass)
+            ->and(verdict(new UserEnumerationCheck, new FakeEnvironment(usersListed: null))[0])->toBe(Outcome::Unknown);
     });
 
     it('recognises pollora/portcullis and does not do its work again', function (): void {

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\Pollora;
 
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Domain\Audit\Report;
+use Pollora\Hornet\Domain\Http\SecurityHeaders;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
@@ -23,6 +25,8 @@ final class HornetServiceProvider extends ServiceProvider
     private const string ACTION = 'Pollora\\Hook\\Domain\\Contract\\Action';
 
     private const string FILTER = 'Pollora\\Hook\\Domain\\Contract\\Filter';
+
+    private const string KERNEL = Kernel::class;
 
     private const string DOCTOR_CHECK = 'Pollora\\Doctor\\Domain\\Contracts\\CheckInterface';
 
@@ -58,6 +62,23 @@ final class HornetServiceProvider extends ServiceProvider
         }
 
         Bootstrap::boot($settings, $hooks, new WordPressEnvironment);
+
+        if ($settings->headers->isActive()) {
+            $this->sendHeadersFromLaravel($settings->headers);
+        }
+    }
+
+    /**
+     * The public site is a Laravel response on Pollora: the WordPress hooks do not reach it, a global middleware does.
+     */
+    private function sendHeadersFromLaravel(SecurityHeaders $headers): void
+    {
+        $this->app->singleton(SecurityHeadersMiddleware::class, static fn (): SecurityHeadersMiddleware => new SecurityHeadersMiddleware($headers));
+        $kernel = $this->app->make(self::KERNEL);
+
+        if (method_exists($kernel, 'pushMiddleware')) {
+            $kernel->pushMiddleware(SecurityHeadersMiddleware::class);
+        }
     }
 
     private function settings(): Settings

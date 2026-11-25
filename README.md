@@ -2,9 +2,9 @@
 
 Security for WordPress, from Pollora. Hornet audits the configuration of a site, tells what to fix and how, and shows the same findings in **Tools > Site Health**, in **WP-CLI** and, on a Pollora project, in **`pollora:doctor`**.
 
-It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on Laravel. It changes nothing on your site: it reads, and it tells you.
+It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on Laravel. By default it changes nothing on your site: it reads, and it tells you. Hardening and headers do nothing until you turn each one on.
 
-> **Status: 0.2.** The audit of the configuration and the notifications are in. Hardening, the file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come in the next releases. Nothing here is a firewall.
+> **Status: 0.3 (in progress).** The audit of the configuration, the notifications, the hardening and the security headers are in. The login throttle, the password and session rules, the file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come next. Nothing here is a firewall.
 
 ## What it checks
 
@@ -13,12 +13,13 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `salts` | the eight keys and salts: set, 32 characters or more, not the sample value. It names the constants and never prints a value |
 | `debug-mode` | `WP_DEBUG`, `WP_DEBUG_DISPLAY`, `WP_DEBUG_LOG` on a production site |
 | `https` | the site address, and `FORCE_SSL_ADMIN` |
-| `file-editor` | `DISALLOW_FILE_EDIT` / `DISALLOW_FILE_MODS` |
+| `file-editor` | whether the theme and plugin editor is refused, whoever refused it (`DISALLOW_FILE_EDIT`, `DISALLOW_FILE_MODS`, Hornet's `hardening.file_editor`) |
 | `file-mods` | installing code from the dashboard (advice: it also stops WordPress's own updates) |
 | `config-permissions` | the permission bits of `wp-config.php` |
 | `php-version` | whether the PHP branch still gets security fixes (dates from php.net, read on 2026-11-24) |
 | `wordpress-version` | the update WordPress already found (no request is made) |
-| `xml-rpc` | whether XML-RPC answers, whoever turned it off |
+| `xml-rpc` | what XML-RPC answers: open, logins refused only (pingbacks still answer), or closed |
+| `user-enumeration` | whether the REST API lists the users to a visitor |
 | `admin-account` | a user named `admin` |
 | `login-protection` | whether [pollora/portcullis](https://github.com/Pollora/portcullis) is there |
 | `two-factor` | whether the official Two-Factor plugin is active |
@@ -74,6 +75,47 @@ A Pollora project uses `config/hornet.php` (`php artisan vendor:publish --tag=ho
 - A finding set aside stays visible, with its reason, in the output and in Site Health.
 - **Kill switch**: `define('HORNET_DISABLED', true);` attaches nothing. It is the way back if a rule ever locks someone out.
 - On a multisite network, `HORNET_CONFIG['sites'][<site id>]` overrides the shared settings for one site.
+
+## Hardening
+
+Closes what a site does not need. **Every line is off until you turn it on.**
+
+```php
+define('HORNET_CONFIG', [
+    'hardening' => [
+        'xmlrpc' => true,            // no XML-RPC method answers, no X-Pingback header, no RSD link
+        'user_enumeration' => true,  // ?author=1 is a 404; no REST user routes, users sitemap or oEmbed author for visitors
+        'hide_version' => true,      // no generator tag
+        'file_editor' => true,       // nobody can edit PHP files from the dashboard
+    ],
+]);
+```
+
+- `xmlrpc` closes all of XML-RPC. `xmlrpc_enabled` alone only refuses the methods that need a login: **pingbacks still answer**, and the audit says so. Jetpack and the WordPress mobile app need XML-RPC.
+- `user_enumeration` blocks `?author=N` before WordPress turns it into `/author/<login>/`, and takes the user routes away from visitors only: a logged-in user keeps them.
+- `file_editor` does what `DISALLOW_FILE_EDIT` does, which a plugin cannot define (`wp-config.php` loads first).
+- Each piece is a filter that is safe to add twice, so it does not matter that `pollora/headless` may do the same.
+
+## Security headers
+
+Nothing is sent until you ask for it.
+
+```php
+define('HORNET_CONFIG', [
+    'headers' => [
+        'content_type_options' => true,                         // X-Content-Type-Options: nosniff
+        'referrer_policy' => 'strict-origin-when-cross-origin', // only policies that tighten
+        'permissions_policy' => 'camera=(), microphone=(), geolocation=()',
+        'hsts' => ['max_age' => 31536000, 'include_subdomains' => false, 'preload' => false],
+        'csp' => ['mode' => 'report-only', 'policy' => "default-src 'self'", 'report_uri' => 'https://example.report-uri.com/r/d/csp/reportOnly', 'admin' => false],
+    ],
+]);
+```
+
+- **HSTS** is sent over HTTPS only, needs `max_age` of at least 300 seconds, and refuses `preload` unless `include_subdomains` is on and `max_age` is a year or more: a browser keeps the rule for `max_age` seconds, so a site that cannot serve HTTPS for a year is out for a year.
+- **Content-Security-Policy** starts in `report-only` (the browser reports what it would block and blocks nothing; set `report_uri` to read the reports). `enforce` is yours to turn on once the reports are quiet. The dashboard is left out unless `admin` is true: the block editor and TinyMCE need inline code that a strict policy refuses. A policy is **added** to the `frame-ancestors 'self'` that WordPress already sends, never put in its place.
+- A value with a line break or a control character is refused: it would be how a second header is injected.
+- WordPress has one hook per place: `wp_headers` for the public site, `admin_init` and `login_init` for the dashboard and the login screen. On Pollora the public site is a Laravel response, so a middleware sends the headers there, and skips what PHP has already sent. **That middleware is unit-tested against Symfony responses and has never run inside a Pollora application.**
 
 ## Notifications
 

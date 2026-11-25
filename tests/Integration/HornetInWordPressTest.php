@@ -6,14 +6,17 @@ use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Outcome;
+use Pollora\Hornet\Domain\Audit\XmlRpcState;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
+use Pollora\Hornet\Infrastructure\WordPress\HardeningModule;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressHooks;
 
 afterEach(function (): void {
     remove_all_filters('site_status_tests');
     remove_all_filters('xmlrpc_enabled');
+    remove_all_filters('xmlrpc_methods');
 });
 
 it('has loaded WordPress', function (): void {
@@ -46,14 +49,48 @@ it('finds wp-config.php and reads its permission bits', function (): void {
         ->and($environment->permissions('/no/such/file'))->toBeNull();
 });
 
-it('reads the effective state of XML-RPC, whoever changed it', function (): void {
+it('reads what XML-RPC answers, whoever changed it: open, logins refused, or closed', function (): void {
     $environment = new WordPressEnvironment;
 
-    expect($environment->xmlRpcEnabled())->toBeTrue();
+    expect($environment->xmlRpcState())->toBe(XmlRpcState::Open);
 
     add_filter('xmlrpc_enabled', '__return_false');
 
-    expect($environment->xmlRpcEnabled())->toBeFalse();
+    // Refusing the logins leaves the pingbacks answering: that is not closed
+    expect($environment->xmlRpcState())->toBe(XmlRpcState::LoginDisabled);
+
+    add_filter('xmlrpc_methods', '__return_empty_array');
+
+    expect($environment->xmlRpcState())->toBe(XmlRpcState::Closed);
+
+    remove_all_filters('xmlrpc_methods');
+});
+
+it('reads whether the editor is refused, whoever refused it', function (): void {
+    $environment = new WordPressEnvironment;
+
+    expect($environment->fileEditingBlocked())->toBeFalse();
+
+    add_filter('map_meta_cap', [HardeningModule::class, 'refuseFileEditing'], 10, 2);
+
+    expect($environment->fileEditingBlocked())->toBeTrue();
+
+    remove_all_filters('map_meta_cap');
+});
+
+it('asks the REST API for the users as a visitor would, and puts the current user back', function (): void {
+    $environment = new WordPressEnvironment;
+    wp_set_current_user(1);
+
+    expect($environment->usersListedToVisitors())->toBeTrue()->and(get_current_user_id())->toBe(1);
+
+    add_filter('rest_endpoints', [HardeningModule::class, 'withoutUserRoutes']);
+    // The filter spares a logged-in user, so a visitor is what the question needs
+    $hidden = $environment->usersListedToVisitors();
+    remove_all_filters('rest_endpoints');
+    wp_set_current_user(0);
+
+    expect($hidden)->toBeFalse();
 });
 
 it('finds no core update to report on a fresh site, and reads the stored answer when there is one', function (): void {
@@ -128,8 +165,8 @@ it('keeps the site running and shows one critical test when its settings are wro
     expect($result['status'])->toBe('critical');
 });
 
-it('judges the state a site is really in: XML-RPC turned off by someone else passes', function (): void {
-    add_filter('xmlrpc_enabled', '__return_false');
+it('judges the state a site is really in: XML-RPC closed by someone else passes', function (): void {
+    add_filter('xmlrpc_methods', '__return_empty_array');
 
     $finding = (new Auditor(DefaultChecks::all()))->run(new WordPressEnvironment)->find('xml-rpc');
 

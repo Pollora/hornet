@@ -4,6 +4,17 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Third milestone (0.3), first part: hardening and headers.
+
+- `hardening` settings (`xmlrpc`, `user_enumeration`, `hide_version`, `file_editor`), all off by default.
+- `headers` settings (`content_type_options`, `referrer_policy`, `permissions_policy`, `hsts`, `csp`), nothing sent by default; sent from `wp_headers`, `admin_init` and `login_init`, and from a Laravel middleware on Pollora.
+- New check `user-enumeration`.
+- Fixed: the `xml-rpc` check called XML-RPC "disabled" when only its logins were refused: pingbacks still answered. It now tells open, logins refused, and closed apart.
+- The `file-editor` check reads whether the editor is really refused, whoever refused it.
+- Proven over real HTTP: `tests/E2E/hardening.sh` runs WordPress itself and asserts the status codes and headers of each route with each module on and off.
+
+## 0.2
+
 Second milestone (0.2): notifications.
 
 - Channels: `mail` (through `wp_mail()`), `slack`, `teams` (Workflows), `discord`, `telegram`, `ntfy` and a signed `webhook` (HMAC-SHA256, documented contract version 1).
