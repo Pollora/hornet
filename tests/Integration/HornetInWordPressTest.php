@@ -8,14 +8,18 @@ use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Pollora\Hornet\Domain\Exceptions\TransportException;
 use Pollora\Hornet\Domain\Login\Attempts;
+use Pollora\Hornet\Domain\Notification\Secret;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
 use Pollora\Hornet\Infrastructure\WordPress\HardeningModule;
 use Pollora\Hornet\Infrastructure\WordPress\ThrottleProblemNote;
+use Pollora\Hornet\Infrastructure\WordPress\TwoFactorEnrollment;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressHooks;
+use Pollora\Hornet\Infrastructure\WordPress\WpHttpClient;
 
 afterEach(function (): void {
     remove_all_filters('site_status_tests');
@@ -258,5 +262,117 @@ describe('login attempts', function (): void {
         expect((new WordPressEnvironment)->isActive(Component::HornetThrottle))->toBeFalse()
             ->and((new WordPressEnvironment(Settings::fromArray([])))->isActive(Component::HornetThrottle))->toBeFalse()
             ->and((new WordPressEnvironment(Settings::fromArray(['login' => ['throttle' => true]])))->isActive(Component::HornetThrottle))->toBeTrue();
+    });
+});
+
+describe('accounts', function (): void {
+    afterEach(function (): void {
+        delete_user_meta(1, '_two_factor_enabled_providers');
+        delete_user_meta(1, '_two_factor_provider');
+        remove_all_filters('two_factor_is_required_for_user');
+        remove_all_filters('pre_http_request');
+        remove_all_filters('auth_cookie_expiration');
+        remove_all_filters('user_profile_update_errors');
+        remove_all_filters('validate_password_reset');
+    });
+
+    it('has the Two-Factor plugin to test against', function (): void {
+        expect(class_exists('Two_Factor_Core'))->toBeTrue('The Two-Factor plugin must be installed for these tests: wp plugin install two-factor');
+    });
+
+    it('reads enrollment from the methods a user has enabled', function (): void {
+        $enrollment = new TwoFactorEnrollment;
+
+        expect($enrollment->available())->toBeTrue()->and($enrollment->enrolled(1))->toBeFalse();
+
+        Two_Factor_Core::enable_provider_for_user(1, 'Two_Factor_Email');
+
+        expect($enrollment->enrolled(1))->toBeTrue();
+    });
+
+    it('is not fooled by the filter that other plugins use to skip two-factor', function (): void {
+        $enrollment = new TwoFactorEnrollment;
+        Two_Factor_Core::enable_provider_for_user(1, 'Two_Factor_Email');
+        add_filter('two_factor_is_required_for_user', '__return_false');
+
+        // The plugin's own answer says "no two-factor here"; the enrollment is still a fact
+        expect(Two_Factor_Core::is_user_using_two_factor(1))->toBeFalse()->and($enrollment->enrolled(1))->toBeTrue();
+    });
+
+    it('says who has no second factor among the roles it watches', function (): void {
+        expect((new WordPressEnvironment)->usersWithoutTwoFactor())->toBe([1]);
+
+        Two_Factor_Core::enable_provider_for_user(1, 'Two_Factor_Email');
+
+        expect((new WordPressEnvironment)->usersWithoutTwoFactor())->toBe([])
+            ->and((new WordPressEnvironment(Settings::fromArray(['two_factor' => ['require_roles' => ['editor']]])))->usersWithoutTwoFactor())->toBe([]);
+    });
+
+    it('turns that into a finding that names accounts by number', function (): void {
+        $finding = (new Auditor(DefaultChecks::all()))->run(new WordPressEnvironment)->find('two-factor-coverage');
+
+        expect($finding?->outcome)->toBe(Outcome::Fail)->and($finding?->details)->toBe(['user #1']);
+    });
+
+    it('asks the breach service with a short timeout, a size limit and no redirect, and keeps what it reads below the limit', function (): void {
+        $seen = null;
+        add_filter('pre_http_request', static function ($pre, array $args, string $url) use (&$seen): array {
+            $seen = ['args' => $args, 'url' => $url];
+
+            return ['headers' => [], 'body' => str_repeat('A', 5000), 'response' => ['code' => 200, 'message' => 'OK'], 'cookies' => [], 'filename' => null];
+        }, 10, 3);
+
+        $response = (new WpHttpClient)->get(Secret::of('https://api.pwnedpasswords.com/range/5BAA6'), ['Add-Padding' => 'true'], 100, 3);
+
+        expect($seen['url'])->toBe('https://api.pwnedpasswords.com/range/5BAA6')
+            ->and($seen['args']['timeout'])->toBe(3)->and($seen['args']['redirection'])->toBe(0)->and($seen['args']['limit_response_size'])->toBe(100)
+            ->and($seen['args']['headers'])->toBe(['Add-Padding' => 'true'])
+            ->and($response->status)->toBe(200)->and(strlen($response->body))->toBe(100);
+    });
+
+    it('refuses a private address for a GET, and never names it', function (): void {
+        try {
+            (new WpHttpClient)->get(Secret::of('http://127.0.0.1:9/x?token=TOPSECRET'), [], 100);
+            $message = 'no exception';
+        } catch (TransportException $error) {
+            $message = $error->getMessage();
+        }
+
+        expect($message)->toStartWith('The request failed')->not->toContain('TOPSECRET')->not->toContain('127.0.0.1');
+    });
+
+    it('refuses a breached password in the profile, through the real hook', function (): void {
+        add_filter('pre_http_request', static fn (): array => ['headers' => [], 'body' => "0018A45C4D1DEF81644B54AB7F969B88D65:1\n".substr(strtoupper(sha1('password')), 5).':9999', 'response' => ['code' => 200, 'message' => 'OK'], 'cookies' => [], 'filename' => null]);
+        Bootstrap::boot(Settings::fromArray(['passwords' => ['check_breached' => true]]), new WordPressHooks, new WordPressEnvironment);
+
+        $errors = new WP_Error;
+        $user = (object) ['user_pass' => 'password'];
+        do_action_ref_array('user_profile_update_errors', [&$errors, true, &$user]);
+
+        expect($errors->get_error_code())->toBe('hornet_breached_password');
+
+        $fine = new WP_Error;
+        $other = (object) ['user_pass' => 'a-long-unique-passphrase-9f3'];
+        add_filter('pre_http_request', static fn (): array => ['headers' => [], 'body' => '0018A45C4D1DEF81644B54AB7F969B88D65:1', 'response' => ['code' => 200, 'message' => 'OK'], 'cookies' => [], 'filename' => null], 20);
+        do_action_ref_array('user_profile_update_errors', [&$fine, true, &$other]);
+
+        expect($fine->has_errors())->toBeFalse();
+    });
+
+    it('lets a password through when the service is down', function (): void {
+        add_filter('pre_http_request', static fn () => new WP_Error('http_request_failed', 'down'));
+        Bootstrap::boot(Settings::fromArray(['passwords' => ['check_breached' => true]]), new WordPressHooks, new WordPressEnvironment);
+
+        $errors = new WP_Error;
+        $user = (object) ['user_pass' => 'password'];
+        do_action_ref_array('user_profile_update_errors', [&$errors, true, &$user]);
+
+        expect($errors->has_errors())->toBeFalse();
+    });
+
+    it('shortens a login through the real filter', function (): void {
+        Bootstrap::boot(Settings::fromArray(['session' => ['lifetime' => 3600, 'remember_lifetime' => 7200]]), new WordPressHooks, new WordPressEnvironment);
+
+        expect(apply_filters('auth_cookie_expiration', 172800, 1, false))->toBe(3600)->and(apply_filters('auth_cookie_expiration', 1209600, 1, true))->toBe(7200);
     });
 });

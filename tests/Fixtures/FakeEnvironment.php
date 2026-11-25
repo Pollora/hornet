@@ -35,6 +35,8 @@ class FakeEnvironment implements Environment
         public ?bool $usersListed = false,
         public ?bool $editingBlocked = null,
         public ?string $throttleProblem = null,
+        /** @var list<int>|null */
+        public ?array $withoutTwoFactor = [],
     ) {}
 
     /**
@@ -122,6 +124,11 @@ class FakeEnvironment implements Environment
     public function usersListedToVisitors(): ?bool
     {
         return $this->usersListed;
+    }
+
+    public function usersWithoutTwoFactor(): ?array
+    {
+        return $this->withoutTwoFactor;
     }
 
     public function loginThrottleProblem(): ?string

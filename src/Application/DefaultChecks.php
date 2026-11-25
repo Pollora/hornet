@@ -15,6 +15,7 @@ use Pollora\Hornet\Domain\Audit\Checks\LoginProtectionCheck;
 use Pollora\Hornet\Domain\Audit\Checks\PhpVersionCheck;
 use Pollora\Hornet\Domain\Audit\Checks\SaltsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCheck;
+use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCoverageCheck;
 use Pollora\Hornet\Domain\Audit\Checks\UserEnumerationCheck;
 use Pollora\Hornet\Domain\Audit\Checks\WordPressUpdateCheck;
 use Pollora\Hornet\Domain\Audit\Checks\XmlRpcCheck;
@@ -43,6 +44,7 @@ final class DefaultChecks
             new AdminAccountCheck,
             new LoginProtectionCheck,
             new TwoFactorCheck,
+            new TwoFactorCoverageCheck,
         ];
     }
 }

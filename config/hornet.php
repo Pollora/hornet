@@ -71,6 +71,23 @@ return [
         // 'allow_ips' => [],
     ],
 
+    // Rules about accounts. All off until you turn them on.
+    'passwords' => [
+        // Refuse a password that is in a known breach, when it is chosen (profile form and password reset only). It asks
+        // haveibeenpwned.com with five characters of the hash. It fails open: a service that is down lets the password through.
+        'check_breached' => false,
+        // 'breached_threshold' => 1,   // how many appearances make it refused
+    ],
+    'session' => [
+        // 'lifetime' => 28800,           // seconds a login lasts (WordPress: two days)
+        // 'remember_lifetime' => 604800, // with "remember me" (WordPress: fourteen days)
+    ],
+    'two_factor' => [
+        // Send these roles to their profile until they have set up a method of the Two-Factor plugin. A gate on enrollment, not on login.
+        // 'require_roles' => ['administrator'],
+        // 'enforce_after' => '2026-12-15',   // until this date: a notice only
+    ],
+
     // Tell someone when the audit finds something new. Nothing is sent until a channel is listed.
     // A secret (a webhook URL, a token, a signing key) is read from the environment: never write it in this file.
     'notifications' => [

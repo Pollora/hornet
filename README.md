@@ -4,7 +4,7 @@ Security for WordPress, from Pollora. Hornet audits the configuration of a site,
 
 It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on Laravel. By default it changes nothing on your site: it reads, and it tells you. Hardening and headers do nothing until you turn each one on.
 
-> **Status: 0.3 (in progress).** The audit of the configuration, the notifications, the hardening, the security headers and the login throttle are in. The password and session rules, the file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come next. Nothing here is a firewall.
+> **Status: 0.3.** The audit of the configuration, the notifications, the hardening, the security headers, the login throttle and the account rules are in. The file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come next. Nothing here is a firewall.
 
 ## What it checks
 
@@ -23,6 +23,7 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `admin-account` | a user named `admin` |
 | `login-protection` | whether [pollora/portcullis](https://github.com/Pollora/portcullis) is there |
 | `two-factor` | whether the official Two-Factor plugin is active |
+| `two-factor-coverage` | the administrators who have not set up a second factor, named by number |
 
 A check reads and never writes, and never asks the network. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 
@@ -95,6 +96,22 @@ define('HORNET_CONFIG', [
 - `user_enumeration` blocks `?author=N` before WordPress turns it into `/author/<login>/`, and takes the user routes away from visitors only: a logged-in user keeps them.
 - `file_editor` does what `DISALLOW_FILE_EDIT` does, which a plugin cannot define (`wp-config.php` loads first).
 - Each piece is a filter that is safe to add twice, so it does not matter that `pollora/headless` may do the same.
+
+## Accounts: passwords, sessions, two-factor
+
+Three rules about accounts. **All off until you turn them on.**
+
+```php
+define('HORNET_CONFIG', [
+    'passwords' => ['check_breached' => true, 'breached_threshold' => 1],
+    'session' => ['lifetime' => 28800, 'remember_lifetime' => 604800],   // seconds
+    'two_factor' => ['require_roles' => ['administrator'], 'enforce_after' => '2026-12-15'],
+]);
+```
+
+- **Breached passwords** (opt-in: it is a call to another service). When a password is chosen, Hornet asks [Have I Been Pwned](https://haveibeenpwned.com/API/v3#PwnedPasswords) whether it is in a known breach, **sending only the first five characters of its SHA-1** (k-anonymity), with `Add-Padding` so the size of the answer says nothing. The comparison is made on the site. It only sees the plain password on the **profile form** (which also creates users from the dashboard) and the **password reset form**: a password set from the REST API, WP-CLI or another plugin is not covered. It is never asked at login, and a service that is down or slow lets the password through (4 seconds at most).
+- **Session length.** `lifetime` replaces WordPress's two days, `remember_lifetime` its fourteen days for "remember me", between 15 minutes and 14 days (a year for the remembered one).
+- **Two-factor enrollment.** Hornet relies on the official [Two-Factor](https://wordpress.org/plugins/two-factor/) plugin and does not rewrite it. `require_roles` sends the users of those roles to their profile until they have set up a method; the profile, where the plugin lets them do it, stays open, and so do Ajax, cron, REST, XML-RPC and the command line. Until `enforce_after` (a date, `YYYY-MM-DD`) they only get a notice. **This is a gate on enrollment, not on login**: the plugin's own filter that "requires" two-factor makes a login fail for anyone who has not enrolled, which would lock out everybody who has not set it up yet. Enrollment is read from the methods a user has enabled, not from `is_user_using_two_factor()`, which other plugins override to skip two-factor from trusted addresses. The audit's `two-factor-coverage` check names the accounts that have none, by number.
 
 ## Login throttle
 

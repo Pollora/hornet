@@ -58,6 +58,14 @@ interface Environment
      */
     public function loginThrottleProblem(): ?string;
 
+    /**
+     * The numbers of the users of the roles Hornet is told to watch (administrators unless `two_factor.require_roles` says otherwise)
+     * who have no second factor. Null when the Two-Factor plugin is not there to ask.
+     *
+     * @return list<int>|null
+     */
+    public function usersWithoutTwoFactor(): ?array;
+
     public function isActive(Component $component): bool;
 
     public function now(): DateTimeImmutable;

@@ -16,6 +16,8 @@ docker run --rm --network hornet-e2e-net -u 0 -v "$S/wp":/var/www/html -v "$PKG"
   [ -f wp-load.php ] || wp core download --quiet
   [ -f wp-config.php ] || wp config create --dbhost=hornet-e2e-mysql --dbname=wordpress --dbuser=root --skip-check --quiet
   wp core is-installed 2>/dev/null || wp core install --url=http://127.0.0.1:8082 --title=t --admin_user=admin --admin_password=pass --admin_email=a@a.test --skip-email --quiet
+  wp plugin is-installed two-factor 2>/dev/null || wp plugin install two-factor --activate --quiet
+  wp plugin activate two-factor >/dev/null 2>&1 || true
   sh /pkg/tests/E2E/hardening.sh' || status=$?
 docker rm -f hornet-e2e-mysql >/dev/null 2>&1 || true
 exit $status

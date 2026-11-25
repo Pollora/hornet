@@ -15,7 +15,7 @@ use Pollora\Hornet\Domain\Network\TrustedProxies;
  */
 final readonly class Settings
 {
-    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications', 'hardening', 'headers', 'network', 'login'];
+    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications', 'hardening', 'headers', 'network', 'login', 'passwords', 'session', 'two_factor'];
 
     /**
      * @param  list<string>  $disabledChecks  ids of the checks that do not run
@@ -31,6 +31,7 @@ final readonly class Settings
         public SecurityHeaders $headers,
         public TrustedProxies $network,
         public LoginSettings $login,
+        public AccountSettings $accounts,
     ) {}
 
     /**
@@ -56,6 +57,7 @@ final readonly class Settings
             array_key_exists('headers', $config) ? HeaderSettings::fromArray($config['headers']) : new SecurityHeaders,
             array_key_exists('network', $config) ? NetworkSettings::fromArray($config['network']) : new TrustedProxies,
             array_key_exists('login', $config) ? LoginSettings::fromArray($config['login']) : LoginSettings::none(),
+            AccountSettings::fromConfig($config),
         );
     }
 

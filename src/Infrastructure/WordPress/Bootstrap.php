@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Notification\NotificationService;
+use Pollora\Hornet\Application\Password\BreachCheck;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
@@ -100,6 +101,27 @@ final class Bootstrap
                     $client ?? static fn (): ?ClientIp => ClientAddress::fromServer($_SERVER, $settings->network),
                     $note->record(...),
                     wp_salt('auth').'hornet-login',
+                );
+            }
+
+            if ($settings->accounts->checkBreached) {
+                $modules[] = new PasswordModule(new BreachCheck(new WpHttpClient), $settings->accounts->breachedThreshold);
+            }
+
+            if ($settings->accounts->sessionLifetime !== null || $settings->accounts->rememberLifetime !== null) {
+                $modules[] = new SessionModule($settings->accounts->sessionLifetime, $settings->accounts->rememberLifetime);
+            }
+
+            if ($settings->accounts->requireRoles !== []) {
+                $modules[] = new TwoFactorGateModule(
+                    $settings->accounts,
+                    new TwoFactorEnrollment,
+                    new SystemClock,
+                    static function (string $url): never {
+                        wp_safe_redirect($url);
+                        exit;
+                    },
+                    static fn (): ?object => is_user_logged_in() ? wp_get_current_user() : null,
                 );
             }
 

@@ -36,4 +36,9 @@ define('WP_USE_THEMES', false);
 
 require_once $wordpressPath.'/wp-load.php';
 
+// The official Two-Factor plugin is installed by the CI job and by the local script. Load it when WordPress has not: the account tests ask it.
+if (! class_exists('Two_Factor_Core') && is_file(WP_PLUGIN_DIR.'/two-factor/two-factor.php')) {
+    require_once WP_PLUGIN_DIR.'/two-factor/two-factor.php';
+}
+
 unset($autoload, $wordpressPath);
