@@ -9,6 +9,7 @@ use DateTimeZone;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Throwable;
 use WP_REST_Request;
@@ -161,6 +162,11 @@ final class WordPressEnvironment implements Environment
     public function loginThrottleProblem(): ?string
     {
         return (new ThrottleProblemNote)->read();
+    }
+
+    public function lastScan(): ?ScanSnapshot
+    {
+        return (new OptionScanStore)->last();
     }
 
     public function now(): DateTimeImmutable

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Application;
 
+use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
 use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Checks\AdminAccountCheck;
 use Pollora\Hornet\Domain\Audit\Checks\ConfigPermissionsCheck;
@@ -14,6 +15,7 @@ use Pollora\Hornet\Domain\Audit\Checks\HttpsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\LoginProtectionCheck;
 use Pollora\Hornet\Domain\Audit\Checks\PhpVersionCheck;
 use Pollora\Hornet\Domain\Audit\Checks\SaltsCheck;
+use Pollora\Hornet\Domain\Audit\Checks\ScanResultCheck;
 use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCheck;
 use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCoverageCheck;
 use Pollora\Hornet\Domain\Audit\Checks\UserEnumerationCheck;
@@ -45,6 +47,8 @@ final class DefaultChecks
             new LoginProtectionCheck,
             new TwoFactorCheck,
             new TwoFactorCoverageCheck,
+            // What the last scan found: the audit reads it and never scans
+            new ScanResultCheck(CoreIntegrityTask::ID, 'WordPress core files'),
         ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Domain\Audit;
 
 use DateTimeImmutable;
+use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 
 /**
  * What a check may know about the site. Every method reads; none changes anything.
@@ -65,6 +66,11 @@ interface Environment
      * @return list<int>|null
      */
     public function usersWithoutTwoFactor(): ?array;
+
+    /**
+     * What the last scan found, null when the site was never scanned. It is read from what the scan stored: nothing is scanned here.
+     */
+    public function lastScan(): ?ScanSnapshot;
 
     public function isActive(Component $component): bool;
 

@@ -4,6 +4,14 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Fourth milestone (0.4), first part: the scanner, and the core files.
+
+- `wp hornet scan` (`--format`, `--fail-on`, `--repin`): compares the core files with the checksums of WordPress.org. It reads the disk and asks the network, only when it is run; it never deletes, repairs or quarantines a file.
+- Reports a file that differs, a file that is gone, and a file that WordPress does not ship in `wp-admin`, `wp-includes` or as a script in the root. An unknown release or an unreachable WordPress.org is `unknown`, not a pass.
+- `scanner.allow_modified` lists core files that are meant to differ. The files changed by the patches of `patches.lock.json` (Pollora, Bedrock) are allowed by themselves. An allowed file is pinned on first sight and a later change is reported; a pin lasts one release of the core.
+- New check `core-integrity`: it shows the result of the last scan (never scanned = `unknown`; a clean result older than seven days = low), so that Site Health and `pollora:doctor` read the same story without scanning. The result is kept in one option without autoload, for the network on a multisite.
+- `Environment` gains `lastScan()`; `Finding` can be read back from its array.
+
 Third milestone (0.3), third part: account rules.
 
 - `passwords.check_breached` (Have I Been Pwned, k-anonymity with padding, fails open, opt-in), `session` lifetimes, `two_factor.require_roles` and `enforce_after` (an enrollment gate in the dashboard, not a login gate); all off by default.

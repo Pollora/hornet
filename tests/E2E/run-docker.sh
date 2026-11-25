@@ -13,7 +13,8 @@ status=0
 docker run --rm --network hornet-e2e-net -u 0 -v "$S/wp":/var/www/html -v "$PKG":/pkg wordpress:cli-php8.4 sh -c '
   wp() { php -d memory_limit=1G /usr/local/bin/wp --allow-root "$@"; }
   cd /var/www/html
-  [ -f wp-load.php ] || wp core download --quiet
+  # The zip, not `wp core download`: its tar extraction cuts the long file names of wp-includes/php-ai-client, and the scanner rightly reports them
+  [ -f wp-load.php ] || { curl -fsSL -o /tmp/wp.zip https://wordpress.org/latest.zip && unzip -q /tmp/wp.zip -d /tmp && cp -R /tmp/wordpress/. /var/www/html/; }
   [ -f wp-config.php ] || wp config create --dbhost=hornet-e2e-mysql --dbname=wordpress --dbuser=root --skip-check --quiet
   wp core is-installed 2>/dev/null || wp core install --url=http://127.0.0.1:8082 --title=t --admin_user=admin --admin_password=pass --admin_email=a@a.test --skip-email --quiet
   wp plugin is-installed two-factor 2>/dev/null || wp plugin install two-factor --activate --quiet
