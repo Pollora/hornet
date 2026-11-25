@@ -30,6 +30,9 @@ final class AdminPageModule implements Module
 
     private ?string $screen = null;
 
+    /** @var list<string> the scripts the screen needs that this WordPress does not have */
+    private array $missing = [];
+
     /**
      * @param  string  $assets  the folder of the compiled files
      * @param  Closure(): never  $exit  ends the request after a file is sent
@@ -56,13 +59,28 @@ final class AdminPageModule implements Module
         $this->screen = is_string($screen) ? $screen : null;
     }
 
+    /**
+     * The hook name that WordPress gave the page (`tools_page_hornet-security` in the administration), null until the menu is built.
+     */
+    public function screen(): ?string
+    {
+        return $this->screen;
+    }
+
     public function render(): void
     {
         if (! AdminAccess::allowed()) {
             wp_die(esc_html('You are not allowed to see this page.'), '', ['response' => 403]);
         }
 
-        echo '<div class="wrap"><h1 class="wp-heading-inline">'.esc_html('Security').'</h1><hr class="wp-header-end"><div id="hornet-admin"></div>';
+        echo '<div class="wrap"><h1 class="wp-heading-inline">'.esc_html('Security').'</h1><hr class="wp-header-end">';
+
+        // A script that WordPress does not know is not printed, and the page would stay empty without a word: say it
+        if ($this->missing !== []) {
+            echo '<div class="notice notice-error inline"><p>'.esc_html(sprintf('This screen needs scripts that this version of WordPress does not have (%s). Use `wp hornet status` and `wp hornet scan`: they give the same information.', implode(', ', $this->missing))).'</p></div>';
+        }
+
+        echo '<div id="hornet-admin"></div>';
         echo '<noscript><p>'.esc_html('This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`.').'</p></noscript></div>';
     }
 
@@ -80,6 +98,11 @@ final class AdminPageModule implements Module
 
         $version = is_string($asset['version'] ?? null) ? $asset['version'] : 'dev';
         $dependencies = is_array($asset['dependencies'] ?? null) ? array_values(array_filter($asset['dependencies'], is_string(...))) : [];
+        $this->missing = array_values(array_filter($dependencies, static fn (string $handle): bool => ! wp_script_is($handle, 'registered')));
+
+        if ($this->missing !== []) {
+            return;
+        }
 
         wp_enqueue_script('hornet-admin', $this->url('index.js', $version), $dependencies, $version, true);
         wp_enqueue_style('wp-components');

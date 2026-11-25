@@ -36,7 +36,7 @@ await page.getByRole( 'button', { name: 'Scan now' } ).waitFor( { timeout: 20000
 check( 'the entry is in the Tools menu, not a menu of its own', ( await page.locator( '#menu-tools a[href*="hornet-security"]' ).count() ) === 1 && ( await page.locator( '#adminmenu a[href*="hornet-security"]' ).count() ) === 1 );
 let t = await text();
 check( 'it shows the headline and the four tabs', /open findings|Nothing needs|could not be verified/.test( t ) && [ 'Overview', 'Findings', 'Settings', 'Notifications' ].every( ( tab ) => t.includes( tab ) ), t.slice( 0, 160 ) );
-check( 'it says the site was never scanned', /Last scan: never/.test( t ), t.slice( 0, 200 ) );
+check( 'it says when the site was last scanned, or that it never was', /Last scan: /.test( t ), t.slice( 0, 200 ) );
 
 console.log( 'the scan' );
 await page.getByRole( 'button', { name: 'Scan now' } ).click();

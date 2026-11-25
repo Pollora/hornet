@@ -1,22 +1,10 @@
 <?php return array(
 	'dependencies' => array(
-		'react',
-		'react-dom',
 		'react-jsx-runtime',
-		'wp-a11y',
 		'wp-api-fetch',
 		'wp-components',
-		'wp-compose',
-		'wp-data',
-		'wp-date',
-		'wp-deprecated',
 		'wp-element',
-		'wp-i18n',
-		'wp-keycodes',
-		'wp-primitives',
-		'wp-private-apis',
-		'wp-theme',
-		'wp-warning'
+		'wp-i18n'
 	),
-	'version' => '5d2394598ea426a1f095'
+	'version' => '1d034880fdc62c9cb5d7'
 );

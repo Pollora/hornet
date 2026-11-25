@@ -36,21 +36,43 @@ final readonly class AdminRestModule implements Module
     public function register(HookRegistrar $hooks): void
     {
         $hooks->addAction('rest_api_init', $this->routes(...));
+        // A security product does not announce itself to whoever asks for /wp-json/
+        $hooks->addFilter('rest_index', $this->hideFromIndex(...));
+    }
+
+    /**
+     * Takes the namespace out of the index of the REST API, for anyone who may not use the routes.
+     */
+    public function hideFromIndex(mixed $response): mixed
+    {
+        if (! $response instanceof WP_REST_Response || AdminAccess::allowed()) {
+            return $response;
+        }
+
+        $data = $response->get_data();
+
+        if (is_array($data) && is_array($data['namespaces'] ?? null)) {
+            $data['namespaces'] = array_values(array_diff($data['namespaces'], [self::NAMESPACE]));
+            $response->set_data($data);
+        }
+
+        return $response;
     }
 
     public function routes(): void
     {
         $allowed = static fn (): bool => AdminAccess::allowed();
 
-        register_rest_route(self::NAMESPACE, '/status', ['methods' => 'GET', 'callback' => $this->status(...), 'permission_callback' => $allowed]);
+        register_rest_route(self::NAMESPACE, '/status', ['methods' => 'GET', 'callback' => $this->status(...), 'permission_callback' => $allowed, 'show_in_index' => false]);
         register_rest_route(self::NAMESPACE, '/scan', [
-            ['methods' => 'GET', 'callback' => $this->scanState(...), 'permission_callback' => $allowed],
-            ['methods' => 'POST', 'callback' => $this->scan(...), 'permission_callback' => $allowed],
+            ['methods' => 'GET', 'callback' => $this->scanState(...), 'permission_callback' => $allowed, 'show_in_index' => false],
+            ['methods' => 'POST', 'callback' => $this->scan(...), 'permission_callback' => $allowed, 'show_in_index' => false],
         ]);
         register_rest_route(self::NAMESPACE, '/notify/test', [
             'methods' => 'POST',
             'callback' => $this->test(...),
             'permission_callback' => $allowed,
+            'show_in_index' => false,
             'args' => ['channel' => ['required' => true, 'type' => 'string', 'validate_callback' => static fn (mixed $value): bool => is_string($value) && preg_match('/^[A-Za-z0-9._-]{1,64}$/D', $value) === 1]],
         ]);
     }

@@ -6,9 +6,10 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 Sixth milestone (0.6): the administration screen.
 
-- **Tools > Security** (on a network: Settings, in the network administration, for the super administrators): overview and **Scan now**, findings (DataViews, worst first, details and what to do), settings (read only, never a secret), notification channels with a test message. `admin => false` removes it.
+- **Tools > Security** (on a network: Settings, in the network administration, for the super administrators): overview and **Scan now**, findings (a table, worst first, with a search, filters and the details with what to do), settings (read only, never a secret), notification channels with a test message. `admin => false` removes it.
 - REST routes `hornet/v1/status`, `hornet/v1/scan` (GET state, POST to ask) and `hornet/v1/notify/test`, for the administrators, with the nonce of the session. A scan that is asked for runs in WP-Cron and tells which task it is at; two never run at once; a scan that died is not waited for.
 - `ScanJob` runs the scan under its lock and tells its progress; `ScanModule` uses it, for the schedule, the continuation and `pollora/hornet/scan_now`.
+- The screen is built with the public components of WordPress only (no DataViews: it relies on private APIs of the core, and WordPress 6.9 refuses them), about 13 KB, WordPress 6.9 and later. It says so on the page when a script it needs is missing. The routes are not listed in `/wp-json/`.
 - The screen is compiled from `admin/src` with `@wordpress/scripts` into `assets/admin`, which is tracked (nothing runs npm on a site); the package serves the files itself, to the people who may see the screen. A workflow checks that what is tracked is what the source builds to.
 - `Scanner` accepts a callback that is told which task it is about to run.
 

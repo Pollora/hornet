@@ -101,6 +101,71 @@ describe('who may ask', function (): void {
     });
 });
 
+describe('discretion', function (): void {
+    it('does not announce its routes to whoever asks for the index of the REST API', function (): void {
+        bootAdmin();
+
+        $anonymous = restAs(null, 'GET', '/')->get_data();
+        $subscriber = restAs($this->subscriber, 'GET', '/')->get_data();
+        $admin = restAs(1, 'GET', '/')->get_data();
+
+        expect($anonymous['namespaces'])->not->toContain('hornet/v1')->and(array_keys($anonymous['routes']))->not->toContain('/hornet/v1/status')
+            ->and($subscriber['namespaces'])->not->toContain('hornet/v1')
+            ->and($anonymous['namespaces'])->toContain('wp/v2')
+            // The people who may use the routes are told
+            ->and($admin['namespaces'])->toContain('hornet/v1');
+    });
+});
+
+describe('a WordPress that lacks what the screen needs', function (): void {
+    it('says so, and prints no script that would leave the page empty', function (): void {
+        wp_set_current_user(1);
+        $assets = sys_get_temp_dir().'/hornet-assets-'.bin2hex(random_bytes(4));
+        mkdir($assets);
+        file_put_contents($assets.'/index.asset.php', "<?php return array('dependencies' => array('wp-element', 'wp-a-script-that-does-not-exist'), 'version' => 'x');");
+        file_put_contents($assets.'/index.js', '// nothing');
+        $module = new AdminPageModule(false, $assets, static fn (): never => throw new RuntimeException('exit'));
+        $module->menu();
+        global $submenu;
+
+        $module->enqueue((string) $module->screen());
+        ob_start();
+        $module->render();
+        $html = (string) ob_get_clean();
+        $enqueued = wp_script_is('hornet-admin', 'enqueued');
+
+        unlink($assets.'/index.asset.php');
+        unlink($assets.'/index.js');
+        rmdir($assets);
+
+        expect($enqueued)->toBeFalse()->and($html)->toContain('notice-error')->toContain('wp-a-script-that-does-not-exist')->toContain('wp hornet scan')
+            ->and($submenu['tools.php'] ?? [])->not->toBe([]);
+    });
+
+    it('enqueues the script when everything it needs is there', function (): void {
+        wp_set_current_user(1);
+        $module = new AdminPageModule(false, dirname(__DIR__, 2).'/assets/admin', static fn (): never => throw new RuntimeException('exit'));
+        $module->menu();
+
+        $module->enqueue((string) $module->screen());
+
+        expect(wp_script_is('hornet-admin', 'enqueued'))->toBeTrue();
+
+        wp_dequeue_script('hornet-admin');
+    });
+
+    it('does not enqueue anything on another page', function (): void {
+        wp_set_current_user(1);
+        wp_dequeue_script('hornet-admin');
+        $module = new AdminPageModule(false, dirname(__DIR__, 2).'/assets/admin', static fn (): never => throw new RuntimeException('exit'));
+        $module->menu();
+
+        $module->enqueue('index.php');
+
+        expect(wp_script_is('hornet-admin', 'enqueued'))->toBeFalse();
+    });
+});
+
 describe('the status', function (): void {
     it('gives the audit, the last scan, the settings and the channels', function (): void {
         bootAdmin();

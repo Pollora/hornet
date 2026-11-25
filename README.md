@@ -302,18 +302,18 @@ What it cannot do, so you know: a core that was changed **before** the first sca
 
 ## The screen: Tools > Security
 
-One entry in the **Tools** menu (never a menu of its own), for the administrators (`manage_options`). On a network it is in the network administration, under **Settings**, for the super administrators only: the files and the scan are shared by every site, and a site administrator must not read what is true of the others. It is built with the components of the block editor and DataViews, and looks like the rest of the dashboard.
+One entry in the **Tools** menu (never a menu of its own), for the administrators (`manage_options`). On a network it is in the network administration, under **Settings**, for the super administrators only: the files and the scan are shared by every site, and a site administrator must not read what is true of the others. It is built with the public components of the block editor (`@wordpress/components`, the ones WordPress ships) and looks like the rest of the dashboard. It runs on WordPress 6.9 and later, and was tried in a browser on 6.9 and on 7.1.
 
 - **Overview**: how many findings are open, not verified, set aside, passing; when the last scan was; one line per scan task; **Scan now**.
-- **Findings**: every check, the open ones first and the worst first, with search and filters; a click on a row says what was found and what to do. Text that comes from the site (a file name, a plugin slug) is shown as text, never as markup.
+- **Findings**: every check, the open ones first and the worst first, with a search and filters by status and severity; a click on a check says what was found and what to do. Text that comes from the site (a file name, a plugin slug) is shown as text, never as markup.
 - **Settings**: what is on and what is off, and why (`hardening.xmlrpc`…). **Read only**: the settings are written in the file, and a protection that a screen could switch off is one that a stolen session could switch off. Never a secret, never an address: a channel is named by its name and its kind.
 - **Notifications**: the channels, with a button to send a test message.
 
 **Scan now** does not wait for the scan: it asks for it, and WP-Cron runs it in the background (the screen shows which task it is at, and says when it is done). With `DISABLE_WP_CRON`, the system cron must call `wp cron event run --due-now`, and the screen says "Waiting for the cron to start it…" until it does. Two scans never run at once.
 
-`'admin' => false` removes the screen and its routes. Its routes are `hornet/v1/status`, `hornet/v1/scan` and `hornet/v1/notify/test`, for the people who may see the screen and with the nonce of their session.
+`'admin' => false` removes the screen and its routes. Its routes are `hornet/v1/status`, `hornet/v1/scan` and `hornet/v1/notify/test`, for the people who may see the screen and with the nonce of their session. They are not listed in `/wp-json/`: a security package does not announce itself to whoever asks.
 
-**The compiled screen is part of the package.** `assets/admin` is built from `admin/src` (`npm ci && npm run build`) and kept in git, so that nothing runs npm on a site. A workflow fails when what is tracked is not what the source builds to. The package serves the files itself, to the people who may see the screen: its folder is outside the web root on Bedrock and on Pollora. About 1 MB of JavaScript is loaded, on that screen only. It needs a browser that the block editor supports.
+**The compiled screen is part of the package.** `assets/admin` is built from `admin/src` (`npm ci && npm run build`) and kept in git, so that nothing runs npm on a site. A workflow fails when what is tracked is not what the source builds to. The package serves the files itself, to the people who may see the screen: its folder is outside the web root on Bedrock and on Pollora. About 13 KB of JavaScript is loaded, on that screen only, and it needs a browser that the block editor supports. The screen uses no private API of WordPress (the table is plain components, not DataViews, which relies on them): an update of WordPress should not break it. If a script it needs is missing, it says so on the page, instead of staying empty.
 
 ## Known vulnerabilities
 
