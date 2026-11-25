@@ -25,4 +25,27 @@ return [
 
     // One Tools > Site Health test per check
     'site_health' => true,
+
+    // Tell someone when the audit finds something new. Nothing is sent until a channel is listed.
+    // A secret (a webhook URL, a token, a signing key) is read from the environment: never write it in this file.
+    'notifications' => [
+        // off, hourly, twicedaily or daily. It rides on WP-Cron: run `wp hornet notify run` from the system cron if WP-Cron is off.
+        'schedule' => 'daily',
+
+        // Seconds before the same finding is told again on the same channel
+        'cooldown' => 86400,
+
+        // Messages per channel per hour at most; what is over waits for the next run
+        'rate_limit' => 20,
+
+        'channels' => [
+            // 'ops-mail' => ['type' => 'mail', 'to' => ['ops@example.com'], 'min_severity' => 'medium'],
+            // 'slack' => ['type' => 'slack', 'url' => env('HORNET_SLACK_URL'), 'min_severity' => 'high'],
+            // 'teams' => ['type' => 'teams', 'url' => env('HORNET_TEAMS_URL')],
+            // 'discord' => ['type' => 'discord', 'url' => env('HORNET_DISCORD_URL')],
+            // 'telegram' => ['type' => 'telegram', 'token' => env('HORNET_TELEGRAM_TOKEN'), 'chat_id' => env('HORNET_TELEGRAM_CHAT')],
+            // 'ntfy' => ['type' => 'ntfy', 'url' => env('HORNET_NTFY_URL'), 'token' => env('HORNET_NTFY_TOKEN')],
+            // 'siem' => ['type' => 'webhook', 'url' => env('HORNET_WEBHOOK_URL'), 'secret' => env('HORNET_WEBHOOK_SECRET')],
+        ],
+    ],
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
+use Pollora\Hornet\Infrastructure\WordPress\NotificationModule;
 use Pollora\Hornet\Infrastructure\WordPress\SettingsErrorModule;
 use Pollora\Hornet\Infrastructure\WordPress\SiteHealthModule;
 use Pollora\Hornet\Tests\Fixtures\FakeEnvironment;
@@ -48,4 +49,17 @@ it('starts at once when plugins are loaded, and waits otherwise', function (): v
     Brain\Monkey\Actions\expectAdded('plugins_loaded')->once();
 
     Bootstrap::fromWordPress();
+});
+
+it('attaches the cron when a channel is configured', function (): void {
+    $settings = Settings::fromArray(['notifications' => ['channels' => ['team' => ['type' => 'mail', 'to' => 'ops@example.com']]]]);
+    $modules = Bootstrap::modules($settings, new FakeEnvironment);
+
+    expect(array_map(static fn ($module): string => $module::class, $modules))->toBe([SiteHealthModule::class, NotificationModule::class]);
+});
+
+it('keeps the site running when a channel is wrong or a setting names a check that does not exist', function (): void {
+    $settings = Settings::fromArray(['disabled_checks' => ['saltz'], 'notifications' => ['channels' => ['team' => ['type' => 'mail', 'to' => 'ops@example.com']]]]);
+
+    expect(Bootstrap::modules($settings, new FakeEnvironment)[0])->toBeInstanceOf(SettingsErrorModule::class);
 });

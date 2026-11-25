@@ -1,6 +1,8 @@
 {
     "version": 1,
     "surface": {
-        "config:hornet": "unreadable without the application"
+        "config:hornet": "unreadable without the application",
+        "hook:pollora/hornet/retry_notifications": "hook",
+        "hook:pollora/hornet/scheduled_audit": "hook"
     }
 }
