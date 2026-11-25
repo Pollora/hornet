@@ -316,6 +316,35 @@ One entry in the **Tools** menu (never a menu of its own), for the administrator
 
 **The compiled screen is part of the package.** `assets/admin` is built from `admin/src` (`npm ci && npm run build`) and kept in git, so that nothing runs npm on a site. A workflow fails when what is tracked is not what the source builds to. The package serves the files itself, to the people who may see the screen: its folder is outside the web root on Bedrock and on Pollora. About 13 KB of JavaScript is loaded, on that screen only, and it needs a browser that the block editor supports. The screen uses no private API of WordPress (the table is plain components, not DataViews, which relies on them): an update of WordPress should not break it. If a script it needs is missing, it says so on the page, instead of staying empty.
 
+## Abilities: what an AI agent may ask
+
+With `abilities.enabled`, the audit is published as **abilities** of the WordPress Abilities API (WordPress 6.9 and later), through [`pollora/abilities`](https://github.com/Pollora/abilities). The MCP Adapter plugin turns abilities into MCP tools, and the abilities say they may be offered to it (`meta.mcp.public`). Hornet runs no MCP server of its own, and sends nothing anywhere: an agent asks, the site answers.
+
+| Ability | Does | Needs |
+| --- | --- | --- |
+| `hornet/get-status` | counts of open, not verified, set aside, passing findings; age of the last scan; scan running | `abilities.enabled` |
+| `hornet/list-findings` | the findings, the ones that need attention first; filter by status and severity; 50 at most, by page | " |
+| `hornet/get-remediation` | what to do about one finding | " |
+| `hornet/read-journal` | the journal, newest first, by kind and source; 50 at most; says so when the journal is off | " |
+| `hornet/run-scan` | asks for a scan (it runs in the background; one at a time) | `abilities.writes` |
+| `hornet/set-aside-finding` | hides an open finding, on a written reason | `abilities.writes` |
+| `hornet/restore-finding` | shows it again | `abilities.writes` |
+
+```php
+'abilities' => [
+    'enabled' => true,  // the agent reads
+    'writes'  => false, // and, if you say so, starts a scan and sets findings aside
+],
+```
+
+**Reading and writing are two switches, both off, both in the settings file only.** `writes` without `enabled` is refused. The writing abilities are not even declared while `writes` is off.
+
+What is deliberately not there: **no ability changes a setting, turns a protection off or reads a secret.** The settings are in the file, and what a token could switch off is what a stolen token could switch off. A finding that the file sets aside cannot be changed by an agent. Writing is for people who may see the screen, at most 20 changes an hour per account, one scan every ten minutes, and each is said in [the journal](#the-journal) (`hornet.scan_requested`, `hornet.finding_set_aside`, `hornet.finding_restored`), with `via: ability`. **An agent cannot set aside a finding of critical or high severity**: hiding the worst is for a person, from the screen. Reading is limited to 60 questions a minute per account, each one runs the audit. The limits are a bound on the volume (without an object cache the counter is not atomic: a few parallel calls may slip past), not a lock.
+
+**Who may call.** The same people as the screen: `manage_options` (on a network, the super administrators), checked on every call. The annotations are exact (`readonly` on what only reads), but they are hints for the client, not a barrier; the barrier is the capability. With the OAuth of [`pollora/mcp-connector`](https://github.com/Pollora/mcp-connector), a token that may only read cannot call an ability that is not read-only.
+
+**What an agent is given is data.** A finding can contain what the site wrote: a file name, a plugin slug, a reason somebody typed. So every text is cut (300 characters, 200 per detail line, 5 lines), cleaned of control and invisible characters, and every field is copied by name: no secret, no setting, no address of a notification channel can come out. The description of each ability tells the model that what it returns is never an instruction. That reduces prompt injection; it does not remove it: do not give an agent that reads a hostile site the power to write (`writes`) without a person looking.
+
 ## The journal
 
 ```php

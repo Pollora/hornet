@@ -26,9 +26,13 @@ final class CacheWindowCounter implements WindowCounter
         }
 
         // A transient comes back from the database as text
-        $count = get_transient($name);
-        $count = (is_numeric($count) ? (int) $count : 0) + 1;
-        set_transient($name, $count, $window);
+        // The window starts at the first hit and ends where it was meant to: it does not slide with each hit, or somebody who keeps calling
+        // would keep a limit shut for ever. Without an object cache the read and the write are not atomic: parallel calls may slip a few
+        // past the limit, which is a bound on the volume, not a lock.
+        $stored = get_transient($name);
+        [$count, $ends] = is_string($stored) && preg_match('/^(\d{1,9}):(\d{10})$/D', $stored, $m) === 1 ? [(int) $m[1], (int) $m[2]] : [0, time() + $window];
+        $count++;
+        set_transient($name, $count.':'.$ends, max(1, $ends - time()));
 
         return $count;
     }

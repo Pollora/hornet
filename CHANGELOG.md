@@ -4,6 +4,13 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Eighth milestone (0.8): abilities for AI agents.
+
+- `abilities.enabled` (off) publishes `hornet/get-status`, `hornet/list-findings`, `hornet/get-remediation` and `hornet/read-journal` in the Abilities API (WordPress 6.9 and later, offered to the MCP Adapter); `abilities.writes` (off, and refused without `enabled`) adds `hornet/run-scan`, `hornet/set-aside-finding` and `hornet/restore-finding`: 20 an hour per account, each said in the journal (`hornet.scan_requested` is new).
+- No ability changes a setting, turns a protection off or reads a secret. What an agent reads is cut, cleaned and copied field by field (`AgentView`).
+- Requires `pollora/abilities` (^1.0, no dependency of its own).
+- `AdminBackend::requestScan()` is what the screen and the ability share.
+
 Seventh milestone (0.7), second part: the journal on the screen, and setting a finding aside.
 
 - **Journal** tab on the screen (`GET hornet/v1/journal`: filters by kind and source validated, 100 per page at most; says it is off when it is).

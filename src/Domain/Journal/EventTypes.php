@@ -56,6 +56,8 @@ final class EventTypes
 
     public const string SCAN_COMPLETED = 'hornet.scan_completed';
 
+    public const string SCAN_REQUESTED = 'hornet.scan_requested';
+
     public const string FINDING_SET_ASIDE = 'hornet.finding_set_aside';
 
     public const string FINDING_RESTORED = 'hornet.finding_restored';
@@ -72,7 +74,7 @@ final class EventTypes
             self::PLUGIN_ACTIVATED, self::PLUGIN_DEACTIVATED, self::PLUGIN_DELETED, self::PLUGIN_INSTALLED, self::PLUGIN_UPDATED,
             self::THEME_SWITCHED, self::THEME_DELETED, self::THEME_INSTALLED, self::THEME_UPDATED,
             self::CORE_UPDATED, self::OPTION_CHANGED,
-            self::SCAN_COMPLETED, self::FINDING_SET_ASIDE, self::FINDING_RESTORED,
+            self::SCAN_COMPLETED, self::SCAN_REQUESTED, self::FINDING_SET_ASIDE, self::FINDING_RESTORED,
         ];
     }
 

@@ -12,6 +12,10 @@
             <file>tests/Arch.php</file>
         </testsuite>
     </testsuites>
+    <php>
+        <!-- Patchwork rewrites every file that is loaded, the architecture rules load them all (the packages hornet requires too) -->
+        <ini name="memory_limit" value="512M"/>
+    </php>
     <source>
         <include>
             <directory>src</directory>

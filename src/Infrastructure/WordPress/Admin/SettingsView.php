@@ -50,6 +50,8 @@ final class SettingsView
         $add('Scanner', 'vulnerabilities.enabled', 'Look up known vulnerabilities', $settings->vulnerabilities->enabled, $settings->vulnerabilities->enabled ? 'name and version of each plugin and theme go to www.wpvulnerability.net' : '');
 
         $add('Journal', 'journal.enabled', 'Security journal', $settings->journal->enabled, $settings->journal->enabled ? sprintf('kept %d days', $settings->journal->retentionDays) : '');
+        $add('Agents', 'abilities.enabled', 'Abilities for AI agents (read)', $settings->abilities->enabled);
+        $add('Agents', 'abilities.writes', 'Abilities for AI agents (start a scan, set aside)', $settings->abilities->writes, $settings->abilities->writes ? 'at most 20 changes an hour per person' : '');
         $add('Notifications', 'notifications.channels', 'Notification channels', $settings->notifications->channels !== [], sprintf('%d, %s', count($settings->notifications->channels), $settings->notifications->schedule));
         $add('Audit', 'site_health', 'Site Health tests', $settings->siteHealth);
         $add('Audit', 'disabled_checks', 'Checks turned off', $settings->disabledChecks !== [], implode(', ', $settings->disabledChecks));

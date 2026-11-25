@@ -8,10 +8,8 @@ use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Domain\Exceptions\SetAsideException;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\Source;
-use Pollora\Hornet\Domain\Scan\ScanState;
 use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
 use Pollora\Hornet\Infrastructure\WordPress\Module;
-use Pollora\Hornet\Infrastructure\WordPress\ScanModule;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -157,16 +155,9 @@ final readonly class AdminRestModule implements Module
      */
     public function scan(): WP_REST_Response
     {
-        if ($this->job->state()->isActive(time())) {
-            return new WP_REST_Response(['queued' => false, 'reason' => 'A scan is already in progress.', 'state' => $this->job->state()->toArray()], 409);
-        }
+        $result = $this->backend->requestScan();
 
-        $this->job->queued();
-        wp_schedule_single_event(time(), ScanModule::NOW_HOOK);
-        // The cron is started now rather than at the next visit; with DISABLE_WP_CRON the system cron picks the event up
-        spawn_cron();
-
-        return new WP_REST_Response(['queued' => true, 'state' => ScanState::fromArray($this->job->state()->toArray())->toArray()], 202);
+        return new WP_REST_Response($result, $result['queued'] ? 202 : 409);
     }
 
     public function test(WP_REST_Request $request): WP_REST_Response

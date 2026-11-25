@@ -54,7 +54,9 @@ final class EventDetails
      */
     public static function text(string $text, int $length): string
     {
-        $text = (string) preg_replace('/[\x00-\x1F\x7F\x{200B}-\x{200F}\x{202A}-\x{202E}\x{2066}-\x{2069}\x{FEFF}]/u', '', $text);
+        // Controls, and every invisible format character (zero width, direction marks, the Tags block that a model reads and a person does not),
+        // private use and unassigned code points, the variation selectors and the combining grapheme joiner
+        $text = (string) preg_replace('/[\x00-\x1F\x7F\p{Cf}\p{Co}\p{Cn}\x{034F}\x{180B}-\x{180F}\x{FE00}-\x{FE0F}\x{E0100}-\x{E01EF}]/u', '', $text);
 
         return mb_strlen($text) > $length ? mb_substr($text, 0, $length - 1).'…' : $text;
     }
