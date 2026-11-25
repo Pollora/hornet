@@ -88,6 +88,14 @@ return [
         // 'enforce_after' => '2026-12-15',   // until this date: a notice only
     ],
 
+    // The file scanner (`wp hornet scan`). It runs when you ask: there is nothing to turn on, and nothing is ever deleted or repaired.
+    'scanner' => [
+        // Core files that are meant to differ from WordPress.org (a patch your project applies), relative to the WordPress root.
+        // Each is pinned the first time it is seen: a later change is reported. On Pollora and Bedrock the files that the
+        // patches of patches.lock.json change are allowed by themselves; list here what Hornet cannot find out.
+        // 'allow_modified' => ['wp-includes/l10n.php'],
+    ],
+
     // Tell someone when the audit finds something new. Nothing is sent until a channel is listed.
     // A secret (a webhook URL, a token, a signing key) is read from the environment: never write it in this file.
     'notifications' => [

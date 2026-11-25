@@ -46,6 +46,32 @@ final readonly class Finding
     }
 
     /**
+     * Reads what {@see toArray()} wrote (the last scan is stored that way). Null when it does not fit: a stored value may have been cut or edited.
+     */
+    public static function fromArray(mixed $value): ?self
+    {
+        if (! is_array($value)) {
+            return null;
+        }
+
+        $outcome = is_string($value['outcome'] ?? null) ? Outcome::tryFrom($value['outcome']) : null;
+        $severity = is_string($value['severity'] ?? null) ? Severity::tryFrom($value['severity']) : null;
+        $details = [];
+
+        foreach (is_array($value['details'] ?? null) ? $value['details'] : [] as $line) {
+            if (is_string($line)) {
+                $details[] = $line;
+            }
+        }
+
+        if (! is_string($value['check'] ?? null) || ! is_string($value['summary'] ?? null) || ! $outcome instanceof Outcome || ! $severity instanceof Severity) {
+            return null;
+        }
+
+        return new self($value['check'], $outcome, $severity, $value['summary'], $details, is_string($value['fix'] ?? null) ? $value['fix'] : null);
+    }
+
+    /**
      * The same finding, set aside on purpose by someone who wrote why.
      */
     public function ignoredFor(string $reason): self

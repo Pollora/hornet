@@ -222,6 +222,50 @@ reset
 login
 check "without the setting WordPress's own duration is back"          in_range "$(expires_in)" 100000 200000
 
+# --- 8. the scanner: the real WordPress.org, and real files changed on disk ---------------------------------
+echo "8. scanner"
+# The network between the container and WordPress.org drops now and then: a scan that says "did not answer" is run again (three times at most).
+# What the test is about is what the scan does when WordPress.org answers.
+scan_try() { n=0; while [ "$n" -lt 3 ]; do php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" hornet scan "$@" >/tmp/hornet-scan.out 2>&1; scan_status=$?; grep -q 'did not answer' /tmp/hornet-scan.out || break; n=$((n + 1)); sleep 4; done; }
+scan_show() { sed 's/^/        | /' /tmp/hornet-scan.out; return 1; }
+# scan_says <text> [scan args]: the scan succeeds and says the text
+scan_says() { needle=$1; shift; scan_try "$@"; { [ "$scan_status" -eq 0 ] && grep -qF "$needle" /tmp/hornet-scan.out; } || scan_show; }
+# scan_fails_with <text> [scan args]: the scan ends with a failing exit code and says the text
+scan_fails_with() { needle=$1; shift; scan_try "$@"; { [ "$scan_status" -ne 0 ] && grep -qF "$needle" /tmp/hornet-scan.out; } || scan_show; }
+core_file="$WP_DIR/wp-includes/version.php"
+cp "$core_file" /tmp/hornet-version.php.orig
+cli option delete hornet_scan >/dev/null 2>&1
+reset
+
+check "before any scan the audit says it does not know"            sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'core-integrity.*never scanned'"
+check "an untouched core matches WordPress.org"                     scan_says 'Nothing found'
+check "the audit now shows the scan"                                sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'pass.*core-integrity'"
+check "the scan is not autoloaded"                                  sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'require \"$PKG/tests/E2E/scan-autoload.php\";' | grep -qE '^(off|no|auto-off)$'"
+
+echo '<?php // planted by the E2E test' > "$WP_DIR/wp-includes/hornet-e2e-shell.php"
+check "a script planted in wp-includes fails the scan, and the exit code says so" scan_fails_with 'wp-includes/hornet-e2e-shell.php'
+check "the audit reports it too"                                    sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'core-integrity'"
+check "the planted file is still there: Hornet deletes nothing"     test -f "$WP_DIR/wp-includes/hornet-e2e-shell.php"
+rm -f "$WP_DIR/wp-includes/hornet-e2e-shell.php"
+
+echo "// changed by the E2E test" >> "$core_file"
+check "a changed core file fails the scan"                          scan_fails_with 'Changed: wp-includes/version.php'
+check "the changed file is not repaired"                            sh -c "tail -1 '$core_file' | grep -q 'changed by the E2E test'"
+configure "array('scanner' => array('allow_modified' => array('wp-includes/version.php')))"
+check "an allowed file may differ"                                  scan_says 'Nothing found'
+echo "// and then something else" >> "$core_file"
+check "an allowed file that changes again is reported"              scan_fails_with 'Changed since first seen: wp-includes/version.php'
+check "it keeps being reported at the next scan"                    scan_fails_with 'Open findings'
+check "--repin accepts the file as it is"                           scan_says 'Nothing found' --repin
+cp /tmp/hornet-version.php.orig "$core_file"
+reset
+
+wp config set HORNET_DISABLED true --raw >/dev/null
+check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'
+wp config delete HORNET_DISABLED >/dev/null 2>&1
+check "the core is back as it was"                                  scan_says 'Nothing found'
+cli option delete hornet_scan >/dev/null 2>&1
+
 reset
 echo
 if [ "$failed" -eq 0 ]; then echo "All assertions passed."; else echo "Some assertions failed."; fi

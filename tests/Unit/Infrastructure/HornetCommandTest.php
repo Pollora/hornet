@@ -10,6 +10,7 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
 use Pollora\Hornet\Infrastructure\WpCli\HornetCommand;
 use Pollora\Hornet\Tests\Fixtures\FakeEnvironment;
 use Pollora\Hornet\Tests\Fixtures\RecordingOutput;
+use Pollora\Hornet\Tests\Fixtures\Samples;
 
 function commandFor(FakeEnvironment $environment, RecordingOutput $output, array $ignored = []): HornetCommand
 {
@@ -54,12 +55,13 @@ it('says so when everything passes', function (): void {
     $environment = new FakeEnvironment(
         constants: [...FakeEnvironment::salts(), 'DISALLOW_FILE_EDIT' => true, 'DISALLOW_FILE_MODS' => true, 'FORCE_SSL_ADMIN' => true],
         active: [Component::Portcullis, Component::TwoFactor],
+        scan: Samples::cleanScan(),
     );
 
     commandFor($environment, $output)->status([], ['all' => true]);
 
-    expect($output->successes[0])->toContain('14 checks: 14 pass, 0 open')
-        ->and($output->rows)->toHaveCount(14);
+    expect($output->successes[0])->toContain('15 checks: 15 pass, 0 open')
+        ->and($output->rows)->toHaveCount(15);
 });
 
 it('does not list what passes unless asked', function (): void {

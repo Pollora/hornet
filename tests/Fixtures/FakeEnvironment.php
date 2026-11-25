@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 
 /**
  * A site described in a few lines: the defaults are a healthy production site, a test changes what it is about.
@@ -37,6 +38,7 @@ class FakeEnvironment implements Environment
         public ?string $throttleProblem = null,
         /** @var list<int>|null */
         public ?array $withoutTwoFactor = [],
+        public ?ScanSnapshot $scan = null,
     ) {}
 
     /**
@@ -139,6 +141,11 @@ class FakeEnvironment implements Environment
     public function isActive(Component $component): bool
     {
         return in_array($component, $this->active, true);
+    }
+
+    public function lastScan(): ?ScanSnapshot
+    {
+        return $this->scan;
     }
 
     public function now(): DateTimeImmutable

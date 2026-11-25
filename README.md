@@ -24,8 +24,9 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `login-protection` | whether [pollora/portcullis](https://github.com/Pollora/portcullis) is there |
 | `two-factor` | whether the official Two-Factor plugin is active |
 | `two-factor-coverage` | the administrators who have not set up a second factor, named by number |
+| `core-integrity` | what the last [scan](#scan-the-files) found about the WordPress core files (it reads the result: it never scans) |
 
-A check reads and never writes, and never asks the network. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
+A check reads and never writes, and never asks the network. A scan is another thing: see below. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 
 Hornet does not redo what Pollora already does. If `pollora/portcullis` protects the login, the check says so instead of warning.
 
@@ -48,6 +49,7 @@ wp hornet status                      # the open findings and what could not be 
 wp hornet status --all                # every check, passing ones too
 wp hornet status --format=json        # for a script or a pipeline
 wp hornet status --fail-on=medium     # exit 1 from a medium finding up (default: high; none = never)
+wp hornet scan                        # compare the core files with WordPress.org (asks the network)
 php artisan pollora:doctor            # Pollora: one "Security (Hornet)" line
 ```
 
@@ -236,6 +238,35 @@ function verify(rawBody, headers, secret) {
   return given.length === expected.length && timingSafeEqual(Buffer.from(given), Buffer.from(expected));
 }
 ```
+
+## Scan the files
+
+```bash
+wp hornet scan                        # compare the core files with WordPress.org
+wp hornet scan --format=json          # for a script or a pipeline
+wp hornet scan --fail-on=medium       # exit 1 from a medium finding up (default: high)
+wp hornet scan --repin                # accept the allowed files as they are now
+```
+
+A scan reads the disk, and asks `api.wordpress.org` for the checksums of the release you run (only the version and the locale are sent: not the address of the site). It runs when you ask, from WP-CLI, and never inside a page request. It **never deletes, repairs or quarantines a file**: it tells you, and you decide.
+
+`ignore` and `disabled_checks` apply to the scan as they do to the audit: a finding you set aside (with its reason) does not fail the command, and `disabled_checks => ['core-integrity']` stops the scan from running and from asking WordPress.org.
+
+A scan that could not look does not erase what an earlier one found: if the last scan found a modified file and this one could not reach WordPress.org, the finding stays, with the date and the reason it was not checked again. Only a scan that looked and found nothing clears it.
+
+The result is kept (in one option that WordPress does not load on every page; on a multisite network, for the network, since the files are shared). The `core-integrity` check, Site Health and `pollora:doctor` show it. A clean result older than seven days is a low finding: it says little about the files today.
+
+**Core files.** For each file WordPress.org lists (the content folder is left out), Hornet reports a file that differs, a file that is gone, and a file that WordPress does not ship in `wp-admin`, `wp-includes` or as a script in the root: that is where a backdoor lands. A clean answer means every listed file has the hash WordPress.org published. A release that WordPress.org knows nothing of (a beta, a development build), or an answer that did not come, is `unknown`, never a pass.
+
+**A project that patches the core on purpose.** Pollora patches `wp-includes/l10n.php` (so that Laravel can declare `__()`). The files changed by the patches of `patches.lock.json` are read from the patches themselves (found in the framework or in the `patches` folder, taken only when their SHA-256 is the one in the lock) and allowed to differ. Anything else is listed by hand:
+
+```php
+'scanner' => ['allow_modified' => ['wp-includes/some-file.php']],
+```
+
+An allowed file is not trusted for good: its hash is pinned the first time it is seen, and a later change is reported (the one file that may differ would otherwise be the best place to hide in). A pin belongs to one release of the core: an update pins again. After you change a patch on purpose, `wp hornet scan --repin` accepts the files as they are.
+
+What it cannot do, so you know: a core that was changed **before** the first scan with a file you allowed is pinned as it is; a compromised WordPress.org answer would be believed (the request is over HTTPS and nothing is cached); the plugins, the themes and the suspicious files in the content folder are not scanned yet.
 
 ## Design
 
