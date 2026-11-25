@@ -108,3 +108,14 @@ it('refuses a format or a severity it does not know', function (): void {
     expect(fn () => scanCommand(scanned(), new RecordingOutput)([], ['format' => 'xml']))->toThrow(RuntimeException::class, 'Unknown format')
         ->and(fn () => scanCommand(scanned(), new RecordingOutput)([], ['fail-on' => 'severe']))->toThrow(RuntimeException::class, 'Unknown severity');
 });
+
+it('does not fail on a finding the owner set aside, and shows it as ignored', function (): void {
+    $files = scanned();
+    $files->files['wp-includes/shell.php'] = 'x';
+    $output = new RecordingOutput;
+    $scanner = new Scanner([new CoreIntegrityTask(new FakeCoreChecksums(scanOfficial()), $files, '7.1.3', 'en_US')], new InMemoryScanStore, new FakeClock, ['core-integrity' => 'Reviewed on 2026-11-20.']);
+
+    (new ScanCommand(fn (): Scanner => $scanner, $output))();
+
+    expect($output->rows[0]['status'])->toBe('ignored')->and($output->successes)->toBe(['Nothing found.']);
+});

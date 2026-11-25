@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Application\Scan;
 
+use DateTimeImmutable;
 use Pollora\Hornet\Domain\Audit\Finding;
+use Pollora\Hornet\Domain\Audit\Outcome;
+use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Clock;
 use Pollora\Hornet\Domain\Scan\Pins;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
@@ -19,13 +22,18 @@ use Throwable;
  */
 final readonly class Scanner
 {
+    /** What a failure that could not be checked again says in its details. */
+    private const string KEPT = 'Not verified again on';
+
     /**
      * @param  list<ScanTask>  $tasks
+     * @param  array<string, string>  $ignored  id of a task => why its finding is set aside (the `ignore` setting)
      */
     public function __construct(
         private array $tasks,
         private ScanStore $store,
         private Clock $clock,
+        private array $ignored = [],
     ) {}
 
     /**
@@ -42,23 +50,48 @@ final readonly class Scanner
     public function run(bool $repin = false): ScanSnapshot
     {
         $previous = $this->store->last();
+        $now = $this->clock->now();
         $findings = [];
         $pins = [];
 
         foreach ($this->tasks as $task) {
             $id = $task->id();
             $result = $this->runOne($task, $previous?->pins($id), $repin);
-            $findings[$id] = $result->finding;
+            $findings[$id] = $this->kept($result->finding, $previous?->finding($id), $now);
 
             if ($result->pins instanceof Pins) {
                 $pins[$id] = $result->pins;
             }
         }
 
-        $snapshot = new ScanSnapshot($this->clock->now(), $findings, $pins);
+        $snapshot = new ScanSnapshot($now, $findings, $pins);
         $this->store->save($snapshot);
 
         return $snapshot;
+    }
+
+    /**
+     * The findings of a scan, with the ones the owner chose to live with set aside, on the reason they wrote.
+     */
+    public function report(ScanSnapshot $snapshot): Report
+    {
+        return new Report(array_values(array_map(fn (Finding $finding): Finding => isset($this->ignored[$finding->checkId]) ? $finding->ignoredFor($this->ignored[$finding->checkId]) : $finding, $snapshot->findings)));
+    }
+
+    /**
+     * A scan that could not look must not erase what an earlier one found: a request to WordPress.org that times out
+     * (or is made to) would otherwise turn a high finding into "not verified". The failure stays, with the reason it was not checked again.
+     */
+    private function kept(Finding $found, ?Finding $before, DateTimeImmutable $now): Finding
+    {
+        if ($found->outcome !== Outcome::Unknown || ! $before instanceof Finding || $before->outcome !== Outcome::Fail) {
+            return $found;
+        }
+
+        // A failure that was already kept once is not stacked: only the latest reason is told
+        $details = array_values(array_filter($before->details, static fn (string $line): bool => ! str_starts_with($line, self::KEPT)));
+
+        return Finding::fail($before->checkId, $before->severity, $before->summary, [...$details, sprintf('%s %s UTC: %s', self::KEPT, $now->format('Y-m-d H:i'), $found->summary)], $before->fix);
     }
 
     /**

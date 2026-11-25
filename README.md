@@ -250,6 +250,10 @@ wp hornet scan --repin                # accept the allowed files as they are now
 
 A scan reads the disk, and asks `api.wordpress.org` for the checksums of the release you run (only the version and the locale are sent: not the address of the site). It runs when you ask, from WP-CLI, and never inside a page request. It **never deletes, repairs or quarantines a file**: it tells you, and you decide.
 
+`ignore` and `disabled_checks` apply to the scan as they do to the audit: a finding you set aside (with its reason) does not fail the command, and `disabled_checks => ['core-integrity']` stops the scan from running and from asking WordPress.org.
+
+A scan that could not look does not erase what an earlier one found: if the last scan found a modified file and this one could not reach WordPress.org, the finding stays, with the date and the reason it was not checked again. Only a scan that looked and found nothing clears it.
+
 The result is kept (in one option that WordPress does not load on every page; on a multisite network, for the network, since the files are shared). The `core-integrity` check, Site Health and `pollora:doctor` show it. A clean result older than seven days is a low finding: it says little about the files today.
 
 **Core files.** For each file WordPress.org lists (the content folder is left out), Hornet reports a file that differs, a file that is gone, and a file that WordPress does not ship in `wp-admin`, `wp-includes` or as a script in the root: that is where a backdoor lands. A clean answer means every listed file has the hash WordPress.org published. A release that WordPress.org knows nothing of (a beta, a development build), or an answer that did not come, is `unknown`, never a pass.

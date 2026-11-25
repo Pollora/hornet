@@ -161,6 +161,49 @@ describe('the patches of the project', function (): void {
         expect(CorePatches::touched("+++ b/../../etc/passwd\n+++ b//absolute\n+++ b/\n+++ /dev/null\n"))->toBe([]);
     });
 
+    it('finds the files that the patches of the lock change, taking only a patch whose hash is the one in the lock', function (): void {
+        $good = "--- a/wp-includes/l10n.php\n+++ b/wp-includes/l10n.php\n@@ -1 +1 @@\n-x\n+y\n";
+        $other = "--- a/wp-admin/index.php\n+++ b/wp-admin/index.php\n@@ -1 +1 @@\n-x\n+y\n";
+        $notCore = "--- a/src/App.php\n+++ b/src/App.php\n@@ -1 +1 @@\n-x\n+y\n";
+        $project = folder([
+            'patches/good.patch' => $good,
+            // Same folder, not in the lock: a patch that was swapped is not trusted
+            'patches/swapped.patch' => $other,
+            'vendor-framework/patches/not-core.patch' => $notCore,
+            'patches.lock.json' => (string) json_encode(['patches' => [
+                'johnpbloch/wordpress-core' => [['package' => 'johnpbloch/wordpress-core', 'sha256' => hash('sha256', $good), 'depth' => 1], ['sha256' => 'not a hash'], 'text'],
+                'some/library' => [['sha256' => hash('sha256', $notCore), 'depth' => 1]],
+            ]]),
+        ]);
+
+        expect(CorePatches::in($project, [$project.'/patches', $project.'/vendor-framework/patches']))->toBe(['wp-includes/l10n.php']);
+
+        remove($project);
+    });
+
+    it('reads the patches of Bedrock\'s core package too, and a patch that is in two folders once', function (): void {
+        $patch = "--- a/wp-includes/l10n.php\n+++ b/wp-includes/l10n.php\n@@ -1 +1 @@\n";
+        $project = folder(['a/one.patch' => $patch, 'b/two.patch' => $patch, 'patches.lock.json' => (string) json_encode(['patches' => ['roots/wordpress' => [['sha256' => hash('sha256', $patch)]]]])]);
+
+        expect(CorePatches::in($project, [$project.'/a', $project.'/b']))->toBe(['wp-includes/l10n.php']);
+
+        remove($project);
+    });
+
+    it('finds nothing without a lock, with a lock that is not JSON, or with no patch file to match', function (): void {
+        $none = folder(['a/x.patch' => 'x']);
+        $broken = folder(['patches.lock.json' => '{not json']);
+        $unmatched = folder(['patches.lock.json' => (string) json_encode(['patches' => ['roots/wordpress' => [['sha256' => str_repeat('a', 64)]]]])]);
+
+        expect(CorePatches::in($none, [$none.'/a']))->toBe([])
+            ->and(CorePatches::in($broken, [$broken]))->toBe([])
+            ->and(CorePatches::in($unmatched, [$unmatched]))->toBe([]);
+
+        remove($none);
+        remove($broken);
+        remove($unmatched);
+    });
+
     it('finds nothing in a project that patches nothing', function (): void {
         // The package is installed on its own here: its root has no patches.lock.json
         expect(CorePatches::files())->toBe([]);

@@ -7,6 +7,7 @@ use Pollora\Hornet\Application\Scan\ScanTask;
 use Pollora\Hornet\Application\Scan\TaskResult;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
+use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Scan\Pins;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Tests\Fixtures\FakeClock;
@@ -75,4 +76,58 @@ it('reports a task that crashed and goes on with the others, keeping its pins', 
         ->and($snapshot->finding('one')?->summary)->toBe('The scan could not run: RuntimeException')
         ->and($snapshot->finding('two')?->outcome)->toBe(Outcome::Pass)
         ->and($snapshot->pins('one'))->toBe($pins);
+});
+
+it('keeps a failure that an earlier scan found when the next one could not look', function (): void {
+    $failed = Finding::fail('one', Severity::High, 'A file differs.', ['Changed: a.php'], 'Look at it.');
+    $store = new InMemoryScanStore(new ScanSnapshot(new DateTimeImmutable('2026-11-20'), ['one' => $failed]));
+    $scanner = new Scanner([fixedTask('one', new TaskResult(Finding::unknown('one', 'WordPress.org did not answer.')))], $store, new FakeClock('2026-11-25 10:00:00'));
+
+    $finding = $scanner->run()->finding('one');
+
+    expect($finding?->outcome)->toBe(Outcome::Fail)
+        ->and($finding?->severity)->toBe(Severity::High)
+        ->and($finding?->summary)->toBe('A file differs.')
+        ->and($finding?->fix)->toBe('Look at it.')
+        ->and($finding?->details)->toBe(['Changed: a.php', 'Not verified again on 2026-11-25 10:00 UTC: WordPress.org did not answer.']);
+});
+
+it('tells only the latest reason when a failure is kept again and again', function (): void {
+    $failed = Finding::fail('one', Severity::High, 'A file differs.', ['Changed: a.php']);
+    $store = new InMemoryScanStore(new ScanSnapshot(new DateTimeImmutable('2026-11-20'), ['one' => $failed]));
+    $clock = new FakeClock('2026-11-25 10:00:00');
+    $scanner = new Scanner([fixedTask('one', new TaskResult(Finding::unknown('one', 'first reason')))], $store, $clock);
+
+    $scanner->run();
+    $clock->advance('PT1H');
+    $again = (new Scanner([fixedTask('one', new TaskResult(Finding::unknown('one', 'second reason')))], $store, $clock))->run()->finding('one');
+
+    expect($again?->details)->toBe(['Changed: a.php', 'Not verified again on 2026-11-25 11:00 UTC: second reason']);
+});
+
+it('does not keep what was fine: a pass followed by a scan that could not look is not known', function (): void {
+    $store = new InMemoryScanStore(new ScanSnapshot(new DateTimeImmutable('2026-11-20'), ['one' => Finding::pass('one', 'fine')]));
+    $scanner = new Scanner([fixedTask('one', new TaskResult(Finding::unknown('one', 'down')))], $store, new FakeClock);
+
+    expect($scanner->run()->finding('one')?->outcome)->toBe(Outcome::Unknown);
+});
+
+it('keeps a failure when the task crashed too', function (): void {
+    $failed = Finding::fail('one', Severity::Medium, 'A file is gone.');
+    $store = new InMemoryScanStore(new ScanSnapshot(new DateTimeImmutable('2026-11-20'), ['one' => $failed]));
+    $scanner = new Scanner([fixedTask('one', new RuntimeException('boom'))], $store, new FakeClock);
+
+    $finding = $scanner->run()->finding('one');
+
+    expect($finding?->outcome)->toBe(Outcome::Fail)->and($finding?->details[0])->toContain('The scan could not run: RuntimeException');
+});
+
+it('sets aside, on the reason the owner wrote, what the owner chose to live with', function (): void {
+    $scanner = new Scanner([fixedTask('one', new TaskResult(Finding::fail('one', Severity::High, 'A file differs.')))], new InMemoryScanStore, new FakeClock, ['one' => 'Reviewed on 2026-11-20.']);
+
+    $report = $scanner->report($scanner->run());
+
+    expect($report->open())->toBe([])
+        ->and($report->counts()['ignored'])->toBe(1)
+        ->and($report->findings[0]->ignoredReason)->toBe('Reviewed on 2026-11-20.');
 });

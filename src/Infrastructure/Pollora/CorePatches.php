@@ -20,6 +20,8 @@ final class CorePatches
     private const array PACKAGES = ['johnpbloch/wordpress-core', 'roots/wordpress', 'roots/wordpress-no-content', 'roots/wordpress-full'];
 
     /**
+     * The files that the project patches, found from the project the package is installed in.
+     *
      * @return list<string>
      */
     public static function files(): array
@@ -30,7 +32,7 @@ final class CorePatches
 
         $root = InstalledVersions::getRootPackage()['install_path'] ?? null;
 
-        if (! is_string($root) || ! is_file($root.'/patches.lock.json')) {
+        if (! is_string($root)) {
             return [];
         }
 
@@ -38,6 +40,20 @@ final class CorePatches
 
         if (InstalledVersions::isInstalled('pollora/framework')) {
             $directories[] = (InstalledVersions::getInstallPath('pollora/framework') ?? '').'/patches';
+        }
+
+        return self::in($root, $directories);
+    }
+
+    /**
+     * @param  string  $root  the folder of the project, where patches.lock.json is
+     * @param  list<string>  $directories  where the patch files may be
+     * @return list<string>
+     */
+    public static function in(string $root, array $directories): array
+    {
+        if (! is_file($root.'/patches.lock.json')) {
+            return [];
         }
 
         $files = [];

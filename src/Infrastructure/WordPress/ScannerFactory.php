@@ -6,6 +6,7 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
 use Pollora\Hornet\Application\Scan\Scanner;
+use Pollora\Hornet\Application\Scan\ScanTask;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Pollora\CorePatches;
@@ -17,7 +18,7 @@ use Pollora\Hornet\Infrastructure\Scan\NativeFileSystem;
 final class ScannerFactory
 {
     /**
-     * @return Scanner|null null when the install cannot be read from here
+     * @return Scanner|null null when the install cannot be read from here, or when every scan is disabled
      */
     public static function forWordPress(Settings $settings): ?Scanner
     {
@@ -30,10 +31,11 @@ final class ScannerFactory
         // What `wp core verify-checksums` reads too: a core downloaded in another language is compared with that language
         $locale = $GLOBALS['wp_local_package'] ?? null;
 
-        return new Scanner(
-            [new CoreIntegrityTask(new WordPressCoreChecksums(new WpHttpClient), $files, wp_get_wp_version(), is_string($locale) && $locale !== '' ? $locale : 'en_US', array_values(array_unique([...$settings->scanner->allowModified, ...CorePatches::files()])))],
-            new OptionScanStore,
-            new SystemClock,
-        );
+        $tasks = [new CoreIntegrityTask(new WordPressCoreChecksums(new WpHttpClient), $files, wp_get_wp_version(), is_string($locale) && $locale !== '' ? $locale : 'en_US', array_values(array_unique([...$settings->scanner->allowModified, ...CorePatches::files()])))];
+
+        // A scan that is disabled does not run, and asks nothing of the network
+        $tasks = array_values(array_filter($tasks, static fn (ScanTask $task): bool => ! in_array($task->id(), $settings->disabledChecks, true)));
+
+        return $tasks === [] ? null : new Scanner($tasks, new OptionScanStore, new SystemClock, $settings->ignored);
     }
 }

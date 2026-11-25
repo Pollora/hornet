@@ -19,7 +19,7 @@ final readonly class ScanCommand
     private const array FORMATS = ['table', 'json', 'csv', 'yaml'];
 
     /**
-     * @param  Closure(): ?Scanner  $scanner  built when the command runs; null when Hornet is switched off or the install cannot be read
+     * @param  Closure(): ?Scanner  $scanner  built when the command runs; null when Hornet is switched off, every scan is disabled or the install cannot be read
      */
     public function __construct(
         private Closure $scanner,
@@ -82,13 +82,13 @@ final readonly class ScanCommand
         $scanner = ($this->scanner)();
 
         if (! $scanner instanceof Scanner) {
-            $this->output->error('Hornet is switched off, or the WordPress files cannot be read from here: nothing was scanned.');
+            $this->output->error('Hornet is switched off, every scan is disabled, or the WordPress files cannot be read from here: nothing was scanned.');
 
             return;
         }
 
         $snapshot = $scanner->run(array_key_exists('repin', $assoc));
-        $report = new Report(array_values($snapshot->findings));
+        $report = $scanner->report($snapshot);
 
         if ($format === 'json') {
             $this->output->line((string) json_encode(['scanned_at' => $snapshot->at->format('c'), 'counts' => $report->counts(), 'findings' => array_map(static fn (Finding $finding): array => $finding->toArray(), $report->findings)], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
@@ -107,10 +107,11 @@ final readonly class ScanCommand
      */
     private function row(Finding $finding): array
     {
-        $status = match ($finding->outcome) {
-            Outcome::Unknown => 'unknown',
-            Outcome::Pass => 'pass',
-            Outcome::Fail => 'open',
+        $status = match (true) {
+            $finding->outcome === Outcome::Unknown => 'unknown',
+            $finding->isIgnored() => 'ignored',
+            $finding->outcome === Outcome::Pass => 'pass',
+            default => 'open',
         };
 
         return ['status' => $status, 'severity' => $finding->outcome === Outcome::Fail ? $finding->severity->value : '-', 'check' => $finding->checkId, 'summary' => $finding->summary];

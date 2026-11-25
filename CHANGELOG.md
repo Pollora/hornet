@@ -10,6 +10,9 @@ Fourth milestone (0.4), first part: the scanner, and the core files.
 - Reports a file that differs, a file that is gone, and a file that WordPress does not ship in `wp-admin`, `wp-includes` or as a script in the root. An unknown release or an unreachable WordPress.org is `unknown`, not a pass.
 - `scanner.allow_modified` lists core files that are meant to differ. The files changed by the patches of `patches.lock.json` (Pollora, Bedrock) are allowed by themselves. An allowed file is pinned on first sight and a later change is reported; a pin lasts one release of the core.
 - New check `core-integrity`: it shows the result of the last scan (never scanned = `unknown`; a clean result older than seven days = low), so that Site Health and `pollora:doctor` read the same story without scanning. The result is kept in one option without autoload, for the network on a multisite.
+- A scan that could not look (WordPress.org did not answer, the files cannot be listed) never erases a failure an earlier scan found: the finding stays, with the date and the reason it was not checked again.
+- `ignore` and `disabled_checks` apply to the scan (`core-integrity`): an ignored finding does not fail `wp hornet scan`, a disabled one is not run and asks nothing of the network.
+- On a site that was never scanned, the new check is `unknown`: `wp hornet status` and the `pollora:doctor` line count one more check that "could not be verified" (no warning, no failing exit code) until `wp hornet scan` runs once.
 - `Environment` gains `lastScan()`; `Finding` can be read back from its array.
 
 Third milestone (0.3), third part: account rules.
