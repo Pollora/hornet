@@ -316,6 +316,23 @@ One entry in the **Tools** menu (never a menu of its own), for the administrator
 
 **The compiled screen is part of the package.** `assets/admin` is built from `admin/src` (`npm ci && npm run build`) and kept in git, so that nothing runs npm on a site. A workflow fails when what is tracked is not what the source builds to. The package serves the files itself, to the people who may see the screen: its folder is outside the web root on Bedrock and on Pollora. About 13 KB of JavaScript is loaded, on that screen only, and it needs a browser that the block editor supports. The screen uses no private API of WordPress (the table is plain components, not DataViews, which relies on them): an update of WordPress should not break it. If a script it needs is missing, it says so on the page, instead of staying empty.
 
+## Rules for the web server
+
+Some protections cannot be applied by a plugin, because the request never reaches PHP. `wp hornet server-config nginx` and `wp hornet server-config apache` **print** rules for them; they write nothing, anywhere: a server configuration is yours, a mistake in it takes the site down, and a plugin that edits it can be made to edit it.
+
+```bash
+wp hornet server-config nginx > hornet.conf          # read it, include it in the server block, nginx -t, reload
+wp hornet server-config apache --headers             # Apache 2.4; --headers adds nosniff, referrer and permissions policies
+wp hornet server-config nginx --uploads=/app/uploads # Bedrock or Pollora: the URL path of the uploads folder (by default, this site's)
+```
+
+- **No PHP from the uploads folder**, nor a double extension (`shell.php.jpg`): the usual way a webshell is planted. The scanner's probe `exposed-files` tells you when that is not the case.
+- **No dotfile** (`.env`, `.git`, `.htaccess`), except `.well-known`.
+- **No file that should never be public**: `wp-config.php`, `composer.json` and `.lock`, `package.json`, `auth.json`, dumps, backups, logs.
+- With `--headers`, the headers that never change. Do not turn them on when Hornet's own `headers` settings are on: they would be set twice.
+
+The folder is checked before it goes into a configuration file (a path of letters, digits, dots, dashes and underscores). On nginx, put the rules before the `location ~ \.php$` block. Both sets were run against a real nginx 1.27 and Apache 2.4: a PHP file in uploads, `a.php.jpg`, `.env` and `composer.json` answer 403; an image, `index.html` and `.well-known/x` answer 200.
+
 ## Abilities: what an AI agent may ask
 
 With `abilities.enabled`, the audit is published as **abilities** of the WordPress Abilities API (WordPress 6.9 and later), through [`pollora/abilities`](https://github.com/Pollora/abilities). The MCP Adapter plugin turns abilities into MCP tools, and the abilities say they may be offered to it (`meta.mcp.public`). Hornet runs no MCP server of its own, and sends nothing anywhere: an agent asks, the site answers.
