@@ -21,6 +21,8 @@ return (new Configuration)
     ->ignoreUnknownFunctionsRegex('~.*~')
     ->ignoreErrorsOnExtensions(['ext-ctype', 'ext-filter', 'ext-json', 'ext-mbstring'], [ErrorType::SHADOW_DEPENDENCY])
     ->ignoreErrorsOnPackage('illuminate/support', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    // The provider names Laravel's HTTP kernel: it only runs inside a Laravel application, which brings its contracts
+    ->ignoreErrorsOnPackage('illuminate/contracts', [ErrorType::SHADOW_DEPENDENCY])
     // The middleware only runs inside Laravel, which brings Symfony's HTTP classes
     ->ignoreErrorsOnPackage('symfony/http-foundation', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPath($root.'/tests', [ErrorType::UNKNOWN_CLASS, ErrorType::UNKNOWN_FUNCTION, ErrorType::SHADOW_DEPENDENCY]);
