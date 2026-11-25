@@ -204,6 +204,19 @@ describe('http client', function (): void {
             ->and(receiver()->requests())->toBe([]);
     });
 
+    it('asks a private address when the site is asking itself, and refuses it otherwise', function (): void {
+        $allowed = (new WpHttpClient)->get(Secret::of(receiver()->url('/status/200')), [], 100, 5, true);
+        $refused = null;
+
+        try {
+            (new WpHttpClient)->get(Secret::of(receiver()->url('/status/200')), [], 100);
+        } catch (TransportException $error) {
+            $refused = $error->getMessage();
+        }
+
+        expect($allowed->status)->toBe(200)->and($refused)->toStartWith('The request failed');
+    });
+
     it('posts to a private address the owner allowed, with the body and headers', function (): void {
         $response = (new WpHttpClient)->post(Secret::of(receiver()->url('/status/200')), ['Content-Type' => 'application/json', 'X-Test' => 'yes'], '{"a":1}', true);
         $request = receiver()->requests()[0];

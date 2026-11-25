@@ -12,7 +12,7 @@ use Pollora\Hornet\Domain\Scan\CoreIntegrity;
  */
 final readonly class ScannerSettings
 {
-    private const array KEYS = ['allow_modified', 'ignore_paths', 'schedule'];
+    private const array KEYS = ['allow_modified', 'ignore_paths', 'schedule', 'own_themes', 'probes', 'probe_uploads'];
 
     private const array SCHEDULES = ['off', 'hourly', 'twicedaily', 'daily'];
 
@@ -20,16 +20,22 @@ final readonly class ScannerSettings
      * @param  list<string>  $allowModified  core files that are meant to differ from WordPress.org
      * @param  list<string>  $ignorePaths  files and folders of the content folder that the suspicious-files scan leaves alone
      * @param  string  $schedule  off, hourly, twicedaily or daily
+     * @param  list<string>  $ownThemes  slugs of the themes written for this site: their files change with every deployment, and are not compared with a first look
+     * @param  bool  $probes  whether the scan asks the site itself for the files it should not give away
+     * @param  bool  $probeUploads  whether the scan puts a file in the uploads for a moment, to ask whether the server runs PHP there
      */
     private function __construct(
         public array $allowModified,
         public array $ignorePaths,
         public string $schedule,
+        public array $ownThemes,
+        public bool $probes,
+        public bool $probeUploads,
     ) {}
 
     public static function none(): self
     {
-        return new self([], [], 'off');
+        return new self([], [], 'off', [], true, false);
     }
 
     /**
@@ -55,7 +61,9 @@ final readonly class ScannerSettings
             throw InvalidSettingsException::invalid('scanner.schedule', implode(', ', self::SCHEDULES));
         }
 
-        return new self($allowed, $ignored, $schedule);
+        $own = self::slugs($value['own_themes'] ?? []);
+
+        return new self($allowed, $ignored, $schedule, $own, self::flag($value, 'probes', true), self::flag($value, 'probe_uploads', false));
     }
 
     /**
@@ -75,5 +83,35 @@ final readonly class ScannerSettings
         }
 
         return $clean;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function slugs(mixed $slugs): array
+    {
+        $expected = "a list of theme folder names (for example 'my-theme')";
+
+        if (! is_array($slugs) || ! array_is_list($slugs)) {
+            throw InvalidSettingsException::invalid('scanner.own_themes', $expected);
+        }
+
+        $clean = [];
+
+        foreach ($slugs as $slug) {
+            $clean[] = is_string($slug) && preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]*$/D', $slug) === 1 ? $slug : throw InvalidSettingsException::invalid('scanner.own_themes', $expected);
+        }
+
+        return $clean;
+    }
+
+    /**
+     * @param  array<mixed>  $value
+     */
+    private static function flag(array $value, string $key, bool $default): bool
+    {
+        $flag = $value[$key] ?? $default;
+
+        return is_bool($flag) ? $flag : throw InvalidSettingsException::invalid('scanner.'.$key, 'true or false');
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Application;
 
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
+use Pollora\Hornet\Application\Scan\ExposedFilesTask;
 use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
 use Pollora\Hornet\Application\Scan\SuspiciousFilesTask;
 use Pollora\Hornet\Domain\Audit\Check;
@@ -52,7 +53,9 @@ final class DefaultChecks
             // What the last scan found: the audit reads it and never scans
             new ScanResultCheck(CoreIntegrityTask::ID, 'WordPress core files'),
             new ScanResultCheck(PluginIntegrityTask::ID, 'Plugin files'),
+            new ScanResultCheck(PluginIntegrityTask::THEMES_ID, 'Theme files'),
             new ScanResultCheck(SuspiciousFilesTask::ID, 'Suspicious files'),
+            new ScanResultCheck(ExposedFilesTask::ID, 'Files given away by the site'),
         ];
     }
 }

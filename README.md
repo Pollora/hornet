@@ -26,7 +26,9 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `two-factor-coverage` | the administrators who have not set up a second factor, named by number |
 | `core-integrity` | what the last [scan](#scan-the-files) found about the WordPress core files (it reads the result: it never scans) |
 | `plugin-integrity` | what the last scan found about the files of the plugins |
+| `theme-integrity` | what the last scan found about the files of the themes |
 | `suspicious-files` | what the last scan found in the content folder (scripts in the uploads, web shells) |
+| `exposed-files` | what the site gave away when the last scan asked it (a `.env`, a repository, a backup, a log) |
 
 A check reads and never writes, and never asks the network. A scan is another thing: see below. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 
@@ -290,7 +292,13 @@ On a large site (many plugins, a large uploads folder) use `wp hornet scan` from
 
 **Shells.** Besides the usual signs, the rules know a function named by the request (`$_POST['a']($_POST['b'])`), a callback handed the request (`call_user_func($_GET['f'])`, `array_map('assert', $_POST)`, `assert($_POST['x'])`) and an `include` of a file the request names: each is 7 points, high on its own. The "Silence is golden" exemption is decided on the PHP tokens, so a comment that is followed by code on the same line is not silence.
 
-What it cannot do, so you know: a core that was changed **before** the first scan with a file you allowed is pinned as it is; a compromised WordPress.org answer would be believed (the request is over HTTPS and nothing is cached); the integrity of the themes (WordPress.org publishes no checksums for them) and the probes of the web server (a reachable `.env`, PHP that runs in the uploads) are not done yet.
+**Themes.** WordPress.org publishes no checksums for themes, so every theme (active or not) gets the plugins' "first look": its files are hashed once, and a change, a missing file or a script that is not there any more is reported afterwards. The first looks have their own option (`hornet_baseline_themes`). A theme you write yourself changes with every deployment: list its folder name in `scanner.own_themes` and it is left out. `--repin` takes the themes as they are now.
+
+**What the site gives away.** The scan asks the site itself, from the server, for about thirty fixed addresses: `.env` files, `.git`, copies of `wp-config.php` and of the database, archives, `.htpasswd`, `phpinfo.php`, PHP error logs, `wp-content/debug.log`, a listing of the uploads and of the plugins. An address counts only when it answers 200 **and** the start of the answer looks like the file (a site that sends its home page for every unknown address gives nothing away). The finding names the address and what it is, never what it holds: a password that was reachable is not repeated in the report. Nothing is written for these questions. A server that does not answer its own address (DNS, a firewall, a certificate it does not trust) gives `unknown`. `scanner.probes => false` turns them off.
+
+**Does the server run PHP in the uploads?** The most useful question writes: with `scanner.probe_uploads => true` the scan puts one small file (`hornet-probe-<random>.php`, which prints a random token that is not in its source) in the uploads, asks for it over HTTP, and removes it at once. If the answer is the token, the server runs PHP that sits in the uploads (high): a file that gets there is run. A server that refuses, or sends the file as text, is fine. It is the only place where the scan writes; it removes only a file of that exact name that holds its own mark (a file left by a run that died is swept at the next one). Off until you ask.
+
+What it cannot do, so you know: a core that was changed **before** the first scan with a file you allowed is pinned as it is; a compromised WordPress.org answer would be believed (the request is over HTTPS and nothing is cached); the probes ask a fixed list: a backup with another name is not found, and a file protected by the web server's own rules is not the site's to say.
 
 ## Design
 

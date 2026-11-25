@@ -98,6 +98,15 @@ return [
         // Files and folders of the content folder that the suspicious-files scan leaves alone (your false positives), relative to wp-content.
         // 'ignore_paths' => ['uploads/known-legacy', 'themes/mine/vendor'],
 
+        // Themes you write for this site (folder names): they change with every deployment, so they are not compared with a first look.
+        // 'own_themes' => ['my-theme'],
+
+        // Ask the site itself, from the server, for what it should not give away (.env, .git, backups, debug.log...). On by default; nothing is written.
+        // 'probes' => true,
+
+        // Also put one harmless file in the uploads for a moment, to ask whether the server runs PHP there. Writes, then removes. Off until you ask.
+        // 'probe_uploads' => false,
+
         // Scan from WP-Cron: off, hourly, twicedaily or daily. Off until you ask. On a large site, run `wp hornet scan` from the system cron instead.
         // 'schedule' => 'daily',
     ],

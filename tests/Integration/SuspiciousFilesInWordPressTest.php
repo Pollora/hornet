@@ -79,7 +79,7 @@ it('leaves alone what the owner says to', function (): void {
 it('builds the scanner of the site with the walk, and a budget for the cron', function (): void {
     $settings = Settings::fromArray(['scanner' => ['ignore_paths' => ['uploads/known']]]);
 
-    expect(ScannerFactory::forWordPress($settings)?->tasks())->toBe(['core-integrity', 'plugin-integrity', 'suspicious-files'])
+    expect(ScannerFactory::forWordPress($settings)?->tasks())->toBe(['core-integrity', 'plugin-integrity', 'theme-integrity', 'suspicious-files', 'exposed-files'])
         ->and(ScannerFactory::forWordPress($settings, true))->toBeInstanceOf(Scanner::class);
 });
 

@@ -4,6 +4,13 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Fourth milestone (0.4), last part: the themes, and the probes.
+
+- `theme-integrity`: the themes get the first look the unknown plugins get (WordPress.org publishes no checksums for themes), in their own option. `scanner.own_themes` leaves out the themes you write yourself.
+- `exposed-files`: the scan asks the site itself for about thirty fixed addresses (`.env`, `.git`, copies of `wp-config.php` and of the database, archives, logs, listings). An answer counts only when it is a 200 whose start looks like the file; the report names the address and never repeats what the file holds. `scanner.probes` (on by default, nothing is written).
+- `scanner.probe_uploads` (off by default): one harmless file is written in the uploads, asked for, and removed at once, to find out whether the server runs PHP there. A file left by a run that died is swept.
+- `HttpClient::get()` can be told that a private address is allowed (the site asking itself).
+
 Fourth milestone (0.4), third part: suspicious files and the schedule.
 
 - `wp hornet scan` walks the content folder (not the plugins, which have their own scan): a script in the uploads, an `.htaccess` or `.user.ini` that runs code, a name with a PHP extension in the middle, a hidden PHP file, and a PHP file that reads like a web shell. The rules are Hornet's own (`token_get_all`), scored: no rule is enough alone. New check `suspicious-files`.
