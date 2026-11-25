@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\Pollora;
 
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use Pollora\Hornet\Application\Auditor;
@@ -25,7 +26,7 @@ final class HornetServiceProvider extends ServiceProvider
 
     private const string FILTER = 'Pollora\\Hook\\Domain\\Contract\\Filter';
 
-    private const string KERNEL = 'Illuminate\\Contracts\\Http\\Kernel';
+    private const string KERNEL = Kernel::class;
 
     private const string DOCTOR_CHECK = 'Pollora\\Doctor\\Domain\\Contracts\\CheckInterface';
 
