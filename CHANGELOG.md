@@ -4,6 +4,10 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Ninth milestone (0.9), first part: rules for the web server.
+
+- `wp hornet server-config nginx|apache [--uploads=<path>] [--headers]` prints rules (no PHP from uploads, no dotfile, no file that should never be public, optional static headers). It writes nothing. The folder is validated before it enters a configuration.
+
 Eighth milestone (0.8): abilities for AI agents.
 
 - `abilities.enabled` (off) publishes `hornet/get-status`, `hornet/list-findings`, `hornet/get-remediation` and `hornet/read-journal` in the Abilities API (WordPress 6.9 and later, offered to the MCP Adapter); `abilities.writes` (off, and refused without `enabled`) adds `hornet/run-scan`, `hornet/set-aside-finding` and `hornet/restore-finding`: 20 an hour per account, each said in the journal (`hornet.scan_requested` is new).

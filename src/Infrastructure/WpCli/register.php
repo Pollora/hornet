@@ -20,6 +20,7 @@ use Pollora\Hornet\Infrastructure\WpCli\HornetCommand;
 use Pollora\Hornet\Infrastructure\WpCli\JournalCommand;
 use Pollora\Hornet\Infrastructure\WpCli\NotifyCommand;
 use Pollora\Hornet\Infrastructure\WpCli\ScanCommand;
+use Pollora\Hornet\Infrastructure\WpCli\ServerConfigCommand;
 use Pollora\Hornet\Infrastructure\WpCli\UnlockCommand;
 use Pollora\Hornet\Infrastructure\WpCli\WpCliOutput;
 
@@ -65,6 +66,11 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
         JournalSchema::drop(...),
         SettingsLoader::load(get_current_blog_id())->journal->retentionDays,
         new SystemClock,
+        new WpCliOutput,
+    ));
+
+    WP_CLI::add_command('hornet server-config', new ServerConfigCommand(
+        static fn (): string => (string) parse_url(wp_get_upload_dir()['baseurl'], PHP_URL_PATH),
         new WpCliOutput,
     ));
 
