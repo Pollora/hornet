@@ -7,6 +7,7 @@ namespace Pollora\Hornet\Tests\Fixtures;
 use DateTimeImmutable;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
+use Pollora\Hornet\Domain\Audit\XmlRpcState;
 
 /**
  * A site described in a few lines: the defaults are a healthy production site, a test changes what it is about.
@@ -28,9 +29,11 @@ class FakeEnvironment implements Environment
         public ?string $config = '/srv/wp-config.php',
         public ?int $mode = 0o640,
         public array $users = ['editor'],
-        public bool $xmlRpc = false,
+        public bool|XmlRpcState $xmlRpc = false,
         public array $active = [],
         public string $today = '2026-11-24',
+        public ?bool $usersListed = false,
+        public ?bool $editingBlocked = null,
     ) {}
 
     /**
@@ -101,9 +104,23 @@ class FakeEnvironment implements Environment
         return in_array($login, $this->users, true);
     }
 
-    public function xmlRpcEnabled(): bool
+    public function xmlRpcState(): XmlRpcState
     {
-        return $this->xmlRpc;
+        return match (true) {
+            $this->xmlRpc instanceof XmlRpcState => $this->xmlRpc,
+            $this->xmlRpc => XmlRpcState::Open,
+            default => XmlRpcState::Closed,
+        };
+    }
+
+    public function fileEditingBlocked(): bool
+    {
+        return $this->editingBlocked ?? ($this->constants['DISALLOW_FILE_EDIT'] ?? false) === true || ($this->constants['DISALLOW_FILE_MODS'] ?? false) === true;
+    }
+
+    public function usersListedToVisitors(): ?bool
+    {
+        return $this->usersListed;
     }
 
     public function isActive(Component $component): bool

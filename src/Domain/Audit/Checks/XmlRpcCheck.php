@@ -8,11 +8,14 @@ use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\Audit\XmlRpcState;
 
 /**
- * XML-RPC lets a script try hundreds of passwords in one request. Most sites do not use it.
+ * XML-RPC lets a script try hundreds of passwords in one request, and its pingbacks can be turned against other sites.
+ * Most sites do not use it.
  *
- * The check reads the effective state, whoever turned it off.
+ * The check reads what the server answers, whoever closed it. Refusing the logins (`xmlrpc_enabled` off) leaves the
+ * pingbacks open: that is a half measure, and it says so.
  */
 final readonly class XmlRpcCheck implements Check
 {
@@ -28,10 +31,10 @@ final readonly class XmlRpcCheck implements Check
 
     public function run(Environment $environment): Finding
     {
-        if (! $environment->xmlRpcEnabled()) {
-            return Finding::pass($this->id(), 'XML-RPC is disabled.');
-        }
-
-        return Finding::fail($this->id(), Severity::Medium, 'XML-RPC is enabled.', [], "Disable it unless Jetpack or the mobile app needs it: add_filter('xmlrpc_enabled', '__return_false'), or use pollora/headless.");
+        return match ($environment->xmlRpcState()) {
+            XmlRpcState::Closed => Finding::pass($this->id(), 'XML-RPC is closed: no method answers.'),
+            XmlRpcState::LoginDisabled => Finding::fail($this->id(), Severity::Low, 'XML-RPC refuses logins, but pingbacks and other methods that need none still answer.', [], "Close it altogether with Hornet's `hardening.xmlrpc`, or return an empty list from the `xmlrpc_methods` filter."),
+            XmlRpcState::Open => Finding::fail($this->id(), Severity::Medium, 'XML-RPC is open.', [], "Close it unless Jetpack or the mobile app needs it: Hornet's `hardening.xmlrpc` does it, or use pollora/headless."),
+        };
     }
 }

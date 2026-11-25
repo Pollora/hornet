@@ -8,6 +8,9 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
+use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Throwable;
+use WP_REST_Request;
 
 /**
  * What the checks may know, read from a running WordPress. It reads; it writes nothing and asks nothing of the network.
@@ -85,9 +88,41 @@ final class WordPressEnvironment implements Environment
         return get_user_by('login', $login) !== false;
     }
 
-    public function xmlRpcEnabled(): bool
+    public function xmlRpcState(): XmlRpcState
     {
-        return (bool) apply_filters('xmlrpc_enabled', true);
+        // A method standing in for the real list: whatever empties the filter closes them all
+        $methods = apply_filters('xmlrpc_methods', ['pingback.ping' => 'this:pingback_ping']);
+
+        return match (true) {
+            $methods === [] => XmlRpcState::Closed,
+            ! apply_filters('xmlrpc_enabled', true) => XmlRpcState::LoginDisabled,
+            default => XmlRpcState::Open,
+        };
+    }
+
+    public function fileEditingBlocked(): bool
+    {
+        return in_array('do_not_allow', map_meta_cap('edit_plugins', 0), true) && in_array('do_not_allow', map_meta_cap('edit_themes', 0), true);
+    }
+
+    /**
+     * Asks the REST API for the users as a visitor would, in this process: no network, nothing written.
+     */
+    public function usersListedToVisitors(): ?bool
+    {
+        $previous = get_current_user_id();
+
+        try {
+            wp_set_current_user(0);
+            $response = rest_do_request(new WP_REST_Request('GET', '/wp/v2/users'));
+            $data = $response->get_data();
+
+            return $response->get_status() < 400 && is_array($data) && $data !== [];
+        } catch (Throwable) {
+            return null;
+        } finally {
+            wp_set_current_user($previous);
+        }
     }
 
     /**
