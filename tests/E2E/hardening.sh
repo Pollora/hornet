@@ -224,9 +224,9 @@ check "without the setting WordPress's own duration is back"          in_range "
 
 # --- 8. the scanner: the real WordPress.org, and real files changed on disk ---------------------------------
 echo "8. scanner"
-# The network between the container and WordPress.org drops now and then: a scan that says "did not answer" is run again (three times at most).
+# The network between the container and WordPress.org drops now and then: a scan that says "did not answer" is run again (four times at most).
 # What the test is about is what the scan does when WordPress.org answers.
-scan_try() { n=0; while [ "$n" -lt 3 ]; do php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" hornet scan "$@" >/tmp/hornet-scan.out 2>&1; scan_status=$?; grep -q 'did not answer' /tmp/hornet-scan.out || break; n=$((n + 1)); sleep 4; done; }
+scan_try() { n=0; while [ "$n" -lt 4 ]; do php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" hornet scan "$@" >/tmp/hornet-scan.out 2>&1; scan_status=$?; grep -q 'did not answer' /tmp/hornet-scan.out || break; n=$((n + 1)); sleep 8; done; }
 scan_show() { sed 's/^/        | /' /tmp/hornet-scan.out; return 1; }
 # scan_says <text> [scan args]: the scan succeeds and says the text
 scan_says() { needle=$1; shift; scan_try "$@"; { [ "$scan_status" -eq 0 ] && grep -qF "$needle" /tmp/hornet-scan.out; } || scan_show; }
@@ -259,6 +259,33 @@ check "it keeps being reported at the next scan"                    scan_fails_w
 check "--repin accepts the file as it is"                           scan_says 'Nothing found' --repin
 cp /tmp/hornet-version.php.orig "$core_file"
 reset
+
+# --- 8b. the plugins: the real list of downloads.wordpress.org, and a plugin it does not know ------------------
+echo "8b. plugins"
+akismet="$WP_DIR/wp-content/plugins/akismet"
+check "the plugins that WordPress.org lists match its list"          scan_says 'Nothing found'
+check "the audit shows the plugin result"                            sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'pass.*plugin-integrity'"
+cp "$akismet/akismet.php" /tmp/hornet-akismet.orig
+echo "// changed by the E2E test" >> "$akismet/akismet.php"
+check "a changed plugin file fails the scan"                         scan_fails_with 'Changed: akismet/akismet.php'
+cp /tmp/hornet-akismet.orig "$akismet/akismet.php"
+echo '<?php // planted by the E2E test' > "$akismet/hornet-e2e-shell.php"
+check "a script planted in a plugin fails the scan"                  scan_fails_with 'Script that does not belong: akismet/hornet-e2e-shell.php'
+check "it is still there: Hornet deletes nothing"                    test -f "$akismet/hornet-e2e-shell.php"
+rm -f "$akismet/hornet-e2e-shell.php"
+check "back to normal, the scan is clean again"                      scan_says 'Nothing found'
+
+mkdir -p "$WP_DIR/wp-content/plugins/hornet-e2e-premium"
+printf '<?php\n/*\nPlugin Name: Hornet E2E premium\nVersion: 3.1\n*/\n' > "$WP_DIR/wp-content/plugins/hornet-e2e-premium/premium.php"
+check "a plugin WordPress.org does not know gets a first look"       scan_says 'First look kept for 1 plugin(s)'
+check "the second scan compares with it"                             scan_says '2 plugin(s) match WordPress.org, 1 match what was first seen.'
+check "the first look is not autoloaded"                             sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'global \$wpdb; echo \$wpdb->get_var(\"SELECT autoload FROM {\$wpdb->options} WHERE option_name = \\\"hornet_baseline\\\"\");' | grep -qE '^(off|no|auto-off)\$'"
+echo "// changed by the E2E test" >> "$WP_DIR/wp-content/plugins/hornet-e2e-premium/premium.php"
+check "a change in it is reported"                                   scan_fails_with 'Changed: hornet-e2e-premium/premium.php'
+check "--repin takes the plugin as it is now"                        scan_says 'First look kept' --repin
+check "and the scan after it is clean"                               scan_says '2 plugin(s) match WordPress.org, 1 match what was first seen.'
+rm -rf "$WP_DIR/wp-content/plugins/hornet-e2e-premium"
+cli option delete hornet_baseline >/dev/null 2>&1
 
 wp config set HORNET_DISABLED true --raw >/dev/null
 check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'

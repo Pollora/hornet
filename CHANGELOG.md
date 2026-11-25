@@ -4,6 +4,12 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Fourth milestone (0.4), second part: the plugins.
+
+- `wp hornet scan` compares each plugin with the list of `downloads.wordpress.org` (SHA-256 by file, one request per plugin with the slug and the version only): a changed file, a missing file, a script that is not in the list. A plugin WordPress.org does not know gets a first look, kept in the `hornet_baseline` option (no autoload) and compared afterwards; `--repin` takes the plugins as they are now.
+- New check `plugin-integrity`, same rules as `core-integrity` (never scanned is `unknown`, a clean result older than seven days is low).
+- A time budget of four minutes: the plugins left are named, not silently skipped.
+
 Fourth milestone (0.4), first part: the scanner, and the core files.
 
 - `wp hornet scan` (`--format`, `--fail-on`, `--repin`): compares the core files with the checksums of WordPress.org. It reads the disk and asks the network, only when it is run; it never deletes, repairs or quarantines a file.

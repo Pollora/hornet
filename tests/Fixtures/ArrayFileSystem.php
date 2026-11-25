@@ -58,6 +58,13 @@ final class ArrayFileSystem implements FileSystem
         return $contents === null ? null : md5($contents);
     }
 
+    public function sha256(string $path): ?string
+    {
+        $contents = $this->files[$path] ?? null;
+
+        return $contents === null ? null : hash('sha256', $contents);
+    }
+
     /**
      * The official list of this install: the MD5 of each file as it is now. WordPress.org does not list wp-config.php (it ships a sample).
      *

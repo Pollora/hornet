@@ -21,4 +21,7 @@ interface FileSystem
 
     /** The MD5 of a file, null when it is missing or cannot be read. */
     public function md5(string $path): ?string;
+
+    /** The SHA-256 of a file, null when it is missing or cannot be read. */
+    public function sha256(string $path): ?string;
 }

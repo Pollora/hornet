@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Application;
 
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
+use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
 use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Checks\AdminAccountCheck;
 use Pollora\Hornet\Domain\Audit\Checks\ConfigPermissionsCheck;
@@ -49,6 +50,7 @@ final class DefaultChecks
             new TwoFactorCoverageCheck,
             // What the last scan found: the audit reads it and never scans
             new ScanResultCheck(CoreIntegrityTask::ID, 'WordPress core files'),
+            new ScanResultCheck(PluginIntegrityTask::ID, 'Plugin files'),
         ];
     }
 }

@@ -119,3 +119,14 @@ it('does not fail on a finding the owner set aside, and shows it as ignored', fu
 
     expect($output->rows[0]['status'])->toBe('ignored')->and($output->successes)->toBe(['Nothing found.']);
 });
+
+it('shows the notes of a clean scan too, such as a file allowed to differ', function (): void {
+    $files = scanned();
+    $files->files['wp-includes/version.php'] = 'patched';
+    $output = new RecordingOutput;
+    $scanner = new Scanner([new CoreIntegrityTask(new FakeCoreChecksums(scanOfficial()), $files, '7.1.3', 'en_US', ['wp-includes/version.php'])], new InMemoryScanStore, new FakeClock);
+
+    (new ScanCommand(fn (): Scanner => $scanner, $output))();
+
+    expect($output->lines)->toContain('  Allowed to differ, and unchanged since first seen: wp-includes/version.php');
+});

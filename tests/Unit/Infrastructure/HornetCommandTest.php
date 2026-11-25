@@ -60,8 +60,8 @@ it('says so when everything passes', function (): void {
 
     commandFor($environment, $output)->status([], ['all' => true]);
 
-    expect($output->successes[0])->toContain('15 checks: 15 pass, 0 open')
-        ->and($output->rows)->toHaveCount(15);
+    expect($output->successes[0])->toContain('16 checks: 16 pass, 0 open')
+        ->and($output->rows)->toHaveCount(16);
 });
 
 it('does not list what passes unless asked', function (): void {
