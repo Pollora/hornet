@@ -8,12 +8,17 @@ use Pollora\Hornet\Application\Login\Unlocker;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Domain\Audit\Report;
+use Pollora\Hornet\Domain\Journal\Journal;
+use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
 use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalSchema;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
 use Pollora\Hornet\Infrastructure\WordPress\ScannerFactory;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Pollora\Hornet\Infrastructure\WpCli\HornetCommand;
+use Pollora\Hornet\Infrastructure\WpCli\JournalCommand;
 use Pollora\Hornet\Infrastructure\WpCli\NotifyCommand;
 use Pollora\Hornet\Infrastructure\WpCli\ScanCommand;
 use Pollora\Hornet\Infrastructure\WpCli\UnlockCommand;
@@ -53,6 +58,14 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
             // The scan asks WordPress.org: it does nothing while Hornet is off
             return $settings->enabled ? ScannerFactory::forWordPress($settings) : null;
         },
+        new WpCliOutput,
+    ));
+
+    WP_CLI::add_command('hornet journal', new JournalCommand(
+        static fn (): Journal => new TableJournal,
+        JournalSchema::drop(...),
+        SettingsLoader::load(get_current_blog_id())->journal->retentionDays,
+        new SystemClock,
         new WpCliOutput,
     ));
 

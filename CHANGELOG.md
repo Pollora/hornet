@@ -4,6 +4,14 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Seventh milestone (0.7), first part: the journal.
+
+- `journal.enabled` (off by default) and `journal.retention_days` (90): a table per site (`{prefix}hornet_journal`, `dbDelta`, versioned) that records logins and failures, accounts created, deleted and given a role, application passwords (by name), plugins and themes (activated, deactivated, deleted, installed, updated), the core update, sensitive options (`siteurl`, `home`, `users_can_register`, `default_role`, and that `admin_email` changed), and the end of a scan. Each event has the **source of the request**: web, admin, rest, ajax, xmlrpc, cli or cron.
+- Never a password, a secret, or the name typed on a login that matches no account. The address is cut (IPv4 /24, IPv6 /48). A journal that cannot be written never stops a request.
+- A daily purge (`pollora/hornet/purge_journal`), an exporter and an eraser for the privacy tools of WordPress (erasing keeps the events and takes the person out of them), a suggestion for the privacy policy.
+- `wp hornet journal list|purge|drop`.
+- New hook `pollora/hornet/scan_completed`. `ScanJob::run()` returns `null` when it did not run.
+
 Sixth milestone (0.6): the administration screen.
 
 - **Tools > Security** (on a network: Settings, in the network administration, for the super administrators): overview and **Scan now**, findings (a table, worst first, with a search, filters and the details with what to do), settings (read only, never a secret), notification channels with a test message. `admin => false` removes it.

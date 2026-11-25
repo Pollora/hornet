@@ -81,7 +81,14 @@ final readonly class ScanModule implements Module
      */
     public function scan(?array $only = null): void
     {
-        if ($this->job->run($only) && wp_next_scheduled(self::CONTINUE_HOOK) === false) {
+        $unfinished = $this->job->run($only);
+
+        // Told to whoever listens (the journal): a run that stepped aside did not happen
+        if ($unfinished !== null) {
+            do_action('pollora/hornet/scan_completed');
+        }
+
+        if ($unfinished === true && wp_next_scheduled(self::CONTINUE_HOOK) === false) {
             wp_schedule_single_event(time() + self::CONTINUE_AFTER, self::CONTINUE_HOOK);
         }
     }

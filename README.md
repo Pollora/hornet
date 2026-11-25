@@ -315,6 +315,34 @@ One entry in the **Tools** menu (never a menu of its own), for the administrator
 
 **The compiled screen is part of the package.** `assets/admin` is built from `admin/src` (`npm ci && npm run build`) and kept in git, so that nothing runs npm on a site. A workflow fails when what is tracked is not what the source builds to. The package serves the files itself, to the people who may see the screen: its folder is outside the web root on Bedrock and on Pollora. About 13 KB of JavaScript is loaded, on that screen only, and it needs a browser that the block editor supports. The screen uses no private API of WordPress (the table is plain components, not DataViews, which relies on them): an update of WordPress should not break it. If a script it needs is missing, it says so on the page, instead of staying empty.
 
+## The journal
+
+```php
+'journal' => ['enabled' => true, 'retention_days' => 90],
+```
+
+**Off until you turn it on**, because it writes to the database and what it keeps (who logged in, from which network, who changed a role) is personal data: turning it on is a decision about what the site tells its users. Hornet adds a paragraph to the privacy policy suggestions (Settings > Privacy) that says what is kept.
+
+What it records, each with the **source of the request** (`web`, `admin`, `rest`, `ajax`, `xmlrpc`, `cli`, `cron`: a role changed from the dashboard, from WP-CLI and over the REST API with an application password are three different stories):
+
+| Group | Events |
+| --- | --- |
+| `login` | success, failure (the account and the reason: `incorrect_password`…), password reset |
+| `user` | created (with its role), deleted, role changed (from > to, or added, or removed), super administrator granted or revoked, application password created or deleted (by its name) |
+| `plugin`, `theme`, `core` | activated, deactivated, deleted, installed, updated (by name), theme switched, core updated (with the version) |
+| `option` | `siteurl`, `home`, `users_can_register`, `default_role` (with the new value); `admin_email` (that it changed, not to what) |
+| `hornet` | a scan that ended, with how many findings it left |
+
+**What it never keeps**: a password, a salt, an application password, or the name that was typed on a login that matches no account (it may be a password in the wrong field: the event says "unknown account" and the reason, and no more). Details are flat, short, and drop any field whose name looks like a secret.
+
+**The address is cut**: the last byte of an IPv4 address, everything after the first 48 bits of an IPv6 address (`203.0.113.0`, `2001:db8:1::`): enough to see "the same network", not to name a household. The command line and the cron have none.
+
+- **Where**: one table per site (`{prefix}hornet_journal`), made with `dbDelta` and a version in an option; nothing in the posts or their meta. A table that cannot be written never stops a login or an update: the failure is counted, not thrown.
+- **Retention**: `retention_days` (90 by default, 1 to 3650); a daily WP-Cron event (`pollora/hornet/purge_journal`) forgets what is older. `wp hornet journal purge` does it now.
+- **Privacy tools**: the journal is an exporter (Tools > Export Personal Data: the events that name a person, as the one who did it or the one it was done to) and an eraser (Tools > Erase Personal Data). Erasing **keeps the events** (a security journal that forgets what happened is no journal) and takes the person out of them: their number, their login and the address are blanked.
+- **WP-CLI**: `wp hornet journal list [--type=login.|user.|plugin.|theme.|core.|option.|hornet.|<a type>] [--source=] [--user=] [--days=] [--limit=] [--format=]`, `wp hornet journal purge`, and `wp hornet journal drop --yes` to remove the table and its option (what an uninstall should do).
+- **Not done yet**: a view of the journal on the screen and a network-wide view for a multisite (the journal is per site), the reports of a Content-Security-Policy (a public endpoint that anyone can write to is a risk of its own), and two-factor events.
+
 ## Known vulnerabilities
 
 ```php

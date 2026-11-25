@@ -14,6 +14,13 @@ declare(strict_types=1);
 */
 
 return [
+    // The journal: who logged in, who changed a role, what was installed or updated, from where (web, admin, rest, cli, cron).
+    // Off until you turn it on: it writes to the database, and what it keeps is personal data. Never a password; the address is shortened.
+    'journal' => [
+        // 'enabled' => true,
+        // 'retention_days' => 90,
+    ],
+
     // The Tools > Security screen, and the REST routes it asks (hornet/v1). `false` removes both.
     'admin' => true,
 
