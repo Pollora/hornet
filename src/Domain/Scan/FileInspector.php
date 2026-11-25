@@ -65,7 +65,8 @@ final readonly class FileInspector
                 $flag(Severity::Medium, 'a hidden PHP file');
             }
 
-            $score = $contents !== null && ($this->content->size($path) ?? 0) <= self::READ ? ScriptRules::score($contents) : new ScriptScore(0);
+            // The first 512 KB of a larger file are read and scored: a shell is not excused by its size (a payload after the first 512 KB is not seen)
+            $score = $contents !== null ? ScriptRules::score($contents) : new ScriptScore(0);
 
             if ($score->isSuspicious()) {
                 $flag($score->score >= ScriptScore::LIKELY_SHELL ? Severity::High : Severity::Medium, sprintf('reads like a web shell (score %d): %s', $score->score, implode(', ', $score->reasons)));

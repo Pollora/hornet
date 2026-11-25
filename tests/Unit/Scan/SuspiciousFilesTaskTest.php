@@ -51,12 +51,19 @@ it('lists what it found, the most serious first, and fails at the worst', functi
 it('leaves the plugins to the plugin scan, and the caches and tools alone', function (): void {
     $files = clean();
 
-    foreach (['plugins/p/shell.php', 'languages/x.php', 'upgrade/x.php', 'themes/t/node_modules/x/shell.php', 'uploads/cache/x.php', 'uploads/.git/x.php', 'wflogs/x.php'] as $path) {
+    foreach (['plugins/p/shell.php', 'upgrade/x.php', 'cache/x.php', 'themes/t/node_modules/x/shell.php', 'uploads/.git/x.php', 'wflogs/x.php'] as $path) {
         $files->files[$path] = '<?php eval($_POST["x"]);';
     }
 
     expect(walk($files)->run(null, false)->finding->outcome)->toBe(Outcome::Pass);
 });
+
+it('looks where a shell hides: a folder that is only called cache or languages, deep in the uploads', function (string $path): void {
+    $files = clean();
+    $files->files[$path] = '<?php eval($_POST["x"]);';
+
+    expect(walk($files)->run(null, false)->finding->outcome)->toBe(Outcome::Fail);
+})->with(['uploads/2025/cache/x.php', 'languages/x.php', 'themes/t/cache/x.php', 'uploads/wflogs/x.php']);
 
 it('leaves alone what the owner says to leave alone: a file, or a folder', function (): void {
     $files = clean();

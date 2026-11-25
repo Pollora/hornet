@@ -4,6 +4,11 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+From the security audit of the package (an independent reviewer, three reproductions):
+
+- **The login lock** no longer forgets the failures at a successful login: somebody with an account of their own could slip a login between four guesses at another account and never reach the limit. The failures end with their window. An IPv6 network is counted as its /64.
+- **Suspicious files**: a folder that is merely named `cache` or `wflogs` (deep in the uploads), and the `languages` folder, are walked again; only the caches at the root of the content folder, `node_modules`, `.git` and the plugins (their own scan) are left. A script larger than 512 KB is no longer excused: its first 512 KB are scored.
+
 Ninth milestone (0.9), first part: rules for the web server.
 
 - `wp hornet server-config nginx|apache [--uploads=<path>] [--headers]` prints rules (no PHP from uploads, no dotfile, no file that should never be public, optional static headers). It writes nothing. The folder is validated before it enters a configuration.

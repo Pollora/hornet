@@ -82,15 +82,14 @@ it('locks per address: another visitor is not affected', function (): void {
     expect($other->gate('user'))->toBe('user');
 });
 
-it('forgets the failures after a success, and a lock ends with time', function (): void {
+it('does not forget the failures after a success, and a lock ends with time', function (): void {
     [$module, , $clock] = throttle();
 
     $module->failed();
     $module->failed();
     $module->succeeded();
-    $module->failed();
-    $module->failed();
 
+    // Two failures, a login of one's own, and the limit (3) is still one failure away: the login did not give the guesses back
     expect($module->gate('user'))->toBe('user');
 
     $module->failed();

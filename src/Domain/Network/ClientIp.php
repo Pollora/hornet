@@ -37,6 +37,13 @@ final readonly class ClientIp
      */
     public function key(string $salt): string
     {
-        return hash_hmac('sha256', (string) bin2hex((string) Cidr::pack($this->address)), $salt);
+        $packed = (string) Cidr::pack($this->address);
+
+        // An IPv6 network is a /64: whoever has one has as many addresses as they like, and each would be a fresh start
+        if (strlen($packed) === 16) {
+            $packed = substr($packed, 0, 8).str_repeat("\0", 8);
+        }
+
+        return hash_hmac('sha256', bin2hex($packed), $salt);
     }
 }

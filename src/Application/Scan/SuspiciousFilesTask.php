@@ -36,10 +36,10 @@ final readonly class SuspiciousFilesTask implements ScanTask
     private const string DROPPED = '~dropped';
 
     /** Folders that are not the site's code: tools, caches that hold generated PHP on purpose, languages. */
-    private const array SKIPPED_ANYWHERE = ['node_modules', '.git', 'cache', 'wflogs'];
+    private const array SKIPPED_ANYWHERE = ['node_modules', '.git'];
 
     /** Folders of the content folder that are left to others (the plugin scan) or hold no code. */
-    private const array SKIPPED_AT_ROOT = ['plugins', 'languages', 'upgrade'];
+    private const array SKIPPED_AT_ROOT = ['plugins', 'upgrade', 'cache', 'wflogs'];
 
     /**
      * @param  list<string>  $ignored  paths, relative to the content folder, that are left alone: a file or a folder (the owner's false positives)

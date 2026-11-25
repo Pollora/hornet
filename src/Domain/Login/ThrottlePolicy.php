@@ -51,11 +51,14 @@ final readonly class ThrottlePolicy
     }
 
     /**
-     * After a successful login the failures are forgotten; the history of lockouts is not.
+     * A successful login forgets nothing: the failures end with their window, by themselves.
+     *
+     * Forgetting them would let somebody who owns any account (an open registration, a customer) slip a login of their own between
+     * four guesses at another account, and never reach the limit.
      */
     public function succeeded(Attempts $attempts): Attempts
     {
-        return new Attempts(0, 0, 0, $attempts->lockouts);
+        return $attempts;
     }
 
     public function secondsLeft(Attempts $attempts, int $now): int
