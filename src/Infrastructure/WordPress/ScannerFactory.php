@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
+use Closure;
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
 use Pollora\Hornet\Application\Scan\ExposedFilesTask;
 use Pollora\Hornet\Application\Scan\KnownVulnerabilitiesTask;
@@ -27,10 +28,11 @@ use Pollora\Hornet\Infrastructure\Scan\UploadsProbeFiles;
 final class ScannerFactory
 {
     /**
+     * @param  Closure(string): void|null  $progress  called with the id of each task before it runs
      * @param  bool  $cron  a run of WP-Cron: the walk of the content folder has a time budget, and the plugin scan a shorter one
      * @return Scanner|null null when the install cannot be read from here, or when every scan is disabled
      */
-    public static function forWordPress(Settings $settings, bool $cron = false): ?Scanner
+    public static function forWordPress(Settings $settings, bool $cron = false, ?Closure $progress = null): ?Scanner
     {
         $files = NativeFileSystem::at(ABSPATH);
 
@@ -76,7 +78,7 @@ final class ScannerFactory
         // A scan that is disabled does not run, and asks nothing of the network
         $tasks = array_values(array_filter($tasks, static fn (ScanTask $task): bool => ! in_array($task->id(), $settings->disabledChecks, true)));
 
-        return $tasks === [] ? null : new Scanner($tasks, new OptionScanStore, new SystemClock, $settings->ignored);
+        return $tasks === [] ? null : new Scanner($tasks, new OptionScanStore, new SystemClock, $settings->ignored, $progress);
     }
 
     /**

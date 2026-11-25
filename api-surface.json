@@ -4,6 +4,7 @@
         "config:hornet": "unreadable without the application",
         "hook:pollora/hornet/continue_scan": "hook",
         "hook:pollora/hornet/retry_notifications": "hook",
+        "hook:pollora/hornet/scan_now": "hook",
         "hook:pollora/hornet/scheduled_audit": "hook",
         "hook:pollora/hornet/scheduled_scan": "hook"
     }

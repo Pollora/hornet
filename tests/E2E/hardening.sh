@@ -67,6 +67,7 @@ check "?author=1 still redirects to the author page" status_is 301 "$BASE/?autho
 check "the REST API still lists the users"          body_has '"slug":"admin"' "$BASE/wp-json/wp/v2/users"
 check "the pingback header is still there on a post"  header_present X-Pingback "$BASE/hello-world/"
 check "the generator tag is still there"            body_has 'name="generator"' "$BASE/"
+check "the REST index does not announce Hornet"                  body_lacks 'hornet/v1' "$BASE/wp-json/"
 check "XML-RPC still answers a pingback with a pingback error" sh -c "! curl -s -X POST -H 'Content-Type: text/xml' --data '$PINGBACK' '$BASE/xmlrpc.php' | grep -q -- '-32601'"
 
 # --- 2. hardening ------------------------------------------------------------------------------------------
@@ -393,6 +394,24 @@ configure "array('vulnerabilities' => array('enabled' => true), 'disabled_checks
 check "disabled_checks stops the lookup and the check"               sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'vulnerabilities'"
 reset
 cli option delete hornet_scan >/dev/null 2>&1
+
+# --- 8f. the screen's "Scan now" when the cron cannot start by itself: the system cron runs it --------------------
+echo "8f. scan now, system cron"
+configure "array('scanner' => array('probes' => false))"
+cli option delete hornet_scan hornet_scan_state >/dev/null 2>&1
+# The loopback request that WordPress makes to start the cron goes nowhere: only the system cron (wp cron event run) can run the event
+cli option update home "http://127.0.0.1:9" >/dev/null
+cli option update siteurl "http://127.0.0.1:9" >/dev/null
+check "an administrator asks for a scan: 202, and it waits"          sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'wp_set_current_user(1); \$r = rest_do_request(new WP_REST_Request(\"POST\", \"/hornet/v1/scan\")); echo \$r->get_status();' | grep -q '^202\$'"
+check "the state says it is queued"                                  sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_scan_state | grep -q queued"
+check "a second request is refused while it waits"                   sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'wp_set_current_user(1); \$r = rest_do_request(new WP_REST_Request(\"POST\", \"/hornet/v1/scan\")); echo \$r->get_status();' | grep -q '^409\$'"
+cli option update home "$BASE" >/dev/null
+cli option update siteurl "$BASE" >/dev/null
+cli cron event run --due-now >/dev/null 2>&1
+check "the system cron ran it: the state is idle again"               sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_scan_state | grep -q idle"
+check "and a scan is stored"                                         sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_scan | grep -q 'core-integrity'"
+reset
+cli option delete hornet_scan hornet_scan_state >/dev/null 2>&1
 
 wp config set HORNET_DISABLED true --raw >/dev/null
 check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'

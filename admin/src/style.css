@@ -1,0 +1,107 @@
+#hornet-admin {
+	max-width: 1100px;
+	margin-top: 16px;
+}
+
+.hornet-overview {
+	display: grid;
+	gap: 16px;
+	margin-top: 16px;
+}
+
+.hornet-headline {
+	margin: 0 0 8px;
+	font-size: 20px;
+}
+
+.hornet-counts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+	margin: 0 0 8px;
+	padding: 0;
+	list-style: none;
+}
+
+.hornet-counts strong {
+	display: block;
+	font-size: 28px;
+	line-height: 1.1;
+}
+
+.hornet-tasks {
+	margin-top: 12px;
+}
+
+.hornet-details {
+	list-style: disc;
+	padding-left: 20px;
+	word-break: break-word;
+}
+
+.hornet-settings-group {
+	margin-top: 20px;
+}
+
+.hornet-badge {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 2px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 20px;
+	background: #f0f0f1;
+	color: #1d2327;
+}
+
+.hornet-badge--critical,
+.hornet-badge--high {
+	background: #f4a2a2;
+	color: #3a0000;
+}
+
+.hornet-badge--medium {
+	background: #f5e6ab;
+	color: #3d2f00;
+}
+
+.hornet-badge--low,
+.hornet-status--ignored {
+	background: #d6e4f5;
+	color: #002b5c;
+}
+
+.hornet-status--open {
+	background: #f4a2a2;
+	color: #3a0000;
+}
+
+.hornet-status--pass,
+.hornet-onoff--on {
+	background: #b8e6bf;
+	color: #00300d;
+}
+
+.hornet-filters {
+	display: grid;
+	grid-template-columns: minmax(200px, 2fr) 1fr 1fr;
+	gap: 16px;
+	align-items: end;
+	margin: 16px 0;
+}
+
+.hornet-table td,
+.hornet-table th {
+	vertical-align: top;
+}
+
+.hornet-pager {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-top: 16px;
+}
+
+.hornet-empty {
+	margin: 24px 0;
+}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Application\Scan;
 
+use Closure;
 use DateTimeImmutable;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
@@ -27,6 +28,7 @@ final readonly class Scanner
 
     /**
      * @param  list<ScanTask>  $tasks
+     * @param  Closure(string): void|null  $progress  called with the id of each task before it runs
      * @param  array<string, string>  $ignored  id of a task => why its finding is set aside (the `ignore` setting)
      */
     public function __construct(
@@ -34,6 +36,7 @@ final readonly class Scanner
         private ScanStore $store,
         private Clock $clock,
         private array $ignored = [],
+        private ?Closure $progress = null,
     ) {}
 
     /**
@@ -80,6 +83,11 @@ final readonly class Scanner
                 }
 
                 continue;
+            }
+
+            // Told before the task, so that someone who waits knows which one it is at
+            if ($this->progress instanceof Closure) {
+                ($this->progress)($id);
             }
 
             $result = $this->runOne($task, $previous?->pins($id), $repin);

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Application\Scan\SuspiciousFilesTask;
 use Pollora\Hornet\Domain\Audit\Outcome;
@@ -11,6 +12,7 @@ use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Scan\NativeFileSystem;
 use Pollora\Hornet\Infrastructure\WordPress\OptionRunLock;
+use Pollora\Hornet\Infrastructure\WordPress\OptionScanStateStore;
 use Pollora\Hornet\Infrastructure\WordPress\OptionScanStore;
 use Pollora\Hornet\Infrastructure\WordPress\ScanModule;
 use Pollora\Hornet\Infrastructure\WordPress\ScannerFactory;
@@ -99,7 +101,7 @@ it('keeps a lock in its own option, takes over a dead one, and lets go', functio
 });
 
 it('puts the scan in the real cron, moves it, and takes it out', function (): void {
-    $module = fn (string $schedule): ScanModule => new ScanModule(static fn (): ?Scanner => null, $schedule, new OptionRunLock('hornet_scan_lock'), static fn (): array => []);
+    $module = fn (string $schedule): ScanModule => new ScanModule(new ScanJob(static fn (): ?Scanner => null, new OptionRunLock('hornet_scan_lock'), new OptionScanStateStore, new SystemClock, static fn (): array => []), $schedule);
 
     $module('daily')->plan();
     $daily = wp_get_schedule(ScanModule::SCAN_HOOK);

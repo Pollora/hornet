@@ -14,3 +14,9 @@
 /pint.json export-ignore
 /renovate.json export-ignore
 /phpunit.integration.xml export-ignore
+# The screen's source and its build tooling are development files; what they build, assets/admin, ships: it is tracked and not listed here
+/admin export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
+# The compiled screen: generated, never edited by hand
+/assets/admin/** linguist-generated -diff
