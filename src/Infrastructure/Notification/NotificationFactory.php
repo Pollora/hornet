@@ -69,7 +69,7 @@ final readonly class NotificationFactory
         );
 
         return new NotificationService(
-            new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored),
+            new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored),
             $environment,
             $notifier,
             $this->lock,

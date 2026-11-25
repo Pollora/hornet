@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
 use Pollora\Hornet\Domain\Exceptions\TransportException;
 use Pollora\Hornet\Domain\Notification\HttpResponse;
@@ -254,6 +255,26 @@ describe('the settings', function (): void {
 
         expect($default->ownThemes)->toBe([])->and($default->probes)->toBeTrue()->and($default->probeUploads)->toBeFalse()
             ->and($set->ownThemes)->toBe(['my-theme', 'child_1.0'])->and($set->probes)->toBeFalse()->and($set->probeUploads)->toBeTrue();
+    });
+
+    it('has the vulnerability lookup off until the owner turns it on', function (): void {
+        expect(Settings::fromArray([], new ArraySecrets)->vulnerabilities->enabled)->toBeFalse()
+            ->and(Settings::fromArray(['vulnerabilities' => ['enabled' => true]], new ArraySecrets)->vulnerabilities->enabled)->toBeTrue()
+            ->and(Settings::fromArray(['vulnerabilities' => []], new ArraySecrets)->vulnerabilities->enabled)->toBeFalse();
+    });
+
+    it('refuses a vulnerability setting it does not understand', function (mixed $config, string $message): void {
+        expect(fn () => Settings::fromArray(['vulnerabilities' => $config], new ArraySecrets))->toThrow(InvalidSettingsException::class, $message);
+    })->with([
+        'not an array' => ['yes', 'vulnerabilities'],
+        'a typo' => [['enable' => true], 'enable'],
+        'not a bool' => [['enabled' => 'yes'], 'vulnerabilities.enabled'],
+    ]);
+
+    it('has the check of the vulnerabilities only when the lookup is on', function (): void {
+        $ids = static fn (bool $on): array => array_map(static fn ($check): string => $check->id(), DefaultChecks::all($on));
+
+        expect($ids(false))->not->toContain('vulnerabilities')->and($ids(true))->toContain('vulnerabilities')->and(count($ids(true)))->toBe(count($ids(false)) + 1);
     });
 
     it('reads the files that may differ', function (): void {

@@ -82,7 +82,7 @@ final class Bootstrap
 
         try {
             if ($settings->siteHealth) {
-                $modules[] = new SiteHealthModule(new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored), $environment);
+                $modules[] = new SiteHealthModule(new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored), $environment);
             }
 
             if ($settings->hardening->isActive()) {

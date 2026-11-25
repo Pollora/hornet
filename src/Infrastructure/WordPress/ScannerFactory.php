@@ -6,10 +6,12 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
 use Pollora\Hornet\Application\Scan\ExposedFilesTask;
+use Pollora\Hornet\Application\Scan\KnownVulnerabilitiesTask;
 use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
 use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Application\Scan\ScanTask;
 use Pollora\Hornet\Application\Scan\SuspiciousFilesTask;
+use Pollora\Hornet\Domain\Scan\CachedVulnerabilityFeed;
 use Pollora\Hornet\Domain\Scan\FileInspector;
 use Pollora\Hornet\Domain\Scan\NoPublishedChecksums;
 use Pollora\Hornet\Domain\Scan\PluginIntegrity;
@@ -63,6 +65,12 @@ final class ScannerFactory
         if ($settings->scanner->probes) {
             $uploads = wp_get_upload_dir();
             $tasks[] = new ExposedFilesTask($http, untrailingslashit(home_url()), untrailingslashit(content_url()), untrailingslashit($uploads['baseurl']), $settings->scanner->probeUploads ? new UploadsProbeFiles($uploads['basedir']) : null, new SystemClock, $cron ? max(5, intdiv(self::cronSeconds(), 4)) : null, static fn (): string => bin2hex(random_bytes(8)));
+        }
+
+        // Opt-in: the name and version of every plugin and theme go to the feed
+        if ($settings->vulnerabilities->enabled) {
+            $feed = new CachedVulnerabilityFeed(new WpVulnerabilityFeed($http), new TransientVulnerabilityCache, new SystemClock);
+            $tasks[] = new KnownVulnerabilitiesTask($feed, new WpPluginInventory, new WpThemeInventory($settings->scanner->ownThemes), wp_get_wp_version(), new SystemClock, $feed->staleAnswers(...), $cron ? max(5, intdiv(self::cronSeconds(), 2)) : null);
         }
 
         // A scan that is disabled does not run, and asks nothing of the network

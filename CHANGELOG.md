@@ -4,6 +4,13 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Fifth milestone (0.5): known vulnerabilities.
+
+- `vulnerabilities.enabled` (off by default): the scan asks WPVulnerability whether the core, each plugin and each theme has a known vulnerability in the version the site runs. Only the name and the version are sent. New check `vulnerabilities`, present only when the lookup is on.
+- A finding per scan with the CVE number, a severity from the CVSS score, and the version that fixes it (or "not fixed"). A feed that does not answer is "not checked", never "no vulnerability", and an earlier failure stays visible.
+- Answers are cached six hours; a copy of up to three days is used when the feed is down, and the finding says so. Text from the feed is cleaned and cut; a link is kept only if it is https.
+- `DefaultChecks::all()` takes whether the lookup is on.
+
 Fourth milestone (0.4), last part: the themes, and the probes.
 
 - `theme-integrity`: the themes get the first look the unknown plugins get (WordPress.org publishes no checksums for themes), in their own option. `scanner.own_themes` leaves out the themes you write yourself.

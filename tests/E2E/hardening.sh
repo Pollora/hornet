@@ -372,6 +372,28 @@ reset
 cli option delete hornet_scan >/dev/null 2>&1
 cli option delete hornet_baseline_themes >/dev/null 2>&1
 
+# --- 8e. known vulnerabilities: the real feed, opt-in -------------------------------------------------------
+echo "8e. vulnerabilities"
+akismet="$WP_DIR/wp-content/plugins/akismet/akismet.php"
+vuln_row() { php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" hornet status --all --fail-on=none | grep -q 'vulnerabilities'; }
+check "off by default: no check of the vulnerabilities in the audit"  sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'vulnerabilities'"
+check "off by default: the scan does not ask the feed"               sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet scan --format=json | grep -vq '\"check\": \"vulnerabilities\"'"
+configure "array('vulnerabilities' => array('enabled' => true))"
+check "the audit has the check once the owner opted in"              vuln_row
+check "the real feed knows no vulnerability in what is installed, or says which" scan_says 'vulnerabilities'
+cp "$akismet" /tmp/hornet-akismet-header.orig
+sed -i -E 's/^([ *]*Version:).*/\1 3.1.4/' "$akismet"
+check "the header of the plugin now says 3.1.4"                       grep -qE '^[ *]*Version: 3.1.4' "$akismet"
+check "an old version of a plugin: the real feed says its vulnerability" scan_fails_with 'CVE-2015-9357'
+check "it says where to update to"                                   grep -q 'fixed in 3.1.5' /tmp/hornet-scan.out
+check "it says which plugin and which version"                       grep -q 'akismet 3.1.4 (plugin)' /tmp/hornet-scan.out
+check "the answer is kept: asked once, not each time"                sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'echo get_site_transient(\"hornet_vuln_\".md5(\"plugin:akismet:3.1.4\")) ? \"cached\" : \"none\";' | grep -q cached"
+cp /tmp/hornet-akismet-header.orig "$akismet"
+configure "array('vulnerabilities' => array('enabled' => true), 'disabled_checks' => array('vulnerabilities'))"
+check "disabled_checks stops the lookup and the check"               sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'vulnerabilities'"
+reset
+cli option delete hornet_scan >/dev/null 2>&1
+
 wp config set HORNET_DISABLED true --raw >/dev/null
 check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'
 wp config delete HORNET_DISABLED >/dev/null 2>&1

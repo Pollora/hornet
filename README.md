@@ -300,6 +300,21 @@ On a large site (many plugins, a large uploads folder) use `wp hornet scan` from
 
 What it cannot do, so you know: a core that was changed **before** the first scan with a file you allowed is pinned as it is; a compromised WordPress.org answer would be believed (the request is over HTTPS and nothing is cached); the probes ask a fixed list: a backup with another name is not found, and a file protected by the web server's own rules is not the site's to say.
 
+## Known vulnerabilities
+
+```php
+'vulnerabilities' => ['enabled' => true],
+```
+
+**Off until you turn it on, because of what it sends.** For the WordPress core, each plugin and each theme, the scan asks [WPVulnerability](https://www.wpvulnerability.net) (free, no account) whether that version has a known vulnerability. What leaves the site is the **name and the version** of each plugin and theme (`/plugin/akismet/`) and the WordPress version, one request each: never the address of the site, nor anything else. But the list of what a site runs is what an attacker would like to have, so you decide. Your own themes (`scanner.own_themes`) are not asked about. A single-file plugin (`hello.php`) is not asked about either.
+
+Each result is a finding with the CVE number when there is one, a severity from the CVSS score (critical from 9, high from 7, medium from 4; no score is medium, never low), and the version that fixes it, or "not fixed". The audit, Site Health and `pollora:doctor` show it like the other scan results; a failure stays visible when a later scan could not ask (the feed being down is "not checked", never "no vulnerability").
+
+- The answers are kept six hours in a transient, so that a scan every hour does not ask forty questions every hour. If the feed is down, a copy of up to three days old is used, and the finding says so.
+- What the feed writes is data from outside: it is cleaned, cut to a length, never taken as an instruction, and a link is kept only if it is an https address.
+- WPVulnerability is a public aggregator: its data is published under CC0, the sources it gathers keep their own terms, and it has no service level. It knows what it knows: **a plugin that is absent from it is not a plugin without a vulnerability**. It is not a substitute for updating.
+- Not done yet: the Composer packages of the project, the adapters for Wordfence, Patchstack and WPScan (they need your key), and an import without the network.
+
 ## Design
 
 - **One engine.** A check returns one finding. The same report feeds Site Health, WP-CLI and `pollora:doctor`, and will feed the administration screen and the MCP abilities.
