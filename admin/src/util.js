@@ -62,3 +62,18 @@ export const headline = ( status ) => {
 		open
 	);
 };
+
+export const sourceLabel = ( source ) =>
+	( {
+		web: __( 'Website', 'pollora-hornet' ),
+		admin: __( 'Administration', 'pollora-hornet' ),
+		rest: __( 'REST API', 'pollora-hornet' ),
+		ajax: __( 'Ajax', 'pollora-hornet' ),
+		xmlrpc: __( 'XML-RPC', 'pollora-hornet' ),
+		cli: __( 'Command line', 'pollora-hornet' ),
+		cron: __( 'Scheduled task', 'pollora-hornet' ),
+	} )[ source ] ?? source;
+
+/** A moment given as a timestamp in seconds, in the language and time zone of the browser. */
+export const whenLabel = ( seconds ) =>
+	seconds ? new Date( seconds * 1000 ).toLocaleString() : '—';

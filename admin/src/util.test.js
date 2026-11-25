@@ -1,4 +1,4 @@
-import { ago, headline, severityLabel, severityRank, statusLabel } from './util';
+import { ago, headline, severityLabel, severityRank, statusLabel, sourceLabel, whenLabel } from './util';
 
 describe( 'severityRank', () => {
 	it( 'puts the worst first when sorted from the highest', () => {
@@ -54,5 +54,18 @@ describe( 'headline', () => {
 
 	it( 'counts the open findings', () => {
 		expect( headline( status( 2, 1 ) ) ).toBe( '2 open findings.' );
+	} );
+} );
+
+describe( 'sourceLabel and whenLabel', () => {
+	it( 'names where a request came from, and keeps what it does not know', () => {
+		expect( sourceLabel( 'cli' ) ).toBe( 'Command line' );
+		expect( sourceLabel( 'mars' ) ).toBe( 'mars' );
+	} );
+
+	it( 'gives a dash for no moment, and a date for a timestamp', () => {
+		expect( whenLabel( 0 ) ).toBe( '—' );
+		expect( whenLabel( null ) ).toBe( '—' );
+		expect( whenLabel( 1795600000 ) ).not.toBe( '—' );
 	} );
 } );

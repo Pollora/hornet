@@ -4,6 +4,12 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Seventh milestone (0.7), second part: the journal on the screen, and setting a finding aside.
+
+- **Journal** tab on the screen (`GET hornet/v1/journal`: filters by kind and source validated, 100 per page at most; says it is off when it is).
+- **Set aside…** / **Bring it back** on a finding (`POST` and `DELETE hornet/v1/findings/{check}/ignore`): a written reason of at least 8 characters, kept with who and when, journaled; only for a finding that is open; the settings file wins over the screen, and a check that no longer exists is left out rather than refused. Every surface (screen, Site Health, `wp hornet`, notifications) goes through `AuditorFactory`, so they all see it.
+- Site Health builds its auditor when it is asked for: the database is not read on other requests.
+
 Seventh milestone (0.7), first part: the journal.
 
 - `journal.enabled` (off by default) and `journal.retention_days` (90): a table per site (`{prefix}hornet_journal`, `dbDelta`, versioned) that records logins and failures, accounts created, deleted and given a role, application passwords (by name), plugins and themes (activated, deactivated, deleted, installed, updated), the core update, sensitive options (`siteurl`, `home`, `users_can_register`, `default_role`, and that `admin_email` changed), and the end of a scan. Each event has the **source of the request**: web, admin, rest, ajax, xmlrpc, cli or cron.
