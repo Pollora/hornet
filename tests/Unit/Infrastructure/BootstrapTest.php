@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
+use Pollora\Hornet\Infrastructure\WordPress\LoginThrottleModule;
 use Pollora\Hornet\Infrastructure\WordPress\NotificationModule;
 use Pollora\Hornet\Infrastructure\WordPress\SettingsErrorModule;
 use Pollora\Hornet\Infrastructure\WordPress\SiteHealthModule;
@@ -62,4 +64,29 @@ it('keeps the site running when a channel is wrong or a setting names a check th
     $settings = Settings::fromArray(['disabled_checks' => ['saltz'], 'notifications' => ['channels' => ['team' => ['type' => 'mail', 'to' => 'ops@example.com']]]]);
 
     expect(Bootstrap::modules($settings, new FakeEnvironment)[0])->toBeInstanceOf(SettingsErrorModule::class);
+});
+
+it('attaches the login throttle when it is on, and not otherwise', function (): void {
+    Brain\Monkey\Functions\when('wp_salt')->justReturn('salt');
+    $on = Bootstrap::modules(Settings::fromArray(['login' => ['throttle' => true]]), new FakeEnvironment);
+    $off = Bootstrap::modules(Settings::fromArray(['login' => ['throttle' => false]]), new FakeEnvironment);
+
+    expect(array_map(static fn ($module): string => $module::class, $on))->toContain(LoginThrottleModule::class)
+        ->and(array_map(static fn ($module): string => $module::class, $off))->not->toContain(LoginThrottleModule::class);
+});
+
+it('lets the host say who is asking: Pollora hands over the request of Laravel', function (): void {
+    Brain\Monkey\Functions\when('wp_salt')->justReturn('salt');
+    Brain\Monkey\Functions\when('wp_using_ext_object_cache')->justReturn(false);
+    Brain\Monkey\Functions\when('get_transient')->justReturn(false);
+    $asked = 0;
+    $modules = Bootstrap::modules(Settings::fromArray(['login' => ['throttle' => true]]), new FakeEnvironment, null, static function () use (&$asked): ?ClientIp {
+        $asked++;
+
+        return new ClientIp('203.0.113.7', '10.0.0.5');
+    });
+    $throttle = array_values(array_filter($modules, static fn ($module): bool => $module instanceof LoginThrottleModule))[0];
+    $throttle->gate('user');
+
+    expect($asked)->toBe(1);
 });

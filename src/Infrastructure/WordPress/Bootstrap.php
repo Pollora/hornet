@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
+use Closure;
 use InvalidArgumentException;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Domain\Audit\Environment;
+use Pollora\Hornet\Domain\Network\ClientIp;
+use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
+use Pollora\Hornet\Infrastructure\Login\ClientAddress;
+use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
 
 /**
@@ -33,7 +38,7 @@ final class Bootstrap
                 return;
             }
 
-            self::boot($settings, new WordPressHooks, new WordPressEnvironment);
+            self::boot($settings, new WordPressHooks, new WordPressEnvironment($settings));
         };
 
         if (did_action('plugins_loaded') > 0) {
@@ -49,10 +54,11 @@ final class Bootstrap
      * Wrong settings never stop the site: Hornet stays off, and Site Health says why.
      *
      * @param  string|null  $settingsError  why the settings could not be read
+     * @param  (Closure(): ?ClientIp)|null  $client  who is asking, when the host knows better than the server variables (Pollora: Laravel's request)
      */
-    public static function boot(?Settings $settings, HookRegistrar $hooks, Environment $environment, ?string $settingsError = null): void
+    public static function boot(?Settings $settings, HookRegistrar $hooks, Environment $environment, ?string $settingsError = null, ?Closure $client = null): void
     {
-        foreach (self::modules($settings, $environment, $settingsError) as $module) {
+        foreach (self::modules($settings, $environment, $settingsError, $client) as $module) {
             $module->register($hooks);
         }
     }
@@ -60,7 +66,7 @@ final class Bootstrap
     /**
      * @return list<Module>
      */
-    public static function modules(?Settings $settings, Environment $environment, ?string $settingsError = null): array
+    public static function modules(?Settings $settings, Environment $environment, ?string $settingsError = null, ?Closure $client = null): array
     {
         if (! $settings instanceof Settings) {
             return [new SettingsErrorModule($settingsError ?? 'The settings could not be read.')];
@@ -83,6 +89,18 @@ final class Bootstrap
 
             if ($settings->headers->isActive()) {
                 $modules[] = new HeadersModule($settings->headers);
+            }
+
+            if ($settings->login->throttle) {
+                $note = new ThrottleProblemNote;
+                $modules[] = new LoginThrottleModule(
+                    $settings->login,
+                    new TransientAttemptStore,
+                    new SystemClock,
+                    $client ?? static fn (): ?ClientIp => ClientAddress::fromServer($_SERVER, $settings->network),
+                    $note->record(...),
+                    wp_salt('auth').'hornet-login',
+                );
             }
 
             if ($settings->notifications->channels !== []) {

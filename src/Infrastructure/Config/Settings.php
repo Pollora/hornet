@@ -6,6 +6,7 @@ namespace Pollora\Hornet\Infrastructure\Config;
 
 use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
 use Pollora\Hornet\Domain\Http\SecurityHeaders;
+use Pollora\Hornet\Domain\Network\TrustedProxies;
 
 /**
  * The settings of the package, checked once and read as an object.
@@ -14,7 +15,7 @@ use Pollora\Hornet\Domain\Http\SecurityHeaders;
  */
 final readonly class Settings
 {
-    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications', 'hardening', 'headers'];
+    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications', 'hardening', 'headers', 'network', 'login'];
 
     /**
      * @param  list<string>  $disabledChecks  ids of the checks that do not run
@@ -28,6 +29,8 @@ final readonly class Settings
         public NotificationSettings $notifications,
         public HardeningSettings $hardening,
         public SecurityHeaders $headers,
+        public TrustedProxies $network,
+        public LoginSettings $login,
     ) {}
 
     /**
@@ -51,6 +54,8 @@ final readonly class Settings
             array_key_exists('notifications', $config) ? NotificationSettings::fromArray($config['notifications'], $secrets ?? new EnvironmentSecrets) : NotificationSettings::none(),
             array_key_exists('hardening', $config) ? HardeningSettings::fromArray($config['hardening']) : HardeningSettings::none(),
             array_key_exists('headers', $config) ? HeaderSettings::fromArray($config['headers']) : new SecurityHeaders,
+            array_key_exists('network', $config) ? NetworkSettings::fromArray($config['network']) : new TrustedProxies,
+            array_key_exists('login', $config) ? LoginSettings::fromArray($config['login']) : LoginSettings::none(),
         );
     }
 

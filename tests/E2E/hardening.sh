@@ -122,6 +122,54 @@ check "the site answers"                                     status_is 200 "$BAS
 check "nothing is hardened"                                  header_present X-Pingback "$BASE/hello-world/"
 check "the audit says why"                                   sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status 2>&1 | grep -q 'Unknown Hornet setting \"hardning\"'"
 
+# --- 6. the login throttle ---------------------------------------------------------------------------------
+echo "6. login throttle"
+# Every request here comes from 127.0.0.1. Without a trusted proxy that is the one address of every visitor.
+wrong() { curl -s -o /dev/null -w '%{http_code}' --max-time 20 -b 'wordpress_test_cookie=WP%20Cookie%20check' -H "X-Forwarded-For: $1" --data 'log=admin&pwd=wrong&wp-submit=Log+In&testcookie=1' "$BASE/wp-login.php"; }
+right() { curl -s -o /dev/null --max-time 20 -D /tmp/hornet-right.h -b 'wordpress_test_cookie=WP%20Cookie%20check' -H "X-Forwarded-For: $1" --data 'log=admin&pwd=pass&wp-submit=Log+In&testcookie=1' "$BASE/wp-login.php"; }
+logged_in() { grep -qi '^set-cookie: wordpress_logged_in' /tmp/hornet-right.h; }
+cli() { php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" "$@"; }
+
+configure "array('login' => array('throttle' => true, 'max_attempts' => 3))"
+for i in 1 2 3 4 5 6; do wrong 203.0.113.9 >/dev/null; done
+right 203.0.113.9
+check "no trusted proxy: the address is the proxy's, so nobody is locked, even after six failures" logged_in
+check "the audit says the throttle cannot tell visitors apart" sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'login-protection.*cannot tell visitors apart'"
+
+cli option delete hornet_throttle_problem >/dev/null 2>&1
+configure "array('network' => array('trusted_proxies' => array('127.0.0.1')), 'login' => array('throttle' => true, 'max_attempts' => 3, 'allow_ips' => array('203.0.113.50')))"
+wrong 203.0.113.9 >/dev/null; wrong 203.0.113.9 >/dev/null
+right 203.0.113.9
+check "behind a trusted proxy a success is still a success after two failures" logged_in
+wrong 203.0.113.9 >/dev/null; wrong 203.0.113.9 >/dev/null; wrong 203.0.113.9 >/dev/null
+right 203.0.113.9
+check "three failures lock the address: even the right password is refused" sh -c "! grep -qi '^set-cookie: wordpress_logged_in' /tmp/hornet-right.h"
+check "the refusal says why" sh -c "curl -s -b 'wordpress_test_cookie=WP%20Cookie%20check' -H 'X-Forwarded-For: 203.0.113.9' --data 'log=admin&pwd=pass&wp-submit=Log+In&testcookie=1' '$BASE/wp-login.php' | grep -q 'Too many failed login attempts'"
+right 203.0.113.10
+check "another address can still log in" logged_in
+for i in 1 2 3 4 5 6; do wrong 203.0.113.50 >/dev/null; done
+right 203.0.113.50
+check "an address on the allow list is never locked" logged_in
+check "a forged left part of the header does not give a locked address another identity" sh -c "curl -s -o /dev/null -D /tmp/hornet-f.h -b 'wordpress_test_cookie=WP%20Cookie%20check' -H 'X-Forwarded-For: 6.6.6.6, 203.0.113.9' --data 'log=admin&pwd=pass&wp-submit=Log+In&testcookie=1' '$BASE/wp-login.php'; ! grep -qi '^set-cookie: wordpress_logged_in' /tmp/hornet-f.h"
+stored() { cli eval "require \"$PKG/tests/E2E/hornet-options.php\";"; }
+check "the lock is kept in the database"                     sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'require \"$PKG/tests/E2E/hornet-options.php\";' | grep -q 'hornet_lg_'"
+check "the lock is stored under a hash, not the address"     sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'require \"$PKG/tests/E2E/hornet-options.php\";' | grep -q '203.0.113.9'"
+
+cli hornet unlock 203.0.113.9 >/dev/null
+right 203.0.113.9
+check "wp hornet unlock lets the address back in" logged_in
+for i in 1 2 3; do wrong 203.0.113.11 >/dev/null; done
+for i in 1 2 3; do wrong 203.0.113.12 >/dev/null; done
+cli hornet unlock --all >/dev/null
+right 203.0.113.11
+check "wp hornet unlock --all lets everybody back in" logged_in
+for i in 1 2 3; do wrong 203.0.113.13 >/dev/null; done
+wp config set HORNET_DISABLED true --raw >/dev/null
+right 203.0.113.13
+check "HORNET_DISABLED switches the lock off" logged_in
+wp config delete HORNET_DISABLED >/dev/null 2>&1
+cli hornet unlock --all >/dev/null
+
 reset
 echo
 if [ "$failed" -eq 0 ]; then echo "All assertions passed."; else echo "Some assertions failed."; fi

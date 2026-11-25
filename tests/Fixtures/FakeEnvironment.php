@@ -34,6 +34,7 @@ class FakeEnvironment implements Environment
         public string $today = '2026-11-24',
         public ?bool $usersListed = false,
         public ?bool $editingBlocked = null,
+        public ?string $throttleProblem = null,
     ) {}
 
     /**
@@ -121,6 +122,11 @@ class FakeEnvironment implements Environment
     public function usersListedToVisitors(): ?bool
     {
         return $this->usersListed;
+    }
+
+    public function loginThrottleProblem(): ?string
+    {
+        return $this->throttleProblem;
     }
 
     public function isActive(Component $component): bool

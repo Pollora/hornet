@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\Pollora;
 
+use Closure;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
@@ -11,9 +12,12 @@ use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Http\SecurityHeaders;
+use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Config\Settings;
+use Pollora\Hornet\Infrastructure\Login\ClientAddress;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
+use Throwable;
 
 /**
  * Loads the package inside a Pollora (Laravel) project: Laravel discovers this provider from composer.json.
@@ -61,7 +65,7 @@ final class HornetServiceProvider extends ServiceProvider
             return;
         }
 
-        Bootstrap::boot($settings, $hooks, new WordPressEnvironment);
+        Bootstrap::boot($settings, $hooks, new WordPressEnvironment($settings), null, $this->client($settings));
 
         if ($settings->headers->isActive()) {
             $this->sendHeadersFromLaravel($settings->headers);
@@ -81,6 +85,26 @@ final class HornetServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Who is asking, as Laravel tells it: its request already knows which proxies the application trusts, so Hornet does not keep a second list.
+     *
+     * @return Closure(): ?ClientIp
+     */
+    private function client(Settings $settings): Closure
+    {
+        return function () use ($settings): ?ClientIp {
+            $remote = $_SERVER['REMOTE_ADDR'] ?? null;
+
+            try {
+                $address = $this->app->make('request')->ip();
+            } catch (Throwable) {
+                return ClientAddress::fromServer($_SERVER, $settings->network);
+            }
+
+            return is_string($address) && is_string($remote) && filter_var($address, FILTER_VALIDATE_IP) !== false ? new ClientIp($address, $remote) : null;
+        };
+    }
+
     private function settings(): Settings
     {
         /** @var array<mixed> $config */
@@ -93,6 +117,6 @@ final class HornetServiceProvider extends ServiceProvider
     {
         $settings = $this->settings();
 
-        return (new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment);
+        return (new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment($settings));
     }
 }

@@ -9,6 +9,7 @@ use DateTimeZone;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Pollora\Hornet\Infrastructure\Config\Settings;
 use Throwable;
 use WP_REST_Request;
 
@@ -17,6 +18,11 @@ use WP_REST_Request;
  */
 final class WordPressEnvironment implements Environment
 {
+    /**
+     * @param  Settings|null  $settings  what Hornet is set to do: the audit asks whether the throttle is on
+     */
+    public function __construct(private readonly ?Settings $settings = null) {}
+
     public function isDefined(string $constant): bool
     {
         return defined($constant);
@@ -133,8 +139,14 @@ final class WordPressEnvironment implements Environment
         return match ($component) {
             Component::Portcullis => class_exists('Pollora\\Portcullis\\Portcullis'),
             Component::Headless => class_exists('Pollora\\Headless\\Infrastructure\\WordPress\\Bootstrap'),
+            Component::HornetThrottle => $this->settings instanceof Settings && $this->settings->login->throttle,
             Component::TwoFactor => class_exists('Two_Factor_Core'),
         };
+    }
+
+    public function loginThrottleProblem(): ?string
+    {
+        return (new ThrottleProblemNote)->read();
     }
 
     public function now(): DateTimeImmutable

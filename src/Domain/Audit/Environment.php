@@ -49,6 +49,15 @@ interface Environment
      */
     public function usersListedToVisitors(): ?bool;
 
+    /**
+     * Why the login throttle cannot be trusted, when it met a request it could not place: `shared` (the address of every visitor
+     * is the proxy's, so it refused to lock anybody) or `forwarded-untrusted` (a forwarding header came from an address that is
+     * not a listed proxy). Null when nothing was noted.
+     *
+     * @return 'shared'|'forwarded-untrusted'|null
+     */
+    public function loginThrottleProblem(): ?string;
+
     public function isActive(Component $component): bool;
 
     public function now(): DateTimeImmutable;

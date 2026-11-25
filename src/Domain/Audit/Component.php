@@ -15,6 +15,9 @@ enum Component: string
     /** pollora/headless: XML-RPC, head clean-up, REST users, file editor. */
     case Headless = 'headless';
 
+    /** Hornet's own login throttle, the fallback for a site without portcullis. */
+    case HornetThrottle = 'hornet-throttle';
+
     /** The official Two-Factor plugin. */
     case TwoFactor = 'two-factor';
 }

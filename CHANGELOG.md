@@ -4,6 +4,16 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Third milestone (0.3), second part: the login throttle.
+
+- `login` settings (`throttle`, `max_attempts`, `window`, `lockout`, `allow_ips`) and `network` settings (`trusted_proxies`, `forwarded_header`); off by default.
+- Per-address lockout, progressive up to a day, applied late on `authenticate` so that WordPress cannot undo it; failures of application passwords count; a success forgets the failures.
+- It never locks an address that many visitors share (a proxy or load balancer that is not listed), and the audit raises a high finding. A forwarding header is believed only from a trusted proxy, and read from the right.
+- Addresses are stored as HMACs; counters live in the object cache when there is a persistent one.
+- `wp hornet unlock <ip>` and `wp hornet unlock --all`.
+- The `login-protection` check accepts Hornet's own throttle and says when it cannot be trusted.
+- Fixed: a `wp_salt()` call at load time made every `wp` command fail when the unlock command was registered.
+
 Third milestone (0.3), first part: hardening and headers.
 
 - `hardening` settings (`xmlrpc`, `user_enumeration`, `hide_version`, `file_editor`), all off by default.

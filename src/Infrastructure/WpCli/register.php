@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
+use Pollora\Hornet\Application\Login\Unlocker;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
+use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Pollora\Hornet\Infrastructure\WpCli\HornetCommand;
 use Pollora\Hornet\Infrastructure\WpCli\NotifyCommand;
+use Pollora\Hornet\Infrastructure\WpCli\UnlockCommand;
 use Pollora\Hornet\Infrastructure\WpCli\WpCliOutput;
 
 /*
@@ -24,7 +27,7 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
         static function (): Report {
             $settings = SettingsLoader::load(get_current_blog_id());
 
-            return (new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment);
+            return (new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment($settings));
         },
         new WpCliOutput,
     ));
@@ -35,8 +38,14 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
 
             return $settings->notifications->channels === []
                 ? null
-                : NotificationFactory::forWordPress()->service($settings, new WordPressEnvironment, get_bloginfo('name'), home_url());
+                : NotificationFactory::forWordPress()->service($settings, new WordPressEnvironment($settings), get_bloginfo('name'), home_url());
         },
+        new WpCliOutput,
+    ));
+
+    WP_CLI::add_command('hornet unlock', new UnlockCommand(
+        // Built when the command runs: WordPress, and its salts, are not loaded yet
+        static fn (): Unlocker => new Unlocker(new TransientAttemptStore, wp_salt('auth').'hornet-login'),
         new WpCliOutput,
     ));
 }

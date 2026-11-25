@@ -214,6 +214,19 @@ describe('accounts and login', function (): void {
         expect(verdict(new LoginProtectionCheck, new FakeEnvironment))->toBe([Outcome::Fail, Severity::Low]);
     });
 
+    it("accepts Hornet's own throttle, and says when it cannot be trusted", function (): void {
+        $on = [Component::HornetThrottle];
+
+        expect(verdict(new LoginProtectionCheck, new FakeEnvironment(active: $on))[0])->toBe(Outcome::Pass)
+            ->and(verdict(new LoginProtectionCheck, new FakeEnvironment(active: $on, throttleProblem: 'shared')))->toBe([Outcome::Fail, Severity::High])
+            ->and(verdict(new LoginProtectionCheck, new FakeEnvironment(active: $on, throttleProblem: 'forwarded-untrusted')))->toBe([Outcome::Fail, Severity::High])
+            ->and((new LoginProtectionCheck)->run(new FakeEnvironment(active: $on, throttleProblem: 'shared'))->fix)->toContain('network.trusted_proxies');
+    });
+
+    it('prefers portcullis to the throttle', function (): void {
+        expect(verdict(new LoginProtectionCheck, new FakeEnvironment(active: [Component::Portcullis, Component::HornetThrottle], throttleProblem: 'shared'))[0])->toBe(Outcome::Pass);
+    });
+
     it('recognises the Two-Factor plugin', function (): void {
         expect(verdict(new TwoFactorCheck, new FakeEnvironment(active: [Component::TwoFactor]))[0])->toBe(Outcome::Pass);
         expect(verdict(new TwoFactorCheck, new FakeEnvironment))->toBe([Outcome::Fail, Severity::Low]);
