@@ -20,4 +20,12 @@ final class InvalidSettingsException extends InvalidArgumentException
     {
         return new self(sprintf('The Hornet setting "%s" must be %s.', $key, $expected));
     }
+
+    /**
+     * A problem with one notification channel. The message never holds a URL, a token or a key.
+     */
+    public static function channel(string $channel, string $problem): self
+    {
+        return new self(sprintf('Hornet notification channel "%s": %s', $channel, $problem));
+    }
 }

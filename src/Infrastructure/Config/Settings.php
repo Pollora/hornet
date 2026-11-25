@@ -13,7 +13,7 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
  */
 final readonly class Settings
 {
-    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health'];
+    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications'];
 
     /**
      * @param  list<string>  $disabledChecks  ids of the checks that do not run
@@ -24,6 +24,7 @@ final readonly class Settings
         public array $disabledChecks,
         public array $ignored,
         public bool $siteHealth,
+        public NotificationSettings $notifications,
     ) {}
 
     /**
@@ -31,7 +32,7 @@ final readonly class Settings
      *
      * @throws InvalidSettingsException
      */
-    public static function fromArray(array $config): self
+    public static function fromArray(array $config, ?SecretSource $secrets = null): self
     {
         foreach (array_keys($config) as $key) {
             if (! in_array($key, self::KEYS, true)) {
@@ -44,6 +45,7 @@ final readonly class Settings
             self::ids($config['disabled_checks'] ?? []),
             self::ignored($config['ignore'] ?? []),
             self::boolean($config, 'site_health', true),
+            array_key_exists('notifications', $config) ? NotificationSettings::fromArray($config['notifications'], $secrets ?? new EnvironmentSecrets) : NotificationSettings::none(),
         );
     }
 

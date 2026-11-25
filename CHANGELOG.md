@@ -4,6 +4,18 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Second milestone (0.2): notifications.
+
+- Channels: `mail` (through `wp_mail()`), `slack`, `teams` (Workflows), `discord`, `telegram`, `ntfy` and a signed `webhook` (HMAC-SHA256, documented contract version 1).
+- Settings `notifications` (`schedule`, `cooldown`, `rate_limit`, `channels`); secrets by `['env' => …]` or `['constant' => …]`, redacted everywhere, never in the database.
+- The audit runs on a WP-Cron schedule and tells each channel what is new: grouped in one message, told once per cooldown, rate-limited per channel.
+- Messages that fail for a passing reason are tried again (1 min, 5 min, 30 min, 2 h, honouring `Retry-After`); a refusal that cannot pass is reported, not repeated.
+- Text from the site is cleaned and escaped per service; mentions are neutralised; redirects are never followed; private addresses are refused unless a channel allows them.
+- `wp hornet notify run|test|status|retry`.
+- Fixed in the settings check: the message of a refused address was built with the wrong operator precedence.
+
+## 0.1 (first milestone)
+
 First milestone (0.1): the foundation.
 
 - Audit engine: one `Check` returns one `Finding`; the same `Report` feeds every surface.

@@ -7,9 +7,11 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 use InvalidArgumentException;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
+use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
+use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
 
 /**
  * Starts the package: builds the modules the settings ask for and attaches them.
@@ -70,12 +72,19 @@ final class Bootstrap
 
         $modules = [];
 
-        if ($settings->siteHealth) {
-            try {
+        try {
+            if ($settings->siteHealth) {
                 $modules[] = new SiteHealthModule(new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored), $environment);
-            } catch (InvalidArgumentException $error) {
-                return [new SettingsErrorModule($error->getMessage())];
             }
+
+            if ($settings->notifications->channels !== []) {
+                // Built once to be sure the settings hold together; the cron builds its own when it runs
+                $factory = NotificationFactory::forWordPress();
+                $factory->service($settings, $environment, '', '');
+                $modules[] = new NotificationModule(static fn (): NotificationService => $factory->service($settings, $environment, get_bloginfo('name'), home_url()), $settings->notifications->schedule);
+            }
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            return [new SettingsErrorModule($invalidArgumentException->getMessage())];
         }
 
         return $modules;

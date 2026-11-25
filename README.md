@@ -2,9 +2,9 @@
 
 Security for WordPress, from Pollora. Hornet audits the configuration of a site, tells what to fix and how, and shows the same findings in **Tools > Site Health**, in **WP-CLI** and, on a Pollora project, in **`pollora:doctor`**.
 
-It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on Laravel. It changes nothing on your site: version 0.1 only reads.
+It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on Laravel. It changes nothing on your site: it reads, and it tells you.
 
-> **Status: 0.1, the foundation.** The audit of the configuration is in. Hardening, notifications, the file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come in the next releases. Nothing here is a firewall.
+> **Status: 0.2.** The audit of the configuration and the notifications are in. Hardening, the file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come in the next releases. Nothing here is a firewall.
 
 ## What it checks
 
@@ -74,6 +74,76 @@ A Pollora project uses `config/hornet.php` (`php artisan vendor:publish --tag=ho
 - A finding set aside stays visible, with its reason, in the output and in Site Health.
 - **Kill switch**: `define('HORNET_DISABLED', true);` attaches nothing. It is the way back if a rule ever locks someone out.
 - On a multisite network, `HORNET_CONFIG['sites'][<site id>]` overrides the shared settings for one site.
+
+## Notifications
+
+Hornet can tell you when the audit finds something new: a mailbox, a chat, a webhook. Nothing is sent until you list a channel.
+
+| Type | Needs | Notes |
+| --- | --- | --- |
+| `mail` | `to` (an address or a list) | through `wp_mail()`: whatever mail setup the site has |
+| `slack` | `url` (incoming webhook) | text is escaped the way Slack asks, so `<!channel>` is inert |
+| `teams` | `url` (a Workflows "When a Teams webhook request is received" trigger) | an Adaptive Card. The old Office 365 connectors were retired in May 2026. A 2xx means the workflow accepted the request, not that Teams posted it |
+| `discord` | `url` | one embed; `allowed_mentions` is empty, so nothing is turned into a ping |
+| `telegram` | `token`, `chat_id` | HTML mode, escaped |
+| `ntfy` | `url` (the topic), optional `token` | plain text, priority by severity; `allow_private` for a self-hosted server |
+| `webhook` | `url`, `secret` | JSON, signed; `insecure` allows plain http, `allow_private` a local address |
+
+```php
+define('HORNET_CONFIG', [
+    'notifications' => [
+        'schedule' => 'daily',      // off, hourly, twicedaily, daily
+        'cooldown' => 86400,        // seconds before the same finding is told again on a channel
+        'rate_limit' => 20,         // messages per channel per hour
+        'channels' => [
+            'ops-mail' => ['type' => 'mail', 'to' => ['ops@example.com']],
+            'slack' => ['type' => 'slack', 'url' => ['env' => 'HORNET_SLACK_URL'], 'min_severity' => 'high'],
+            'siem' => ['type' => 'webhook', 'url' => ['env' => 'HORNET_WEBHOOK_URL'], 'secret' => ['constant' => 'HORNET_WEBHOOK_SECRET']],
+        ],
+    ],
+]);
+```
+
+- **Secrets stay out of the repository and the database.** A webhook URL, a token and a signing key are written as `['env' => 'NAME']` or `['constant' => 'NAME']`. A plain string is accepted too (a Pollora `config/hornet.php` calls `env()` itself). A secret prints as `[redacted]` everywhere and an error never repeats an address.
+- **Grouped, told once, calm.** A channel gets one message per run with every alert it is due. The same finding is not repeated on a channel before the cooldown ends (a finding that gets worse is new). A channel gets at most `rate_limit` messages an hour; what is over waits for the next run, nothing is lost. Each channel has its own `min_severity` (default `medium`).
+- **Persistent.** A message that fails for a reason that can pass (network, 429, 5xx) is tried again after 1 minute, 5 minutes, 30 minutes and 2 hours, honouring the service's `Retry-After`. One that cannot succeed (a revoked token, a deleted webhook: 4xx) is reported and not repeated.
+- **Text from a site is data.** Control and invisible characters are removed, mentions (`@everyone`, `<!channel>`) are neutralised, and every message is cut below the limits of the service.
+- **Calls only go where you said.** Private and local addresses are refused unless a channel has `allow_private`, and a redirect is never followed.
+- **WP-Cron only runs when a page is visited.** On a production site set `DISABLE_WP_CRON` and call `wp cron event run --due-now` (or `wp hornet notify run`) from the system cron.
+
+```bash
+wp hornet notify status      # the channels (never their addresses) and the messages waiting
+wp hornet notify test slack  # a test message, whatever the severity and cooldown
+wp hornet notify run         # audit now and tell the channels, as the schedule does
+wp hornet notify retry       # try the waiting messages again now
+```
+
+### The webhook contract (version 1)
+
+```
+POST <url>
+Content-Type: application/json
+X-Hornet-Id: <the id of the message: the same on every retry, use it to deduplicate>
+X-Hornet-Timestamp: <unix time>
+X-Hornet-Signature: sha256=<hex of HMAC-SHA256(secret, "<timestamp>.<raw body>")>
+
+{"version":1,"event":"hornet.alert","id":"…","sent_at":"…","site":{"name":"…","url":"…"},"severity":"high",
+ "alerts":[{"key":"…","severity":"…","title":"…","details":["…"],"fix":null}]}
+```
+
+Verify it in Node:
+
+```js
+import { createHmac, timingSafeEqual } from 'node:crypto';
+
+function verify(rawBody, headers, secret) {
+  const timestamp = headers['x-hornet-timestamp'];
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false; // refuse an old message
+  const expected = 'sha256=' + createHmac('sha256', secret).update(`${timestamp}.${rawBody}`).digest('hex');
+  const given = headers['x-hornet-signature'] ?? '';
+  return given.length === expected.length && timingSafeEqual(Buffer.from(given), Buffer.from(expected));
+}
+```
 
 ## Design
 
