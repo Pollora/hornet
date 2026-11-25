@@ -15,7 +15,7 @@ use Pollora\Hornet\Domain\Network\TrustedProxies;
  */
 final readonly class Settings
 {
-    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications', 'hardening', 'headers', 'network', 'login', 'passwords', 'session', 'two_factor', 'scanner'];
+    private const array KEYS = ['enabled', 'disabled_checks', 'ignore', 'site_health', 'notifications', 'hardening', 'headers', 'network', 'login', 'passwords', 'session', 'two_factor', 'scanner', 'vulnerabilities'];
 
     /**
      * @param  list<string>  $disabledChecks  ids of the checks that do not run
@@ -33,6 +33,7 @@ final readonly class Settings
         public LoginSettings $login,
         public AccountSettings $accounts,
         public ScannerSettings $scanner,
+        public VulnerabilitySettings $vulnerabilities,
     ) {}
 
     /**
@@ -60,6 +61,7 @@ final readonly class Settings
             array_key_exists('login', $config) ? LoginSettings::fromArray($config['login']) : LoginSettings::none(),
             AccountSettings::fromConfig($config),
             array_key_exists('scanner', $config) ? ScannerSettings::fromArray($config['scanner']) : ScannerSettings::none(),
+            array_key_exists('vulnerabilities', $config) ? VulnerabilitySettings::fromArray($config['vulnerabilities']) : VulnerabilitySettings::none(),
         );
     }
 

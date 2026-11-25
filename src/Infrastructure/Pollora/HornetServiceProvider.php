@@ -117,6 +117,6 @@ final class HornetServiceProvider extends ServiceProvider
     {
         $settings = $this->settings();
 
-        return (new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment($settings));
+        return (new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment($settings));
     }
 }

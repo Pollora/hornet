@@ -111,6 +111,13 @@ return [
         // 'schedule' => 'daily',
     ],
 
+    // Known vulnerabilities (WPVulnerability): is the version of the core, of each plugin and of each theme known to have a flaw? Off until you turn it on:
+    // the name and version of every plugin and theme go to www.wpvulnerability.net (never the address of the site), and the list of what a site runs
+    // is what an attacker would like to have.
+    'vulnerabilities' => [
+        // 'enabled' => true,
+    ],
+
     // Tell someone when the audit finds something new. Nothing is sent until a channel is listed.
     // A secret (a webhook URL, a token, a signing key) is read from the environment: never write it in this file.
     'notifications' => [

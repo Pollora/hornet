@@ -30,7 +30,7 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
         static function (): Report {
             $settings = SettingsLoader::load(get_current_blog_id());
 
-            return (new Auditor(DefaultChecks::all(), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment($settings));
+            return (new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored))->run(new WordPressEnvironment($settings));
         },
         new WpCliOutput,
     ));

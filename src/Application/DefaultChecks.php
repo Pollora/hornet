@@ -6,6 +6,7 @@ namespace Pollora\Hornet\Application;
 
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
 use Pollora\Hornet\Application\Scan\ExposedFilesTask;
+use Pollora\Hornet\Application\Scan\KnownVulnerabilitiesTask;
 use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
 use Pollora\Hornet\Application\Scan\SuspiciousFilesTask;
 use Pollora\Hornet\Domain\Audit\Check;
@@ -33,7 +34,7 @@ final class DefaultChecks
     /**
      * @return list<Check>
      */
-    public static function all(): array
+    public static function all(bool $vulnerabilities = false): array
     {
         return [
             new SaltsCheck,
@@ -56,6 +57,8 @@ final class DefaultChecks
             new ScanResultCheck(PluginIntegrityTask::THEMES_ID, 'Theme files'),
             new ScanResultCheck(SuspiciousFilesTask::ID, 'Suspicious files'),
             new ScanResultCheck(ExposedFilesTask::ID, 'Files given away by the site'),
+            // Only when the owner opted in: without it the scan never asks, and the check would be "not scanned" for ever
+            ...($vulnerabilities ? [new ScanResultCheck(KnownVulnerabilitiesTask::ID, 'Known vulnerabilities')] : []),
         ];
     }
 }
