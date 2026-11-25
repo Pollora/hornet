@@ -331,6 +331,47 @@ reset
 rm -rf "$content/uploads/2026" "$content/uploads/.htaccess" "$content/themes/e2e"
 cli option delete hornet_scan >/dev/null 2>&1
 
+# --- 8d. the themes, and what the site gives away -------------------------------------------------------------
+echo "8d. themes and probes"
+themes="$WP_DIR/wp-content/themes"
+theme=$(ls "$themes" | grep -v '\.php$' | head -1)
+cli option delete hornet_baseline_themes >/dev/null 2>&1
+scan_try >/dev/null
+check "the first scan keeps a first look of the themes"              sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_baseline_themes | grep -q 'style.css'"
+check "the second compares with it"                                  scan_says 'theme(s) match what was first seen'
+echo "/* changed by the E2E test */" >> "$themes/$theme/style.css"
+check "a changed theme file is reported"                             scan_fails_with "Changed: $theme/style.css"
+configure "array('scanner' => array('own_themes' => array('$theme')))"
+check "a theme that is the owner's is left out"                      scan_says 'Nothing found'
+reset
+cli option delete hornet_baseline_themes >/dev/null 2>&1
+sed -i '$ d' "$themes/$theme/style.css"
+
+check "a clean site gives nothing away"                              scan_says 'None of the'
+printf 'APP_KEY=base64:abc\nDB_PASSWORD=hunter2-e2e-secret\n' > "$WP_DIR/.env"
+printf '[25-Nov-2026 10:00:00 UTC] PHP Warning:  Undefined variable in /var/www/html/wp-content/themes/x/a.php on line 3\n' > "$WP_DIR/wp-content/debug.log"
+check "a .env that the web server serves is reported"                scan_fails_with '/.env answers, and it is environment variables'
+check "the debug log in the content folder is reported"              grep -q '/wp-content/debug.log answers' /tmp/hornet-scan.out
+check "the scan does not print what the .env holds"                  sh -c "! grep -q 'hunter2' /tmp/hornet-scan.out"
+check "the audit shows it, and not the secret"                       sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'exposed-files' && ! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q hunter2"
+rm -f "$WP_DIR/.env" "$WP_DIR/wp-content/debug.log"
+check "the files are not touched by the scan"                        scan_says 'None of the'
+
+mkdir -p "$WP_DIR/wp-content/uploads"
+check "nothing is written in the uploads unless the owner asks"      sh -c "ls '$WP_DIR'/wp-content/uploads | grep -c hornet-probe | grep -q '^0\$'"
+configure "array('scanner' => array('probe_uploads' => true))"
+check "the server runs PHP in the uploads: the probe says so"        scan_fails_with 'The server runs PHP that sits in the uploads folder'
+check "the probe file is gone"                                       sh -c "ls '$WP_DIR'/wp-content/uploads | grep -c hornet-probe | grep -q '^0\$'"
+printf "<?php echo strrev('abc');\n" > "$WP_DIR/wp-content/uploads/hornet-probe-aaaaaaaaaaaaaaaa.php"
+scan_try >/dev/null
+check "a probe file that a dead run left is swept"                   sh -c "! test -f '$WP_DIR/wp-content/uploads/hornet-probe-aaaaaaaaaaaaaaaa.php'"
+reset
+configure "array('scanner' => array('probes' => false))"
+check "with the probes off nothing is asked of the site"             sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet scan --format=json | grep -vq '\"check\": \"exposed-files\"'"
+reset
+cli option delete hornet_scan >/dev/null 2>&1
+cli option delete hornet_baseline_themes >/dev/null 2>&1
+
 wp config set HORNET_DISABLED true --raw >/dev/null
 check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'
 wp config delete HORNET_DISABLED >/dev/null 2>&1

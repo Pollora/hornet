@@ -7,6 +7,7 @@ use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Exceptions\TransportException;
 use Pollora\Hornet\Domain\Scan\Baseline;
+use Pollora\Hornet\Domain\Scan\NoPublishedChecksums;
 use Pollora\Hornet\Domain\Scan\PluginIntegrity;
 use Pollora\Hornet\Tests\Fixtures\ArrayFileSystem;
 use Pollora\Hornet\Tests\Fixtures\ArrayPluginInventory;
@@ -237,5 +238,51 @@ describe('the scan of the plugins', function (): void {
         expect($finding->outcome)->toBe(Outcome::Pass)
             ->and($finding->summary)->toBe('1 plugin(s) match WordPress.org, 0 match what was first seen, 1 first seen now.')
             ->and($finding->details[0])->toContain('First look kept for 1 plugin(s)');
+    });
+});
+
+describe('the themes, which WordPress.org publishes no list for', function (): void {
+    function themeTask(ArrayFileSystem $dir, InMemoryBaselineStore $store): PluginIntegrityTask
+    {
+        return new PluginIntegrityTask(new ArrayPluginInventory(['mytheme' => '1.0']), new NoPublishedChecksums, new PluginIntegrity($dir), $store, new FakeClock, 240, 'theme-integrity', 'theme');
+    }
+
+    it('keeps a first look, then compares with it, and says theme', function (): void {
+        $dir = new ArrayFileSystem(['mytheme/style.css' => 'css', 'mytheme/functions.php' => '<?php // f']);
+        $store = new InMemoryBaselineStore;
+        $task = themeTask($dir, $store);
+
+        $first = $task->run(null, false)->finding;
+        $second = $task->run(null, false)->finding;
+
+        expect($first->checkId)->toBe('theme-integrity')->and($first->outcome)->toBe(Outcome::Unknown)
+            ->and($first->summary)->toContain('First look kept for 1 theme(s)')
+            ->and($second->outcome)->toBe(Outcome::Pass)
+            ->and($second->summary)->toBe('1 theme(s) match what was first seen.');
+    });
+
+    it('reports a changed file and a planted script in a theme', function (): void {
+        $dir = new ArrayFileSystem(['mytheme/style.css' => 'css', 'mytheme/functions.php' => '<?php // f']);
+        $store = new InMemoryBaselineStore;
+        themeTask($dir, $store)->run(null, false);
+        $dir->files['mytheme/functions.php'] = '<?php // changed';
+        $dir->files['mytheme/inc/x.php'] = '<?php // planted';
+
+        $finding = themeTask($dir, $store)->run(null, false)->finding;
+
+        expect($finding->outcome)->toBe(Outcome::Fail)->and($finding->severity)->toBe(Severity::High)
+            ->and($finding->summary)->toBe('1 theme has changed since it was published or first seen: mytheme.')
+            ->and($finding->details)->toBe(['Changed: mytheme/functions.php', 'Script that does not belong: mytheme/inc/x.php'])
+            ->and($finding->fix)->toContain('reinstall the theme');
+    });
+
+    it('says in its own words that there is no theme', function (): void {
+        $task = new PluginIntegrityTask(new ArrayPluginInventory([]), new NoPublishedChecksums, new PluginIntegrity(new ArrayFileSystem), new InMemoryBaselineStore, new FakeClock, 240, 'theme-integrity', 'theme');
+
+        expect($task->run(null, false)->finding->summary)->toBe('No theme has a folder of its own.');
+    });
+
+    it('has no list for any theme', function (): void {
+        expect((new NoPublishedChecksums)->checksums('twentytwentysix', '1.0'))->toBeNull();
     });
 });

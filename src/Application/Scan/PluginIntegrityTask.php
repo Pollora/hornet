@@ -29,6 +29,8 @@ final readonly class PluginIntegrityTask implements ScanTask
 {
     public const string ID = 'plugin-integrity';
 
+    public const string THEMES_ID = 'theme-integrity';
+
     /** How many findings of each kind are listed: the rest is counted. */
     private const int LISTED = 15;
 
@@ -45,11 +47,13 @@ final readonly class PluginIntegrityTask implements ScanTask
         private BaselineStore $baselines,
         private Clock $clock,
         private int $budget = 240,
+        private string $id = self::ID,
+        private string $kind = 'plugin',
     ) {}
 
     public function id(): string
     {
-        return self::ID;
+        return $this->id;
     }
 
     public function run(?Pins $pinned, bool $repin): TaskResult
@@ -57,7 +61,7 @@ final readonly class PluginIntegrityTask implements ScanTask
         $plugins = $this->inventory->plugins();
 
         if ($plugins === []) {
-            return new TaskResult(Finding::pass(self::ID, 'No plugin has a folder of its own.'));
+            return new TaskResult(Finding::pass($this->id, sprintf('No %s has a folder of its own.', $this->kind)));
         }
 
         $deadline = $this->clock->now()->add(new DateInterval('PT'.$this->budget.'S'));
@@ -143,7 +147,7 @@ final readonly class PluginIntegrityTask implements ScanTask
     {
         $problems = array_values(array_filter($verdicts, static fn (PluginVerdict $verdict): bool => ! $verdict->isClean()));
         $notes = [
-            ...($recorded === [] ? [] : [sprintf('First look kept for %d plugin(s) WordPress.org does not know, nothing to compare with yet: %s', count($recorded), implode(', ', $recorded))]),
+            ...($recorded === [] ? [] : [sprintf('First look kept for %d %s(s) WordPress.org does not know, nothing to compare with yet: %s', count($recorded), $this->kind, implode(', ', $recorded))]),
             ...($unchecked === [] ? [] : [sprintf('Not checked: %s', implode(', ', $unchecked))]),
         ];
 
@@ -157,19 +161,22 @@ final readonly class PluginIntegrityTask implements ScanTask
             $hard = array_filter($problems, static fn (PluginVerdict $verdict): bool => $verdict->modified !== [] || $verdict->unexpectedCode !== []);
 
             return Finding::fail(
-                self::ID,
+                $this->id,
                 $hard === [] ? Severity::Medium : Severity::High,
-                sprintf('%d %s changed since it was published or first seen: %s.', count($problems), count($problems) === 1 ? 'plugin has' : 'plugins have', implode(', ', array_map(static fn (PluginVerdict $verdict): string => $verdict->slug, array_slice($problems, 0, 5)))),
+                sprintf('%d %s changed since it was published or first seen: %s.', count($problems), count($problems) === 1 ? $this->kind.' has' : $this->kind.'s have', implode(', ', array_map(static fn (PluginVerdict $verdict): string => $verdict->slug, array_slice($problems, 0, 5)))),
                 $details,
-                'Look at each file. If you did not change it, reinstall the plugin from its source after a backup, and find how it was changed. Hornet never changes a file.',
+                'Look at each file. If you did not change it, reinstall the '.$this->kind.' from its source after a backup, and find how it was changed. Hornet never changes a file.',
             );
         }
 
         if ($byList + $byBaseline === 0) {
-            return Finding::unknown(self::ID, $notes === [] ? 'No plugin could be compared.' : implode(' ', $notes));
+            return Finding::unknown($this->id, $notes === [] ? sprintf('No %s could be compared.', $this->kind) : implode(' ', $notes));
         }
 
-        return Finding::pass(self::ID, sprintf('%d plugin(s) match WordPress.org, %d match what was first seen%s.', $byList, $byBaseline, $recorded === [] ? '' : sprintf(', %d first seen now', count($recorded))), $notes);
+        // A theme has no list on WordPress.org: only what was first seen can be matched
+        $matched = $this->kind === 'plugin' ? sprintf('%d plugin(s) match WordPress.org, %d match what was first seen', $byList, $byBaseline) : sprintf('%d %s(s) match what was first seen', $byBaseline, $this->kind);
+
+        return Finding::pass($this->id, sprintf('%s%s.', $matched, $recorded === [] ? '' : sprintf(', %d first seen now', count($recorded))), $notes);
     }
 
     /**

@@ -34,9 +34,10 @@ final class WpHttpClient implements HttpClient
         return new HttpResponse((int) wp_remote_retrieve_response_code($response), is_string($retryAfter) && ctype_digit($retryAfter) ? (int) $retryAfter : null, substr(wp_remote_retrieve_body($response), 0, 4096));
     }
 
-    public function get(Secret $url, array $headers, int $maxBytes, int $timeout = self::TIMEOUT): HttpResponse
+    public function get(Secret $url, array $headers, int $maxBytes, int $timeout = self::TIMEOUT, bool $allowPrivate = false): HttpResponse
     {
-        $response = wp_safe_remote_get($url->reveal(), ['timeout' => $timeout, 'redirection' => 0, 'headers' => $headers, 'limit_response_size' => $maxBytes, 'user-agent' => 'Hornet (WordPress security)']);
+        $args = ['timeout' => $timeout, 'redirection' => 0, 'headers' => $headers, 'limit_response_size' => $maxBytes, 'user-agent' => 'Hornet (WordPress security)'];
+        $response = $allowPrivate ? wp_remote_get($url->reveal(), $args) : wp_safe_remote_get($url->reveal(), $args);
 
         if (is_wp_error($response)) {
             throw new TransportException('The request failed ('.$response->get_error_code().').');

@@ -32,12 +32,12 @@ final class FakeHttpClient implements HttpClient
         return $answer;
     }
 
-    /** @var list<array{url: string, headers: array<string, string>, maxBytes: int, timeout: int}> */
+    /** @var list<array{url: string, headers: array<string, string>, maxBytes: int, timeout: int, private?: bool}> */
     public array $gets = [];
 
-    public function get(Secret $url, array $headers, int $maxBytes, int $timeout = 10): HttpResponse
+    public function get(Secret $url, array $headers, int $maxBytes, int $timeout = 10, bool $allowPrivate = false): HttpResponse
     {
-        $this->gets[] = ['url' => $url->reveal(), 'headers' => $headers, 'maxBytes' => $maxBytes, 'timeout' => $timeout];
+        $this->gets[] = ['url' => $url->reveal(), 'headers' => $headers, 'maxBytes' => $maxBytes, 'timeout' => $timeout, 'private' => $allowPrivate];
         $answer = array_shift($this->answers) ?? new HttpResponse(200);
 
         if ($answer instanceof TransportException) {

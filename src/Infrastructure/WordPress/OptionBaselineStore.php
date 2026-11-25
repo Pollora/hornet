@@ -12,13 +12,20 @@ use Pollora\Hornet\Domain\Scan\BaselineStore;
  * What was first seen of the plugins WordPress.org does not know, in one option that is not loaded on every page
  * (network-wide on a multisite: the files are shared). Stored as JSON.
  */
-final class OptionBaselineStore implements BaselineStore
+final readonly class OptionBaselineStore implements BaselineStore
 {
     public const string OPTION = 'hornet_baseline';
 
+    public const string THEMES = 'hornet_baseline_themes';
+
+    /**
+     * @param  string  $option  the option that holds it: the themes have their own, a slug can be a plugin's and a theme's
+     */
+    public function __construct(private string $option = self::OPTION) {}
+
     public function load(): array
     {
-        $stored = is_multisite() ? get_network_option(null, self::OPTION, '') : get_option(self::OPTION, '');
+        $stored = is_multisite() ? get_network_option(null, $this->option, '') : get_option($this->option, '');
 
         if (! is_string($stored) || $stored === '') {
             return [];
@@ -48,12 +55,12 @@ final class OptionBaselineStore implements BaselineStore
         $json = json_encode(array_map(static fn (Baseline $baseline): array => $baseline->toArray(), $baselines), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
 
         if (is_multisite()) {
-            update_network_option(null, self::OPTION, $json);
+            update_network_option(null, $this->option, $json);
 
             return;
         }
 
-        add_option(self::OPTION, $json, '', false);
-        update_option(self::OPTION, $json);
+        add_option($this->option, $json, '', false);
+        update_option($this->option, $json);
     }
 }

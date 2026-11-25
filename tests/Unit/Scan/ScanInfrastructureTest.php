@@ -248,6 +248,14 @@ describe('the settings', function (): void {
             ->and(ScannerSettings::none()->schedule)->toBe('off')->and(ScannerSettings::none()->ignorePaths)->toBe([]);
     });
 
+    it('reads the themes that are the owner\'s, and the probes', function (): void {
+        $default = Settings::fromArray([], new ArraySecrets)->scanner;
+        $set = Settings::fromArray(['scanner' => ['own_themes' => ['my-theme', 'child_1.0'], 'probes' => false, 'probe_uploads' => true]], new ArraySecrets)->scanner;
+
+        expect($default->ownThemes)->toBe([])->and($default->probes)->toBeTrue()->and($default->probeUploads)->toBeFalse()
+            ->and($set->ownThemes)->toBe(['my-theme', 'child_1.0'])->and($set->probes)->toBeFalse()->and($set->probeUploads)->toBeTrue();
+    });
+
     it('reads the files that may differ', function (): void {
         $settings = Settings::fromArray(['scanner' => ['allow_modified' => ['wp-includes/l10n.php']]], new ArraySecrets);
 
@@ -263,6 +271,11 @@ describe('the settings', function (): void {
         'a keyed array' => [['allow_modified' => ['a' => 'wp-includes/l10n.php']], 'scanner.allow_modified'],
         'a path that leaves the install' => [['allow_modified' => ['../wp-config.php']], 'scanner.allow_modified'],
         'an absolute path' => [['allow_modified' => ['/var/www/index.php']], 'scanner.allow_modified'],
+        'own themes that are not a list' => [['own_themes' => 'my-theme'], 'scanner.own_themes'],
+        'an own theme that is a path' => [['own_themes' => ['../x']], 'scanner.own_themes'],
+        'an own theme that is not a name' => [['own_themes' => [12]], 'scanner.own_themes'],
+        'probes that are not a bool' => [['probes' => 'yes'], 'scanner.probes'],
+        'probe_uploads that is not a bool' => [['probe_uploads' => 1], 'scanner.probe_uploads'],
         'a schedule that does not exist' => [['schedule' => 'weekly'], 'scanner.schedule'],
         'a schedule that is not a string' => [['schedule' => true], 'scanner.schedule'],
         'ignored paths that leave the content folder' => [['ignore_paths' => ['../x']], 'scanner.ignore_paths'],
