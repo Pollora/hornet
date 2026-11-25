@@ -6,7 +6,6 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Closure;
 use InvalidArgumentException;
-use Pollora\Hornet\Application\Admin\StatusView;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Journal\FloodGuard;
@@ -18,15 +17,14 @@ use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
-use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
 use Pollora\Hornet\Infrastructure\Login\ClientAddress;
 use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
+use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminBackend;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
-use Pollora\Hornet\Infrastructure\WordPress\Admin\SettingsView;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
@@ -95,7 +93,9 @@ final class Bootstrap
 
         try {
             if ($settings->siteHealth) {
-                $modules[] = new SiteHealthModule(new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored), $environment);
+                // The settings are checked now, without touching the database; the auditor itself is built when Site Health asks for it
+                new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored);
+                $modules[] = new SiteHealthModule(static fn (): Auditor => AuditorFactory::forWordPress($settings), $environment);
             }
 
             if ($settings->hardening->isActive()) {
@@ -139,11 +139,14 @@ final class Bootstrap
                 );
             }
 
+            $recorder = null;
+
             if ($settings->journal->enabled) {
                 $client ??= static fn (): ?ClientIp => ClientAddress::fromServer($_SERVER, $settings->network);
                 $journal = new TableJournal;
                 $context = new WpRequestContext($client);
-                $modules[] = new JournalModule(new JournalRecorder($journal, $context, new SystemClock), $journal, new SystemClock, $settings->journal->retentionDays, new FloodGuard(new CacheWindowCounter), $context->ip(...));
+                $recorder = new JournalRecorder($journal, $context, new SystemClock);
+                $modules[] = new JournalModule($recorder, $journal, new SystemClock, $settings->journal->retentionDays, new FloodGuard(new CacheWindowCounter), $context->ip(...));
                 $modules[] = new JournalPrivacy($journal, $settings->journal->retentionDays);
             }
 
@@ -165,11 +168,7 @@ final class Bootstrap
 
                 if ($settings->admin) {
                     // The routes cost one hook on every request: a REST request is only known after this point
-                    $modules[] = new AdminRestModule(
-                        static fn (): array => self::adminStatus($settings, $environment, $job),
-                        $job,
-                        static fn (string $channel): ?array => self::testChannel($settings, $environment, $channel),
-                    );
+                    $modules[] = new AdminRestModule(new AdminBackend($settings, $environment, $job, $recorder), $job);
 
                     if (function_exists('is_admin') && is_admin()) {
                         $modules[] = new AdminPageModule(is_multisite(), dirname(__DIR__, 3).'/assets/admin', static function (): never {
@@ -182,7 +181,8 @@ final class Bootstrap
             if ($settings->notifications->channels !== []) {
                 // Built once to be sure the settings hold together; the cron builds its own when it runs
                 $factory = NotificationFactory::forWordPress();
-                $factory->service($settings, $environment, '', '');
+                // Only to be sure the settings hold together: no auditor of the site, which would read the database on every request
+                $factory->service($settings, $environment, '', '', new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored));
                 $modules[] = new NotificationModule(static fn (): NotificationService => $factory->service($settings, $environment, get_bloginfo('name'), home_url()), $settings->notifications->schedule);
             }
         } catch (InvalidArgumentException $invalidArgumentException) {
@@ -198,45 +198,6 @@ final class Bootstrap
     private static function inAdminOrCron(): bool
     {
         return function_exists('is_admin') && (is_admin() || (function_exists('wp_doing_cron') && wp_doing_cron()));
-    }
-
-    /**
-     * What the screen shows: the audit, the last scan, the settings, the channels. It runs the audit, which is not instant.
-     *
-     * @return array<string, mixed>
-     */
-    private static function adminStatus(Settings $settings, Environment $environment, ScanJob $job): array
-    {
-        $auditor = new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored);
-        $labels = [];
-
-        foreach ($auditor->checks() as $check) {
-            $labels[$check->id()] = $check->label();
-        }
-
-        $view = StatusView::build($auditor->run($environment), $labels, (new OptionScanStore)->last(), $job->state(), (new SystemClock)->now(), ScannerFactory::forWordPress($settings)?->tasks() ?? []);
-
-        return [
-            ...$view,
-            'settings' => SettingsView::build($settings),
-            // By name and kind only: where a channel goes is a secret
-            'channels' => array_map(static fn (ChannelSpec $channel): array => ['name' => $channel->name, 'type' => $channel->type->value, 'min_severity' => $channel->minSeverity->value], $settings->notifications->channels),
-            'network' => is_multisite(),
-        ];
-    }
-
-    /**
-     * @return array{status: string, reason: string}|null null when there is no such channel
-     */
-    private static function testChannel(Settings $settings, Environment $environment, string $name): ?array
-    {
-        if (! in_array($name, array_map(static fn (ChannelSpec $channel): string => $channel->name, $settings->notifications->channels), true)) {
-            return null;
-        }
-
-        $outcome = NotificationFactory::forWordPress()->service($settings, $environment, get_bloginfo('name'), home_url())->test($name);
-
-        return ['status' => $outcome->status->value, 'reason' => $outcome->reason];
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
+use Closure;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Environment;
@@ -21,10 +22,20 @@ final class SiteHealthModule implements Module
 {
     private ?Report $report = null;
 
+    private ?Auditor $built = null;
+
     public function __construct(
-        private readonly Auditor $auditor,
+        private readonly Auditor|Closure $auditor,
         private readonly Environment $environment,
     ) {}
+
+    /**
+     * The auditor, built when Site Health first asks: what is set aside from the screen is read from the database, and a request that is not Site Health does not pay for it.
+     */
+    private function auditor(): Auditor
+    {
+        return $this->built ??= $this->auditor instanceof Closure ? ($this->auditor)() : $this->auditor;
+    }
 
     public function register(HookRegistrar $hooks): void
     {
@@ -39,7 +50,7 @@ final class SiteHealthModule implements Module
     {
         $direct = is_array($tests['direct'] ?? null) ? $tests['direct'] : [];
 
-        foreach ($this->auditor->checks() as $check) {
+        foreach ($this->auditor()->checks() as $check) {
             $direct['hornet_'.str_replace('-', '_', $check->id())] = [
                 'label' => 'Hornet: '.$check->label(),
                 'test' => fn (): array => $this->result($check),
@@ -56,7 +67,7 @@ final class SiteHealthModule implements Module
      */
     public function result(Check $check): array
     {
-        $this->report ??= $this->auditor->run($this->environment);
+        $this->report ??= $this->auditor()->run($this->environment);
         $finding = $this->report->find($check->id()) ?? Finding::unknown($check->id(), 'The check did not run.');
 
         return self::format($finding, $check->label());
