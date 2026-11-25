@@ -61,7 +61,7 @@ it('steps aside when another run holds the lock, and touches nothing', function 
         return null;
     }, $lock, $state, new FakeClock, static fn (): array => []))->run();
 
-    expect($ran)->toBeFalse()->and($built)->toBe(0)->and($state->history)->toBe([])->and($lock->held)->toBeTrue();
+    expect($ran)->toBeNull()->and($built)->toBe(0)->and($state->history)->toBe([])->and($lock->held)->toBeTrue();
 });
 
 it('goes back to idle and lets go of the lock when the scan blows up', function (): void {

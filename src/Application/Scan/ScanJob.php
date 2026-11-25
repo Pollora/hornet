@@ -30,12 +30,12 @@ final readonly class ScanJob
 
     /**
      * @param  list<string>|null  $only  the tasks to run; all of them when null
-     * @return bool whether a task stopped on its budget, and a run that goes on is to be planned
+     * @return bool|null whether a task stopped on its budget, and a run that goes on is to be planned; null when it did not run (another run holds the lock)
      */
-    public function run(?array $only = null): bool
+    public function run(?array $only = null): ?bool
     {
         if (! $this->lock->acquire()) {
-            return false;
+            return null;
         }
 
         try {

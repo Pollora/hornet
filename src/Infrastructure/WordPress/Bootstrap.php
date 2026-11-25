@@ -9,6 +9,8 @@ use InvalidArgumentException;
 use Pollora\Hornet\Application\Admin\StatusView;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
+use Pollora\Hornet\Application\Journal\FloodGuard;
+use Pollora\Hornet\Application\Journal\JournalRecorder;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Password\BreachCheck;
 use Pollora\Hornet\Application\Scan\ScanJob;
@@ -25,6 +27,11 @@ use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\SettingsView;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\WpRequestContext;
 
 /**
  * Starts the package: builds the modules the settings ask for and attaches them.
@@ -130,6 +137,14 @@ final class Bootstrap
                     },
                     static fn (): ?object => is_user_logged_in() ? wp_get_current_user() : null,
                 );
+            }
+
+            if ($settings->journal->enabled) {
+                $client ??= static fn (): ?ClientIp => ClientAddress::fromServer($_SERVER, $settings->network);
+                $journal = new TableJournal;
+                $context = new WpRequestContext($client);
+                $modules[] = new JournalModule(new JournalRecorder($journal, $context, new SystemClock), $journal, new SystemClock, $settings->journal->retentionDays, new FloodGuard(new CacheWindowCounter), $context->ip(...));
+                $modules[] = new JournalPrivacy($journal, $settings->journal->retentionDays);
             }
 
             // The files are shared by every site of a network: the main site schedules the scan, and runs it, once.
