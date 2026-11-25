@@ -287,6 +287,36 @@ check "and the scan after it is clean"                               scan_says '
 rm -rf "$WP_DIR/wp-content/plugins/hornet-e2e-premium"
 cli option delete hornet_baseline >/dev/null 2>&1
 
+# --- 8c. the files of the content folder, and the schedule ----------------------------------------------------
+echo "8c. suspicious files"
+content="$WP_DIR/wp-content"
+mkdir -p "$content/uploads/2026/11" "$content/themes/e2e"
+check "a fresh content folder has nothing suspicious"                scan_says 'Nothing found'
+echo '<?php echo "hello";' > "$content/uploads/2026/11/logo.php"
+echo 'x' > "$content/uploads/2026/11/pic.php.jpg"
+printf 'AddHandler application/x-httpd-php .jpg\n' > "$content/uploads/.htaccess"
+printf '<?php eval($_POST["x"]);' > "$content/themes/e2e/inc.php"
+check "a script in the uploads fails the scan"                       scan_fails_with 'uploads/2026/11/logo.php: a PHP file in the uploads folder'
+check "a name with a PHP extension in the middle is told"            grep -q 'pic.php.jpg' /tmp/hornet-scan.out
+check "a server setting that runs pictures as PHP is told"           grep -q 'uploads/.htaccess' /tmp/hornet-scan.out
+check "a web shell in a theme is told, with its score"               grep -q 'themes/e2e/inc.php: reads like a web shell (score 7)' /tmp/hornet-scan.out
+check "the audit shows it"                                           sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'suspicious-files'"
+check "nothing was deleted"                                          sh -c "test -f '$content/uploads/2026/11/logo.php' && test -f '$content/themes/e2e/inc.php'"
+configure "array('scanner' => array('ignore_paths' => array('uploads', 'themes/e2e')))"
+check "folders the owner leaves alone are left alone"                scan_says 'Nothing found'
+reset
+
+configure "array('scanner' => array('schedule' => 'daily'))"
+check "the schedule puts the scan in the cron"                       sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' cron event list --format=csv | grep -q 'pollora/hornet/scheduled_scan'"
+cli option delete hornet_scan >/dev/null 2>&1
+check "the cron event runs a scan"                                   sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' cron event run pollora/hornet/scheduled_scan >/dev/null 2>&1 && php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'suspicious-files.*content folder'"
+check "the lock is let go afterwards"                                sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_scan_lock >/dev/null 2>&1"
+configure "array('scanner' => array('schedule' => 'off'))"
+check "turned off, the scan leaves the cron"                         sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' cron event list --format=csv | grep -q 'pollora/hornet/scheduled_scan'"
+reset
+rm -rf "$content/uploads/2026" "$content/uploads/.htaccess" "$content/themes/e2e"
+cli option delete hornet_scan >/dev/null 2>&1
+
 wp config set HORNET_DISABLED true --raw >/dev/null
 check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'
 wp config delete HORNET_DISABLED >/dev/null 2>&1

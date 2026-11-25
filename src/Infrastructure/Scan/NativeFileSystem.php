@@ -79,6 +79,27 @@ final readonly class NativeFileSystem implements FileSystem
         return $hash === false ? null : $hash;
     }
 
+    public function read(string $path, int $maxBytes): ?string
+    {
+        $file = $this->resolve($path);
+
+        if ($file === null || ! is_file($file) || ! is_readable($file)) {
+            return null;
+        }
+
+        $contents = file_get_contents($file, false, null, 0, max(1, $maxBytes));
+
+        return $contents === false ? null : $contents;
+    }
+
+    public function size(string $path): ?int
+    {
+        $file = $this->resolve($path);
+        $size = $file !== null && is_file($file) ? filesize($file) : false;
+
+        return $size === false ? null : $size;
+    }
+
     public function sha256(string $path): ?string
     {
         $file = $this->resolve($path);

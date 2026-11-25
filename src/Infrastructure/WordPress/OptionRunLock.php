@@ -10,24 +10,27 @@ use Pollora\Hornet\Application\Notification\RunLock;
  * A lock made of an option: `add_option()` inserts a row or fails, and two processes cannot both succeed.
  * A lock older than ten minutes is the leftover of a run that died, and is taken over.
  */
-final class OptionRunLock implements RunLock
+final readonly class OptionRunLock implements RunLock
 {
-    private const string OPTION = 'hornet_notify_lock';
+    /**
+     * @param  string  $option  the option that holds the lock: each job has its own
+     */
+    public function __construct(private string $option = 'hornet_notify_lock') {}
 
     private const int STALE_AFTER = 600;
 
     public function acquire(): bool
     {
-        if (add_option(self::OPTION, time(), '', false)) {
+        if (add_option($this->option, time(), '', false)) {
             return true;
         }
 
-        $since = get_option(self::OPTION);
+        $since = get_option($this->option);
 
         if (is_int($since) && $since < time() - self::STALE_AFTER) {
-            delete_option(self::OPTION);
+            delete_option($this->option);
 
-            return add_option(self::OPTION, time(), '', false);
+            return add_option($this->option, time(), '', false);
         }
 
         return false;
@@ -35,6 +38,6 @@ final class OptionRunLock implements RunLock
 
     public function release(): void
     {
-        delete_option(self::OPTION);
+        delete_option($this->option);
     }
 }

@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+use Brain\Monkey\Functions;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
 use Pollora\Hornet\Infrastructure\WordPress\LoginThrottleModule;
 use Pollora\Hornet\Infrastructure\WordPress\NotificationModule;
+use Pollora\Hornet\Infrastructure\WordPress\ScanModule;
 use Pollora\Hornet\Infrastructure\WordPress\SettingsErrorModule;
 use Pollora\Hornet\Infrastructure\WordPress\SiteHealthModule;
 use Pollora\Hornet\Tests\Fixtures\FakeEnvironment;
@@ -89,4 +91,22 @@ it('lets the host say who is asking: Pollora hands over the request of Laravel',
     $throttle->gate('user');
 
     expect($asked)->toBe(1);
+});
+
+it('attaches the scan to the cron only when the owner asks for a schedule', function (): void {
+    Functions\when('wp_next_scheduled')->justReturn(false);
+
+    $classes = static fn (array $settings): array => array_map(static fn ($module): string => $module::class, Bootstrap::modules(Settings::fromArray($settings), new FakeEnvironment));
+
+    expect($classes(['scanner' => ['schedule' => 'daily']]))->toBe([SiteHealthModule::class, ScanModule::class])
+        ->and($classes(['scanner' => ['schedule' => 'off']]))->toBe([SiteHealthModule::class])
+        ->and($classes([]))->toBe([SiteHealthModule::class]);
+});
+
+it('keeps the scan attached while its event is still in the cron, so that turning the schedule off takes it out', function (): void {
+    Functions\when('wp_next_scheduled')->justReturn(1893456000);
+
+    $modules = Bootstrap::modules(Settings::fromArray(['scanner' => ['schedule' => 'off']]), new FakeEnvironment);
+
+    expect(array_map(static fn ($module): string => $module::class, $modules))->toBe([SiteHealthModule::class, ScanModule::class]);
 });

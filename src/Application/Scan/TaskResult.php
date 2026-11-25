@@ -15,5 +15,6 @@ final readonly class TaskResult
     public function __construct(
         public Finding $finding,
         public ?Pins $pins = null,
+        public bool $unfinished = false,
     ) {}
 }

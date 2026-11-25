@@ -26,7 +26,7 @@ final class Samples
      */
     public static function cleanScan(string $at = '2026-11-24 10:00:00'): ScanSnapshot
     {
-        return new ScanSnapshot(new DateTimeImmutable($at.' UTC'), ['core-integrity' => Finding::pass('core-integrity', 'The core files match.'), 'plugin-integrity' => Finding::pass('plugin-integrity', 'The plugins match.')]);
+        return new ScanSnapshot(new DateTimeImmutable($at.' UTC'), ['core-integrity' => Finding::pass('core-integrity', 'The core files match.'), 'plugin-integrity' => Finding::pass('plugin-integrity', 'The plugins match.'), 'suspicious-files' => Finding::pass('suspicious-files', 'Nothing suspicious.')]);
     }
 
     /**

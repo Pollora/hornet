@@ -4,6 +4,13 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Fourth milestone (0.4), third part: suspicious files and the schedule.
+
+- `wp hornet scan` walks the content folder (not the plugins, which have their own scan): a script in the uploads, an `.htaccess` or `.user.ini` that runs code, a name with a PHP extension in the middle, a hidden PHP file, and a PHP file that reads like a web shell. The rules are Hornet's own (`token_get_all`), scored: no rule is enough alone. New check `suspicious-files`.
+- `scanner.ignore_paths` leaves files or folders alone; `scanner.schedule` (`off` by default, `hourly`, `twicedaily`, `daily`) runs the scan from WP-Cron under a lock. The walk has a time budget in the cron, keeps its cursor and what it found, and goes on a minute later; from the command line it is made in one go.
+- `ScanTask` results can say they are unfinished; the stored scan keeps the list.
+- A failure found earlier stays visible while a walk is in progress.
+
 Fourth milestone (0.4), second part: the plugins.
 
 - `wp hornet scan` compares each plugin with the list of `downloads.wordpress.org` (SHA-256 by file, one request per plugin with the slug and the version only): a changed file, a missing file, a script that is not in the list. A plugin WordPress.org does not know gets a first look, kept in the `hornet_baseline` option (no autoload) and compared afterwards; `--repin` takes the plugins as they are now.

@@ -12,16 +12,24 @@ use Pollora\Hornet\Domain\Scan\CoreIntegrity;
  */
 final readonly class ScannerSettings
 {
-    private const array KEYS = ['allow_modified'];
+    private const array KEYS = ['allow_modified', 'ignore_paths', 'schedule'];
+
+    private const array SCHEDULES = ['off', 'hourly', 'twicedaily', 'daily'];
 
     /**
      * @param  list<string>  $allowModified  core files that are meant to differ from WordPress.org
+     * @param  list<string>  $ignorePaths  files and folders of the content folder that the suspicious-files scan leaves alone
+     * @param  string  $schedule  off, hourly, twicedaily or daily
      */
-    private function __construct(public array $allowModified) {}
+    private function __construct(
+        public array $allowModified,
+        public array $ignorePaths,
+        public string $schedule,
+    ) {}
 
     public static function none(): self
     {
-        return new self([]);
+        return new self([], [], 'off');
     }
 
     /**
@@ -39,19 +47,33 @@ final readonly class ScannerSettings
             }
         }
 
-        $paths = $value['allow_modified'] ?? [];
-        $expected = "a list of core file paths, relative to the WordPress root (for example 'wp-includes/l10n.php')";
+        $allowed = self::paths($value['allow_modified'] ?? [], 'allow_modified', "a list of core file paths, relative to the WordPress root (for example 'wp-includes/l10n.php')");
+        $ignored = self::paths($value['ignore_paths'] ?? [], 'ignore_paths', "a list of files or folders, relative to the content folder (for example 'themes/mine/vendor')");
+        $schedule = $value['schedule'] ?? 'off';
 
-        if (! is_array($paths) || ! array_is_list($paths)) {
-            throw InvalidSettingsException::invalid('scanner.allow_modified', $expected);
+        if (! is_string($schedule) || ! in_array($schedule, self::SCHEDULES, true)) {
+            throw InvalidSettingsException::invalid('scanner.schedule', implode(', ', self::SCHEDULES));
         }
 
-        $allowed = [];
+        return new self($allowed, $ignored, $schedule);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function paths(mixed $paths, string $key, string $expected): array
+    {
+        if (! is_array($paths) || ! array_is_list($paths)) {
+            throw InvalidSettingsException::invalid('scanner.'.$key, $expected);
+        }
+
+        $clean = [];
 
         foreach ($paths as $path) {
-            $allowed[] = is_string($path) && CoreIntegrity::isSafe($path) ? $path : throw InvalidSettingsException::invalid('scanner.allow_modified', $expected);
+            $path = is_string($path) ? rtrim($path, '/') : null;
+            $clean[] = $path !== null && CoreIntegrity::isSafe($path) ? $path : throw InvalidSettingsException::invalid('scanner.'.$key, $expected);
         }
 
-        return new self($allowed);
+        return $clean;
     }
 }

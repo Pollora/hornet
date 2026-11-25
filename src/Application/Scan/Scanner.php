@@ -53,6 +53,7 @@ final readonly class Scanner
         $now = $this->clock->now();
         $findings = [];
         $pins = [];
+        $unfinished = [];
 
         foreach ($this->tasks as $task) {
             $id = $task->id();
@@ -62,9 +63,13 @@ final readonly class Scanner
             if ($result->pins instanceof Pins) {
                 $pins[$id] = $result->pins;
             }
+
+            if ($result->unfinished) {
+                $unfinished[] = $id;
+            }
         }
 
-        $snapshot = new ScanSnapshot($now, $findings, $pins);
+        $snapshot = new ScanSnapshot($now, $findings, $pins, $unfinished);
         $this->store->save($snapshot);
 
         return $snapshot;

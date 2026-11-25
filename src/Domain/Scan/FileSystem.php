@@ -22,6 +22,12 @@ interface FileSystem
     /** The MD5 of a file, null when it is missing or cannot be read. */
     public function md5(string $path): ?string;
 
+    /** The start of a file: at most `$maxBytes` bytes. Null when it is missing or cannot be read. */
+    public function read(string $path, int $maxBytes): ?string;
+
+    /** The size of a file in bytes, null when it is missing or cannot be read. */
+    public function size(string $path): ?int;
+
     /** The SHA-256 of a file, null when it is missing or cannot be read. */
     public function sha256(string $path): ?string;
 }

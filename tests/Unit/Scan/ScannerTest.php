@@ -131,3 +131,15 @@ it('sets aside, on the reason the owner wrote, what the owner chose to live with
         ->and($report->counts()['ignored'])->toBe(1)
         ->and($report->findings[0]->ignoredReason)->toBe('Reviewed on 2026-11-20.');
 });
+
+it('says which tasks stopped on their budget, and keeps it in what is stored', function (): void {
+    $store = new InMemoryScanStore;
+    $scanner = new Scanner([fixedTask('one', new TaskResult(Finding::unknown('one', 'half'), new Pins('cursor:a', []), true)), fixedTask('two', new TaskResult(Finding::pass('two', 'fine')))], $store, new FakeClock);
+
+    $snapshot = $scanner->run();
+
+    expect($snapshot->unfinished)->toBe(['one'])
+        ->and(ScanSnapshot::fromArray(json_decode((string) json_encode($snapshot->toArray()), true))?->unfinished)->toBe(['one'])
+        ->and(ScanSnapshot::fromArray(['at' => 1, 'findings' => [], 'unfinished' => ['a', 4]])?->unfinished)->toBe(['a'])
+        ->and(ScanSnapshot::fromArray(['at' => 1, 'findings' => []])?->unfinished)->toBe([]);
+});

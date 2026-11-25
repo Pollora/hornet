@@ -10,6 +10,7 @@ use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Password\BreachCheck;
+use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
@@ -123,6 +124,11 @@ final class Bootstrap
                     },
                     static fn (): ?object => is_user_logged_in() ? wp_get_current_user() : null,
                 );
+            }
+
+            // Turned off, the scan still has to take its own event out of the cron: the module is attached while one is left
+            if ($settings->scanner->schedule !== 'off' || (function_exists('wp_next_scheduled') && wp_next_scheduled(ScanModule::SCAN_HOOK) !== false)) {
+                $modules[] = new ScanModule(static fn (): ?Scanner => ScannerFactory::forWordPress($settings, true), $settings->scanner->schedule, new OptionRunLock('hornet_scan_lock'));
             }
 
             if ($settings->notifications->channels !== []) {
