@@ -96,3 +96,18 @@ it('removes the journal only when told to mean it', function (): void {
 
     expect($dropped)->toBe(1)->and($output->successes)->toBe(['The journal was removed.']);
 });
+
+it('declares its flags the way WP-CLI reads them: a flag it does not declare is refused, however the method is written', function (): void {
+    $doc = (string) (new ReflectionMethod(JournalCommand::class, 'drop'))->getDocComment();
+
+    // `--yes` alone would be a required parameter with a value; WP-CLI answers "unknown --yes parameter" to `--yes` on the command line
+    expect($doc)->toContain('[--yes]')->and(preg_match('/^\s*\*\s*--yes\s*$/m', $doc))->toBe(0);
+
+    foreach (['list' => ['[--type=<type>]', '[--source=<source>]', '[--user=<id>]', '[--days=<days>]', '[--limit=<n>]', '[--format=<format>]']] as $method => $flags) {
+        $doc = (string) (new ReflectionMethod(JournalCommand::class, $method))->getDocComment();
+
+        foreach ($flags as $flag) {
+            expect($doc)->toContain($flag);
+        }
+    }
+});

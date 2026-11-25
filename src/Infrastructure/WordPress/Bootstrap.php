@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Pollora\Hornet\Application\Admin\StatusView;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
+use Pollora\Hornet\Application\Journal\FloodGuard;
 use Pollora\Hornet\Application\Journal\JournalRecorder;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Password\BreachCheck;
@@ -26,6 +27,7 @@ use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\SettingsView;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
@@ -140,7 +142,8 @@ final class Bootstrap
             if ($settings->journal->enabled) {
                 $client ??= static fn (): ?ClientIp => ClientAddress::fromServer($_SERVER, $settings->network);
                 $journal = new TableJournal;
-                $modules[] = new JournalModule(new JournalRecorder($journal, new WpRequestContext($client), new SystemClock), $journal, new SystemClock, $settings->journal->retentionDays);
+                $context = new WpRequestContext($client);
+                $modules[] = new JournalModule(new JournalRecorder($journal, $context, new SystemClock), $journal, new SystemClock, $settings->journal->retentionDays, new FloodGuard(new CacheWindowCounter), $context->ip(...));
                 $modules[] = new JournalPrivacy($journal, $settings->journal->retentionDays);
             }
 

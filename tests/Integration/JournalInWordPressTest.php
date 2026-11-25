@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Pollora\Hornet\Application\Journal\FloodGuard;
 use Pollora\Hornet\Application\Journal\JournalRecorder;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
@@ -11,6 +12,7 @@ use Pollora\Hornet\Domain\Journal\Source;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalSchema;
@@ -19,7 +21,7 @@ use Pollora\Hornet\Infrastructure\WordPress\Journal\WpRequestContext;
 use Pollora\Hornet\Infrastructure\WordPress\OptionScanStore;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressHooks;
 
-const JOURNAL_HOOKS = ['init', 'wp_login', 'wp_login_failed', 'after_password_reset', 'user_register', 'delete_user', 'set_user_role', 'add_user_role', 'remove_user_role', 'grant_super_admin', 'revoke_super_admin', 'wp_create_application_password', 'wp_delete_application_password', 'activated_plugin', 'deactivated_plugin', 'deleted_plugin', 'switch_theme', 'deleted_theme', 'upgrader_process_complete', 'updated_option', 'pollora/hornet/scan_completed', 'pollora/hornet/purge_journal', 'wp_privacy_personal_data_exporters', 'wp_privacy_personal_data_erasers', 'admin_init'];
+const JOURNAL_HOOKS = ['init', 'wp_login', 'wp_login_failed', 'after_password_reset', 'user_register', 'delete_user', 'set_user_role', 'add_user_role', 'remove_user_role', 'grant_super_admin', 'revoke_super_admin', 'wp_create_application_password', 'wp_delete_application_password', 'activated_plugin', 'deactivated_plugin', 'deleted_plugin', 'switch_theme', 'deleted_theme', 'upgrader_process_complete', 'updated_option', 'pollora/hornet/scan_completed', 'pollora/hornet/purge_journal', 'wpmu_drop_tables', 'wp_privacy_personal_data_exporters', 'wp_privacy_personal_data_erasers', 'admin_init'];
 
 function journalEvents(?string $type = null, int $limit = 50): array
 {
@@ -39,10 +41,17 @@ beforeEach(function (): void {
     JournalSchema::ensure();
     $this->journal = new TableJournal;
     $this->recorder = new JournalRecorder($this->journal, new WpRequestContext(static fn (): ClientIp => new ClientIp('203.0.113.50', '203.0.113.50')), new SystemClock);
-    $this->module = new JournalModule($this->recorder, $this->journal, new SystemClock, 30);
+    $this->address = '203.0.113.50';
+    $this->module = new JournalModule($this->recorder, $this->journal, new SystemClock, 30, new FloodGuard(new CacheWindowCounter), fn (): string => $this->address);
 });
 
 afterEach(function (): void {
+    // The counters of the flood guard are transients: they would carry over to the next test
+    global $wpdb;
+    $wpdb->query($wpdb->prepare('DELETE FROM %i WHERE option_name LIKE %s OR option_name LIKE %s', $wpdb->options, $wpdb->esc_like('_transient_hornet_jr_').'%', $wpdb->esc_like('_transient_timeout_hornet_jr_').'%'));
+    // The cache of options still holds what the query removed: a counter would go on from a value that is no longer in the database
+    wp_cache_flush();
+
     foreach ($this->hooks as $hook => $saved) {
         $saved === null ? remove_all_actions($hook) : $GLOBALS['wp_filter'][$hook] = $saved;
     }
@@ -185,7 +194,8 @@ describe('what it listens to', function (): void {
 
         $events = journalEvents('login.');
 
-        expect($events)->toHaveCount(2)->and($events[0])->toMatchObject(['type' => 'login.failed', 'userId' => 1, 'subject' => 'user:1', 'details' => ['reason' => 'incorrect_password']])
+        // Nobody is the author of a failed login: it is not the account holder's doing
+        expect($events)->toHaveCount(2)->and($events[0])->toMatchObject(['type' => 'login.failed', 'userId' => 0, 'actor' => '', 'subject' => 'user:1', 'details' => ['reason' => 'incorrect_password']])
             ->and($events[1])->toMatchObject(['type' => 'login.success', 'actor' => $user->user_login]);
     });
 
@@ -311,6 +321,77 @@ describe('what it listens to', function (): void {
     });
 });
 
+describe('a visitor who is not logged in cannot make the table grow', function (): void {
+    beforeEach(function (): void {
+        $this->module->register(new WordPressHooks);
+    });
+
+    it('writes the first failures from one network, says once that it went past, and writes no more', function (): void {
+        foreach (range(1, 500) as $ignored) {
+            do_action('wp_login_failed', 'admin', new WP_Error('incorrect_password'));
+        }
+
+        $failed = journalEvents('login.failed', 200);
+        $flood = journalEvents('login.flood', 200);
+
+        // 500 failures from one network cross two limits: its own after 5, and the site's after 120. Each says so once.
+        expect($failed)->toHaveCount(5)->and(array_column(array_map(static fn (Event $e): array => $e->toArray(), $flood), 'subject'))->toBe(['site', 'network'])
+            ->and($flood[1])->toMatchObject(['subject' => 'network', 'details' => ['limit' => 5, 'seconds' => 600], 'userId' => 0])
+            ->and($this->journal->count(new JournalQuery))->toBe(7);
+    });
+
+    it('holds the whole site to a number of rows an hour when the attack comes from five hundred networks', function (): void {
+        foreach (range(1, 500) as $n) {
+            $this->address = '10.'.intdiv($n, 250).'.'.($n % 250).'.9';
+            do_action('wp_login_failed', 'admin', new WP_Error('incorrect_password'));
+        }
+
+        $rows = $this->journal->count(new JournalQuery);
+        $site = array_values(array_filter(journalEvents('login.flood', 200), static fn (Event $e): bool => $e->subject === 'site'));
+
+        // 120 failures, one event that says the site went past its hour, and nothing for the 379 others
+        expect($rows)->toBe(121)->and($site)->toHaveCount(1)->and($site[0]->details)->toBe(['limit' => 120, 'seconds' => 3600]);
+    });
+
+    it('does not count what a person does who is logged in: a login that works is always written', function (): void {
+        $user = get_user_by('id', 1);
+
+        foreach (range(1, 20) as $ignored) {
+            do_action('wp_login', $user->user_login, $user);
+        }
+
+        expect(journalEvents('login.success', 100))->toHaveCount(20);
+    });
+});
+
+describe('the counter of the guard', function (): void {
+    it('counts in a window, from one hit to the next, and not from zero each time', function (): void {
+        $counter = new CacheWindowCounter;
+        $key = 'test:'.bin2hex(random_bytes(4));
+
+        expect([$counter->hit($key, 60), $counter->hit($key, 60), $counter->hit($key, 60)])->toBe([1, 2, 3])
+            ->and($counter->hit($key.'-other', 60))->toBe(1);
+    });
+});
+
+describe('the table is ready for what it is asked', function (): void {
+    it('has an index on the subject, which the export and the erasure look up by', function (): void {
+        global $wpdb;
+
+        $indexes = array_column($wpdb->get_results($wpdb->prepare('SHOW INDEX FROM %i', JournalSchema::table()), ARRAY_A) ?: [], 'Key_name');
+
+        expect($indexes)->toContain('subject')->toContain('user_id')->toContain('type')->toContain('occurred_at');
+    });
+
+    it('goes with a site that is deleted from a network', function (): void {
+        global $wpdb;
+
+        $this->module->register(new WordPressHooks);
+
+        expect(apply_filters('wpmu_drop_tables', ['wp_5_options'], 5))->toBe(['wp_5_options', $wpdb->get_blog_prefix(5).'hornet_journal']);
+    });
+});
+
 describe('the source of a request', function (): void {
     it('says web for an ordinary request, and gives the address of the client', function (): void {
         $context = new WpRequestContext(static fn (): ClientIp => new ClientIp('198.51.100.9', '198.51.100.9'));
@@ -333,9 +414,12 @@ describe('the privacy tools of WordPress', function (): void {
         $this->privacy->register(new WordPressHooks);
         $this->id = wp_insert_user(['user_login' => 'journal-test-'.wp_generate_password(5, false), 'user_pass' => wp_generate_password(), 'user_email' => 'journal-privacy-'.wp_generate_password(5, false).'@example.test', 'role' => 'subscriber']);
         $this->email = get_userdata($this->id)->user_email;
-        $this->recorder->record('login.success', 'user:'.$this->id, [], $this->id, 'someone');
-        $this->recorder->record('user.role_changed', 'user:'.$this->id, ['to' => 'editor'], 1, 'admin');
-        $this->recorder->record('plugin.activated', 'plugin:x', [], 1, 'admin');
+        // Three people, three networks: what an export gives must be told apart by the address
+        $from = static fn (string $ip): JournalRecorder => new JournalRecorder(new TableJournal, new WpRequestContext(static fn (): ClientIp => new ClientIp($ip, $ip)), new SystemClock);
+        $from('203.0.113.50')->record('login.success', 'user:'.$this->id, [], $this->id, 'someone');
+        $from('198.51.100.77')->record('user.role_changed', 'user:'.$this->id, ['to' => 'editor'], 1, 'admin');
+        $from('192.0.2.200')->record('login.failed', 'user:'.$this->id, ['reason' => 'incorrect_password'], 0, '');
+        $from('198.51.100.77')->record('plugin.activated', 'plugin:x', [], 1, 'admin');
     });
 
     afterEach(function (): void {
@@ -350,9 +434,21 @@ describe('the privacy tools of WordPress', function (): void {
     it('exports the events that name a person: what they did and what was done to them, and nothing else', function (): void {
         $export = $this->privacy->export($this->email);
 
-        expect($export['done'])->toBeTrue()->and($export['data'])->toHaveCount(2)
-            ->and(array_column(array_column($export['data'], 'data')[0], 'name'))->toBe(['When', 'What', 'From', 'About', 'Network'])
-            ->and(json_encode($export))->not->toContain('plugin:x')->toContain('203.0.113.0');
+        $json = (string) json_encode($export);
+
+        expect($export['done'])->toBeTrue()->and($export['data'])->toHaveCount(3)
+            ->and($json)->not->toContain('plugin:x')->toContain('203.0.113.0')
+            // The administrator's network, and the network of the one who failed to log in, are not this person's data
+            ->and($json)->not->toContain('198.51.100.0')->not->toContain('192.0.2.0')->not->toContain('admin');
+    });
+
+    it('gives the network and the source of what the person did, and only that', function (): void {
+        $items = $this->privacy->export($this->email)['data'];
+        $names = array_map(static fn (array $item): array => array_column($item['data'], 'name'), $items);
+        $mine = array_values(array_filter($names, static fn (array $n): bool => in_array('Network', $n, true)));
+
+        expect($mine)->toHaveCount(1)->and($mine[0])->toBe(['When', 'What', 'About', 'From', 'Network'])
+            ->and(count(array_filter($names, static fn (array $n): bool => ! in_array('Network', $n, true))))->toBe(2);
     });
 
     it('exports nothing for an address that is nobody\'s', function (): void {
@@ -364,7 +460,7 @@ describe('the privacy tools of WordPress', function (): void {
 
         expect($erased)->toMatchArray(['items_removed' => true, 'items_retained' => true, 'done' => true])
             ->and($erased['messages'])->not->toBe([])
-            ->and(journalEvents())->toHaveCount(3)
+            ->and(journalEvents())->toHaveCount(4)
             ->and($this->privacy->export($this->email)['data'])->toBe([]);
 
         global $wpdb;
@@ -384,6 +480,6 @@ describe('the privacy tools of WordPress', function (): void {
         $first = $this->privacy->export($this->email, 1);
         $second = $this->privacy->export($this->email, 2);
 
-        expect($first['done'])->toBeFalse()->and($first['data'])->toHaveCount(100)->and($second['done'])->toBeTrue()->and($second['data'])->toHaveCount(7);
+        expect($first['done'])->toBeFalse()->and($first['data'])->toHaveCount(100)->and($second['done'])->toBeTrue()->and($second['data'])->toHaveCount(8);
     });
 });

@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress\Journal;
 
+use Closure;
 use DateInterval;
+use Pollora\Hornet\Application\Journal\Decision;
+use Pollora\Hornet\Application\Journal\FloodGuard;
 use Pollora\Hornet\Application\Journal\JournalRecorder;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Clock;
 use Pollora\Hornet\Domain\Journal\EventTypes;
+use Pollora\Hornet\Domain\Journal\IpAnonymizer;
 use Pollora\Hornet\Domain\Journal\Journal;
 use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
 use Pollora\Hornet\Infrastructure\WordPress\Module;
@@ -45,17 +49,24 @@ final class JournalModule implements Module
     /** Of those, the ones whose new value is no one's secret and no one's address. */
     private const array SHOWN = ['siteurl', 'home', 'users_can_register', 'default_role'];
 
+    /**
+     * @param  Closure(): string  $address  the address of the visitor, as it is
+     */
     public function __construct(
         private readonly JournalRecorder $recorder,
         private readonly Journal $journal,
         private readonly Clock $clock,
         private readonly int $retentionDays,
+        private readonly FloodGuard $guard,
+        private readonly Closure $address,
     ) {}
 
     public function register(HookRegistrar $hooks): void
     {
         // The table first: an event that comes before it would be lost
         $hooks->addAction('init', JournalSchema::ensure(...), 0);
+        // The table goes with the site that is deleted from a network
+        $hooks->addFilter('wpmu_drop_tables', $this->tablesOfDeletedSite(...), 10, 2);
         $hooks->addAction('init', $this->plan(...));
         $hooks->addAction(self::PURGE_HOOK, $this->purge(...));
 
@@ -88,6 +99,17 @@ final class JournalModule implements Module
     }
 
     /**
+     * @param  mixed  $tables  the tables WordPress is about to drop with a site
+     * @return array<mixed>
+     */
+    public function tablesOfDeletedSite(mixed $tables, mixed $siteId = 0): array
+    {
+        global $wpdb;
+
+        return [...(is_array($tables) ? $tables : []), $wpdb->get_blog_prefix(is_scalar($siteId) ? (int) $siteId : 0).'hornet_journal'];
+    }
+
+    /**
      * Puts the purge in the cron, once.
      */
     public function plan(): void
@@ -112,15 +134,32 @@ final class JournalModule implements Module
         }
     }
 
+    /**
+     * A failed login: the account it aimed at is the subject, and nobody is the author. The one who typed is not the account holder, and the
+     * attempts of an attacker must not show up as the holder's own doings.
+     *
+     * It is the one event that a visitor can cause as often as they like: the guard keeps it within bounds.
+     */
     public function loginFailed(mixed $username, mixed $error = null): void
     {
         $user = is_string($username) && $username !== '' ? (get_user_by('login', $username) ?: get_user_by('email', $username)) : false;
         $why = $error instanceof WP_Error ? $error->get_error_code() : '';
+        $subject = $user instanceof WP_User ? 'user:'.$user->ID : 'unknown account';
 
-        // A name that matches nobody is not written: it may be a password typed in the wrong field
-        $user instanceof WP_User
-            ? $this->recorder->record(EventTypes::LOGIN_FAILED, 'user:'.$user->ID, ['reason' => (string) $why], $user->ID, $user->user_login)
-            : $this->recorder->record(EventTypes::LOGIN_FAILED, 'unknown account', ['reason' => (string) $why], 0, '');
+        match ($this->guard->decide($this->network())) {
+            Decision::Write => $this->recorder->record(EventTypes::LOGIN_FAILED, $subject, ['reason' => (string) $why], 0, ''),
+            Decision::FloodNetwork => $this->recorder->record(EventTypes::LOGIN_FLOOD, 'network', ['limit' => $this->guard->perNetwork(), 'seconds' => $this->guard->window()], 0, ''),
+            Decision::FloodSite => $this->recorder->record(EventTypes::LOGIN_FLOOD, 'site', ['limit' => $this->guard->perHour(), 'seconds' => 3600], 0, ''),
+            Decision::Drop => null,
+        };
+    }
+
+    /**
+     * Who is asking, as the journal keeps it: the shortened address.
+     */
+    private function network(): string
+    {
+        return IpAnonymizer::truncate(($this->address)());
     }
 
     public function passwordReset(mixed $user): void

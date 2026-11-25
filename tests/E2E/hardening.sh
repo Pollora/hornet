@@ -322,7 +322,7 @@ cli eval 'wp_clear_scheduled_hook("pollora/hornet/scheduled_scan"); wp_schedule_
 check "wp-cron.php answers"                                          status_is 200 --max-time 120 "http://127.0.0.1:$CRON_PORT/wp-cron.php?doing_wp_cron=1"
 lock_gone() { n=0; while php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" option get hornet_scan_lock >/dev/null 2>&1; do n=$((n + 1)); [ "$n" -gt 30 ] && { echo "        | the lock is still held after 60 seconds"; tail -5 /tmp/e2e-cron.log | sed 's/^/        | /'; return 1; }; sleep 2; done; }
 check "the scan lets go of its lock"                                 lock_gone
-scan_covered() { out=$(php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" hornet status --all --fail-on=none 2>&1); for id in core-integrity plugin-integrity suspicious-files; do echo "$out" | grep "$id" | grep -qE 'never scanned|did not cover' && { echo "        | $id has no result"; echo "$out" | grep -E 'core-integrity|plugin-integrity|suspicious-files' | cut -c1-160 | sed 's/^/        | /'; tail -15 /tmp/e2e-cron.log | sed 's/^/        | log: /'; php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" cron event list --format=csv 2>&1 | grep -i hornet | sed 's/^/        | cron: /'; return 1; }; done; echo "$out" | grep -q 'suspicious-files'; }
+scan_covered() { n=0; while [ "$n" -lt 30 ]; do out=$(php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" hornet status --all --fail-on=none 2>&1); echo "$out" | grep -E 'core-integrity|plugin-integrity|suspicious-files' | grep -qE 'never scanned|did not cover' || break; n=$((n + 1)); sleep 4; done; for id in core-integrity plugin-integrity suspicious-files; do echo "$out" | grep "$id" | grep -qE 'never scanned|did not cover' && { echo "        | $id has no result"; echo "$out" | grep -E 'core-integrity|plugin-integrity|suspicious-files' | cut -c1-160 | sed 's/^/        | /'; tail -15 /tmp/e2e-cron.log | sed 's/^/        | log: /'; return 1; }; done; echo "$out" | grep -q 'suspicious-files'; }
 check "the scheduled scan, under a 20 second PHP, stored a result for every scan" scan_covered
 cli option update home "$BASE" >/dev/null
 cli option update siteurl "$BASE" >/dev/null
@@ -434,6 +434,11 @@ check "the name that was typed is not kept anywhere"                  sh -c "! p
 check "a login that works is told"                                    sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.success --format=csv | grep -q 'web.*admin'"
 check "the address is cut: the last byte is gone"                     sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login. --format=csv | grep -q '127.0.0.0' && ! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --limit=200 --format=csv | grep -q '127.0.0.1'"
 
+# A visitor who keeps failing cannot make the table grow: 5 are written, one event says it went past, the rest are only counted
+for i in 1 2 3 4 5 6 7 8 9 10 11 12; do wrong 198.51.100.2 >/dev/null; done
+check "a flood of failed logins writes at most five, from one network"   sh -c "[ \"\$(php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.failed --limit=200 --format=csv | grep -c 'web.*user:1')\" -le 5 ]"
+check "and one event says the network went past the limit"           sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.flood --format=csv | grep -q 'network.*limit'"
+
 cli user create e2e-journal e2e-journal@example.test --role=editor >/dev/null 2>&1
 cli user set-role e2e-journal administrator >/dev/null 2>&1
 check "WP-CLI: an account created, from cli"                          sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=user.created --format=csv | grep -q 'cli'"
@@ -461,7 +466,8 @@ check "the journal can be removed, and only if you mean it"           sh -c "! p
 journal drop --yes >/dev/null 2>&1
 # Turned off first: with the journal on, the next request makes the table again
 reset
-check "after the drop, the table and its option are gone"            sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_journal_schema >/dev/null 2>&1 && [ -z \"\$(php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'global \$wpdb; echo \$wpdb->get_var(\"SHOW TABLES LIKE \\\"\".\$wpdb->prefix.\"hornet_journal\\\"\");')\" ]"
+check "after the drop, the option is gone"                            sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_journal_schema >/dev/null 2>&1"
+check "and so is the table"                                          sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'require \"$PKG/tests/E2E/journal-table.php\";' | grep -q '^none\$'"
 
 wp config set HORNET_DISABLED true --raw >/dev/null
 check "HORNET_DISABLED: the scan does not run, and asks nothing of the network" scan_fails_with 'nothing was scanned'

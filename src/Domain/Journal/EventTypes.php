@@ -14,6 +14,8 @@ final class EventTypes
 
     public const string LOGIN_FAILED = 'login.failed';
 
+    public const string LOGIN_FLOOD = 'login.flood';
+
     public const string PASSWORD_RESET = 'login.password_reset';
 
     public const string USER_CREATED = 'user.created';
@@ -64,7 +66,7 @@ final class EventTypes
     public static function all(): array
     {
         return [
-            self::LOGIN_SUCCESS, self::LOGIN_FAILED, self::PASSWORD_RESET,
+            self::LOGIN_SUCCESS, self::LOGIN_FAILED, self::LOGIN_FLOOD, self::PASSWORD_RESET,
             self::USER_CREATED, self::USER_DELETED, self::USER_ROLE, self::SUPER_ADMIN_GRANTED, self::SUPER_ADMIN_REVOKED,
             self::APP_PASSWORD_CREATED, self::APP_PASSWORD_DELETED,
             self::PLUGIN_ACTIVATED, self::PLUGIN_DEACTIVATED, self::PLUGIN_DELETED, self::PLUGIN_INSTALLED, self::PLUGIN_UPDATED,

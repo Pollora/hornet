@@ -65,22 +65,26 @@ final readonly class JournalPrivacy implements Module
         }
 
         $events = $this->journal->aboutUser($user->ID, self::PAGE, (max(1, $page) - 1) * self::PAGE);
+        $items = [];
 
-        return [
-            'data' => array_map(static fn (Event $event): array => [
-                'group_id' => 'hornet-journal',
-                'group_label' => 'Security journal',
-                'item_id' => 'hornet-journal-'.($event->id ?? 0),
-                'data' => [
-                    ['name' => 'When', 'value' => $event->at->format('Y-m-d H:i:s').' UTC'],
-                    ['name' => 'What', 'value' => $event->type],
-                    ['name' => 'From', 'value' => $event->source->value],
-                    ['name' => 'About', 'value' => $event->subject],
-                    ['name' => 'Network', 'value' => $event->ip],
-                ],
-            ], $events),
-            'done' => count($events) < self::PAGE,
-        ];
+        foreach ($events as $event) {
+            $data = [
+                ['name' => 'When', 'value' => $event->at->format('Y-m-d H:i:s').' UTC'],
+                ['name' => 'What', 'value' => $event->type],
+                ['name' => 'About', 'value' => $event->subject],
+            ];
+
+            // The source and the network are those of whoever did it: the person's only if they did it. Of an event that was done to them, by an
+            // administrator or by someone who tried to get in, they are somebody else's data, and are not given.
+            if ($event->userId === $user->ID) {
+                $data[] = ['name' => 'From', 'value' => $event->source->value];
+                $data[] = ['name' => 'Network', 'value' => $event->ip];
+            }
+
+            $items[] = ['group_id' => 'hornet-journal', 'group_label' => 'Security journal', 'item_id' => 'hornet-journal-'.($event->id ?? 0), 'data' => $data];
+        }
+
+        return ['data' => $items, 'done' => count($events) < self::PAGE];
     }
 
     /**

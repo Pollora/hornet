@@ -135,8 +135,8 @@ final readonly class JournalCommand
      *
      * ## OPTIONS
      *
-     * --yes
-     * : Say that you mean it.
+     * [--yes]
+     * : Say that you mean it. Without it the command only says what it would do.
      *
      * ## EXAMPLES
      *

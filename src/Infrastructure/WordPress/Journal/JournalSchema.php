@@ -52,7 +52,8 @@ final class JournalSchema
   PRIMARY KEY  (id),
   KEY occurred_at (occurred_at),
   KEY type (type),
-  KEY user_id (user_id)
+  KEY user_id (user_id),
+  KEY subject (subject)
 ) {$charset};");
 
         update_option(self::OPTION, self::VERSION);

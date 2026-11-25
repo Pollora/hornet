@@ -8,6 +8,7 @@ Seventh milestone (0.7), first part: the journal.
 
 - `journal.enabled` (off by default) and `journal.retention_days` (90): a table per site (`{prefix}hornet_journal`, `dbDelta`, versioned) that records logins and failures, accounts created, deleted and given a role, application passwords (by name), plugins and themes (activated, deactivated, deleted, installed, updated), the core update, sensitive options (`siteurl`, `home`, `users_can_register`, `default_role`, and that `admin_email` changed), and the end of a scan. Each event has the **source of the request**: web, admin, rest, ajax, xmlrpc, cli or cron.
 - Never a password, a secret, or the name typed on a login that matches no account. The address is cut (IPv4 /24, IPv6 /48). A journal that cannot be written never stops a request.
+- What a visitor can cause is bounded: 5 failed logins per network per 10 minutes, 120 per hour for the site, each limit said once by a `login.flood` event (about 125 rows an hour at worst). A failed login has nobody as its author, and the account it aimed at as its subject. The export gives the network and the source only of what the person did themselves.
 - A daily purge (`pollora/hornet/purge_journal`), an exporter and an eraser for the privacy tools of WordPress (erasing keeps the events and takes the person out of them), a suggestion for the privacy policy.
 - `wp hornet journal list|purge|drop`.
 - New hook `pollora/hornet/scan_completed`. `ScanJob::run()` returns `null` when it did not run.
