@@ -54,7 +54,8 @@ final readonly class NativeFileSystem implements FileSystem
             return null;
         }
 
-        sort($files);
+        // By bytes, as the cursor of a walk compares them
+        sort($files, SORT_STRING);
 
         return $files;
     }

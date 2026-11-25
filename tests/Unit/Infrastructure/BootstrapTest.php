@@ -110,3 +110,16 @@ it('keeps the scan attached while its event is still in the cron, so that turnin
 
     expect(array_map(static fn ($module): string => $module::class, $modules))->toBe([SiteHealthModule::class, ScanModule::class]);
 });
+
+it('leaves the scheduled scan to the main site of a network: the files are shared', function (): void {
+    Functions\when('wp_next_scheduled')->justReturn(false);
+    Functions\when('is_multisite')->justReturn(true);
+    Functions\when('is_main_site')->justReturn(false);
+    $schedule = ['scanner' => ['schedule' => 'daily']];
+
+    expect(array_map(static fn ($module): string => $module::class, Bootstrap::modules(Settings::fromArray($schedule), new FakeEnvironment)))->toBe([SiteHealthModule::class]);
+
+    Functions\when('is_main_site')->justReturn(true);
+
+    expect(array_map(static fn ($module): string => $module::class, Bootstrap::modules(Settings::fromArray($schedule), new FakeEnvironment)))->toBe([SiteHealthModule::class, ScanModule::class]);
+});

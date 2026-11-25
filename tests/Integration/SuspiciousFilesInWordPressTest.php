@@ -99,7 +99,7 @@ it('keeps a lock in its own option, takes over a dead one, and lets go', functio
 });
 
 it('puts the scan in the real cron, moves it, and takes it out', function (): void {
-    $module = fn (string $schedule): ScanModule => new ScanModule(static fn (): ?Scanner => null, $schedule, new OptionRunLock('hornet_scan_lock'));
+    $module = fn (string $schedule): ScanModule => new ScanModule(static fn (): ?Scanner => null, $schedule, new OptionRunLock('hornet_scan_lock'), static fn (): array => []);
 
     $module('daily')->plan();
     $daily = wp_get_schedule(ScanModule::SCAN_HOOK);

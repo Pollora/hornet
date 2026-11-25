@@ -51,7 +51,7 @@ it('runs every task and keeps what they found with the time', function (): void 
         ->and($snapshot->pins('one'))->toBe($pins)
         ->and($snapshot->pins('two'))->toBeNull()
         ->and($snapshot->at->format('c'))->toBe('2026-11-25T10:00:00+00:00')
-        ->and($store->saves)->toBe(1)
+        ->and($store->saves)->toBe(3)
         ->and($store->snapshot)->toBe($snapshot);
 });
 
@@ -142,4 +142,54 @@ it('says which tasks stopped on their budget, and keeps it in what is stored', f
         ->and(ScanSnapshot::fromArray(json_decode((string) json_encode($snapshot->toArray()), true))?->unfinished)->toBe(['one'])
         ->and(ScanSnapshot::fromArray(['at' => 1, 'findings' => [], 'unfinished' => ['a', 4]])?->unfinished)->toBe(['a'])
         ->and(ScanSnapshot::fromArray(['at' => 1, 'findings' => []])?->unfinished)->toBe([]);
+});
+
+it('runs only the tasks it is told to on a continuation, and keeps what the others found', function (): void {
+    $one = fixedTask('one', new TaskResult(Finding::pass('one', 'fresh one')));
+    $two = fixedTask('two', new TaskResult(Finding::pass('two', 'fresh two')));
+    $pins = new Pins('7.1.5', ['a' => 'b']);
+    $before = new ScanSnapshot(new DateTimeImmutable('2026-11-20'), ['one' => Finding::fail('one', Severity::High, 'old one'), 'two' => Finding::pass('two', 'old two')], ['one' => $pins], ['two']);
+    $store = new InMemoryScanStore($before);
+
+    $snapshot = (new Scanner([$one, $two], $store, new FakeClock))->run(false, ['two']);
+
+    expect($snapshot->finding('one')?->summary)->toBe('old one')
+        ->and($snapshot->finding('two')?->summary)->toBe('fresh two')
+        ->and($snapshot->pins('one'))->toBe($pins)
+        ->and($one->received)->toBeNull()
+        ->and($two->repin)->toBeFalse()
+        ->and($snapshot->unfinished)->toBe([]);
+});
+
+it('runs a task that has no earlier result even when it is not asked for', function (): void {
+    $new = fixedTask('new', new TaskResult(Finding::pass('new', 'first time')));
+    $store = new InMemoryScanStore(new ScanSnapshot(new DateTimeImmutable('2026-11-20'), ['old' => Finding::pass('old', 'fine')]));
+
+    $snapshot = (new Scanner([fixedTask('old', new TaskResult(Finding::pass('old', 'again'))), $new], $store, new FakeClock))->run(false, ['old']);
+
+    expect($snapshot->finding('new')?->summary)->toBe('first time');
+});
+
+it('keeps an unfinished task unfinished when the continuation does not touch it', function (): void {
+    $store = new InMemoryScanStore(new ScanSnapshot(new DateTimeImmutable('2026-11-20'), ['one' => Finding::unknown('one', 'half'), 'two' => Finding::pass('two', 'x')], [], ['one']));
+
+    $snapshot = (new Scanner([fixedTask('one', new TaskResult(Finding::pass('one', 'x'))), fixedTask('two', new TaskResult(Finding::pass('two', 'y')))], $store, new FakeClock))->run(false, ['two']);
+
+    expect($snapshot->unfinished)->toBe(['one']);
+});
+
+it('saves after each task, with the old date until the last one is done, so that a run that dies loses only the task it was in', function (): void {
+    $store = new InMemoryScanStore(new ScanSnapshot(new DateTimeImmutable('2026-11-20 10:00:00 UTC'), ['one' => Finding::pass('one', 'old one'), 'two' => Finding::pass('two', 'old two')]));
+    $scanner = new Scanner([fixedTask('one', new TaskResult(Finding::pass('one', 'new one'))), fixedTask('two', new TaskResult(Finding::pass('two', 'new two')))], $store, new FakeClock('2026-11-25 10:00:00'));
+
+    $scanner->run();
+    [$afterOne, $afterTwo, $final] = $store->history;
+
+    // After the first task: its result is new, the other is still the old one, and the date is still the old one
+    expect($store->saves)->toBe(3)
+        ->and($afterOne->finding('one')?->summary)->toBe('new one')
+        ->and($afterOne->finding('two')?->summary)->toBe('old two')
+        ->and($afterOne->at->format('Y-m-d'))->toBe('2026-11-20')
+        ->and($afterTwo->at->format('Y-m-d'))->toBe('2026-11-20')
+        ->and($final->at->format('Y-m-d'))->toBe('2026-11-25');
 });

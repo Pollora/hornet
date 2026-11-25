@@ -33,13 +33,16 @@ function scanTask(bool $unfinished): ScanTask
     };
 }
 
-function scanModule(bool $unfinished, ArrayLock $lock, string $schedule = 'daily', int &$built = 0): ScanModule
+/**
+ * @param  list<string>  $left  the tasks that stopped on their budget at the last run
+ */
+function scanModule(bool $unfinished, ArrayLock $lock, string $schedule = 'daily', int &$built = 0, array $left = []): ScanModule
 {
     return new ScanModule(function () use ($unfinished, &$built): Scanner {
         $built++;
 
         return new Scanner([scanTask($unfinished)], new InMemoryScanStore, new FakeClock);
-    }, $schedule, $lock);
+    }, $schedule, $lock, static fn (): array => $left);
 }
 
 it('attaches the init hook, the scan and its continuation', function (): void {
@@ -116,7 +119,7 @@ it('steps aside when another run holds the lock', function (): void {
 
 it('lets go of the lock when the scan fails', function (): void {
     $lock = new ArrayLock;
-    $module = new ScanModule(static fn (): never => throw new RuntimeException('boom'), 'daily', $lock);
+    $module = new ScanModule(static fn (): never => throw new RuntimeException('boom'), 'daily', $lock, static fn (): array => []);
 
     expect(fn () => $module->scan())->toThrow(RuntimeException::class)->and($lock->held)->toBeFalse();
 });
@@ -124,7 +127,20 @@ it('lets go of the lock when the scan fails', function (): void {
 it('does not build a scanner that is not there (Hornet off, folders unreadable)', function (): void {
     $lock = new ArrayLock;
 
-    (new ScanModule(static fn (): ?Scanner => null, 'daily', $lock))->scan();
+    (new ScanModule(static fn (): ?Scanner => null, 'daily', $lock, static fn (): array => []))->scan();
 
     expect($lock->held)->toBeFalse()->and($lock->released)->toBe(1);
+});
+
+it('goes on with the tasks that were left, and with nothing else', function (): void {
+    Functions\when('wp_next_scheduled')->justReturn(false);
+    Functions\expect('wp_schedule_single_event')->never();
+    $lock = new ArrayLock;
+    $built = 0;
+
+    scanModule(false, $lock, 'daily', $built, [CoreIntegrityTask::ID])->continue();
+    scanModule(false, $lock, 'daily', $built)->continue();
+
+    // The second one had nothing left to do: it did not even build a scanner
+    expect($built)->toBe(1);
 });

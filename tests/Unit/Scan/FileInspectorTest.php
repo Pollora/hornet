@@ -28,6 +28,12 @@ it('lets the silence files of the uploads be', function (string $contents): void
     ["<?php\n"],
 ]);
 
+it('does not let a file pass as silence by hiding code behind the end of a comment', function (): void {
+    $found = inspected('uploads/index.php', '<?php // Silence is golden. ?><?php include $_GET["f"];');
+
+    expect($found?->severity)->toBe(Severity::High)->and(implode(';', $found->reasons ?? []))->toContain('includes a file named by request input');
+});
+
 it('does not let a file pass as silence when it holds code', function (): void {
     expect(inspected('uploads/index.php', "<?php // Silence is golden.\nsystem(\$_GET['c']);")?->severity)->toBe(Severity::High);
 });

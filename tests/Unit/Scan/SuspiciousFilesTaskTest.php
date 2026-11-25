@@ -153,6 +153,24 @@ describe('a walk that has a time budget', function (): void {
         expect($result->finding->details[0])->toContain('themes/t/f030.php');
     });
 
+    it('says how many it could not keep between two runs', function (): void {
+        $hits = [];
+
+        foreach (range(1, 700) as $number) {
+            $hits[sprintf('themes/t/f%03d.php', $number)] = '<?php eval($_POST["x"]);';
+        }
+
+        $clock = new FakeClock;
+        $first = walk(new TickingFileSystem(new ArrayFileSystem($hits), $clock, 'PT1S'), budget: 300, clock: $clock)->run(null, false);
+        $dropped = (int) ($first->pins?->hashes['~dropped'] ?? 0);
+        $second = walk(new ArrayFileSystem($hits))->run($first->pins, false);
+
+        expect($first->unfinished)->toBeTrue()->and($dropped)->toBeGreaterThan(0)
+            ->and(count($first->pins?->hashes ?? []))->toBe(201)
+            ->and($second->finding->details[array_key_last($second->finding->details)])->toContain(sprintf('and %d more were found in an earlier run and not kept', $dropped))
+            ->and($second->finding->summary)->toContain('files in the content folder');
+    });
+
     it('does not trust what it kept: a stored suspicion that does not fit is dropped', function (): void {
         $pins = new Pins('cursor:themes/t/f999.php', ['a.php' => 'not json', 'b.php' => '{"path":"b.php","severity":"nope","reasons":[]}']);
 

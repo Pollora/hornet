@@ -15,6 +15,13 @@ it('flags code that runs what a visitor sends', function (string $source, int $s
     'a command in backticks from the request' => ['<?php echo `{$_GET["c"]}`;', 6],
     'eval of a decoded blob' => ['<?php eval(base64_decode("ZWNobyAxOw=="));', 5],
     'eval of a deflated blob' => ['<?php eval(gzinflate(base64_decode("x")));', 6],
+    'the function is named by the request' => ['<?php $_POST["a"]($_POST["b"]);', 7],
+    'the function is named by the request, the usual way' => ['<?php @$_REQUEST[\'f\']($_REQUEST[\'c\']);', 7],
+    'a callback named by the request' => ['<?php call_user_func($_GET["f"], "id");', 7],
+    'a callback that runs code, given the request' => ['<?php array_map("assert", $_POST);', 7],
+    'assert of the request' => ['<?php assert($_POST["x"]);', 7],
+    'a file named by the request' => ['<?php include $_GET["page"];', 7],
+    'a file named by the request, in a string' => ['<?php require_once "pages/".$_GET["page"].".php";', 7],
     'preg_replace with the e modifier, and a command, from the request' => ['<?php preg_replace("/x/e", $_GET["c"], "x"); passthru($a);', 9],
 ]);
 
@@ -37,6 +44,10 @@ it('leaves ordinary code alone, even when it uses what a shell uses', function (
     'an eval that is only a word in a comment' => ["<?php\n// eval(\$_POST['x']) is what a shell does\n/* system(\$_GET['c']) */\necho 1;"],
     'a method named exec, and one declared so' => ['<?php class A { function exec() {} } $a->exec($_GET["x"]); A::system($_POST["y"]); eval_not($x);'],
     'a string that says eval' => ['<?php echo "eval($_POST) and system(x)";'],
+    'a callback that is not given the request first' => ['<?php $clean = array_map("trim", $_POST); call_user_func("render", $_GET["id"]);'],
+    'assert of something else' => ['<?php assert($x > 0); assert(is_int($_GET["id"]) === false || true);'],
+    'a file that is not named by the request' => ['<?php include __DIR__."/a.php"; require_once $path; echo $_GET["page"];'],
+    'an index of the request that is not called' => ['<?php $f = $_POST["a"]; echo $_POST["b"][0];'],
     'plain HTML' => ['<html><body>Hello</body></html>'],
     'nothing' => [''],
 ]);
@@ -63,3 +74,20 @@ it('never fails on a file that is not valid PHP', function (): void {
 it('puts a number on the boundaries', function (): void {
     expect(ScriptScore::SUSPICIOUS)->toBe(5)->and(ScriptScore::LIKELY_SHELL)->toBe(7)->and((new ScriptScore(4))->isSuspicious())->toBeFalse();
 });
+
+it('knows a file that holds nothing that runs, by its tokens', function (string $source, bool $silence): void {
+    expect(ScriptRules::isSilence($source))->toBe($silence);
+})->with([
+    ['<?php // Silence is golden.', true],
+    ["<?php\n// Silence is golden.\n", true],
+    ["<?php\n/* Silence is golden */\n?>\n", true],
+    ['<?php # nothing', true],
+    ["<?php\n", true],
+    ['<?php // x ?>'."\n", true],
+    // The comment of a line stops at the closing tag: what follows is code
+    ['<?php // x ?><?php include $_GET["f"];', false],
+    ["<?php // Silence is golden.\nsystem(\$_GET['c']);", false],
+    ['<?php /* x */ echo 1;', false],
+    ['<html>hello</html>', false],
+    ["<?php ?>\n  \n", true],
+]);

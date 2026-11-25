@@ -46,20 +46,45 @@ final readonly class Scanner
 
     /**
      * @param  bool  $repin  accept the files that are allowed to differ as they are now
+     * @param  list<string>|null  $only  the tasks to run; the others keep what the last scan found (a continuation does not start over, nor asks WordPress.org again)
      */
-    public function run(bool $repin = false): ScanSnapshot
+    public function run(bool $repin = false, ?array $only = null): ScanSnapshot
     {
         $previous = $this->store->last();
         $now = $this->clock->now();
+        $ids = $this->tasks();
         $findings = [];
         $pins = [];
         $unfinished = [];
 
+        // What an earlier scan found stays until the task that found it has run again
+        foreach ($ids as $id) {
+            $finding = $previous?->finding($id);
+            if ($finding instanceof Finding) {
+                $findings[$id] = $finding;
+            }
+
+            $kept = $previous?->pins($id);
+            if ($kept instanceof Pins) {
+                $pins[$id] = $kept;
+            }
+        }
+
         foreach ($this->tasks as $task) {
             $id = $task->id();
+
+            if ($only !== null && ! in_array($id, $only, true) && isset($findings[$id])) {
+                // Not run again: it is still unfinished if it was
+                if (in_array($id, $previous->unfinished ?? [], true)) {
+                    $unfinished[] = $id;
+                }
+
+                continue;
+            }
+
             $result = $this->runOne($task, $previous?->pins($id), $repin);
             $findings[$id] = $this->kept($result->finding, $previous?->finding($id), $now);
-
+            unset($pins[$id]);
             if ($result->pins instanceof Pins) {
                 $pins[$id] = $result->pins;
             }
@@ -67,6 +92,10 @@ final readonly class Scanner
             if ($result->unfinished) {
                 $unfinished[] = $id;
             }
+
+            // Saved after each task: a run that dies on the time limit loses the task it was in, not those it had done.
+            // Until the last one is done the scan keeps its old date, so that what was not run again does not look fresh.
+            $this->store->save(new ScanSnapshot($previous instanceof ScanSnapshot ? $previous->at : $now, $findings, $pins, $unfinished));
         }
 
         $snapshot = new ScanSnapshot($now, $findings, $pins, $unfinished);

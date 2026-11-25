@@ -21,9 +21,6 @@ final readonly class FileInspector
     /** What an `.htaccess` or a `.user.ini` says when it runs code that is not the site's. */
     private const string DANGEROUS_SETTING = '/^\s*(?:auto_prepend_file|auto_append_file|php_value\s+auto_(?:prepend|append)_file|(?:AddHandler|AddType|SetHandler)\b.*\bphp)/imD';
 
-    /** What WordPress and the plugins put in a folder so that it cannot be listed: a comment, no code. */
-    private const string SILENCE = '/^<\?php\s*(?:\/\/[^\n]*|\/\*.*?\*\/|#[^\n]*)?\s*(?:\?>)?\s*$/sD';
-
     /**
      * @param  string  $uploads  the uploads folder, relative to the content folder ('' when it is not inside it)
      */
@@ -60,7 +57,7 @@ final readonly class FileInspector
         if ($script) {
             $contents = $this->content->read($path, self::READ);
 
-            if ($inUploads && ! ($contents !== null && preg_match(self::SILENCE, $contents) === 1)) {
+            if ($inUploads && ! ($contents !== null && ScriptRules::isSilence($contents))) {
                 $flag(Severity::High, 'a PHP file in the uploads folder, where nothing should run');
             }
 

@@ -126,9 +126,15 @@ final class Bootstrap
                 );
             }
 
-            // Turned off, the scan still has to take its own event out of the cron: the module is attached while one is left
-            if ($settings->scanner->schedule !== 'off' || (function_exists('wp_next_scheduled') && wp_next_scheduled(ScanModule::SCAN_HOOK) !== false)) {
-                $modules[] = new ScanModule(static fn (): ?Scanner => ScannerFactory::forWordPress($settings, true), $settings->scanner->schedule, new OptionRunLock('hornet_scan_lock'));
+            // The files are shared by every site of a network: the main site schedules the scan, once.
+            // Turned off, the scan still has to take its own event out of the cron: the module is attached while one is left.
+            if (self::ownsScan() && ($settings->scanner->schedule !== 'off' || (function_exists('wp_next_scheduled') && wp_next_scheduled(ScanModule::SCAN_HOOK) !== false))) {
+                $modules[] = new ScanModule(
+                    static fn (): ?Scanner => ScannerFactory::forWordPress($settings, true),
+                    $settings->scanner->schedule,
+                    new OptionRunLock('hornet_scan_lock'),
+                    static fn (): array => (new OptionScanStore)->last()->unfinished ?? [],
+                );
             }
 
             if ($settings->notifications->channels !== []) {
@@ -142,5 +148,13 @@ final class Bootstrap
         }
 
         return $modules;
+    }
+
+    /**
+     * Whether this site runs the scheduled scan: a single site, or the main site of a network.
+     */
+    private static function ownsScan(): bool
+    {
+        return ! function_exists('is_multisite') || ! is_multisite() || is_main_site();
     }
 }

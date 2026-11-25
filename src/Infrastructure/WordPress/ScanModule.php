@@ -12,7 +12,7 @@ use Pollora\Hornet\Application\Scan\Scanner;
  * Runs the scan on a schedule, when the owner asked for one (`scanner.schedule`; off by default).
  *
  * It rides on WP-Cron, which only runs when a page is visited and has the time limit of a web request: the walk of the content
- * folder stops on a budget and goes on a minute later, but the plugin scan is not cut in pieces. On a large site, run `wp hornet scan`
+ * folder stops on a budget and goes on a minute later (that run does only the walk), but the plugin scan is not cut in pieces. On a large site, run `wp hornet scan`
  * from the system cron (with `DISABLE_WP_CRON`). Two runs never overlap: the second steps aside.
  * The result is read by the audit, which tells the channels what is new at its own turn.
  */
@@ -28,18 +28,20 @@ final readonly class ScanModule implements Module
     /**
      * @param  Closure(): ?Scanner  $scanner  built when it is needed: a request that does not run the cron builds nothing
      * @param  string  $schedule  hourly, twicedaily or daily
+     * @param  Closure(): list<string>  $unfinished  the tasks that stopped on their budget at the last run
      */
     public function __construct(
         private Closure $scanner,
         private string $schedule,
         private RunLock $lock,
+        private Closure $unfinished,
     ) {}
 
     public function register(HookRegistrar $hooks): void
     {
         $hooks->addAction('init', $this->plan(...));
-        $hooks->addAction(self::SCAN_HOOK, $this->scan(...));
-        $hooks->addAction(self::CONTINUE_HOOK, $this->scan(...));
+        $hooks->addAction(self::SCAN_HOOK, fn () => $this->scan());
+        $hooks->addAction(self::CONTINUE_HOOK, $this->continue(...));
     }
 
     public function plan(): void
@@ -63,7 +65,22 @@ final readonly class ScanModule implements Module
         wp_schedule_event(time() + 600, $this->schedule, self::SCAN_HOOK);
     }
 
-    public function scan(): void
+    /**
+     * Goes on with what was left: only the tasks that stopped on their budget run again.
+     */
+    public function continue(): void
+    {
+        $unfinished = ($this->unfinished)();
+
+        if ($unfinished !== []) {
+            $this->scan($unfinished);
+        }
+    }
+
+    /**
+     * @param  list<string>|null  $only  the tasks to run; all of them when null
+     */
+    public function scan(?array $only = null): void
     {
         if (! $this->lock->acquire()) {
             return;
@@ -72,7 +89,7 @@ final readonly class ScanModule implements Module
         try {
             $scanner = ($this->scanner)();
 
-            if ($scanner instanceof Scanner && $scanner->run()->unfinished !== [] && wp_next_scheduled(self::CONTINUE_HOOK) === false) {
+            if ($scanner instanceof Scanner && $scanner->run(false, $only)->unfinished !== [] && wp_next_scheduled(self::CONTINUE_HOOK) === false) {
                 wp_schedule_single_event(time() + self::CONTINUE_AFTER, self::CONTINUE_HOOK);
             }
         } finally {

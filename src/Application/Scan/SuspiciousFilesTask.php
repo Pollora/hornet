@@ -6,6 +6,7 @@ namespace Pollora\Hornet\Application\Scan;
 
 use DateInterval;
 use Pollora\Hornet\Domain\Audit\Finding;
+use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Clock;
 use Pollora\Hornet\Domain\Scan\FileInspector;
 use Pollora\Hornet\Domain\Scan\FileSystem;
@@ -30,6 +31,9 @@ final readonly class SuspiciousFilesTask implements ScanTask
     private const int KEPT = 200;
 
     private const int LISTED = 20;
+
+    /** The key, among the pins of a walk, that counts what could not be kept. */
+    private const string DROPPED = '~dropped';
 
     /** Folders that are not the site's code: tools, caches that hold generated PHP on purpose, languages. */
     private const array SKIPPED_ANYWHERE = ['node_modules', '.git', 'cache', 'wflogs'];
@@ -63,7 +67,7 @@ final readonly class SuspiciousFilesTask implements ScanTask
         }
 
         $after = $pinned instanceof Pins && str_starts_with($pinned->scope, self::CURSOR) && ! $repin ? substr($pinned->scope, strlen(self::CURSOR)) : null;
-        $found = $after === null ? [] : $this->kept($pinned);
+        [$found, $dropped] = $after === null ? [[], 0] : $this->kept($pinned);
         $deadline = $this->budget === null ? null : $this->clock->now()->add(new DateInterval('PT'.$this->budget.'S'));
         $looked = 0;
         $last = null;
@@ -78,7 +82,7 @@ final readonly class SuspiciousFilesTask implements ScanTask
             }
 
             if ($deadline instanceof \DateTimeImmutable && $looked % 50 === 0 && $this->clock->now() > $deadline && $looked > 0) {
-                return $this->partial($found, (string) $last, $looked);
+                return $this->partial($found, $dropped, (string) $last, $looked);
             }
 
             $suspicion = $this->inspector->inspect($path);
@@ -91,18 +95,25 @@ final readonly class SuspiciousFilesTask implements ScanTask
         }
 
         // Done: the cursor is dropped, and the next run starts again from the first file
-        return new TaskResult($this->finding($found, $looked));
+        return new TaskResult($this->finding($found, $looked, $dropped));
     }
 
     /**
      * @param  array<string, Suspicion>  $found
      */
-    private function partial(array $found, string $last, int $looked): TaskResult
+    private function partial(array $found, int $dropped, string $last, int $looked): TaskResult
     {
         $hashes = [];
 
         foreach (array_slice($found, 0, self::KEPT, true) as $path => $suspicion) {
             $hashes[$path] = (string) json_encode($suspicion->toArray());
+        }
+
+        // More than can be kept between two runs: they are counted, and said
+        $lost = $dropped + max(0, count($found) - self::KEPT);
+
+        if ($lost > 0) {
+            $hashes[self::DROPPED] = (string) $lost;
         }
 
         return new TaskResult(
@@ -113,28 +124,36 @@ final readonly class SuspiciousFilesTask implements ScanTask
     }
 
     /**
-     * @return array<string, Suspicion>
+     * @return array{array<string, Suspicion>, int} what an earlier run found, and how many it found beyond what it could keep
      */
     private function kept(?Pins $pinned): array
     {
         $found = [];
+        $dropped = 0;
 
         foreach ($pinned->hashes ?? [] as $path => $json) {
+            if ($path === self::DROPPED) {
+                $dropped = max(0, (int) $json);
+
+                continue;
+            }
+
             $suspicion = Suspicion::fromArray(json_decode($json, true));
+
             if ($suspicion instanceof Suspicion) {
                 $found[(string) $path] = $suspicion;
             }
         }
 
-        return $found;
+        return [$found, $dropped];
     }
 
     /**
      * @param  array<string, Suspicion>  $found
      */
-    private function finding(array $found, int $looked): Finding
+    private function finding(array $found, int $looked, int $dropped = 0): Finding
     {
-        if ($found === []) {
+        if ($found === [] && $dropped === 0) {
             return Finding::pass(self::ID, sprintf('Nothing suspicious in the %d files of the content folder that were looked at.', $looked));
         }
 
@@ -146,10 +165,14 @@ final readonly class SuspiciousFilesTask implements ScanTask
             $details[] = sprintf('and %d more', count($list) - self::LISTED);
         }
 
+        if ($dropped > 0) {
+            $details[] = sprintf('and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all', $dropped);
+        }
+
         return Finding::fail(
             self::ID,
-            $list[0]->severity,
-            sprintf('%d %s in the content folder would not be left unsaid.', count($list), count($list) === 1 ? 'file' : 'files'),
+            $list === [] ? Severity::Medium : $list[0]->severity,
+            sprintf('%d %s in the content folder would not be left unsaid.', count($list) + $dropped, count($list) + $dropped === 1 ? 'file' : 'files'),
             $details,
             'Look at each file before anything else, and do not open it in a browser. A file you know and trust can be left alone with scanner.ignore_paths. If you do not know it, find how it came there (an old plugin, a form that accepts uploads) before you remove it. Hornet never changes a file.',
         );

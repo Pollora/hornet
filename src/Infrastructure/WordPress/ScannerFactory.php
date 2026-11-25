@@ -42,13 +42,13 @@ final class ScannerFactory
 
         // The plugins directory may be elsewhere than the WordPress root (Bedrock, Pollora)
         if ($plugins instanceof NativeFileSystem) {
-            $tasks[] = new PluginIntegrityTask(new WpPluginInventory, new WordPressPluginChecksums($http), new PluginIntegrity($plugins), new OptionBaselineStore, new SystemClock, $cron ? 100 : 240);
+            $tasks[] = new PluginIntegrityTask(new WpPluginInventory, new WordPressPluginChecksums($http), new PluginIntegrity($plugins), new OptionBaselineStore, new SystemClock, $cron ? max(5, intdiv(self::cronSeconds(), 2)) : 240);
         }
 
         $content = NativeFileSystem::at(WP_CONTENT_DIR);
 
         if ($content instanceof NativeFileSystem) {
-            $tasks[] = new SuspiciousFilesTask($content, new FileInspector($content, self::uploads()), new SystemClock, $settings->scanner->ignorePaths, $cron ? 20 : null);
+            $tasks[] = new SuspiciousFilesTask($content, new FileInspector($content, self::uploads()), new SystemClock, $settings->scanner->ignorePaths, $cron ? max(5, intdiv(self::cronSeconds(), 4)) : null);
         }
 
         // A scan that is disabled does not run, and asks nothing of the network
@@ -67,5 +67,16 @@ final class ScannerFactory
         $uploads = realpath($base);
 
         return $content !== false && $uploads !== false && str_starts_with($uploads, $content.'/') ? substr($uploads, strlen($content) + 1) : '';
+    }
+
+    /**
+     * How long a run of WP-Cron may last in all: the time limit of the web request that runs it, less a margin, and never more than 45 seconds
+     * (a web server cuts a request that lasts longer). The core, which asks one URL, is the margin; the plugins get half and the walk a quarter.
+     */
+    private static function cronSeconds(): int
+    {
+        $limit = (int) ini_get('max_execution_time');
+
+        return max(10, min(45, $limit > 0 ? $limit - 8 : 45));
     }
 }

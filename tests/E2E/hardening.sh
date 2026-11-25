@@ -55,7 +55,10 @@ reset
 
 (cd "$WP_DIR" && php -d opcache.enable=0 -S "127.0.0.1:$PORT" -t "$WP_DIR" "$PKG/tests/E2E/router.php" >/tmp/e2e-server.log 2>&1 &)
 (cd "$WP_DIR" && E2E_HTTPS=1 php -d opcache.enable=0 -S "127.0.0.1:$SECURE_PORT" -t "$WP_DIR" "$PKG/tests/E2E/router.php" >/tmp/e2e-secure.log 2>&1 &)
-for i in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null "$BASE/" && break; sleep 1; done
+# A server with the time limit of a web request, for the real WP-Cron (wp-cron.php) in section 8c
+CRON_PORT=${CRON_PORT:-8084}
+(cd "$WP_DIR" && php -d opcache.enable=0 -d max_execution_time=20 -S "127.0.0.1:$CRON_PORT" -t "$WP_DIR" "$PKG/tests/E2E/router.php" >/tmp/e2e-cron.log 2>&1 &)
+for i in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null "$BASE/" && curl -s -o /dev/null "http://127.0.0.1:$CRON_PORT/" && break; sleep 1; done
 
 # --- 1. nothing configured: nothing changes ----------------------------------------------------------------
 echo "1. Hornet installed, nothing turned on: the site is as WordPress made it"
@@ -309,8 +312,19 @@ reset
 configure "array('scanner' => array('schedule' => 'daily'))"
 check "the schedule puts the scan in the cron"                       sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' cron event list --format=csv | grep -q 'pollora/hornet/scheduled_scan'"
 cli option delete hornet_scan >/dev/null 2>&1
-check "the cron event runs a scan"                                   sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' cron event run pollora/hornet/scheduled_scan >/dev/null 2>&1 && php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --fail-on=none | grep -q 'suspicious-files.*content folder'"
-check "the lock is let go afterwards"                                sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_scan_lock >/dev/null 2>&1"
+# The event is made due, and WordPress's own cron entry point runs it, over HTTP, under a PHP that stops a request at 20 seconds.
+# WordPress starts the cron with a request to its own address: the site is pointed at the limited server for the time of this test, so that all the work is done there.
+CRON_BASE="http://127.0.0.1:$CRON_PORT"
+cli option update home "$CRON_BASE" >/dev/null
+cli option update siteurl "$CRON_BASE" >/dev/null
+cli eval 'wp_clear_scheduled_hook("pollora/hornet/scheduled_scan"); wp_schedule_event(time() - 60, "daily", "pollora/hornet/scheduled_scan");' >/dev/null
+check "wp-cron.php answers"                                          status_is 200 --max-time 120 "http://127.0.0.1:$CRON_PORT/wp-cron.php?doing_wp_cron=1"
+lock_gone() { n=0; while php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" option get hornet_scan_lock >/dev/null 2>&1; do n=$((n + 1)); [ "$n" -gt 30 ] && { echo "        | the lock is still held after 60 seconds"; tail -5 /tmp/e2e-cron.log | sed 's/^/        | /'; return 1; }; sleep 2; done; }
+check "the scan lets go of its lock"                                 lock_gone
+scan_covered() { out=$(php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" hornet status --all --fail-on=none 2>&1); for id in core-integrity plugin-integrity suspicious-files; do echo "$out" | grep "$id" | grep -qE 'never scanned|did not cover' && { echo "        | $id has no result"; echo "$out" | grep -E 'core-integrity|plugin-integrity|suspicious-files' | cut -c1-160 | sed 's/^/        | /'; tail -15 /tmp/e2e-cron.log | sed 's/^/        | log: /'; php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" cron event list --format=csv 2>&1 | grep -i hornet | sed 's/^/        | cron: /'; return 1; }; done; echo "$out" | grep -q 'suspicious-files'; }
+check "the scheduled scan, under a 20 second PHP, stored a result for every scan" scan_covered
+cli option update home "$BASE" >/dev/null
+cli option update siteurl "$BASE" >/dev/null
 configure "array('scanner' => array('schedule' => 'off'))"
 check "turned off, the scan leaves the cron"                         sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' cron event list --format=csv | grep -q 'pollora/hornet/scheduled_scan'"
 reset
