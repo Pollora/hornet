@@ -279,8 +279,8 @@ msgid "Security grade %1$s, %2$d out of 100."
 msgstr "보안 등급 %1$s, 100점 만점에 %2$d점."
 
 #: admin/src/Settings.js:10
-msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
-msgstr "이 설정은 파일(HORNET_CONFIG 상수, Pollora에서는 config/hornet.php)에 작성되어 있습니다. 이 화면은 설정을 보여줄 뿐 아무것도 변경하지 않습니다. 화면에서 끌 수 있는 보호 기능은 탈취된 세션으로도 끌 수 있기 때문입니다."
+msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/pollora/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
+msgstr "이 설정은 파일(HORNET_CONFIG 상수, Pollora에서는 config/pollora/hornet.php)에 작성되어 있습니다. 이 화면은 설정을 보여줄 뿐 아무것도 변경하지 않습니다. 화면에서 끌 수 있는 보호 기능은 탈취된 세션으로도 끌 수 있기 때문입니다."
 
 #: admin/src/Settings.js:27
 msgid "On"

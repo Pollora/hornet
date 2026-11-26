@@ -278,7 +278,7 @@ msgid "Security grade %1$s, %2$d out of 100."
 msgstr ""
 
 #: admin/src/Settings.js:10
-msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
+msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/pollora/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
 msgstr ""
 
 #: admin/src/Settings.js:27

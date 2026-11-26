@@ -8,7 +8,7 @@ export default function Settings( { settings } ) {
 		<>
 			<Notice status="info" isDismissible={ false }>
 				{ __(
-					'These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off.',
+					'These settings are written in a file (the HORNET_CONFIG constant, or config/pollora/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off.',
 					'pollora-hornet'
 				) }
 			</Notice>

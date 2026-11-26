@@ -282,8 +282,8 @@ msgid "Security grade %1$s, %2$d out of 100."
 msgstr "Nota de segurança %1$s, %2$d de 100."
 
 #: admin/src/Settings.js:10
-msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
-msgstr "Estas configurações são gravadas em um arquivo (a constante HORNET_CONFIG, ou config/hornet.php no Pollora). Esta tela as exibe e não altera nenhuma: uma proteção que uma tela pudesse desativar é uma proteção que uma sessão roubada também poderia desativar."
+msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/pollora/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
+msgstr "Estas configurações são gravadas em um arquivo (a constante HORNET_CONFIG, ou config/pollora/hornet.php no Pollora). Esta tela as exibe e não altera nenhuma: uma proteção que uma tela pudesse desativar é uma proteção que uma sessão roubada também poderia desativar."
 
 #: admin/src/Settings.js:27
 msgid "On"
