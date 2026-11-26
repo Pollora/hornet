@@ -6,6 +6,7 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Closure;
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
+use Pollora\Hornet\Application\Scan\DatabaseScriptsTask;
 use Pollora\Hornet\Application\Scan\ExposedFilesTask;
 use Pollora\Hornet\Application\Scan\KnownVulnerabilitiesTask;
 use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
@@ -23,6 +24,7 @@ use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Pollora\CorePatches;
 use Pollora\Hornet\Infrastructure\Scan\NativeFileSystem;
 use Pollora\Hornet\Infrastructure\Scan\UploadsProbeFiles;
+use wpdb;
 
 /**
  * Builds the scanner for the running WordPress. It is built when `wp hornet scan` runs: WordPress, and its files, are known by then.
@@ -64,6 +66,13 @@ final class ScannerFactory
 
         if ($content instanceof NativeFileSystem) {
             $tasks[] = new SuspiciousFilesTask($content, new FileInspector($content, self::uploads()), new SystemClock, $settings->scanner->ignorePaths, $cron ? max(5, intdiv(self::cronSeconds(), 4)) : null);
+        }
+
+        global $wpdb;
+
+        // The main site's tables on a network
+        if ($wpdb instanceof wpdb) {
+            $tasks[] = new DatabaseScriptsTask(new WpContentStore($wpdb), new SystemClock, $settings->scanner->ignoreContent, $cron ? max(5, intdiv(self::cronSeconds(), 4)) : null);
         }
 
         if ($settings->scanner->probes) {

@@ -393,6 +393,20 @@ reset
 send_headers
 cli option delete hornet_scan >/dev/null 2>&1
 
+# --- 8d-ter. disguised scripts in the database -----------------------------------------------------------------
+echo "8d-ter. scripts in the database"
+embed=$(cli post create --user=admin --post_status=publish --post_title=e2e-embed --post_content='<script async src="https://platform.example.com/embed.js"></script>' --porcelain)
+scan_try >/dev/null
+check "a script a site would hold is not reported"                    scan_prints 'No disguised script in the database'
+bad=$(cli post create --user=admin --post_status=publish --post_title=e2e-bad --post_content='<script>eval(atob("ZG9jdW1lbnQud3JpdGUoMSk="))</script>' --porcelain)
+check "a disguised script is, by the number of its post"              scan_prints "post #$bad: runs code that is decoded first"
+check "and nothing of what it holds is repeated"                      sh -c "! grep -q 'ZG9jdW1lbnQ' /tmp/hornet-scan.out"
+configure "array('scanner' => array('ignore_content' => array('post:$bad')))"
+check "an entry the owner knows is left alone"                        scan_prints 'No disguised script in the database'
+reset
+cli post delete "$embed" "$bad" --force >/dev/null 2>&1
+cli option delete hornet_scan >/dev/null 2>&1
+
 # --- 8e. known vulnerabilities: the real feed, opt-in -------------------------------------------------------
 echo "8e. vulnerabilities"
 akismet="$WP_DIR/wp-content/plugins/akismet/akismet.php"

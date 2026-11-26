@@ -445,31 +445,35 @@ msgstr ""
 msgid "The check could not run: %s"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:78
+#: src/Application/DefaultChecks.php:79
 msgid "WordPress core files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:79
+#: src/Application/DefaultChecks.php:80
 msgid "Plugin files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:80
+#: src/Application/DefaultChecks.php:81
 msgid "Theme files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:81
+#: src/Application/DefaultChecks.php:82
 msgid "Suspicious files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:82
+#: src/Application/DefaultChecks.php:83
+msgid "Scripts in the database"
+msgstr ""
+
+#: src/Application/DefaultChecks.php:84
 msgid "Files given away by the site"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:83
+#: src/Application/DefaultChecks.php:85
 msgid "Security headers"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:85
+#: src/Application/DefaultChecks.php:87
 msgid "Known vulnerabilities"
 msgstr ""
 
@@ -529,6 +533,56 @@ msgstr ""
 
 #: src/Application/Scan/CoreIntegrityTask.php:126 src/Application/Scan/PluginIntegrityTask.php:254
 msgid "%s: and %d more"
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:192 src/Application/Scan/DatabaseScriptsTask.php:196
+msgid "The database is not read through yet: it goes on next time."
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "No disguised script in the database (%d entries holding code were looked at)."
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "Scripts are loaded from: %s (not judged)."
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:207 src/Application/Scan/SuspiciousFilesTask.php:164
+msgid "[%s] %s: "
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:223 src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:63 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:64 src/Domain/Audit/Checks/NewAdministratorsCheck.php:56 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47 src/Domain/Audit/Checks/UpdatesCheck.php:76
+msgid "and %d more"
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:229
+msgid "%d entry of the database holds a script that looks disguised."
+msgid_plural "%d entries of the database hold a script that looks disguised."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:231
+msgid "Read each entry in the database or with WP-CLI, not on the page that shows it. If you did not put that code there: remove it, change every password and the salts, and find how it got in. A script you know can be left alone with scanner.ignore_content. Hornet changes nothing."
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:238
+msgid "post #%d"
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:239
+msgid "comment #%d"
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:240 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:60 src/Domain/Audit/Checks/NewAdministratorsCheck.php:53 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
+msgid "user #%d"
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option %s"
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option #%d"
 msgstr ""
 
 #: src/Application/Scan/ExposedFilesTask.php:78
@@ -607,10 +661,6 @@ msgstr ""
 
 #: src/Application/Scan/KnownVulnerabilitiesTask.php:113
 msgid "[%s] %s: %s (%s)%s"
-msgstr ""
-
-#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:63 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:64 src/Domain/Audit/Checks/NewAdministratorsCheck.php:56 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47 src/Domain/Audit/Checks/UpdatesCheck.php:76
-msgid "and %d more"
 msgstr ""
 
 #: src/Application/Scan/KnownVulnerabilitiesTask.php:119
@@ -781,10 +831,6 @@ msgstr ""
 msgid "Nothing suspicious in the %d files of the content folder that were looked at."
 msgstr ""
 
-#: src/Application/Scan/SuspiciousFilesTask.php:164
-msgid "[%s] %s: "
-msgstr ""
-
 #: src/Application/Scan/SuspiciousFilesTask.php:171
 msgid "and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all"
 msgstr ""
@@ -933,10 +979,6 @@ msgstr ""
 
 #: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:31
 msgid "Dormant administrators"
-msgstr ""
-
-#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:60 src/Domain/Audit/Checks/NewAdministratorsCheck.php:53 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
-msgid "user #%d"
 msgstr ""
 
 #: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:69
@@ -1463,6 +1505,58 @@ msgstr ""
 
 #: src/Domain/Exceptions/SetAsideException.php:45
 msgid "\"%s\" has nothing open to set aside."
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:96
+msgid "runs code that is decoded first"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:97
+msgid "writes decoded code into the page"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:98
+msgid "sends the visitor to a hidden address"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:99
+msgid "loads a script from a hidden address"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:100
+msgid "builds text from a long list of character codes"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:101
+msgid "holds a long run of escaped characters"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:102
+msgid "decodes a long hidden block"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:103
+msgid "has names made unreadable by an obfuscator"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:104
+msgid "loads a script from a bare IP address"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:105
+msgid "holds a hidden frame to another site"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:106
+msgid "has a script in the name or the address of the site"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:107
+msgid "has a script in a comment"
+msgstr ""
+
+#: src/Domain/Scan/ContentRules.php:108
+msgid "has a javascript: address in a profile"
 msgstr ""
 
 #: src/Domain/Scan/ExposureCatalog.php:31

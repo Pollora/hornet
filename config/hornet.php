@@ -115,6 +115,7 @@ return [
 
         // Files and folders of the content folder that the suspicious-files scan leaves alone (your false positives), relative to wp-content.
         // 'ignore_paths' => ['uploads/known-legacy', 'themes/mine/vendor'],
+        // 'ignore_content' => ['post:12', 'option:widget_text'], // database entries whose script you know
 
         // Themes you write for this site (folder names): they change with every deployment, so they are not compared with a first look.
         // 'own_themes' => ['my-theme'],

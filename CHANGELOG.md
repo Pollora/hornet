@@ -4,6 +4,8 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+- **The scan looks for disguised JavaScript in the database** (`database-scripts`): posts, options, comments, profiles. A plain `<script>` is never reported. Built for large databases (ranges of primary keys, resumable on a time budget; 2.6 GB of posts read in 20 s). `scanner.ignore_content` leaves known entries alone.
+
 - The screen says **why a scan that was asked for does not start** (the scheduled tasks have not run: `DISABLE_WP_CRON` with no system cron, as on a new Pollora site, or a site that cannot call itself) and how to unblock it.
 
 - **Three more checks**: `security-headers` (the scan asks for the home page; also says when a header Hornet sends is dropped on the way), `new-administrators` (last 14 days) and `dormant-administrators` (90 days). The logins of administrators are now noted, one date per account, to know the latter. `HttpResponse` carries the response headers; `Environment` has two more methods.
