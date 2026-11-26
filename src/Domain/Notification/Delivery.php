@@ -9,6 +9,8 @@ namespace Pollora\Hornet\Domain\Notification;
  *
  * A failure says whether trying again can help: a network error, a 429 or a 5xx can; a 4xx that is not a 429 (a wrong URL,
  * a revoked token) cannot, and retrying it would only repeat the mistake. The reason never contains a URL or a token.
+ *
+ * @internal
  */
 final readonly class Delivery
 {

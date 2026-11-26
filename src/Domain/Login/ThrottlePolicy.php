@@ -9,6 +9,8 @@ namespace Pollora\Hornet\Domain\Login;
  *
  * Per address only, never per user name: locking a user name would let anyone lock the owner out by guessing wrong on purpose.
  * A lockout is longer each time the same address earns one, up to a day.
+ *
+ * @internal
  */
 final readonly class ThrottlePolicy
 {

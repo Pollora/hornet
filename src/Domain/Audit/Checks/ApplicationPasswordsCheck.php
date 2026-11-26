@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * An application password enters the REST API with the rights of its account and no second factor. One that nobody uses any
  * more is a door that nobody watches. Accounts are named by number; the name of a password and its address are never read.
+ *
+ * @internal
  */
 final readonly class ApplicationPasswordsCheck implements Check
 {

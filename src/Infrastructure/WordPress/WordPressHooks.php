@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 /**
  * The hooks of WordPress, through its global functions.
+ *
+ * @internal
  */
 final class WordPressHooks implements HookRegistrar
 {

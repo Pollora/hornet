@@ -14,6 +14,8 @@ use Pollora\Hornet\Application\Scan\ScanJob;
  * folder stops on a budget and goes on a minute later (that run does only the walk), but the plugin scan is not cut in pieces.
  * On a large site, run `wp hornet scan` from the system cron (with `DISABLE_WP_CRON`). Two runs never overlap: the second steps aside.
  * The result is read by the audit, which tells the channels what is new at its own turn.
+ *
+ * @internal
  */
 final readonly class ScanModule implements Module
 {

@@ -23,6 +23,8 @@ use WP_Theme;
 
 /**
  * What the checks may know, read from a running WordPress. It reads; it writes nothing and asks nothing of the network.
+ *
+ * @internal
  */
 final class WordPressEnvironment implements Environment
 {

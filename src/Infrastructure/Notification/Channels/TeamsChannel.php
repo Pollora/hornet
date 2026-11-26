@@ -14,6 +14,8 @@ use Pollora\Hornet\Infrastructure\Notification\Text;
  * It sends an Adaptive Card. A 2xx means the workflow accepted the request, not that Teams posted it: the workflow can still fail
  * afterwards, and Hornet cannot see it. Text is Markdown there, so Markdown characters are escaped; a mention needs entities that the card does not carry.
  * A message may be 28 KB: the card stays far below.
+ *
+ * @internal
  */
 final class TeamsChannel extends HttpChannel
 {

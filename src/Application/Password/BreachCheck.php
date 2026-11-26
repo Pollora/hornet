@@ -17,6 +17,8 @@ use Pollora\Hornet\Domain\Notification\Secret;
  *
  * It fails open: a service that is down, slow or odd must never stop someone from setting a password. It is asked at the moment
  * a password is chosen, never at login.
+ *
+ * @internal
  */
 final readonly class BreachCheck
 {

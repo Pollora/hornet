@@ -9,6 +9,8 @@ use RuntimeException;
 
 /**
  * A finding could not be set aside, or brought back.
+ *
+ * @internal
  */
 final class SetAsideException extends RuntimeException
 {

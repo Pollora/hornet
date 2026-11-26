@@ -7,6 +7,8 @@ namespace Pollora\Hornet\Domain\Journal;
 /**
  * What the journal records: a short list, each with a stable name (`login.failed`). The first part is the group a person filters by.
  * A name that is not on the list is not recorded: the journal holds what Hornet decided to keep, and nothing else.
+ *
+ * @internal
  */
 final class EventTypes
 {

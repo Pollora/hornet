@@ -16,6 +16,8 @@ use Throwable;
  * Runs the checks against the site and sets aside, on written reasons, the findings the owner chose to live with.
  *
  * It is the one engine: the dashboard, WP-CLI, Site Health and `pollora:doctor` all read its report.
+ *
+ * @internal
  */
 final readonly class Auditor
 {

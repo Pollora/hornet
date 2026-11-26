@@ -9,6 +9,8 @@ use Pollora\Hornet\Application\Notification\RunLock;
 /**
  * A lock made of an option: `add_option()` inserts a row or fails, and two processes cannot both succeed.
  * A lock older than ten minutes is the leftover of a run that died, and is taken over.
+ *
+ * @internal
  */
 final readonly class OptionRunLock implements RunLock
 {

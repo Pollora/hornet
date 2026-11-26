@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * The time, from a port: a test sets it, and nothing in the domain reads the system clock.
+ *
+ * @internal
  */
 interface Clock
 {

@@ -15,6 +15,8 @@ use Pollora\Hornet\Infrastructure\Notification\Text;
  * An e-mail through the site's own mailer, in plain text.
  *
  * A mailer that says no may be a passing problem (the SMTP server is down), so the message is tried again.
+ *
+ * @internal
  */
 final readonly class MailChannel implements Channel
 {

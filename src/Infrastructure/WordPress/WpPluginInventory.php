@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Scan\PluginInventory;
 
 /**
  * The plugins WordPress knows of, through `get_plugins()`. A single-file plugin (hello.php) has no folder: it is left out.
+ *
+ * @internal
  */
 final class WpPluginInventory implements PluginInventory
 {

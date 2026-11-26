@@ -29,6 +29,8 @@ use Pollora\Hornet\Infrastructure\WordPress\WpMailer;
 
 /**
  * Puts the notification service together from the settings.
+ *
+ * @internal
  */
 final readonly class NotificationFactory
 {

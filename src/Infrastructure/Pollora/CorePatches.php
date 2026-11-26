@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Scan\CoreIntegrity;
  * The project's `patches.lock.json` lists the patches of the core package by the SHA-256 of the file; the patch itself is
  * looked for in the framework and in the project's `patches` folder, and taken only when its hash is the one in the lock.
  * A patch that cannot be found is not guessed: the file shows as changed, and the owner lists it in `scanner.allow_modified`.
+ *
+ * @internal
  */
 final class CorePatches
 {

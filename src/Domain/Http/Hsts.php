@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
  * Strict-Transport-Security. It is easy to get wrong and hard to take back: a browser keeps the rule for `max-age`
  * seconds, so a site that cannot serve HTTPS for a year is out for a year. Hence the guard rails: a short minimum, and
  * `preload` only with the conditions the preload list asks for.
+ *
+ * @internal
  */
 final readonly class Hsts
 {

@@ -7,6 +7,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 /**
  * What the web server's PHP does with its errors, kept so that the command line and the cron, which have their own setting,
  * report the same thing. It writes only when the answer changes.
+ *
+ * @internal
  */
 final class ErrorDisplayNote
 {

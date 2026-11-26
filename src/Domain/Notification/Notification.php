@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
 
 /**
  * One message to one channel: a few alerts grouped, so that a night of findings is one message and not twelve.
+ *
+ * @internal
  */
 final readonly class Notification
 {

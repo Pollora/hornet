@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\Config;
 
 /**
  * Where a secret named in the settings is read from: an environment variable or a constant, never the database.
+ *
+ * @internal
  */
 interface SecretSource
 {

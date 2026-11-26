@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Application\Journal;
 
 /**
  * What to do with an event that a visitor caused.
+ *
+ * @internal
  */
 enum Decision
 {

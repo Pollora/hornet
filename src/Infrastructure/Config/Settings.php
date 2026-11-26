@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\Network\TrustedProxies;
  * The settings of the package, checked once and read as an object.
  *
  * A key that is not listed here is refused: a typo must not leave a protection off.
+ *
+ * @internal
  */
 final readonly class Settings
 {

@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Network\Cidr;
 
 /**
  * The `login` settings: the fallback throttle for sites that do not run pollora/portcullis. Off until it is asked for.
+ *
+ * @internal
  */
 final readonly class LoginSettings
 {

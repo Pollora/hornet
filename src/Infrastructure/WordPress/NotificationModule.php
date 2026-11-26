@@ -12,6 +12,8 @@ use Pollora\Hornet\Application\Notification\NotificationService;
  *
  * It rides on WP-Cron, which only runs when a page is visited: on a production site, turn it off with `DISABLE_WP_CRON` and
  * call `wp cron event run --due-now` from the system cron, or run `wp hornet notify run` yourself.
+ *
+ * @internal
  */
 final readonly class NotificationModule implements Module
 {

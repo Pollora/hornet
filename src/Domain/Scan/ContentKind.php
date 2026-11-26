@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * Where a text of the database was read.
+ *
+ * @internal
  */
 enum ContentKind: string
 {

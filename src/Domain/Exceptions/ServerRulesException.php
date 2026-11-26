@@ -8,6 +8,8 @@ use InvalidArgumentException;
 
 /**
  * The rules for a web server could not be written for what was asked.
+ *
+ * @internal
  */
 final class ServerRulesException extends InvalidArgumentException
 {

@@ -8,6 +8,8 @@ use WP_User;
 
 /**
  * Notes the logins of the administrators, for the audit, and gives that date to the privacy tools of WordPress.
+ *
+ * @internal
  */
 final readonly class LoginDatesModule implements Module
 {

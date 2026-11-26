@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\Config;
 
 /**
  * Environment variables (a Bedrock `.env`, the server) and constants (`wp-config.php`).
+ *
+ * @internal
  */
 final class EnvironmentSecrets implements SecretSource
 {

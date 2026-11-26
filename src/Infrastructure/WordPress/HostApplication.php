@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Audit\LaravelApplication;
 /**
  * Whether WordPress runs inside a Laravel application. Only the service provider of the package says so, and only Laravel runs it:
  * on a classic WordPress or on Bedrock nothing is ever set.
+ *
+ * @internal
  */
 final class HostApplication
 {

@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\Notification\Secret;
  *
  * It uses the "safe" variant, which refuses a private or local address, unless the owner allowed one for this channel.
  * It never follows a redirect (an alert must not be sent somewhere the owner did not choose), and an error never repeats the URL.
+ *
+ * @internal
  */
 final class WpHttpClient implements HttpClient
 {

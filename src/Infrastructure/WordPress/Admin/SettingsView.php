@@ -16,6 +16,8 @@ use Pollora\Hornet\Infrastructure\Config\Settings;
  *
  * The screen only shows the settings. They are written in a file (a constant, or `config/pollora/hornet.php`), which wins over anything
  * the screen could do; a screen that changed them would let a stolen session switch the protections off.
+ *
+ * @internal
  */
 final class SettingsView
 {

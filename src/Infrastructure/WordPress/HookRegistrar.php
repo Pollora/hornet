@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 /**
  * Where a module attaches its callbacks: WordPress itself, or Pollora's hook service.
+ *
+ * @internal
  */
 interface HookRegistrar
 {

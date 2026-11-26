@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * Without HTTPS the login cookie and the password travel in clear.
+ *
+ * @internal
  */
 final readonly class HttpsCheck implements Check
 {

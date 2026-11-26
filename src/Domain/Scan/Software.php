@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * What a vulnerability can be in: the WordPress core, a plugin or a theme.
+ *
+ * @internal
  */
 enum Software: string
 {

@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Scan\PluginVerdict;
 
 /**
  * What looking at one plugin came to: a verdict (against a list or against what was first seen), a first look to keep, or the reason it could not be done.
+ *
+ * @internal
  */
 final readonly class PluginLook
 {

@@ -18,6 +18,8 @@ use wpdb;
  * Revisions are left out (they are most of a large posts table and are not shown), and so are the transients, Hornet's own
  * options, and the post meta, where page builders keep scripts on purpose. Serialized values are matched as they are written,
  * never unserialized.
+ *
+ * @internal
  */
 final readonly class WpContentStore implements ContentStore
 {

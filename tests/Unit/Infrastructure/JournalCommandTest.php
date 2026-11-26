@@ -19,7 +19,7 @@ function journalCommand(InMemoryJournal $journal, RecordingOutput $output, ?Clos
     return new JournalCommand(static fn (): Journal => $journal, function () use (&$dropped, &$calls): void {
         $calls++;
         $dropped = $calls;
-    }, $days, new FakeClock('2026-11-25 10:00:00'), $output);
+    }, static fn (): int => $days, new FakeClock('2026-11-25 10:00:00'), $output);
 }
 
 function aJournalWithThreeEvents(): InMemoryJournal

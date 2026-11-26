@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Scan\ProbeFiles;
 /**
  * The uploads folder, for the one file that the scan puts there and removes. It writes only a name that is its own
  * (`hornet-probe-` and 16 hexadecimal characters, `.php`), and removes only what holds its own mark.
+ *
+ * @internal
  */
 final readonly class UploadsProbeFiles implements ProbeFiles
 {

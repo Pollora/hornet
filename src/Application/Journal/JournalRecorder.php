@@ -17,6 +17,8 @@ use Throwable;
  *
  * It never gets in the way: a journal that cannot be written (the table is gone, the database is slow) must not stop a login, a plugin
  * update or a page. The failure is counted, not thrown.
+ *
+ * @internal
  */
 final class JournalRecorder
 {

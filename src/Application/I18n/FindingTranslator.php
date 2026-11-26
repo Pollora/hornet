@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\I18n\Translator;
 
 /**
  * The words of a finding in the language of someone; the finding itself is not changed.
+ *
+ * @internal
  */
 final class FindingTranslator
 {

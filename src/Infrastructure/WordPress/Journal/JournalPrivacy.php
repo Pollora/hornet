@@ -14,6 +14,8 @@ use Pollora\Hornet\Infrastructure\WordPress\Module;
  *
  * Exporting gives a person the events that name them. Erasing does not delete the events (a security journal that forgets what happened
  * is no journal): it takes the person out of them, which leaves "someone logged in from a network, at this time".
+ *
+ * @internal
  */
 final readonly class JournalPrivacy implements Module
 {

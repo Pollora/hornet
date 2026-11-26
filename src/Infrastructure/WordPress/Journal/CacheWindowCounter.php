@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Journal\WindowCounter;
 /**
  * A counter in the object cache when the site has a persistent one (an atomic increment, no write to the database), and in a transient
  * otherwise. The key is hashed: it holds a network, and a transient name is short.
+ *
+ * @internal
  */
 final class CacheWindowCounter implements WindowCounter
 {

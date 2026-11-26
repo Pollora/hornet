@@ -7,6 +7,8 @@ namespace Pollora\Hornet\Domain\Audit;
 /**
  * What XML-RPC really answers. Turning `xmlrpc_enabled` off only stops the methods that need a login: pingbacks and
  * `system.multicall` still answer, so "login disabled" is not "closed".
+ *
+ * @internal
  */
 enum XmlRpcState: string
 {

@@ -28,6 +28,8 @@ use WP_User;
  *
  * It records what happened and who did it, and never what a person typed: not a password, not the name that was typed on a login that
  * matches nobody (it may be a password in the wrong field), not the e-mail address of the site.
+ *
+ * @internal
  */
 final class JournalModule implements Module
 {

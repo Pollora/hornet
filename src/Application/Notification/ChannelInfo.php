@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
 
 /**
  * What a person may be told about a channel: its name, its kind, how loud. Never where it goes.
+ *
+ * @internal
  */
 final readonly class ChannelInfo
 {

@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\Notification\RetryQueue;
 
 /**
  * What the cron and `wp hornet notify` do: audit, tell the channels what is new, try the waiting messages again.
+ *
+ * @internal
  */
 final readonly class NotificationService
 {

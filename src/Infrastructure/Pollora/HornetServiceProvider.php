@@ -25,6 +25,8 @@ use Throwable;
  *
  * Settings live under `pollora.hornet`: the file is `config/pollora/hornet.php` (published with the `hornet-config` tag). Laravel reads
  * a folder inside `config/` as a prefix, so that is the only place that is read; a `config/hornet.php` is reported, never ignored in silence.
+ *
+ * @internal
  */
 final class HornetServiceProvider extends ServiceProvider
 {

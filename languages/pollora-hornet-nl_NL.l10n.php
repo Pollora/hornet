@@ -230,7 +230,7 @@ return [
 		"Two-factor authentication" => "Tweefactorauthenticatie",
 		"The Two-Factor plugin is active." => "De plugin Two-Factor is actief.",
 		"The Two-Factor plugin is not active." => "De plugin Two-Factor is niet actief.",
-		"Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles." => "Installeer de plugin Two-Factor. Een latere versie van Hornet zal die voor gekozen rollen verplichten.",
+		"Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`." => "Installeer de plugin Two-Factor en verplicht hem voor de gekozen rollen met `two_factor.require_roles`.",
 		"Two-factor authentication of administrators" => "Tweefactorauthenticatie van beheerders",
 		"The Two-Factor plugin is not active: whether administrators use a second factor cannot be told." => "De plugin Two-Factor is niet actief: of beheerders een tweede factor gebruiken, is niet vast te stellen.",
 		"Every administrator has set up two-factor authentication." => "Elke beheerder heeft tweefactorauthenticatie ingesteld.",

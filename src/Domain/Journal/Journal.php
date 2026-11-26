@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * Where the events are kept.
+ *
+ * @internal
  */
 interface Journal
 {

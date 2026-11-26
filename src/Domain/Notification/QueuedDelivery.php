@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * A message that did not go through and will be tried again.
+ *
+ * @internal
  */
 final readonly class QueuedDelivery
 {

@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Notification\RetryQueue;
 /**
  * Waiting messages, one option each (`hornet_nq_<id>`), so that two writers never overwrite each other's list.
  * The queue is capped: when a service stays down for days the oldest news is not worth a growing table.
+ *
+ * @internal
  */
 final class OptionRetryQueue implements RetryQueue
 {

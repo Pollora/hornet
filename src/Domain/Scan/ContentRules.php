@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\I18n\Message;
  * and header plugins put it there on purpose. What is looked for is code that hides what it does, and code where none belongs.
  *
  * The rules only read; nothing is run, and nothing of the content is ever given back: the reasons are Hornet's own words.
+ *
+ * @internal
  */
 final class ContentRules
 {

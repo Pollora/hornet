@@ -17,6 +17,8 @@ use Pollora\Hornet\Domain\I18n\Message;
  *
  * The check reads what the server answers, whoever closed it. Refusing the logins (`xmlrpc_enabled` off) leaves the
  * pingbacks open: that is a half measure, and it says so.
+ *
+ * @internal
  */
 final readonly class XmlRpcCheck implements Check
 {

@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\Network\TrustedProxies;
  * The `network` settings: which proxies stand in front of the site, so that Hornet can tell who is really asking.
  *
  * Empty by default, which means "no proxy": a forwarding header is never believed.
+ *
+ * @internal
  */
 final class NetworkSettings
 {

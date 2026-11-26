@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Notification;
 
 /**
  * How long to wait before the next attempt, and when to stop: 1 minute, 5 minutes, 30 minutes, 2 hours, then give up.
+ *
+ * @internal
  */
 final readonly class Backoff
 {

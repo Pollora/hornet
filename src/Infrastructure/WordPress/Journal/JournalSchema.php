@@ -9,6 +9,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress\Journal;
  *
  * It is made with dbDelta, which also brings an older table to the current shape. Nothing else of the site is touched, and nothing is
  * put in the posts or in their meta.
+ *
+ * @internal
  */
 final class JournalSchema
 {

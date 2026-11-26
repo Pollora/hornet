@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\Network\ClientIp;
  * The way back in: forgets the failures and the lockout of one address, or of every address.
  *
  * It is a command-line tool on purpose: a person who is locked out can still reach the server, and nothing on the web can unlock.
+ *
+ * @internal
  */
 final readonly class Unlocker
 {

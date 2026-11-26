@@ -10,6 +10,8 @@ use DateTimeImmutable;
  * One thing that happened: when, what, from where, by whom, to what.
  *
  * The address is already cut when it gets here, and the details already cleaned: an event never holds more than it should.
+ *
+ * @internal
  */
 final readonly class Event
 {

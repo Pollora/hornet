@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Application\Notification;
 
 /**
  * What happened on one channel during one run.
+ *
+ * @internal
  */
 enum ChannelStatus: string
 {

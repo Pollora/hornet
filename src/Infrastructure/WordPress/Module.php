@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 /**
  * One piece of the package (Site Health, later the headers…): it attaches itself to WordPress and nothing else.
+ *
+ * @internal
  */
 interface Module
 {

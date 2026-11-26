@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\Config;
 
 /**
  * The kinds of channel, and what each one needs to be told in the settings.
+ *
+ * @internal
  */
 enum ChannelType: string
 {

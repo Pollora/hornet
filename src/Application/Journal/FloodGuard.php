@@ -15,6 +15,8 @@ use Pollora\Hornet\Domain\Journal\WindowCounter;
  * a whole, per hour, since a botnet that comes from thousands of networks goes round a limit per network.
  *
  * The worst case is therefore {@see Decision} `perHour` rows an hour for failed logins, whatever is sent.
+ *
+ * @internal
  */
 final readonly class FloodGuard
 {

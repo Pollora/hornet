@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Audit\LaravelApplication;
 /**
  * The Laravel application as its configuration describes it. It reads `config()`, never the environment: that is what runs,
  * with or without a cached configuration.
+ *
+ * @internal
  */
 final readonly class ConfiguredApplication implements LaravelApplication
 {

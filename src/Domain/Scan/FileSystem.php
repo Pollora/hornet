@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * The files of the WordPress install, read and never changed. Paths are relative to the WordPress root and use `/`.
+ *
+ * @internal
  */
 interface FileSystem
 {

@@ -11,6 +11,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
  *
  * The `key` says what the alert is about: the same key twice is the same news, and a channel hears it once per cooldown.
  * The text comes from the site and from Hornet's own findings: a channel treats it as data and never as markup.
+ *
+ * @internal
  */
 final readonly class Alert
 {

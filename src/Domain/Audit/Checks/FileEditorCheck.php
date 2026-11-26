@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * The theme and plugin editor turns any stolen administrator session into code execution.
+ *
+ * @internal
  */
 final readonly class FileEditorCheck implements Check
 {

@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\WpCli;
 
 /**
  * What a command says to the person who ran it: WP-CLI's output in WordPress, a fake in tests.
+ *
+ * @internal
  */
 interface Output
 {

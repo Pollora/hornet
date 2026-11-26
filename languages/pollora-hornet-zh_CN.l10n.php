@@ -230,7 +230,7 @@ return [
 		"Two-factor authentication" => "双重身份验证",
 		"The Two-Factor plugin is active." => "Two-Factor 插件已启用。",
 		"The Two-Factor plugin is not active." => "Two-Factor 插件未启用。",
-		"Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles." => "请安装 Two-Factor 插件。后续版本的 Hornet 将要求指定的角色使用它。",
+		"Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`." => "安装 Two-Factor 插件，然后用 `two_factor.require_roles` 要求所选角色启用。",
 		"Two-factor authentication of administrators" => "管理员的双重身份验证",
 		"The Two-Factor plugin is not active: whether administrators use a second factor cannot be told." => "Two-Factor 插件未启用:无法判断管理员是否使用第二重验证。",
 		"Every administrator has set up two-factor authentication." => "所有管理员都已设置双重身份验证。",

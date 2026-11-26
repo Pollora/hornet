@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
  * Having the Two-Factor plugin is not using it: an administrator who has not set up a second factor is as exposed as before.
  *
  * It names the accounts by number, never by login or address, because a finding may be sent to a chat.
+ *
+ * @internal
  */
 final readonly class TwoFactorCoverageCheck implements Check
 {

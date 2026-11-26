@@ -8,6 +8,8 @@ use InvalidArgumentException;
 
 /**
  * A setting names a check that does not exist: refused, so that a typo does not leave a check running that was meant to be set aside.
+ *
+ * @internal
  */
 final class UnknownCheckException extends InvalidArgumentException
 {

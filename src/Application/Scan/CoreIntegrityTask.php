@@ -19,6 +19,8 @@ use Pollora\Hornet\Domain\Scan\Pins;
  *
  * A file that differs, a file that is gone, a file that does not belong in wp-admin or wp-includes. A project that patches the
  * core on purpose names those files (`allowed`): they may differ, and their hash is pinned so that a second change is still seen.
+ *
+ * @internal
  */
 final readonly class CoreIntegrityTask implements ScanTask
 {

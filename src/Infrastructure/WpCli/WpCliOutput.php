@@ -11,6 +11,8 @@ use WP_CLI\Utils;
  * The output of WP-CLI, which exits on an error.
  *
  * @codeCoverageIgnore It only forwards to the `WP_CLI` class, which exists inside WP-CLI.
+ *
+ * @internal
  */
 final class WpCliOutput implements Output
 {

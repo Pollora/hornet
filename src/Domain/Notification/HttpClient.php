@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Exceptions\TransportException;
 
 /**
  * The only door to the network: one POST, one answer.
+ *
+ * @internal
  */
 interface HttpClient
 {

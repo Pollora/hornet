@@ -15,6 +15,8 @@ use Pollora\Hornet\Domain\Journal\Source;
 
 /**
  * Read the security journal, empty it of what is old, or remove it.
+ *
+ * @internal
  */
 final readonly class JournalCommand
 {
@@ -23,11 +25,12 @@ final readonly class JournalCommand
     /**
      * @param  Closure(): Journal  $journal  built when a command runs
      * @param  Closure(): void  $drop  removes the table and its option
+     * @param  Closure(): int  $retentionDays  how long the journal keeps; read when a command runs, never when it is declared
      */
     public function __construct(
         private Closure $journal,
         private Closure $drop,
-        private int $retentionDays,
+        private Closure $retentionDays,
         private Clock $clock,
         private Output $output,
     ) {}
@@ -125,9 +128,10 @@ final readonly class JournalCommand
      */
     public function purge(array $args = [], array $assoc = []): void
     {
-        $cutoff = $this->clock->now()->sub(new DateInterval('P'.$this->retentionDays.'D'));
+        $retentionDays = ($this->retentionDays)();
+        $cutoff = $this->clock->now()->sub(new DateInterval('P'.$retentionDays.'D'));
 
-        $this->output->success(sprintf('%d events older than %d days were forgotten.', ($this->journal)()->purgeBefore($cutoff), $this->retentionDays));
+        $this->output->success(sprintf('%d events older than %d days were forgotten.', ($this->journal)()->purgeBefore($cutoff), $retentionDays));
     }
 
     /**

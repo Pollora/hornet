@@ -26,6 +26,8 @@ use WP_Error;
  * - **A forwarding header from an address that is not a trusted proxy is not believed**, and the request is counted under the
  *   address that opened the connection: otherwise adding a header would be a way around the lock.
  * - `network`: the addresses in `login.allow_ips` are never counted nor locked.
+ *
+ * @internal
  */
 final readonly class LoginThrottleModule implements Module
 {
@@ -50,7 +52,9 @@ final readonly class LoginThrottleModule implements Module
     {
         $hooks->addFilter('authenticate', $this->gate(...), 100, 1);
         $hooks->addAction('wp_login_failed', $this->failed(...));
-        $hooks->addAction('application_password_failed_authentication', $this->failed(...));
+        $hooks->addAction('application_password_failed_authentication', $this->applicationPasswordFailed(...));
+        // The REST API checks application passwords without going through `authenticate`: the lock is applied there too
+        $hooks->addAction('wp_authenticate_application_password_errors', $this->gateApplicationPassword(...));
         $hooks->addAction('wp_login', $this->succeeded(...));
     }
 
@@ -65,18 +69,53 @@ final readonly class LoginThrottleModule implements Module
             return $user;
         }
 
+        $refusal = $this->refusal($client);
+
+        return $refusal === null ? $user : new WP_Error('hornet_locked', $refusal);
+    }
+
+    /**
+     * Refuses an application password, even the right one, to an address that is locked.
+     *
+     * @param  mixed  $error  the WP_Error WordPress hands over: what is added to it refuses the authentication
+     */
+    public function gateApplicationPassword(mixed $error): void
+    {
+        $client = $this->counted();
+        $refusal = $client instanceof ClientIp ? $this->refusal($client) : null;
+
+        if ($refusal !== null && $error instanceof WP_Error) {
+            $error->add('hornet_locked', $refusal);
+        }
+    }
+
+    /**
+     * @param  mixed  $error  why WordPress refused it
+     */
+    public function applicationPasswordFailed(mixed $error = null): void
+    {
+        // Refused by this lock: not one more guess, or a person waiting with the right password would lengthen their own wait
+        if ($error instanceof WP_Error && $error->get_error_code() === 'hornet_locked') {
+            return;
+        }
+
+        $this->failed();
+    }
+
+    private function refusal(ClientIp $client): ?string
+    {
         $now = $this->clock->now()->getTimestamp();
         $attempts = $this->store->get($client->key($this->salt));
 
         if (! $this->settings->policy->isLocked($attempts, $now)) {
-            return $user;
+            return null;
         }
 
-        return new WP_Error('hornet_locked', sprintf(
+        return sprintf(
             '<strong>%s</strong> %s',
             Message::of('Error:')->render($this->translator),
             Message::of('Too many failed login attempts. Try again in %d minute(s).', (int) ceil($this->settings->policy->secondsLeft($attempts, $now) / 60))->render($this->translator),
-        ));
+        );
     }
 
     public function failed(): void

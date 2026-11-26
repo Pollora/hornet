@@ -11,6 +11,8 @@ use Pollora\Hornet\Domain\Scan\BaselineStore;
 /**
  * What was first seen of the plugins WordPress.org does not know, in one option that is not loaded on every page
  * (network-wide on a multisite: the files are shared). Stored as JSON.
+ *
+ * @internal
  */
 final readonly class OptionBaselineStore implements BaselineStore
 {

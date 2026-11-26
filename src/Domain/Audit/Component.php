@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Audit;
 
 /**
  * Another piece of software that already does part of the job: Hornet detects it and does not do the work twice.
+ *
+ * @internal
  */
 enum Component: string
 {

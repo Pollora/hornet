@@ -27,6 +27,8 @@ use Pollora\Hornet\Domain\Scan\ProbeFiles;
  * answer holds is never kept nor shown: a finding names the address and what it is, not what it says.
  *
  * The last question writes one small file in the uploads, asks for it, and removes it at once. It is off until the owner turns it on.
+ *
+ * @internal
  */
 final readonly class ExposedFilesTask implements ScanTask
 {

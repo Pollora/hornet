@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Audit;
 
 /**
  * What a check could say. `Unknown` is not a pass: the server hides what the check needs (open_basedir, a missing file).
+ *
+ * @internal
  */
 enum Outcome: string
 {

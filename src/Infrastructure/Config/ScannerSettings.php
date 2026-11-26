@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Scan\CoreIntegrity;
 
 /**
  * The `scanner` settings. The scan runs when someone asks; there is nothing to turn on.
+ *
+ * @internal
  */
 final readonly class ScannerSettings
 {

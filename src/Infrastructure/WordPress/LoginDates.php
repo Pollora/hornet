@@ -7,6 +7,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 /**
  * When each administrator last logged in, which WordPress does not keep, and since when that is noted. Nothing else is kept:
  * one date on the account, for the accounts that can manage the site.
+ *
+ * @internal
  */
 final class LoginDates
 {

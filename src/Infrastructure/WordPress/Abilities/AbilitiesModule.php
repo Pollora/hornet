@@ -32,6 +32,8 @@ use WP_Error;
  * There is no ability that changes a setting, turns a protection off, or reads a secret: the settings are in the file, and what a screen or
  * a token could switch off is what a stolen session could switch off. The annotations tell the truth (`readonly` on what only reads), but they
  * are hints for the client and not a barrier: the barrier is the capability checked here, on every call.
+ *
+ * @internal
  */
 final class AbilitiesModule implements Module
 {

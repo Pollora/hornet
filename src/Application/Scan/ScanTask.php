@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Scan\Pins;
 
 /**
  * One thing the scanner looks at (the core files, the plugins, the suspicious files). It may read the disk and ask the network.
+ *
+ * @internal
  */
 interface ScanTask
 {

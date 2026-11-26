@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\I18n;
 
 /**
  * Says a text of the source in the language of someone.
+ *
+ * @internal
  */
 interface Translator
 {

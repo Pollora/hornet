@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * A file that the scan would not leave unsaid, and why.
+ *
+ * @internal
  */
 final readonly class Suspicion
 {

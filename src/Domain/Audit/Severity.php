@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Audit;
 
 /**
  * How much a failed check matters. `Info` is advice, `Critical` is an emergency.
+ *
+ * @internal
  */
 enum Severity: string
 {

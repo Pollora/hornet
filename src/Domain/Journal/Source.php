@@ -7,6 +7,8 @@ namespace Pollora\Hornet\Domain\Journal;
 /**
  * Where a request came from: the most useful thing a journal can say about a change. A role that is changed from the dashboard
  * by a person, from WP-CLI by an operator, or over the REST API by a script, is not the same story.
+ *
+ * @internal
  */
 enum Source: string
 {

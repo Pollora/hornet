@@ -8,6 +8,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
  * A note, kept for a week, that the login throttle met a request it could not trust: the audit turns it into a finding.
  *
  * It writes at most once an hour for the same reason, so a flood of requests does not become a flood of writes.
+ *
+ * @internal
  */
 final class ThrottleProblemNote
 {

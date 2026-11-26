@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * An administrator account nobody uses is one whose theft nobody notices. WordPress keeps no date of the last login: Hornet notes
  * it, so nothing is called dormant before it has been watching for 90 days. Until then, what is not known is said so.
+ *
+ * @internal
  */
 final readonly class DormantAdministratorsCheck implements Check
 {

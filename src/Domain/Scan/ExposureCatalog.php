@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * What a WordPress site leaves reachable by mistake, most often: environment files, a repository, backups of the configuration
  * and of the database, a debug log, a listing of the uploads. Each is a fixed address on the site itself.
+ *
+ * @internal
  */
 final class ExposureCatalog
 {

@@ -19,6 +19,8 @@ use WP_REST_Response;
  *
  * Every route is for the people who may see the screen, and the REST cookie authentication asks for the nonce of the session.
  * Nothing here changes a setting: a protection is switched on or off in the settings file, not from a screen.
+ *
+ * @internal
  */
 final readonly class AdminRestModule implements Module
 {

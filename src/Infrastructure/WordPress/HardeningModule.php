@@ -17,6 +17,8 @@ use Pollora\Hornet\Infrastructure\Config\HardeningSettings;
  * - **hide_version**: no generator tag.
  * - **file_editor**: the capabilities of the theme and plugin editor are refused to everyone (what `DISALLOW_FILE_EDIT`
  *   does, which a plugin cannot define: `wp-config.php` loads first).
+ *
+ * @internal
  */
 final readonly class HardeningModule implements Module
 {

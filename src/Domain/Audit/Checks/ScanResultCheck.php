@@ -18,6 +18,8 @@ use Pollora\Hornet\Domain\Scan\ScanSnapshot;
  *
  * The audit reads and never scans: it does not walk the files nor ask the network (the contract of a check). The scan runs
  * on its own (`wp hornet scan`), and this check shows its result, so that Site Health and `pollora:doctor` tell the same story.
+ *
+ * @internal
  */
 final readonly class ScanResultCheck implements Check
 {

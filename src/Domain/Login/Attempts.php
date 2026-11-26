@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Login;
 
 /**
  * What is known of one address: its recent failures, and whether it is locked out.
+ *
+ * @internal
  */
 final readonly class Attempts
 {

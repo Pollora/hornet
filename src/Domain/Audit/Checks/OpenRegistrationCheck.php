@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * Open registration with a default role that may do more than read hands the site to anybody. It is also how somebody who got in
  * once keeps a way back. The role is judged by what it may do, not by its name.
+ *
+ * @internal
  */
 final readonly class OpenRegistrationCheck implements Check
 {

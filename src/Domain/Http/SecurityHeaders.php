@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
  * The security headers to send, and which of them go where.
  *
  * Pure: it knows no WordPress and no Laravel. One adapter sends them from WordPress hooks, another from a Laravel middleware.
+ *
+ * @internal
  */
 final readonly class SecurityHeaders
 {

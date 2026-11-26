@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Scan\Pins;
 
 /**
  * What a scan task found, and the pins it wants kept for the next scan.
+ *
+ * @internal
  */
 final readonly class TaskResult
 {

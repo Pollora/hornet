@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Scan\ScanStateStore;
 /**
  * One run of the scan as a job that nobody is watching (the cron, the "Scan now" button): under a lock, with its progress told
  * as it goes, so that the administration screen can show which task it is at. The lock is let go whatever happens.
+ *
+ * @internal
  */
 final readonly class ScanJob
 {

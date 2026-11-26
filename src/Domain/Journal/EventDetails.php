@@ -7,6 +7,8 @@ namespace Pollora\Hornet\Domain\Journal;
 /**
  * The few facts that go with an event (`from: editor`, `to: administrator`). Never a secret: a key that looks like one is dropped,
  * a value is cut, and the whole is small. What is kept is flat text and numbers, so that it can be shown without care.
+ *
+ * @internal
  */
 final class EventDetails
 {

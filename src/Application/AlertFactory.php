@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\Notification\Alert;
  * Turns the findings of an audit into alerts.
  *
  * The key holds the severity: a finding that gets worse is news again, one that stays the same is not.
+ *
+ * @internal
  */
 final class AlertFactory
 {

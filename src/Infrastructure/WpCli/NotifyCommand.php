@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\Audit\Report;
 
 /**
  * Tell the channels about the site's security, and check that they work.
+ *
+ * @internal
  */
 final readonly class NotifyCommand
 {

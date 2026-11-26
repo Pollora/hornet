@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Clock;
 
 /**
  * The system clock, in UTC.
+ *
+ * @internal
  */
 final class SystemClock implements Clock
 {

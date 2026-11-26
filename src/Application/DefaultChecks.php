@@ -41,6 +41,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * The checks that ship with the package, in the order a person should read them: the configuration first, then the accounts.
+ *
+ * @internal
  */
 final class DefaultChecks
 {

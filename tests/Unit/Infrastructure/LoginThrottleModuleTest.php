@@ -38,7 +38,7 @@ it('attaches to the login late, so that WordPress cannot undo the lock', functio
     [, , , , $hooks] = throttle();
     $priorities = array_column($hooks->registered, 'priority', 'hook');
 
-    expect($priorities['authenticate'])->toBeGreaterThan(20)->and(array_column($hooks->registered, 'hook'))->toBe(['authenticate', 'wp_login_failed', 'application_password_failed_authentication', 'wp_login']);
+    expect($priorities['authenticate'])->toBeGreaterThan(20)->and(array_column($hooks->registered, 'hook'))->toBe(['authenticate', 'wp_login_failed', 'application_password_failed_authentication', 'wp_authenticate_application_password_errors', 'wp_login']);
 });
 
 it('lets a visitor in until the failures reach the limit, then refuses even a valid user', function (): void {
@@ -179,4 +179,26 @@ it('stores a hash of the address, never the address', function (): void {
     $module->failed();
 
     expect(array_keys($store->records)[0])->toMatch('/\A[a-f0-9]{64}\z/')->not->toContain('203');
+});
+
+it('refuses even the right application password to a locked address, without counting that as a guess', function (): void {
+    [$module, $store] = throttle();
+    $open = new WP_Error;
+    $module->gateApplicationPassword($open);
+
+    expect($open->added)->toBe([]);
+
+    foreach ([1, 2, 3] as $_) {
+        $module->applicationPasswordFailed(new WP_Error('incorrect_password'));
+    }
+
+    $error = new WP_Error;
+    $module->gateApplicationPassword($error);
+
+    expect($error->added)->toHaveCount(1)->and($error->added[0][0])->toBe('hornet_locked');
+
+    $before = serialize($store);
+    $module->applicationPasswordFailed(new WP_Error('hornet_locked'));
+
+    expect(serialize($store))->toBe($before);
 });

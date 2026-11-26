@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * wp-config.php holds the database password and the salts: other accounts on the server should not read it.
+ *
+ * @internal
  */
 final readonly class ConfigPermissionsCheck implements Check
 {

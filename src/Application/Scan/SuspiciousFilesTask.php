@@ -20,6 +20,8 @@ use Pollora\Hornet\Domain\Scan\Suspicion;
  * The plugins are left to the plugin scan, which knows what they should hold. A scan never lasts for ever: with a time budget
  * (the cron has one), it stops where it is, keeps the cursor and what it found, and the next run goes on from there.
  * From the command line there is no budget, and the walk is made in one go. It never deletes, quarantines or repairs a file.
+ *
+ * @internal
  */
 final readonly class SuspiciousFilesTask implements ScanTask
 {

@@ -14,6 +14,8 @@ namespace Pollora\Hornet\Domain\Audit;
  *   than C. A site with one open door is not "good" because everything else is shut;
  * - a high or critical finding that was set aside costs no points, and keeps the grade from A: an accepted risk is still there;
  * - what could not be verified costs nothing, and the score says it is provisional.
+ *
+ * @internal
  */
 final readonly class SecurityScore
 {

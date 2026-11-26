@@ -18,6 +18,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
  * It lives in this package, not in the framework: it only exists when pollora/framework is installed,
  * and the provider registers it only then. The doctor's contract holds: it reads, it never writes, it never asks the network.
  * It runs from the command line; Site Health already has one test per Hornet check.
+ *
+ * @internal
  */
 final readonly class DoctorSecurityCheck implements CheckInterface
 {

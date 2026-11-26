@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Http\SecurityHeaders;
  * WordPress has one hook per place: `wp_headers` for the public site, `admin_init` for the dashboard, `login_init` for
  * the login screen (`send_headers` and `wp_headers` do not fire in the last two). Nothing is sent once output has begun.
  * On Pollora the public site is a Laravel response: a middleware sends the headers there, and skips what was already sent.
+ *
+ * @internal
  */
 final readonly class HeadersModule implements Module
 {

@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * The REST API lists the authors of a site to anyone: their slugs are often their logins, which is half of a password guess.
+ *
+ * @internal
  */
 final readonly class UserEnumerationCheck implements Check
 {

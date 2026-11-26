@@ -28,6 +28,8 @@ use wpdb;
 
 /**
  * Builds the scanner for the running WordPress. It is built when `wp hornet scan` runs: WordPress, and its files, are known by then.
+ *
+ * @internal
  */
 final class ScannerFactory
 {

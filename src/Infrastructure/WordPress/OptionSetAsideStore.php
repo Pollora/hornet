@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Audit\SetAsideStore;
 
 /**
  * The findings set aside from the screen, in one option of the site (not loaded on every page), as JSON.
+ *
+ * @internal
  */
 final readonly class OptionSetAsideStore implements SetAsideStore
 {

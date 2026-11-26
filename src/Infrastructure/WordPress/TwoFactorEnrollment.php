@@ -12,6 +12,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
  * and it would then say that nobody needs to enroll.
  *
  * The plugin is somebody else's code, so it is reached by name and never required.
+ *
+ * @internal
  */
 final class TwoFactorEnrollment
 {

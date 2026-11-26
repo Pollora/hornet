@@ -15,6 +15,8 @@ use Pollora\Hornet\Infrastructure\Config\Settings;
  *
  * The file wins: a finding it sets aside keeps the reason it gave. A finding set aside from the screen whose check no longer exists
  * (the lookup of vulnerabilities was turned off) is left out, rather than making the audit refuse an id it does not know.
+ *
+ * @internal
  */
 final class AuditorFactory
 {

@@ -9,6 +9,8 @@ namespace Pollora\Hornet\Domain\Scan;
  *
  * There is no reference for such a plugin (a premium one, one installed by Composer from elsewhere): the first look is trusted,
  * and a later change is reported. A plugin that is compromised before that first look cannot be told from a good one.
+ *
+ * @internal
  */
 final readonly class Baseline
 {

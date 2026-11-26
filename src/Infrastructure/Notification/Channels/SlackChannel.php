@@ -13,6 +13,8 @@ use Pollora\Hornet\Infrastructure\Notification\Text;
  * Text is escaped the way Slack asks (`&`, `<`, `>` only), which also makes `<!channel>` and `<!here>` inert, and every
  * text object is `verbatim`. The payload has no `link_names`, so `@name` is not turned into a mention.
  * Section text stops at 3000 characters in Slack: this stays well below.
+ *
+ * @internal
  */
 final class SlackChannel extends HttpChannel
 {

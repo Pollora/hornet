@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Notification;
 
 /**
  * Sends a plain-text e-mail.
+ *
+ * @internal
  */
 interface Mailer
 {

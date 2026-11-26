@@ -8,6 +8,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
  * Notes, on a page of the dashboard, whether PHP shows its errors.
  *
  * Only a page: on an Ajax or a REST request WordPress turns the display off by itself, and the answer would always be "off".
+ *
+ * @internal
  */
 final readonly class ErrorDisplayModule implements Module
 {

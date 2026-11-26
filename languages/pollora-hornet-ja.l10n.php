@@ -230,7 +230,7 @@ return [
 		"Two-factor authentication" => "二要素認証",
 		"The Two-Factor plugin is active." => "Two-Factor プラグインは有効です。",
 		"The Two-Factor plugin is not active." => "Two-Factor プラグインが有効ではありません。",
-		"Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles." => "Two-Factor プラグインをインストールしてください。今後のバージョンの Hornet では、指定したロールに必須になります。",
+		"Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`." => "Two-Factor プラグインをインストールし、`two_factor.require_roles` で指定した権限グループに必須にしてください。",
 		"Two-factor authentication of administrators" => "管理者の二要素認証",
 		"The Two-Factor plugin is not active: whether administrators use a second factor cannot be told." => "Two-Factor プラグインが有効ではないため、管理者が第二要素を使用しているかは判別できません。",
 		"Every administrator has set up two-factor authentication." => "すべての管理者が二要素認証を設定しています。",

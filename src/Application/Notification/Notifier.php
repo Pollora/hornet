@@ -26,6 +26,8 @@ use Throwable;
  * - **Calm**: a channel gets at most `rateLimit` messages an hour; the rest waits for the next run, nothing is dropped.
  * - **Persistent**: a message that fails for a reason that can pass (network, 429, 5xx) is queued with a growing delay;
  *   one that cannot succeed (a revoked token) is reported and not repeated.
+ *
+ * @internal
  */
 final readonly class Notifier
 {
