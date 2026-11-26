@@ -45,6 +45,16 @@ export const ago = ( seconds ) => {
 	return sprintf( _n( '%d day ago', '%d days ago', days, 'pollora-hornet' ), days );
 };
 
+/** How long a scan may wait before the screen says why: a system cron runs once a minute. */
+export const PATIENCE = 75;
+
+/**
+ * Whether to say why the scan waits: it was asked for long enough ago, or the server says its task is overdue (after a reload,
+ * the screen does not know since when it waits).
+ */
+export const isStuck = ( scan, waitedFor ) =>
+	scan.status !== 'running' && ( Boolean( scan.overdue ) || ( scan.status === 'queued' && waitedFor >= PATIENCE ) );
+
 /** The sentence at the top of the overview. */
 export const headline = ( status ) => {
 	const { open, unknown } = status.counts;

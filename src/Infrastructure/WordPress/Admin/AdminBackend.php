@@ -18,6 +18,7 @@ use Pollora\Hornet\Domain\Journal\Event;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Domain\Journal\Source;
+use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Domain\Scan\ScanState;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
@@ -59,10 +60,11 @@ final readonly class AdminBackend
             $labels[$check->id()] = $check->label();
         }
 
-        $view = StatusView::build($auditor->run($this->environment), $labels, (new OptionScanStore)->last(), $this->job->state(), (new SystemClock)->now(), ScannerFactory::forWordPress($this->settings)?->tasks() ?? [], (new OptionSetAsideStore)->all(), array_keys($this->settings->ignored), WpTranslator::forPackage());
+        $view = StatusView::build($auditor->run($this->environment), $labels, (new OptionScanStore)->last(), $this->state(), (new SystemClock)->now(), ScannerFactory::forWordPress($this->settings)?->tasks() ?? [], (new OptionSetAsideStore)->all(), array_keys($this->settings->ignored), WpTranslator::forPackage());
 
         return [
             ...$view,
+            'scan' => [...$view['scan'], ...$this->cron()],
             'settings' => SettingsView::build($this->settings, WpTranslator::forPackage()),
             // By name and kind only: where a channel goes is a secret
             'channels' => array_map(static fn (ChannelSpec $channel): array => ['name' => $channel->name, 'type' => $channel->type->value, 'min_severity' => $channel->minSeverity->value], $this->settings->notifications->channels),
@@ -104,14 +106,47 @@ final readonly class AdminBackend
     }
 
     /**
+     * What the screen needs to say why a scan does not start: whether the task that was asked for is overdue, and who should run it.
+     *
+     * @return array{overdue: bool, cron: array{disabled: bool, url: string}}
+     */
+    private function cron(): array
+    {
+        $at = wp_next_scheduled(ScanModule::NOW_HOOK);
+
+        return [
+            'overdue' => is_int($at) && $at < time() - 75 && ! $this->scannedSince($at),
+            'cron' => ['disabled' => defined('DISABLE_WP_CRON') && DISABLE_WP_CRON, 'url' => site_url('wp-cron.php')],
+        ];
+    }
+
+    /**
+     * Where the scan stands. A scan that was waiting and that another way answered (`wp hornet scan`) is not waited for any more:
+     * its event may stay in the cron for ever, on the very sites where nothing runs it.
+     */
+    public function state(): ScanState
+    {
+        $state = $this->job->state();
+
+        return $state->status === ScanState::QUEUED && $this->scannedSince($state->since) ? ScanState::idle() : $state;
+    }
+
+    private function scannedSince(int $moment): bool
+    {
+        $last = (new OptionScanStore)->last();
+
+        return $last instanceof ScanSnapshot && $last->at->getTimestamp() >= $moment;
+    }
+
+    /**
      * Asks for a scan, which the cron runs: it does not wait for it.
      *
      * @return array{queued: bool, reason?: string, state: array<string, mixed>}
      */
     public function requestScan(): array
     {
-        if ($this->job->state()->isActive(time())) {
-            return ['queued' => false, 'reason' => Message::of('A scan is already in progress.')->render(WpTranslator::forPackage()), 'state' => $this->job->state()->toArray()];
+        if ($this->state()->isActive(time())) {
+            return ['queued' => false, 'reason' => Message::of('A scan is already in progress.')->render(WpTranslator::forPackage()), 'state' => $this->state()->toArray()];
         }
 
         $this->job->queued();

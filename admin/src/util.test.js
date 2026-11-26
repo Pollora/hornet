@@ -1,5 +1,5 @@
 import { getSettings, setSettings } from '@wordpress/date';
-import { ago, headline, severityLabel, severityRank, statusLabel, sourceLabel, whenLabel, fixFirst, gradeLabel, codeSegments } from './util';
+import { ago, headline, severityLabel, severityRank, statusLabel, sourceLabel, whenLabel, fixFirst, gradeLabel, codeSegments, isStuck, PATIENCE } from './util';
 
 describe( 'severityRank', () => {
 	it( 'puts the worst first when sorted from the highest', () => {
@@ -126,5 +126,15 @@ describe( 'codeSegments', () => {
 		expect( codeSegments( 'a ` b' ) ).toEqual( [ { text: 'a ` b', code: false } ] );
 		expect( codeSegments( 'plain' ) ).toEqual( [ { text: 'plain', code: false } ] );
 		expect( codeSegments( null ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'isStuck', () => {
+	it( 'says why only after a while, or when the task is overdue, and never while the scan runs', () => {
+		expect( isStuck( { status: 'queued' }, 10 ) ).toBe( false );
+		expect( isStuck( { status: 'queued' }, PATIENCE ) ).toBe( true );
+		expect( isStuck( { status: 'idle' }, PATIENCE ) ).toBe( false );
+		expect( isStuck( { status: 'idle', overdue: true }, 0 ) ).toBe( true );
+		expect( isStuck( { status: 'running', overdue: true }, PATIENCE ) ).toBe( false );
 	} );
 } );

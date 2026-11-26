@@ -1757,3 +1757,19 @@ msgstr[0] "最近 14 天内有 %d 个账户成为管理员。"
 #: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
 msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
 msgstr "请确认每个账户由谁创建。若有无法识别的账户：删除它，更换所有密码和盐值，并查明它是如何创建的。"
+
+#: admin/src/Waiting.js:12
+msgid "The scan is waiting for the scheduled tasks of WordPress, which have not run."
+msgstr "扫描正在等待 WordPress 计划任务，但这些任务尚未运行。"
+
+#: admin/src/Waiting.js:17
+msgid "This site does not run them when it is visited (DISABLE_WP_CRON, which Pollora sets): the server has to. Add this line to its crontab:"
+msgstr "本站不会在被访问时运行这些任务（Pollora 设置了 DISABLE_WP_CRON）：需要由服务器运行。请在其 crontab 中添加此行："
+
+#: admin/src/Waiting.js:28
+msgid "The site could not call itself to start them (a certificate, a firewall, a password in front of the site). Check Tools > Site Health, or add a cron on the server."
+msgstr "站点无法调用自身来启动这些任务（证书、防火墙或站点前的密码保护）。请查看“工具 > 站点健康”，或在服务器上添加 cron。"
+
+#: admin/src/Waiting.js:35
+msgid "To run the scan now, from the command line:"
+msgstr "如需现在从命令行运行扫描："

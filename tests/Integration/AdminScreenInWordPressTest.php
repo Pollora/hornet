@@ -8,6 +8,7 @@ use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Domain\Audit\SetAside;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Domain\Network\ClientIp;
+use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Domain\Scan\ScanState;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
@@ -240,7 +241,8 @@ describe('the scan', function (): void {
             ->and(wp_next_scheduled(ScanModule::NOW_HOOK))->not->toBeFalse()
             ->and((new OptionScanStateStore)->get()->status)->toBe(ScanState::QUEUED)
             ->and(restAs(1, 'GET', '/hornet/v1/scan')->get_data()['status'])->toBe('queued')
-            ->and(restAs(1, 'GET', '/hornet/v1/status')->get_data()['scan'])->toMatchArray(['running' => true, 'status' => 'queued']);
+            ->and(restAs(1, 'GET', '/hornet/v1/status')->get_data()['scan'])->toMatchArray(['running' => true, 'status' => 'queued', 'overdue' => false])
+            ->and(restAs(1, 'GET', '/hornet/v1/status')->get_data()['scan']['cron'])->toHaveKeys(['disabled', 'url']);
     });
 
     it('refuses a second scan while one is waiting or running', function (): void {
@@ -569,4 +571,37 @@ describe('the journal on the screen', function (): void {
             ->and(restAs($this->subscriber, 'GET', '/hornet/v1/journal')->get_status())->toBe(403)
             ->and(restAs(null, 'GET', '/hornet/v1/journal')->get_status())->toBeIn([401, 403]);
     });
+});
+
+it('says that the scan is overdue when its task was never run', function (): void {
+    bootAdmin();
+    wp_clear_scheduled_hook(ScanModule::NOW_HOOK);
+    wp_schedule_single_event(time() - 3600, ScanModule::NOW_HOOK);
+
+    try {
+        $scan = restAs(1, 'GET', '/hornet/v1/status')->get_data()['scan'];
+
+        expect($scan['overdue'])->toBeTrue()->and($scan['cron']['url'])->toEndWith('/wp-cron.php');
+    } finally {
+        wp_clear_scheduled_hook(ScanModule::NOW_HOOK);
+    }
+});
+
+it('stops waiting once the scan was made another way, although its event stays in the cron', function (): void {
+    bootAdmin();
+    expect(restAs(1, 'POST', '/hornet/v1/scan')->get_status())->toBe(202);
+    wp_clear_scheduled_hook(ScanModule::NOW_HOOK);
+    wp_schedule_single_event(time() - 3600, ScanModule::NOW_HOOK);
+
+    try {
+        // What `wp hornet scan` leaves behind: a scan newer than the request
+        (new OptionScanStore)->save(new ScanSnapshot(new DateTimeImmutable('+1 second', new DateTimeZone('UTC')), []));
+        $scan = restAs(1, 'GET', '/hornet/v1/status')->get_data()['scan'];
+
+        expect($scan)->toMatchArray(['running' => false, 'status' => 'idle', 'overdue' => false])
+            ->and(restAs(1, 'GET', '/hornet/v1/scan')->get_data()['status'])->toBe('idle')
+            ->and(restAs(1, 'POST', '/hornet/v1/scan')->get_status())->toBe(202);
+    } finally {
+        wp_clear_scheduled_hook(ScanModule::NOW_HOOK);
+    }
 });

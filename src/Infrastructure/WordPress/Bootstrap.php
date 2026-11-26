@@ -186,7 +186,7 @@ final class Bootstrap
 
                 if ($settings->admin) {
                     // The routes cost one hook on every request: a REST request is only known after this point
-                    $modules[] = new AdminRestModule(new AdminBackend($settings, $environment, $job, $recorder), $job);
+                    $modules[] = new AdminRestModule(new AdminBackend($settings, $environment, $job, $recorder));
 
                     if (function_exists('is_admin') && is_admin()) {
                         $modules[] = new AdminPageModule(is_multisite(), dirname(__DIR__, 3).'/assets/admin', static function (): never {

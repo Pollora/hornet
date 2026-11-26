@@ -1815,3 +1815,19 @@ msgstr[2] "За последние 14 дней %d учётных записей 
 #: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
 msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
 msgstr "Убедитесь, что знаете, кто создал каждую. Если какая-то незнакома: удалите её, смените все пароли и соли и выясните, как она появилась."
+
+#: admin/src/Waiting.js:12
+msgid "The scan is waiting for the scheduled tasks of WordPress, which have not run."
+msgstr "Проверка ждёт запланированных задач WordPress, которые не выполнились."
+
+#: admin/src/Waiting.js:17
+msgid "This site does not run them when it is visited (DISABLE_WP_CRON, which Pollora sets): the server has to. Add this line to its crontab:"
+msgstr "Этот сайт не запускает их при посещениях (DISABLE_WP_CRON, его задаёт Pollora): это должен делать сервер. Добавьте строку в его crontab:"
+
+#: admin/src/Waiting.js:28
+msgid "The site could not call itself to start them (a certificate, a firewall, a password in front of the site). Check Tools > Site Health, or add a cron on the server."
+msgstr "Сайт не смог обратиться сам к себе, чтобы запустить их (сертификат, брандмауэр, пароль перед сайтом). Проверьте «Инструменты > Здоровье сайта» или добавьте cron на сервере."
+
+#: admin/src/Waiting.js:35
+msgid "To run the scan now, from the command line:"
+msgstr "Чтобы запустить проверку сейчас из командной строки:"
