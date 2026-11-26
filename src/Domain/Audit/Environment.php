@@ -68,6 +68,27 @@ interface Environment
     public function usersWithoutTwoFactor(): ?array;
 
     /**
+     * The role a visitor who registers gets, with what it may do. Null when registering gives nobody a role: it is closed, or the
+     * site is part of a network, where signing up gives no role on a site.
+     *
+     * @return array{role: string, capabilities: list<string>}|null
+     */
+    public function registrationRole(): ?array;
+
+    /**
+     * The application passwords of the accounts that can manage the site (timestamps). Null when application passwords are turned off.
+     *
+     * @return list<array{user: int, created: int, last_used: int|null}>|null
+     */
+    public function administratorApplicationPasswords(): ?array;
+
+    /**
+     * Whether PHP shows its errors on a web page, as last seen from the web server (the command line has its own setting).
+     * Null when it was never seen.
+     */
+    public function displaysPhpErrors(): ?bool;
+
+    /**
      * What the last scan found, null when the site was never scanned. It is read from what the scan stored: nothing is scanned here.
      */
     public function lastScan(): ?ScanSnapshot;

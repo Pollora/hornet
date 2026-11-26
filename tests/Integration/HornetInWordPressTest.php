@@ -376,3 +376,52 @@ describe('accounts', function (): void {
         expect(apply_filters('auth_cookie_expiration', 172800, 1, false))->toBe(3600)->and(apply_filters('auth_cookie_expiration', 1209600, 1, true))->toBe(7200);
     });
 });
+
+it('reads an open registration and its default role from the site', function (): void {
+    $environment = new WordPressEnvironment;
+    $before = [get_option('users_can_register'), get_option('default_role')];
+
+    try {
+        update_option('users_can_register', 0);
+        expect($environment->registrationRole())->toBeNull();
+
+        update_option('users_can_register', 1);
+        update_option('default_role', 'administrator');
+        $role = $environment->registrationRole();
+
+        // A network gives no role by registration
+        is_multisite()
+            ? expect($role)->toBeNull()
+            : expect($role['role'])->toBe('administrator')->and($role['capabilities'])->toContain('manage_options');
+    } finally {
+        update_option('users_can_register', $before[0]);
+        update_option('default_role', $before[1]);
+    }
+});
+
+it('reads the application passwords of administrators, and nothing but their dates', function (): void {
+    add_filter('wp_is_application_passwords_available', '__return_true');
+    $admin = get_user_by('login', 'admin')->ID;
+    $reader = wp_insert_user(['user_login' => 'app-pass-reader', 'user_pass' => wp_generate_password(), 'role' => 'subscriber']);
+
+    try {
+        WP_Application_Passwords::create_new_application_password($admin, ['name' => 'a script of mine']);
+        WP_Application_Passwords::create_new_application_password($reader, ['name' => 'not an administrator']);
+        $found = (new WordPressEnvironment)->administratorApplicationPasswords();
+
+        expect($found)->toHaveCount(1)
+            ->and(array_keys($found[0]))->toBe(['user', 'created', 'last_used'])
+            ->and($found[0]['user'])->toBe($admin)
+            ->and($found[0]['last_used'])->toBeNull();
+
+        remove_all_filters('wp_is_application_passwords_available');
+        add_filter('wp_is_application_passwords_available', '__return_false');
+
+        expect((new WordPressEnvironment)->administratorApplicationPasswords())->toBeNull();
+    } finally {
+        remove_all_filters('wp_is_application_passwords_available');
+        WP_Application_Passwords::delete_all_application_passwords($admin);
+        require_once ABSPATH.'wp-admin/includes/user.php';
+        wp_delete_user($reader);
+    }
+});

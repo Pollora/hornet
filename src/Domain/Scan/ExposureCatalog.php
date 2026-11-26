@@ -14,9 +14,10 @@ use Pollora\Hornet\Domain\I18n\Message;
 final class ExposureCatalog
 {
     /**
+     * @param  bool  $laravel  whether the site is a Laravel application (Pollora), which has files of its own to keep to itself
      * @return list<Exposure>
      */
-    public static function all(): array
+    public static function all(bool $laravel = false): array
     {
         $env = '/^\s*(?:export\s+)?[A-Z][A-Z0-9_]*\s*=/mD';
         $config = '/DB_PASSWORD|DB_NAME|AUTH_KEY|table_prefix/';
@@ -63,6 +64,11 @@ final class ExposureCatalog
         $exposures[] = new Exposure(Exposure::CONTENT, 'debug.log', Message::mark('the WordPress debug log (paths, queries, sometimes data)'), Severity::Medium, $log);
         $exposures[] = new Exposure(Exposure::CONTENT, 'uploads/', Message::mark('a listing of the uploads folder'), Severity::Low, $listing);
         $exposures[] = new Exposure(Exposure::CONTENT, 'plugins/', Message::mark('a listing of the plugins folder'), Severity::Low, $listing);
+
+        // Reached only when the web root is the folder of the project instead of its public/ folder
+        if ($laravel) {
+            $exposures[] = new Exposure(Exposure::SITE, 'storage/logs/laravel.log', Message::mark('the log of the Laravel application (paths, queries, sometimes data)'), Severity::High, '/^\[\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}[^\]]*\] \w+\.(?:DEBUG|INFO|NOTICE|WARNING|ERROR|CRITICAL|ALERT|EMERGENCY):/m');
+        }
 
         return $exposures;
     }

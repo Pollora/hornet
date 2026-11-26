@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Brain\Monkey;
+use Pollora\Hornet\Infrastructure\WordPress\HostApplication;
 use Pollora\Hornet\Tests\Fixtures\FakeWpError;
 
 // The part of pollora/framework's doctor that the bridge implements: the package does not require the framework
@@ -31,6 +32,8 @@ pest()->beforeEach(function (): void {
     $expectations = Mockery::getContainer()?->mockery_getExpectationCount() ?? 0;
 
     Monkey\tearDown();
+    // What a service provider said about the host does not carry over to the next test
+    HostApplication::set(null);
 
     expect($expectations)->toBeGreaterThanOrEqual(0);
 })->in('Unit');

@@ -39,6 +39,11 @@ class FakeEnvironment implements Environment
         /** @var list<int>|null */
         public ?array $withoutTwoFactor = [],
         public ?ScanSnapshot $scan = null,
+        /** @var array{role: string, capabilities: list<string>}|null */
+        public ?array $registration = null,
+        /** @var list<array{user: int, created: int, last_used: int|null}>|null */
+        public ?array $applicationPasswords = [],
+        public ?bool $phpErrors = false,
     ) {}
 
     /**
@@ -141,6 +146,21 @@ class FakeEnvironment implements Environment
     public function isActive(Component $component): bool
     {
         return in_array($component, $this->active, true);
+    }
+
+    public function registrationRole(): ?array
+    {
+        return $this->registration;
+    }
+
+    public function administratorApplicationPasswords(): ?array
+    {
+        return $this->applicationPasswords;
+    }
+
+    public function displaysPhpErrors(): ?bool
+    {
+        return $this->phpErrors;
     }
 
     public function lastScan(): ?ScanSnapshot

@@ -3,8 +3,9 @@
 		'react-jsx-runtime',
 		'wp-api-fetch',
 		'wp-components',
+		'wp-date',
 		'wp-element',
 		'wp-i18n'
 	),
-	'version' => '29f34c072781a4a0d115'
+	'version' => 'ed70f994f355180e7915'
 );

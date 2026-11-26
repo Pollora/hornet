@@ -44,6 +44,7 @@ final readonly class ExposedFilesTask implements ScanTask
      * @param  ProbeFiles|null  $probeFiles  where the file to ask the server to run is put; null does not ask
      * @param  int|null  $budget  seconds after which the questions left are not asked; null for no limit
      * @param  Closure(): string  $token  a random token (16 hexadecimal characters): a test sets it
+     * @param  bool  $laravel  whether to ask for the files of a Laravel application too
      */
     public function __construct(
         private HttpClient $http,
@@ -54,6 +55,7 @@ final readonly class ExposedFilesTask implements ScanTask
         private Clock $clock,
         private ?int $budget,
         private Closure $token,
+        private bool $laravel = false,
     ) {}
 
     public function id(): string
@@ -69,7 +71,7 @@ final readonly class ExposedFilesTask implements ScanTask
         $asked = 0;
         $notes = [];
 
-        $catalog = ExposureCatalog::all();
+        $catalog = ExposureCatalog::all($this->laravel);
 
         foreach ($catalog as $index => $exposure) {
             if ($deadline instanceof \DateTimeImmutable && $this->clock->now() > $deadline) {

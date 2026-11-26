@@ -12,6 +12,7 @@ use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
 use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Application\Scan\ScanTask;
 use Pollora\Hornet\Application\Scan\SuspiciousFilesTask;
+use Pollora\Hornet\Domain\Audit\LaravelApplication;
 use Pollora\Hornet\Domain\Scan\CachedVulnerabilityFeed;
 use Pollora\Hornet\Domain\Scan\FileInspector;
 use Pollora\Hornet\Domain\Scan\NoPublishedChecksums;
@@ -66,7 +67,7 @@ final class ScannerFactory
 
         if ($settings->scanner->probes) {
             $uploads = wp_get_upload_dir();
-            $tasks[] = new ExposedFilesTask($http, untrailingslashit(home_url()), untrailingslashit(content_url()), untrailingslashit($uploads['baseurl']), $settings->scanner->probeUploads ? new UploadsProbeFiles($uploads['basedir']) : null, new SystemClock, $cron ? max(5, intdiv(self::cronSeconds(), 4)) : null, static fn (): string => bin2hex(random_bytes(8)));
+            $tasks[] = new ExposedFilesTask($http, untrailingslashit(home_url()), untrailingslashit(content_url()), untrailingslashit($uploads['baseurl']), $settings->scanner->probeUploads ? new UploadsProbeFiles($uploads['basedir']) : null, new SystemClock, $cron ? max(5, intdiv(self::cronSeconds(), 4)) : null, static fn (): string => bin2hex(random_bytes(8)), HostApplication::laravel() instanceof LaravelApplication);
         }
 
         // Opt-in: the name and version of every plugin and theme go to the feed

@@ -1,3 +1,4 @@
+import { dateI18n, getSettings } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 export const SEVERITIES = [ 'critical', 'high', 'medium', 'low', 'info' ];
@@ -80,9 +81,9 @@ export const sourceLabel = ( source ) =>
 		cron: __( 'Scheduled task', 'pollora-hornet' ),
 	} )[ source ] ?? source;
 
-/** A moment given as a timestamp in seconds, in the language and time zone of the browser. */
+/** A moment given as a timestamp in seconds, in the format and time zone of the site and the language of the person. */
 export const whenLabel = ( seconds ) =>
-	seconds ? new Date( seconds * 1000 ).toLocaleString() : '—';
+	seconds ? dateI18n( getSettings().formats.datetime, seconds * 1000 ) : '—';
 
 /** What a grade means, in a word. */
 export const gradeLabel = ( grade ) =>

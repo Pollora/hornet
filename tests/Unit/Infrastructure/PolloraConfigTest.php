@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use Brain\Monkey\Functions;
+use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Support\ServiceProvider;
 use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
 use Pollora\Hornet\Infrastructure\Pollora\HornetServiceProvider;
+use Pollora\Hornet\Infrastructure\WordPress\HostApplication;
 
 /**
  * Where the settings of a Pollora project are published, and read from. Laravel names the configuration of `config/<folder>/<file>.php`
@@ -82,4 +84,50 @@ it('reads the settings of the application, and HORNET_CONFIG only when there is 
     expect($settings->journal->enabled)->toBeTrue()
         ->and(SettingsLoader::load(2, ['journal' => ['enabled' => true], 'sites' => [2 => ['journal' => ['enabled' => false]]]])->journal->enabled)->toBeFalse()
         ->and(SettingsLoader::load(1, [])->journal->enabled)->toBeFalse();
+});
+
+it('tells the audit it runs on Laravel as soon as it is registered, console included', function (): void {
+    // A cached configuration: the provider merges nothing, and the file that reads env() is not loaded
+    $app = new class implements CachesConfiguration
+    {
+        public function getCachedConfigPath(): string
+        {
+            return '';
+        }
+
+        public function getCachedServicesPath(): string
+        {
+            return '';
+        }
+
+        public function make(string $abstract): object
+        {
+            return new class
+            {
+                public function get(string $key, mixed $default = null): mixed
+                {
+                    return $key === 'app.debug' ? true : $default;
+                }
+
+                public function set(string $key, mixed $value): void {}
+            };
+        }
+
+        public function booting(Closure $callback): void {}
+
+        public function configurationIsCached(): bool
+        {
+            return true;
+        }
+
+        public function singleton(string $abstract, ?Closure $concrete = null): void {}
+
+        public function tag(array $abstracts, string $tag): void {}
+    };
+
+    expect(HostApplication::laravel())->toBeNull();
+
+    (new HornetServiceProvider($app))->register();
+
+    expect(HostApplication::laravel()?->debug())->toBeTrue();
 });
