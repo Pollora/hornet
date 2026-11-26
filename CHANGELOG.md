@@ -34,7 +34,7 @@ First published version. Security for WordPress (classic, Bedrock, Pollora): Hor
 ### Known limitations
 
 - The translations are machine-made and have not been reviewed.
-- Not verified: `wp hornet` inside a Pollora project, multisite on a real network (the integration suite runs a single site), Windows.
+- Not verified: multisite on a real network (the integration suite runs a single site), Windows.
 - On a network, the scan reads the tables of the main site only.
 - The login throttle: its counters are not atomic (a burst can get a few tries more); a site behind a CDN that is not listed in `network.trusted_proxies` can lock visitors who share an edge address (the audit says so).
 - Requiring two-factor sends browsers to their profile; it does not gate the REST API or XML-RPC.
