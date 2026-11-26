@@ -557,10 +557,6 @@ msgid_plural "%d things are given away by the site itself."
 msgstr[0] "%d onderdeel wordt door de site zelf prijsgegeven."
 msgstr[1] "%d onderdelen worden door de site zelf prijsgegeven."
 
-#: src/Application/Scan/ExposedFilesTask.php:169
-msgid "Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
-msgstr "Verwijder het bestand uit de webroot, of weiger de toegang in de webserver (Hornet kan daar niets schrijven). Een wachtwoord, sleutel of salt die bereikbaar was, moet worden gewijzigd: ga ervan uit dat die is gelezen."
-
 #: src/Application/Scan/KnownVulnerabilitiesTask.php:57
 msgid "%s %s (plugin)"
 msgstr "%s %s (plugin)"
@@ -1436,3 +1432,35 @@ msgstr "Voor jouw rol moet tweefactorauthenticatie worden ingesteld. Kies hieron
 #: src/Infrastructure/WordPress/TwoFactorGateModule.php:70
 msgid "Set it up"
 msgstr "Instellen"
+
+#: src/Application/Scan/ExposedFilesTask.php:169
+msgid "Remove the file from the web root, or deny it in the web server: `wp hornet server-config nginx`, `apache` or `htaccess` prints the rules (Hornet writes nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
+msgstr "Verwijder het bestand uit de webroot of blokkeer het in de webserver: `wp hornet server-config nginx`, `apache` of `htaccess` toont de regels (Hornet schrijft daar niets). Een wachtwoord, sleutel of salt die bereikbaar was, moet worden gewijzigd: ga ervan uit dat het is gelezen."
+
+#: src/Domain/Scan/ExposureCatalog.php:49
+msgid "the settings of an SFTP deployment (the password of the server)"
+msgstr "de instellingen van een SFTP-deploy (het wachtwoord van de server)"
+
+#: src/Domain/Scan/ExposureCatalog.php:50
+msgid "the Composer credentials (tokens to private packages)"
+msgstr "de Composer-inloggegevens (tokens voor privépakketten)"
+
+#: src/Domain/Scan/ExposureCatalog.php:51
+msgid "composer.lock (the exact versions the site runs)"
+msgstr "composer.lock (de exacte versies die de site draait)"
+
+#: src/Domain/Scan/ExposureCatalog.php:52
+msgid "the list of the PHP packages installed"
+msgstr "de lijst met geïnstalleerde PHP-pakketten"
+
+#: src/Domain/Scan/ExposureCatalog.php:53
+msgid "the .htaccess file (how the server is set)"
+msgstr "het .htaccess-bestand (hoe de server is ingesteld)"
+
+#: src/Domain/Scan/ExposureCatalog.php:54
+msgid "a macOS folder index (the names of the files)"
+msgstr "een macOS-mapindex (de namen van de bestanden)"
+
+#: src/Domain/Scan/ExposureCatalog.php:55
+msgid "the settings of a code editor (paths, history)"
+msgstr "de instellingen van een code-editor (paden, geschiedenis)"

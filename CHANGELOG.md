@@ -4,6 +4,11 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+- **Fixed: the Apache rules served what is inside a dot folder** (`.git/config`, `.vscode/sftp.json`): print them again with `wp hornet server-config apache`.
+- **Fixed: the Apache rules took the site down (500) when put in an `.htaccess`**, as their own header suggested. New `wp hornet server-config htaccess` for that use (mod_rewrite only).
+- **Fixed: nginx served dotfiles and dumps of the uploads folder**; PHP followed by a path (`x.php/info`) is refused in uploads too.
+- The scan asks for seven more addresses: SFTP and editor settings, `auth.json`, `composer.lock`, the list of installed packages, `.htaccess`, `.DS_Store`.
+
 - **The screen was redrawn** in the colours of Pollora, with a **security score** (0 to 100, grade A to F) and what to fix first, and a visual scan. `hornet/get-status` also gives `score` and `grade`. New `Domain\Audit\SecurityScore`.
 
 - **Fixed: on Pollora the settings of the project were never read.** The provider reads `pollora.hornet`, but the published file went to `config/hornet.php`, which Laravel loads as `hornet`: every protection looked turned on and did nothing. The file is now published to `config/pollora/hornet.php`, and a left `config/hornet.php` is reported in Site Health. Found by installing Hornet in a real Pollora project.

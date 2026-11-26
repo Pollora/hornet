@@ -14,6 +14,9 @@ use Pollora\Hornet\Domain\Exceptions\ServerRulesException;
  * the files that should never be public (`wp-config.php`, `composer.json`, a dump, a backup, a log); and, when asked, the headers that
  * never change.
  *
+ * Apache has two forms, because what a virtual host accepts an `.htaccess` does not (`<LocationMatch>` there answers 500 to every
+ * request): `apache` for the virtual host, `htaccess` with mod_rewrite only, which WordPress already needs for its permalinks.
+ *
  * The folder is a URL path, which is what both servers match on. It is checked: it goes into a configuration file.
  */
 final class ServerRules
@@ -40,6 +43,7 @@ final class ServerRules
         return match ($server) {
             'nginx' => self::nginx($uploads, $headers),
             'apache' => self::apache($uploads, $headers),
+            'htaccess' => self::htaccess($uploads, $headers),
             default => throw ServerRulesException::unknownServer($server),
         };
     }
@@ -53,7 +57,11 @@ final class ServerRules
 # No PHP from the uploads folder, nor a double extension (shell.php.jpg).
 # ^~ ends the search among the regular expressions: a PHP block further down never sees these files.
 location ^~ {$uploads}/ {
-    location ~* \\.(?:%s)(?:\\.|\$) { return 403; }
+    location ~* \\.(?:%s)(?:\\.|/|\$) { return 403; }
+    # The block above keeps the rules further down away from the uploads: they are said again here
+    location ~ /\\. { return 403; }
+    location ~* (?:^|/)(?:%s)\$ { return 403; }
+    location ~* \\.(?:%s)\$ { return 403; }
 }
 
 # No dotfile (.env, .git, .htaccess), except .well-known (certificates, security.txt).
@@ -65,7 +73,7 @@ location ~* \\.(?:%s)\$ { return 403; }
 
 
 NGINX;
-        $out = sprintf($out, self::CODE, self::NEVER_PUBLIC, self::DUMPS);
+        $out = sprintf($out, self::CODE, self::NEVER_PUBLIC, self::DUMPS, self::NEVER_PUBLIC, self::DUMPS);
 
         if ($headers) {
             $out .= <<<'NGINX'
@@ -84,17 +92,17 @@ NGINX;
     {
         $out = <<<APACHE
 # Rules for Apache 2.4, written by `wp hornet server-config apache`. Nothing was changed on this server: read them, put them in the
-# virtual host (or in .htaccess, where AllowOverride Limit and FileInfo allow it), run `apachectl configtest`, then reload.
+# virtual host (not in .htaccess: `wp hornet server-config htaccess` is for that), run `apachectl configtest`, then reload.
 
 # No PHP from the uploads folder, nor a double extension (shell.php.jpg runs where .php is mapped anywhere in a name).
-<LocationMatch "^{$uploads}/.*\\.(?i:%s)(?:\\.|\$)">
+<LocationMatch "^{$uploads}/.*\\.(?i:%s)(?:\\.|/|\$)">
     Require all denied
 </LocationMatch>
 
-# No dotfile (.env, .git, .htaccess). .well-known is a folder: it is not matched.
-<FilesMatch "^\\.">
+# No dotfile nor what is in a dot folder (.env, .git/config, .vscode/sftp.json), except .well-known (certificates, security.txt).
+<LocationMatch "/\\.(?!well-known(?:/|\$))">
     Require all denied
-</FilesMatch>
+</LocationMatch>
 
 # Files that are never public.
 <FilesMatch "^(?:%s)\$">
@@ -107,8 +115,41 @@ NGINX;
 APACHE;
         $out = sprintf($out, self::CODE, self::NEVER_PUBLIC, self::DUMPS);
 
-        if ($headers) {
-            $out .= <<<'APACHE'
+        return $headers ? $out.self::apacheHeaders() : $out;
+    }
+
+    private static function htaccess(string $uploads, bool $headers): string
+    {
+        $out = <<<APACHE
+# Rules for an .htaccess file (Apache 2.4), written by `wp hornet server-config htaccess`. Nothing was changed on this server.
+# Put them at the top of the .htaccess of the web root, ABOVE "# BEGIN WordPress" (WordPress rewrites what is between its markers),
+# then open a page of the site: a mistake or a module that is missing answers 500, and removing the lines brings the site back.
+# They need mod_rewrite and AllowOverride FileInfo, as the permalinks of WordPress do. A folder below that has its own
+# RewriteEngine does not inherit them.
+# BEGIN Hornet
+RewriteEngine On
+
+# No PHP from the uploads folder, nor a double extension (shell.php.jpg).
+RewriteCond %%{REQUEST_URI} "^{$uploads}/.*\\.(?:%s)(?:\\.|/|\$)" [NC]
+RewriteRule ^ - [F]
+
+# No dotfile nor what is in a dot folder (.env, .git/config), except .well-known.
+RewriteRule "(?:^|/)\\.(?!well-known(?:/|\$))" - [F]
+
+# Files that are never public.
+RewriteRule "(?:^|/)(?:%s)\$" - [F,NC]
+RewriteRule "\\.(?:%s)\$" - [F,NC]
+# END Hornet
+
+APACHE;
+        $out = sprintf($out, self::CODE, self::NEVER_PUBLIC, self::DUMPS);
+
+        return $headers ? $out.self::apacheHeaders() : $out;
+    }
+
+    private static function apacheHeaders(): string
+    {
+        return <<<'APACHE'
 # Headers that do not change (mod_headers). If Hornet's own `headers` settings are on, do not set them twice.
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"
@@ -117,8 +158,5 @@ APACHE;
 </IfModule>
 
 APACHE;
-        }
-
-        return $out;
     }
 }

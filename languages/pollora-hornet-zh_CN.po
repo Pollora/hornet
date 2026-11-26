@@ -547,10 +547,6 @@ msgid "%d thing is given away by the site itself."
 msgid_plural "%d things are given away by the site itself."
 msgstr[0] "站点自身对外暴露了 %d 项内容。"
 
-#: src/Application/Scan/ExposedFilesTask.php:169
-msgid "Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
-msgstr "请从 Web 根目录中删除该文件,或在 Web 服务器中拒绝访问(Hornet 无法在那里写入任何内容)。曾可被访问的密码、密钥或盐值必须更换:请假定它已被读取。"
-
 #: src/Application/Scan/KnownVulnerabilitiesTask.php:57
 msgid "%s %s (plugin)"
 msgstr "%s %s(插件)"
@@ -1418,3 +1414,35 @@ msgstr "您的角色必须设置双重身份验证。请在下方选择一种方
 #: src/Infrastructure/WordPress/TwoFactorGateModule.php:70
 msgid "Set it up"
 msgstr "立即设置"
+
+#: src/Application/Scan/ExposedFilesTask.php:169
+msgid "Remove the file from the web root, or deny it in the web server: `wp hornet server-config nginx`, `apache` or `htaccess` prints the rules (Hornet writes nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
+msgstr "请将该文件从网站根目录移除，或在 Web 服务器中禁止访问：`wp hornet server-config nginx`、`apache` 或 `htaccess` 会输出规则（Hornet 不会写入任何内容）。曾可被访问的密码、密钥或盐值必须更换：请视其已被读取。"
+
+#: src/Domain/Scan/ExposureCatalog.php:49
+msgid "the settings of an SFTP deployment (the password of the server)"
+msgstr "SFTP 部署配置（服务器密码）"
+
+#: src/Domain/Scan/ExposureCatalog.php:50
+msgid "the Composer credentials (tokens to private packages)"
+msgstr "Composer 凭据（私有包的令牌）"
+
+#: src/Domain/Scan/ExposureCatalog.php:51
+msgid "composer.lock (the exact versions the site runs)"
+msgstr "composer.lock（网站运行的确切版本）"
+
+#: src/Domain/Scan/ExposureCatalog.php:52
+msgid "the list of the PHP packages installed"
+msgstr "已安装的 PHP 包列表"
+
+#: src/Domain/Scan/ExposureCatalog.php:53
+msgid "the .htaccess file (how the server is set)"
+msgstr ".htaccess 文件（服务器的配置方式）"
+
+#: src/Domain/Scan/ExposureCatalog.php:54
+msgid "a macOS folder index (the names of the files)"
+msgstr "macOS 文件夹索引（文件名）"
+
+#: src/Domain/Scan/ExposureCatalog.php:55
+msgid "the settings of a code editor (paths, history)"
+msgstr "代码编辑器的设置（路径、历史记录）"

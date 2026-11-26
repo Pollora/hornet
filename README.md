@@ -324,11 +324,12 @@ What a finding says is stored in English with what is needed to translate it, an
 
 ## Rules for the web server
 
-Some protections cannot be applied by a plugin, because the request never reaches PHP. `wp hornet server-config nginx` and `wp hornet server-config apache` **print** rules for them; they write nothing, anywhere: a server configuration is yours, a mistake in it takes the site down, and a plugin that edits it can be made to edit it.
+Some protections cannot be applied by a plugin, because the request never reaches PHP. `wp hornet server-config nginx`, `apache` (virtual host) and `htaccess` **print** rules for them; they write nothing, anywhere: a server configuration is yours, a mistake in it takes the site down, and a plugin that edits it can be made to edit it.
 
 ```bash
 wp hornet server-config nginx > hornet.conf          # read it, include it in the server block, nginx -t, reload
-wp hornet server-config apache --headers             # Apache 2.4; --headers adds nosniff, referrer and permissions policies
+wp hornet server-config apache --headers             # Apache 2.4 virtual host; --headers adds nosniff, referrer and permissions policies
+wp hornet server-config htaccess                     # the same for an .htaccess (mod_rewrite, AllowOverride FileInfo), above "# BEGIN WordPress"
 wp hornet server-config nginx --uploads=/app/uploads # Bedrock or Pollora: the URL path of the uploads folder (by default, this site's)
 ```
 
@@ -337,7 +338,7 @@ wp hornet server-config nginx --uploads=/app/uploads # Bedrock or Pollora: the U
 - **No file that should never be public**: `wp-config.php`, `composer.json` and `.lock`, `package.json`, `auth.json`, dumps, backups, logs.
 - With `--headers`, the headers that never change. Do not turn them on when Hornet's own `headers` settings are on: they would be set twice.
 
-The folder is checked before it goes into a configuration file (a path of letters, digits, dots, dashes and underscores). On nginx, put the rules before the `location ~ \.php$` block. Both sets were run against a real nginx 1.27 and Apache 2.4: a PHP file in uploads, `a.php.jpg`, `.env` and `composer.json` answer 403; an image, `index.html` and `.well-known/x` answer 200.
+The folder is checked before it goes into a configuration file (a path of letters, digits, dots, dashes and underscores). On nginx, put the rules before the `location ~ \.php$` block. The three sets were run against a real nginx 1.27 and Apache 2.4: a PHP file in uploads, `a.php.jpg`, `.env`, `.git/config`, `.vscode/sftp.json` and `composer.json` answer 403; an image, `index.html` and `.well-known/x` answer 200. Do not paste the `apache` set into an `.htaccess`: Apache answers 500 to every request.
 
 ## Abilities: what an AI agent may ask
 

@@ -13,11 +13,22 @@ it('refuses PHP from the uploads folder, dotfiles and files that are never publi
     expect($rules)->toContain('/app/uploads')->toContain('phtml')->toContain('phar')
         ->toContain('well-known')->toContain('wp-config')->toContain('composer')->toContain('sql')
         ->not->toContain('X-Content-Type-Options');
-})->with(['nginx', 'apache']);
+})->with(['nginx', 'apache', 'htaccess']);
 
 it('sets the headers that never change only when asked', function (string $server): void {
     expect(ServerRules::for($server, '/wp-content/uploads', true))->toContain('X-Content-Type-Options')->toContain('Referrer-Policy')->toContain('Permissions-Policy');
-})->with(['nginx', 'apache']);
+})->with(['nginx', 'apache', 'htaccess']);
+
+it('gives an .htaccess nothing that Apache refuses there', function (): void {
+    // <Location> and <LocationMatch> in an .htaccess answer 500 to every request of the site
+    expect(ServerRules::for('htaccess', '/app/uploads', true))->toContain('RewriteEngine On')->toContain('%{REQUEST_URI}')
+        ->not->toContain('<Location')->not->toContain('Require ');
+});
+
+it('refuses what is inside a dot folder, not only a file whose name starts with a dot', function (): void {
+    // <FilesMatch> only sees the last part of the path: .git/config was served
+    expect(ServerRules::for('apache', '/uploads'))->toContain('<LocationMatch "/\\.(?!well-known')->not->toContain('<FilesMatch "^\\.">');
+});
 
 it('treats a trailing slash as the same folder', function (): void {
     expect(ServerRules::for('nginx', '/wp-content/uploads/'))->toBe(ServerRules::for('nginx', '/wp-content/uploads'));
@@ -41,7 +52,7 @@ it('puts nothing in a configuration file that is not a plain path', function (st
 ]);
 
 it('says which servers it knows', function (): void {
-    expect(fn () => ServerRules::for('iis', '/uploads'))->toThrow(ServerRulesException::class, 'nginx or apache');
+    expect(fn () => ServerRules::for('iis', '/uploads'))->toThrow(ServerRulesException::class, 'nginx, apache or htaccess');
 });
 
 it('prints the rules, and nothing else, through the command', function (): void {
@@ -66,6 +77,6 @@ it('stops with what is wrong when the folder or the server is not right (the out
     expect(fn () => $command($args, $assoc))->toThrow(RuntimeException::class, $message);
 })->with([
     'a folder with a brace' => [['apache'], ['uploads' => '/app/{'], 'not a path'],
-    'a server that is not known' => [['iis'], [], 'nginx or apache'],
-    'no server' => [[], [], 'nginx or apache'],
+    'a server that is not known' => [['iis'], [], 'nginx, apache or htaccess'],
+    'no server' => [[], [], 'nginx, apache or htaccess'],
 ]);

@@ -557,10 +557,6 @@ msgid_plural "%d things are given away by the site itself."
 msgstr[0] "%d élément est livré par le site lui-même."
 msgstr[1] "%d éléments sont livrés par le site lui-même."
 
-#: src/Application/Scan/ExposedFilesTask.php:169
-msgid "Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
-msgstr "Retirez le fichier de la racine web, ou interdisez-le dans le serveur web (Hornet ne peut rien y écrire). Un mot de passe, une clé ou un sel qui était accessible doit être changé : considérez qu'il a été lu."
-
 #: src/Application/Scan/KnownVulnerabilitiesTask.php:57
 msgid "%s %s (plugin)"
 msgstr "%s %s (extension)"
@@ -1436,3 +1432,35 @@ msgstr "Votre rôle doit configurer l'authentification à deux facteurs. Choisis
 #: src/Infrastructure/WordPress/TwoFactorGateModule.php:70
 msgid "Set it up"
 msgstr "La configurer"
+
+#: src/Application/Scan/ExposedFilesTask.php:169
+msgid "Remove the file from the web root, or deny it in the web server: `wp hornet server-config nginx`, `apache` or `htaccess` prints the rules (Hornet writes nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
+msgstr "Retirez le fichier de la racine web, ou interdisez-le dans le serveur web : `wp hornet server-config nginx`, `apache` ou `htaccess` affiche les règles (Hornet n'y écrit rien). Un mot de passe, une clé ou un sel qui était accessible doit être changé : considérez qu'il a été lu."
+
+#: src/Domain/Scan/ExposureCatalog.php:49
+msgid "the settings of an SFTP deployment (the password of the server)"
+msgstr "les réglages d'un déploiement SFTP (le mot de passe du serveur)"
+
+#: src/Domain/Scan/ExposureCatalog.php:50
+msgid "the Composer credentials (tokens to private packages)"
+msgstr "les identifiants Composer (jetons des paquets privés)"
+
+#: src/Domain/Scan/ExposureCatalog.php:51
+msgid "composer.lock (the exact versions the site runs)"
+msgstr "composer.lock (les versions exactes que le site exécute)"
+
+#: src/Domain/Scan/ExposureCatalog.php:52
+msgid "the list of the PHP packages installed"
+msgstr "la liste des paquets PHP installés"
+
+#: src/Domain/Scan/ExposureCatalog.php:53
+msgid "the .htaccess file (how the server is set)"
+msgstr "le fichier .htaccess (la configuration du serveur)"
+
+#: src/Domain/Scan/ExposureCatalog.php:54
+msgid "a macOS folder index (the names of the files)"
+msgstr "un index de dossier macOS (les noms des fichiers)"
+
+#: src/Domain/Scan/ExposureCatalog.php:55
+msgid "the settings of a code editor (paths, history)"
+msgstr "les réglages d'un éditeur de code (chemins, historique)"

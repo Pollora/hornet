@@ -13,7 +13,7 @@ final class ServerRulesException extends InvalidArgumentException
 {
     public static function unknownServer(string $server): self
     {
-        return new self(sprintf('Unknown server "%s": use nginx or apache.', $server));
+        return new self(sprintf('Unknown server "%s": use nginx, apache or htaccess.', $server));
     }
 
     public static function badPath(string $path): self
