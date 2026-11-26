@@ -58,6 +58,14 @@ return [
 
         // Nobody can edit PHP files from the dashboard (what DISALLOW_FILE_EDIT does, which a plugin cannot define)
         'file_editor' => false,
+
+        // The REST API answers 401 to a visitor who is not logged in. A logged-in user, an application password included, keeps all
+        // of it. Kept open: the index (without its list of routes), oembed/1.0/embed, contact-form-7/v1/contact-forms, wc/store
+        // (WooCommerce cart and checkout blocks), and headless/v1 when pollora/headless is there.
+        'restrict_rest_api' => false,
+
+        // More route prefixes visitors keep: what your front end, a payment webhook or a plugin calls without logging in.
+        // 'rest_api_allow' => ['wp/v2/posts', 'wp/v2/pages', 'akismet/v1/webhook'],
     ],
 
     // Security headers. Nothing is sent until you ask for it.

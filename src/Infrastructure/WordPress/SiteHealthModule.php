@@ -33,6 +33,7 @@ final class SiteHealthModule implements Module
         private readonly Auditor|Closure $auditor,
         private readonly Environment $environment,
         private readonly ?Translator $translator = null,
+        private readonly ?SiteHealthInfo $information = null,
     ) {}
 
     /**
@@ -49,6 +50,10 @@ final class SiteHealthModule implements Module
     public function register(HookRegistrar $hooks): void
     {
         $hooks->addFilter('site_status_tests', $this->tests(...));
+
+        if ($this->information instanceof SiteHealthInfo) {
+            $hooks->addFilter('debug_information', $this->information->information(...));
+        }
     }
 
     /**

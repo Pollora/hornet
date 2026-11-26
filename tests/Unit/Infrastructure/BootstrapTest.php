@@ -77,7 +77,7 @@ it('registers every module on the hooks it is given', function (): void {
     // The note of the logins is attached on every request: it has its own test below
     Bootstrap::boot(bootSettings(['disabled_checks' => ['dormant-administrators']]), $hooks, new FakeEnvironment);
 
-    expect(array_column($hooks->registered, 'hook'))->toBe(['site_status_tests']);
+    expect(array_column($hooks->registered, 'hook'))->toBe(['site_status_tests', 'debug_information']);
 });
 
 it('starts at once when plugins are loaded, and waits otherwise', function (): void {

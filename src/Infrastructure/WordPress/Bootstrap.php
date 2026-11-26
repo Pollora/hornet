@@ -13,6 +13,7 @@ use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Password\BreachCheck;
 use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Application\Scan\Scanner;
+use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\LaravelApplication;
 use Pollora\Hornet\Domain\Network\ClientIp;
@@ -31,6 +32,7 @@ use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\TwoFactorJournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\WpRequestContext;
 
 /**
@@ -104,7 +106,9 @@ final class Bootstrap
             if ($settings->siteHealth) {
                 // The settings are checked now, without touching the database; the auditor itself is built when Site Health asks for it
                 new Auditor(AuditorFactory::checks($settings), $settings->disabledChecks, $settings->ignored);
-                $modules[] = new SiteHealthModule(static fn (): Auditor => AuditorFactory::forWordPress($settings), $environment, WpTranslator::forPackage());
+                $auditor = static fn (): Auditor => AuditorFactory::forWordPress($settings);
+                $translator = WpTranslator::forPackage();
+                $modules[] = new SiteHealthModule($auditor, $environment, $translator, new SiteHealthInfo($settings, $auditor, $environment, $translator));
             }
 
             // On every request: a login happens on a page of the site, not of the dashboard
@@ -114,6 +118,10 @@ final class Bootstrap
 
             if ($settings->hardening->isActive()) {
                 $modules[] = new HardeningModule($settings->hardening);
+            }
+
+            if ($settings->hardening->restrictRestApi) {
+                $modules[] = new RestAccessModule($settings->hardening->restAllowList($environment->isActive(Component::Headless)), WpTranslator::forPackage());
             }
 
             if ($settings->headers->isActive()) {
@@ -162,7 +170,8 @@ final class Bootstrap
                 $journal = new TableJournal;
                 $context = new WpRequestContext($client);
                 $recorder = new JournalRecorder($journal, $context, new SystemClock);
-                $modules[] = new JournalModule($recorder, $journal, new SystemClock, $settings->journal->retentionDays, new FloodGuard(new CacheWindowCounter), $context->ip(...));
+                $modules[] = new JournalModule($recorder, $journal, new SystemClock, $settings->journal->retentionDays, new FloodGuard(new CacheWindowCounter), $context->ip(...), TwoFactorJournalModule::isPending(...));
+                $modules[] = new TwoFactorJournalModule($recorder, new FloodGuard(new CacheWindowCounter, scope: 'journal:second-factor'), $context->ip(...));
                 $modules[] = new JournalPrivacy($journal, $settings->journal->retentionDays);
             }
 

@@ -16,6 +16,9 @@ use Pollora\Hornet\Domain\Journal\WindowCounter;
  *
  * The worst case is therefore {@see Decision} `perHour` rows an hour for failed logins, whatever is sent.
  *
+ * A `scope` counts apart: refused second factors have their own, so that a burst of wrong passwords cannot use up the room and hide
+ * them. The worst case is then `perHour` rows an hour for each scope.
+ *
  * @internal
  */
 final readonly class FloodGuard
@@ -25,6 +28,7 @@ final readonly class FloodGuard
         private int $perNetwork = 5,
         private int $window = 600,
         private int $perHour = 120,
+        private string $scope = 'journal',
     ) {}
 
     /**
@@ -32,7 +36,7 @@ final readonly class FloodGuard
      */
     public function decide(string $network): Decision
     {
-        $hour = $this->counter->hit('journal:hour', 3600);
+        $hour = $this->counter->hit($this->scope.':hour', 3600);
 
         if ($hour > $this->perHour + 1) {
             return Decision::Drop;
@@ -42,7 +46,7 @@ final readonly class FloodGuard
             return Decision::FloodSite;
         }
 
-        $count = $this->counter->hit('journal:network:'.($network === '' ? 'unknown' : $network), $this->window);
+        $count = $this->counter->hit($this->scope.':network:'.($network === '' ? 'unknown' : $network), $this->window);
 
         return match (true) {
             $count <= $this->perNetwork => Decision::Write,
