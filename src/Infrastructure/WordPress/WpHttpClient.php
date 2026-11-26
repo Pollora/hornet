@@ -19,6 +19,21 @@ final class WpHttpClient implements HttpClient
 {
     private const int TIMEOUT = 10;
 
+    /**
+     * @param  array<mixed>  $response
+     * @return array<string, string> names in lower case; a header sent twice is joined with a comma
+     */
+    private static function headers(array $response): array
+    {
+        $headers = [];
+
+        foreach (wp_remote_retrieve_headers($response) as $name => $value) {
+            $headers[strtolower((string) $name)] = implode(', ', array_map(strval(...), (array) $value));
+        }
+
+        return $headers;
+    }
+
     public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false): HttpResponse
     {
         $args = ['timeout' => self::TIMEOUT, 'redirection' => 0, 'headers' => $headers, 'body' => $body, 'user-agent' => 'Hornet (WordPress security)'];
@@ -43,6 +58,6 @@ final class WpHttpClient implements HttpClient
             throw new TransportException('The request failed ('.$response->get_error_code().').');
         }
 
-        return new HttpResponse((int) wp_remote_retrieve_response_code($response), null, substr(wp_remote_retrieve_body($response), 0, $maxBytes));
+        return new HttpResponse((int) wp_remote_retrieve_response_code($response), null, substr(wp_remote_retrieve_body($response), 0, $maxBytes), self::headers($response));
     }
 }

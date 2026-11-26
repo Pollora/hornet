@@ -52,6 +52,9 @@ class FakeEnvironment implements Environment
         public ?array $inactivePlugins = [],
         /** @var list<string>|null */
         public ?array $unusedThemes = [],
+        /** @var list<array{user: int, since: int, last_seen: int|null}> */
+        public array $administrators = [],
+        public ?int $loginsNotedSince = null,
     ) {}
 
     /**
@@ -189,6 +192,16 @@ class FakeEnvironment implements Environment
     public function unusedThemes(): ?array
     {
         return $this->unusedThemes;
+    }
+
+    public function administrators(): array
+    {
+        return $this->administrators;
+    }
+
+    public function loginsNotedSince(): ?int
+    {
+        return $this->loginsNotedSince;
     }
 
     public function lastScan(): ?ScanSnapshot

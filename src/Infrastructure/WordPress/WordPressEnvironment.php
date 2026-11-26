@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
+use DateInterval;
 use DateTimeImmutable;
 use DateTimeZone;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Pollora\Hornet\Domain\Journal\EventTypes;
+use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Infrastructure\Config\Settings;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
 use Throwable;
 use WP_Application_Passwords;
 use WP_REST_Request;
+use WP_Session_Tokens;
 use WP_Theme;
 
 /**
@@ -278,6 +283,90 @@ final class WordPressEnvironment implements Environment
         }
 
         return array_values(array_diff(array_map(strval(...), array_keys(wp_get_themes())), $kept));
+    }
+
+    /**
+     * WordPress keeps no date of the last login: what Hornet noted, the open sessions, the application passwords and, when it is
+     * on, the journal tell it. The journal also tells when an older account was made an administrator.
+     */
+    public function administrators(): array
+    {
+        $users = [];
+
+        foreach (get_users(['capability' => 'manage_options', 'fields' => ['ID', 'user_registered'], 'number' => 500]) as $user) {
+            $users[(int) $user->ID] = (string) $user->user_registered;
+        }
+
+        if (is_multisite()) {
+            foreach (get_super_admins() as $login) {
+                $user = get_user_by('login', $login);
+
+                if ($user !== false) {
+                    $users[$user->ID] = (string) $user->user_registered;
+                }
+            }
+        }
+
+        $journal = $this->settings instanceof Settings && $this->settings->journal->enabled ? new TableJournal : null;
+        $promoted = $journal instanceof TableJournal ? $this->promotions($journal) : [];
+        $dates = new LoginDates;
+        $administrators = [];
+
+        foreach ($users as $id => $registered) {
+            $registeredAt = strtotime($registered.' UTC');
+            $seen = [$dates->last($id)];
+
+            foreach (WP_Session_Tokens::get_instance($id)->get_all() as $session) {
+                $seen[] = isset($session['login']) ? (int) $session['login'] : null;
+            }
+
+            foreach (WP_Application_Passwords::get_user_application_passwords($id) as $password) {
+                $seen[] = isset($password['last_used']) ? (int) $password['last_used'] : null;
+            }
+
+            if ($journal instanceof TableJournal) {
+                $login = $journal->find(new JournalQuery(EventTypes::LOGIN_SUCCESS, null, $id, null, 1))[0] ?? null;
+                $seen[] = $login?->at->getTimestamp();
+            }
+
+            $seen = array_filter($seen, is_int(...));
+            $administrators[] = [
+                'user' => $id,
+                'since' => max($registeredAt === false ? 0 : $registeredAt, $promoted[$id] ?? 0),
+                'last_seen' => $seen === [] ? null : max($seen),
+            ];
+        }
+
+        return $administrators;
+    }
+
+    public function loginsNotedSince(): ?int
+    {
+        return (new LoginDates)->since();
+    }
+
+    /**
+     * @return array<int, int> when each account was last given a role that manages the site, in the last 30 days
+     */
+    private function promotions(TableJournal $journal): array
+    {
+        $since = $this->now()->sub(new DateInterval('P30D'));
+        $promoted = [];
+        $events = [
+            ...$journal->find(new JournalQuery(EventTypes::USER_ROLE, null, null, $since, JournalQuery::MAX)),
+            ...$journal->find(new JournalQuery(EventTypes::SUPER_ADMIN_GRANTED, null, null, $since, JournalQuery::MAX)),
+        ];
+
+        foreach ($events as $event) {
+            $role = (string) ($event->details['to'] ?? $event->details['added'] ?? '');
+            $manages = $event->type === EventTypes::SUPER_ADMIN_GRANTED || ($role !== '' && get_role($role)?->has_cap('manage_options') === true);
+
+            if ($manages && preg_match('/^user:(\d+)$/D', $event->subject, $match) === 1) {
+                $promoted[(int) $match[1]] = max($promoted[(int) $match[1]] ?? 0, $event->at->getTimestamp());
+            }
+        }
+
+        return $promoted;
     }
 
     public function lastScan(): ?ScanSnapshot

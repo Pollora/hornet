@@ -1696,3 +1696,93 @@ msgstr "Supprimez les thèmes que vous n'utilisez pas (ou composer remove). Gard
 #: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
 msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
 msgstr "Supprimez ce que vous n'utilisez pas (ou composer remove) : ses fichiers restent accessibles, et ses failles avec eux."
+
+#: src/Application/DefaultChecks.php:83
+msgid "Security headers"
+msgstr "En-têtes de sécurité"
+
+#: src/Application/Scan/SecurityHeadersTask.php:64
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): its headers were not seen."
+msgstr "Le site n'a pas répondu à sa propre adresse depuis le serveur (DNS, pare-feu, certificat non approuvé) : ses en-têtes n'ont pas été vus."
+
+#: src/Application/Scan/SecurityHeadersTask.php:68
+msgid "The home page answered %d: its headers were not judged."
+msgstr "La page d'accueil a répondu %d : ses en-têtes n'ont pas été évalués."
+
+#: src/Application/Scan/SecurityHeadersTask.php:77
+msgid "X-Content-Type-Options: nosniff is missing (a browser may take a file for something else than it is)."
+msgstr "X-Content-Type-Options: nosniff est absent (un navigateur peut prendre un fichier pour autre chose que ce qu'il est)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:81
+msgid "Nothing stops another site from showing this one in a frame (X-Frame-Options, or frame-ancestors)."
+msgstr "Rien n'empêche un autre site d'afficher celui-ci dans un cadre (X-Frame-Options, ou frame-ancestors)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:85
+msgid "Strict-Transport-Security is missing (a browser may still come over plain HTTP)."
+msgstr "Strict-Transport-Security est absent (un navigateur peut encore venir en HTTP simple)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:92
+msgid "%s is turned on in the settings of Hornet but does not reach the visitor: something in front (a page cache served without PHP, a proxy) drops it."
+msgstr "%s est activé dans les réglages de Hornet mais n'arrive pas au visiteur : quelque chose en amont (un cache de pages servi sans PHP, un proxy) le retire."
+
+#: src/Application/Scan/SecurityHeadersTask.php:99
+msgid "The home page sends the security headers that are judged."
+msgstr "La page d'accueil envoie les en-têtes de sécurité évalués."
+
+#: src/Application/Scan/SecurityHeadersTask.php:105
+msgid "%d security header problem on the home page."
+msgid_plural "%d security header problems on the home page."
+msgstr[0] "%d problème d'en-tête de sécurité sur la page d'accueil."
+msgstr[1] "%d problèmes d'en-têtes de sécurité sur la page d'accueil."
+
+#: src/Application/Scan/SecurityHeadersTask.php:107
+msgid "Turn on Hornet's `headers` settings, or set the headers in the web server (`wp hornet server-config nginx --headers`). Against framing, send X-Frame-Options: SAMEORIGIN or a Content-Security-Policy with frame-ancestors 'self'. If a CDN adds them where this server cannot see them, set this finding aside."
+msgstr "Activez les réglages `headers` de Hornet, ou posez les en-têtes dans le serveur web (`wp hornet server-config nginx --headers`). Contre la mise en cadre, envoyez X-Frame-Options: SAMEORIGIN ou une Content-Security-Policy avec frame-ancestors 'self'. Si un CDN les ajoute là où ce serveur ne les voit pas, écartez ce constat."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:31
+msgid "Dormant administrators"
+msgstr "Administrateurs dormants"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:69
+msgid "%d administrator has not been seen for 90 days."
+msgid_plural "%d administrators have not been seen for 90 days."
+msgstr[0] "%d administrateur n'a pas été vu depuis 90 jours."
+msgstr[1] "%d administrateurs n'ont pas été vus depuis 90 jours."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:71
+msgid "Delete the accounts that are not needed any more, or give them a lesser role."
+msgstr "Supprimez les comptes devenus inutiles, ou donnez-leur un rôle moindre."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:77
+msgid "Logins are not noted yet: they are from the next visit to the dashboard."
+msgstr "Les connexions ne sont pas encore notées : elles le seront à partir de la prochaine visite du tableau de bord."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:78
+msgid "Logins are noted since %s: whether an administrator is dormant can be told 90 days after that."
+msgstr "Les connexions sont notées depuis le %s : on ne pourra dire si un administrateur est dormant que 90 jours après."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:81
+msgid "Every administrator is recent or has been seen in the last 90 days."
+msgstr "Chaque administrateur est récent ou a été vu ces 90 derniers jours."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:31
+msgid "New administrators"
+msgstr "Nouveaux administrateurs"
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:45
+msgid "No account became an administrator in the last 14 days."
+msgstr "Aucun compte n'est devenu administrateur ces 14 derniers jours."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:50
+msgid "Every administrator account is recent: there is no older one to compare with."
+msgstr "Tous les comptes administrateurs sont récents : il n'en existe pas de plus ancien auquel comparer."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:62
+msgid "%d account became an administrator in the last 14 days."
+msgid_plural "%d accounts became administrators in the last 14 days."
+msgstr[0] "%d compte est devenu administrateur ces 14 derniers jours."
+msgstr[1] "%d comptes sont devenus administrateurs ces 14 derniers jours."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
+msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
+msgstr "Assurez-vous de savoir qui a créé chacun d'eux. Si l'un vous est inconnu : supprimez-le, changez tous les mots de passe et les sels, et cherchez comment il a été créé."

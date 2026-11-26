@@ -1722,3 +1722,96 @@ msgstr "Удалите неиспользуемые темы (или composer re
 #: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
 msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
 msgstr "Удалите то, что не используете (или composer remove): файлы остаются доступными, а с ними и уязвимости."
+
+#: src/Application/DefaultChecks.php:83
+msgid "Security headers"
+msgstr "Заголовки безопасности"
+
+#: src/Application/Scan/SecurityHeadersTask.php:64
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): its headers were not seen."
+msgstr "Сайт не ответил на собственный адрес с сервера (DNS, брандмауэр, недоверенный сертификат): его заголовки не были получены."
+
+#: src/Application/Scan/SecurityHeadersTask.php:68
+msgid "The home page answered %d: its headers were not judged."
+msgstr "Главная страница ответила %d: её заголовки не оценивались."
+
+#: src/Application/Scan/SecurityHeadersTask.php:77
+msgid "X-Content-Type-Options: nosniff is missing (a browser may take a file for something else than it is)."
+msgstr "Нет X-Content-Type-Options: nosniff (браузер может принять файл за нечто другое)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:81
+msgid "Nothing stops another site from showing this one in a frame (X-Frame-Options, or frame-ancestors)."
+msgstr "Ничто не мешает другому сайту показать этот во фрейме (X-Frame-Options или frame-ancestors)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:85
+msgid "Strict-Transport-Security is missing (a browser may still come over plain HTTP)."
+msgstr "Нет Strict-Transport-Security (браузер всё ещё может прийти по обычному HTTP)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:92
+msgid "%s is turned on in the settings of Hornet but does not reach the visitor: something in front (a page cache served without PHP, a proxy) drops it."
+msgstr "%s включён в настройках Hornet, но не доходит до посетителя: что-то перед сайтом (кэш страниц без PHP, прокси) его отбрасывает."
+
+#: src/Application/Scan/SecurityHeadersTask.php:99
+msgid "The home page sends the security headers that are judged."
+msgstr "Главная страница отправляет оцениваемые заголовки безопасности."
+
+#: src/Application/Scan/SecurityHeadersTask.php:105
+msgid "%d security header problem on the home page."
+msgid_plural "%d security header problems on the home page."
+msgstr[0] "%d проблема с заголовками безопасности на главной странице."
+msgstr[1] "%d проблемы с заголовками безопасности на главной странице."
+msgstr[2] "%d проблем с заголовками безопасности на главной странице."
+
+#: src/Application/Scan/SecurityHeadersTask.php:107
+msgid "Turn on Hornet's `headers` settings, or set the headers in the web server (`wp hornet server-config nginx --headers`). Against framing, send X-Frame-Options: SAMEORIGIN or a Content-Security-Policy with frame-ancestors 'self'. If a CDN adds them where this server cannot see them, set this finding aside."
+msgstr "Включите настройки `headers` в Hornet или задайте заголовки на веб-сервере (`wp hornet server-config nginx --headers`). Против встраивания во фреймы отправляйте X-Frame-Options: SAMEORIGIN или Content-Security-Policy с frame-ancestors 'self'. Если их добавляет CDN там, где этот сервер их не видит, отложите это замечание."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:31
+msgid "Dormant administrators"
+msgstr "Неактивные администраторы"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:69
+msgid "%d administrator has not been seen for 90 days."
+msgid_plural "%d administrators have not been seen for 90 days."
+msgstr[0] "%d администратор не появлялся 90 дней."
+msgstr[1] "%d администратора не появлялись 90 дней."
+msgstr[2] "%d администраторов не появлялись 90 дней."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:71
+msgid "Delete the accounts that are not needed any more, or give them a lesser role."
+msgstr "Удалите ненужные учётные записи или назначьте им роль с меньшими правами."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:77
+msgid "Logins are not noted yet: they are from the next visit to the dashboard."
+msgstr "Входы пока не отмечаются: начнут со следующего посещения консоли."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:78
+msgid "Logins are noted since %s: whether an administrator is dormant can be told 90 days after that."
+msgstr "Входы отмечаются с %s: определить, неактивен ли администратор, можно будет через 90 дней после этого."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:81
+msgid "Every administrator is recent or has been seen in the last 90 days."
+msgstr "Все администраторы недавние или появлялись за последние 90 дней."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:31
+msgid "New administrators"
+msgstr "Новые администраторы"
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:45
+msgid "No account became an administrator in the last 14 days."
+msgstr "За последние 14 дней ни одна учётная запись не стала администратором."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:50
+msgid "Every administrator account is recent: there is no older one to compare with."
+msgstr "Все учётные записи администраторов недавние: сравнить не с чем."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:62
+msgid "%d account became an administrator in the last 14 days."
+msgid_plural "%d accounts became administrators in the last 14 days."
+msgstr[0] "За последние 14 дней %d учётная запись стала администратором."
+msgstr[1] "За последние 14 дней %d учётные записи стали администраторами."
+msgstr[2] "За последние 14 дней %d учётных записей стали администраторами."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
+msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
+msgstr "Убедитесь, что знаете, кто создал каждую. Если какая-то незнакома: удалите её, смените все пароли и соли и выясните, как она появилась."

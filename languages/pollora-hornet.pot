@@ -429,27 +429,31 @@ msgstr ""
 msgid "The check could not run: %s"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:73
+#: src/Application/DefaultChecks.php:78
 msgid "WordPress core files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:74
+#: src/Application/DefaultChecks.php:79
 msgid "Plugin files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:75
+#: src/Application/DefaultChecks.php:80
 msgid "Theme files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:76
+#: src/Application/DefaultChecks.php:81
 msgid "Suspicious files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:77
+#: src/Application/DefaultChecks.php:82
 msgid "Files given away by the site"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:79
+#: src/Application/DefaultChecks.php:83
+msgid "Security headers"
+msgstr ""
+
+#: src/Application/DefaultChecks.php:85
 msgid "Known vulnerabilities"
 msgstr ""
 
@@ -589,7 +593,7 @@ msgstr ""
 msgid "[%s] %s: %s (%s)%s"
 msgstr ""
 
-#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:64 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47 src/Domain/Audit/Checks/UpdatesCheck.php:76
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:63 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:64 src/Domain/Audit/Checks/NewAdministratorsCheck.php:56 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47 src/Domain/Audit/Checks/UpdatesCheck.php:76
 msgid "and %d more"
 msgstr ""
 
@@ -705,6 +709,48 @@ msgstr ""
 
 #: src/Application/Scan/Scanner.php:151
 msgid "The scan could not run: %s"
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:58 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:37 src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:46 src/Domain/Audit/Checks/LaravelDebugbarCheck.php:35 src/Domain/Audit/Checks/NewAdministratorsCheck.php:37 src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:32
+msgid "Not a production site: not judged."
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:64
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): its headers were not seen."
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:68
+msgid "The home page answered %d: its headers were not judged."
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:77
+msgid "X-Content-Type-Options: nosniff is missing (a browser may take a file for something else than it is)."
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:81
+msgid "Nothing stops another site from showing this one in a frame (X-Frame-Options, or frame-ancestors)."
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:85
+msgid "Strict-Transport-Security is missing (a browser may still come over plain HTTP)."
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:92
+msgid "%s is turned on in the settings of Hornet but does not reach the visitor: something in front (a page cache served without PHP, a proxy) drops it."
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:99
+msgid "The home page sends the security headers that are judged."
+msgstr ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:105
+msgid "%d security header problem on the home page."
+msgid_plural "%d security header problems on the home page."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/SecurityHeadersTask.php:107
+msgid "Turn on Hornet's `headers` settings, or set the headers in the web server (`wp hornet server-config nginx --headers`). Against framing, send X-Frame-Options: SAMEORIGIN or a Content-Security-Policy with frame-ancestors 'self'. If a CDN adds them where this server cannot see them, set this finding aside."
 msgstr ""
 
 #: src/Application/Scan/SuspiciousFilesTask.php:67
@@ -869,6 +915,36 @@ msgstr ""
 msgid "Debug mode is off."
 msgstr ""
 
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:31
+msgid "Dormant administrators"
+msgstr ""
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:60 src/Domain/Audit/Checks/NewAdministratorsCheck.php:53 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
+msgid "user #%d"
+msgstr ""
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:69
+msgid "%d administrator has not been seen for 90 days."
+msgid_plural "%d administrators have not been seen for 90 days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:71
+msgid "Delete the accounts that are not needed any more, or give them a lesser role."
+msgstr ""
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:77
+msgid "Logins are not noted yet: they are from the next visit to the dashboard."
+msgstr ""
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:78
+msgid "Logins are noted since %s: whether an administrator is dormant can be told 90 days after that."
+msgstr ""
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:81
+msgid "Every administrator is recent or has been seen in the last 90 days."
+msgstr ""
+
 #: src/Domain/Audit/Checks/FileEditorCheck.php:26
 msgid "Theme and plugin editor"
 msgstr ""
@@ -895,10 +971,6 @@ msgstr ""
 
 #: src/Domain/Audit/Checks/FileModsCheck.php:33
 msgid "Plugins, themes and updates cannot be installed from the dashboard."
-msgstr ""
-
-#: src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:46 src/Domain/Audit/Checks/LaravelDebugbarCheck.php:35 src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:32
-msgid "Not a production site: not judged."
 msgstr ""
 
 #: src/Domain/Audit/Checks/FileModsCheck.php:40
@@ -1057,6 +1129,28 @@ msgstr ""
 msgid "composer require pollora/portcullis, or turn on Hornet's `login.throttle`."
 msgstr ""
 
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:31
+msgid "New administrators"
+msgstr ""
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:45
+msgid "No account became an administrator in the last 14 days."
+msgstr ""
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:50
+msgid "Every administrator account is recent: there is no older one to compare with."
+msgstr ""
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:62
+msgid "%d account became an administrator in the last 14 days."
+msgid_plural "%d accounts became administrators in the last 14 days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
+msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
+msgstr ""
+
 #: src/Domain/Audit/Checks/OpenRegistrationCheck.php:35
 msgid "Open registration"
 msgstr ""
@@ -1207,10 +1301,6 @@ msgstr ""
 
 #: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:41
 msgid "Every administrator has set up two-factor authentication."
-msgstr ""
-
-#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
-msgid "user #%d"
 msgstr ""
 
 #: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:53

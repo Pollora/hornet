@@ -1449,3 +1449,93 @@ msgstr "Kullanmadığınız temaları silin (veya composer remove). Etkin temay�
 #: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
 msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
 msgstr "Kullanmadıklarınızı silin (veya composer remove): dosyaları hâlâ erişilebilir, açıkları da onlarla birlikte."
+
+#: src/Application/DefaultChecks.php:83
+msgid "Security headers"
+msgstr "Güvenlik başlıkları"
+
+#: src/Application/Scan/SecurityHeadersTask.php:64
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): its headers were not seen."
+msgstr "Site, sunucudan kendi adresine yanıt vermedi (DNS, güvenlik duvarı, güvenilmeyen sertifika): başlıkları görülemedi."
+
+#: src/Application/Scan/SecurityHeadersTask.php:68
+msgid "The home page answered %d: its headers were not judged."
+msgstr "Ana sayfa %d yanıtı verdi: başlıkları değerlendirilmedi."
+
+#: src/Application/Scan/SecurityHeadersTask.php:77
+msgid "X-Content-Type-Options: nosniff is missing (a browser may take a file for something else than it is)."
+msgstr "X-Content-Type-Options: nosniff eksik (tarayıcı bir dosyayı olduğundan farklı bir şey sanabilir)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:81
+msgid "Nothing stops another site from showing this one in a frame (X-Frame-Options, or frame-ancestors)."
+msgstr "Başka bir sitenin bunu bir çerçeve içinde göstermesini engelleyen bir şey yok (X-Frame-Options veya frame-ancestors)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:85
+msgid "Strict-Transport-Security is missing (a browser may still come over plain HTTP)."
+msgstr "Strict-Transport-Security eksik (tarayıcı hâlâ düz HTTP ile gelebilir)."
+
+#: src/Application/Scan/SecurityHeadersTask.php:92
+msgid "%s is turned on in the settings of Hornet but does not reach the visitor: something in front (a page cache served without PHP, a proxy) drops it."
+msgstr "%s Hornet ayarlarında açık ancak ziyaretçiye ulaşmıyor: öndeki bir katman (PHP'siz sunulan sayfa önbelleği, bir proxy) onu kaldırıyor."
+
+#: src/Application/Scan/SecurityHeadersTask.php:99
+msgid "The home page sends the security headers that are judged."
+msgstr "Ana sayfa, değerlendirilen güvenlik başlıklarını gönderiyor."
+
+#: src/Application/Scan/SecurityHeadersTask.php:105
+msgid "%d security header problem on the home page."
+msgid_plural "%d security header problems on the home page."
+msgstr[0] "Ana sayfada %d güvenlik başlığı sorunu."
+msgstr[1] "Ana sayfada %d güvenlik başlığı sorunu."
+
+#: src/Application/Scan/SecurityHeadersTask.php:107
+msgid "Turn on Hornet's `headers` settings, or set the headers in the web server (`wp hornet server-config nginx --headers`). Against framing, send X-Frame-Options: SAMEORIGIN or a Content-Security-Policy with frame-ancestors 'self'. If a CDN adds them where this server cannot see them, set this finding aside."
+msgstr "Hornet'in `headers` ayarlarını açın veya başlıkları web sunucusunda ayarlayın (`wp hornet server-config nginx --headers`). Çerçeve içine alınmaya karşı X-Frame-Options: SAMEORIGIN veya frame-ancestors 'self' içeren bir Content-Security-Policy gönderin. Bir CDN bunları bu sunucunun göremediği yerde ekliyorsa bu bulguyu kenara ayırın."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:31
+msgid "Dormant administrators"
+msgstr "Uyuyan yöneticiler"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:69
+msgid "%d administrator has not been seen for 90 days."
+msgid_plural "%d administrators have not been seen for 90 days."
+msgstr[0] "%d yönetici 90 gündür görülmedi."
+msgstr[1] "%d yönetici 90 gündür görülmedi."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:71
+msgid "Delete the accounts that are not needed any more, or give them a lesser role."
+msgstr "Artık gerekmeyen hesapları silin veya onlara daha alt bir rol verin."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:77
+msgid "Logins are not noted yet: they are from the next visit to the dashboard."
+msgstr "Girişler henüz kaydedilmiyor: başlangıç ekranına bir sonraki ziyaretten itibaren kaydedilecek."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:78
+msgid "Logins are noted since %s: whether an administrator is dormant can be told 90 days after that."
+msgstr "Girişler %s tarihinden beri kaydediliyor: bir yöneticinin uykuda olup olmadığı 90 gün sonra söylenebilir."
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:81
+msgid "Every administrator is recent or has been seen in the last 90 days."
+msgstr "Her yönetici yeni veya son 90 günde görülmüş."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:31
+msgid "New administrators"
+msgstr "Yeni yöneticiler"
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:45
+msgid "No account became an administrator in the last 14 days."
+msgstr "Son 14 günde hiçbir hesap yönetici olmadı."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:50
+msgid "Every administrator account is recent: there is no older one to compare with."
+msgstr "Tüm yönetici hesapları yeni: karşılaştırılacak daha eski bir hesap yok."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:62
+msgid "%d account became an administrator in the last 14 days."
+msgid_plural "%d accounts became administrators in the last 14 days."
+msgstr[0] "Son 14 günde %d hesap yönetici oldu."
+msgstr[1] "Son 14 günde %d hesap yönetici oldu."
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
+msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
+msgstr "Her birini kimin oluşturduğundan emin olun. Tanımadığınız varsa: silin, tüm parolaları ve tuzları değiştirin ve nasıl oluşturulduğunu bulun."

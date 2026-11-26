@@ -118,6 +118,16 @@ interface Environment
     public function unusedThemes(): ?array;
 
     /**
+     * The accounts that can manage the site: when each got that right (as far as is known) and when it was last seen to be used.
+     *
+     * @return list<array{user: int, since: int, last_seen: int|null}>
+     */
+    public function administrators(): array;
+
+    /** Since when the logins of the administrators are noted (a timestamp), null when they are not yet. */
+    public function loginsNotedSince(): ?int;
+
+    /**
      * What the last scan found, null when the site was never scanned. It is read from what the scan stored: nothing is scanned here.
      */
     public function lastScan(): ?ScanSnapshot;
