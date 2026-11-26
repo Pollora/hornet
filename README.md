@@ -4,7 +4,7 @@ Security for WordPress, from Pollora. Hornet audits the configuration of a site,
 
 It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on Laravel. By default it changes nothing on your site: it reads, and it tells you. Hardening and headers do nothing until you turn each one on.
 
-> **Status: 0.3.** The audit of the configuration, the notifications, the hardening, the security headers, the login throttle and the account rules are in. The file scanner, the vulnerability feed, the administration screen, the activity log and the MCP abilities come next. Nothing here is a firewall.
+> **Version 0.9.** What is described here is in and tested. The public surface (settings, commands, hooks, abilities, REST routes, webhook payload) can still change before 1.0; the PHP classes are internal. Translations are machine-made. Nothing here is a firewall.
 
 ## What it checks
 
@@ -46,6 +46,12 @@ Site Health shows these checks too, except the four on plugins and themes, which
 A check reads and never writes, and never asks the network. A scan is another thing: see below. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 
 Hornet does not redo what Pollora already does. If `pollora/portcullis` protects the login, the check says so instead of warning.
+
+## Requirements
+
+- PHP 8.3 or later, with `json`, `mbstring` and `tokenizer`.
+- WordPress 6.9 or later; MySQL 8 or MariaDB 11.
+- Composer: classic WordPress (with the autoloader), Bedrock or Pollora.
 
 ## Install
 
@@ -150,7 +156,8 @@ define('HORNET_CONFIG', [
 ```
 
 - **Per address only, never per user name**: locking a user name would let anyone lock the owner out.
-- **It cannot be undone by WordPress.** The lock runs late on `authenticate`, after WordPress's own checks, and turns even a valid user into an error. Failures of application passwords (REST, XML-RPC) count too; a success forgets the failures.
+- **It cannot be undone by WordPress.** The lock runs late on `authenticate`, after WordPress's own checks, and turns even a valid user into an error. Failures of application passwords (REST, XML-RPC) count too, and a locked address is refused **even with the right application password**; a success forgets the failures.
+- **A burst can get a few tries more.** The counters are not atomic: requests that arrive at the same instant can each read the count before the others wrote it.
 - **It never locks an address that many visitors share.** Behind a proxy or a load balancer that is not in `network.trusted_proxies`, every visitor would have the proxy's address and one attacker could lock everybody out. Hornet then steps aside, writes a note, and the audit raises a **high** finding. Declare the proxy: a forwarding header (`X-Forwarded-For`, `CF-Connecting-IP` or `X-Real-IP`, set with `network.forwarded_header`) is believed **only** when the connection comes from a listed proxy, and is read from the right, skipping the trusted proxies, so a forged left part counts for nothing.
 - **Adding a header does not dodge the lock.** A forwarding header from an address that is not a trusted proxy is ignored and the request is counted under the address that opened the connection. If a header arrives that way, the audit says so: if the site is behind a CDN, list it in `network.trusted_proxies`, or visitors behind the same edge address can lock each other out.
 - **On Pollora, the address is the one Laravel's request reports**, which already knows the proxies the application trusts: no second list to keep in step.

@@ -230,7 +230,7 @@ return [
 		"Two-factor authentication" => "İki faktörlü kimlik doğrulama",
 		"The Two-Factor plugin is active." => "Two-Factor eklentisi etkin.",
 		"The Two-Factor plugin is not active." => "Two-Factor eklentisi etkin değil.",
-		"Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles." => "Two-Factor eklentisini yükleyin. Hornet'in sonraki bir sürümü, seçilen roller için bunu zorunlu kılacak.",
+		"Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`." => "Two-Factor eklentisini kurun, ardından `two_factor.require_roles` ile seçtiğiniz roller için zorunlu tutun.",
 		"Two-factor authentication of administrators" => "Yöneticilerin iki faktörlü kimlik doğrulaması",
 		"The Two-Factor plugin is not active: whether administrators use a second factor cannot be told." => "Two-Factor eklentisi etkin değil: yöneticilerin ikinci bir faktör kullanıp kullanmadığı söylenemiyor.",
 		"Every administrator has set up two-factor authentication." => "Tüm yöneticiler iki faktörlü kimlik doğrulamayı kurmuş.",

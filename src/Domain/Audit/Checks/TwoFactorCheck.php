@@ -34,6 +34,6 @@ final readonly class TwoFactorCheck implements Check
             return Finding::pass($this->id(), Message::of('The Two-Factor plugin is active.'));
         }
 
-        return Finding::fail($this->id(), Severity::Low, Message::of('The Two-Factor plugin is not active.'), [], Message::of('Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles.'));
+        return Finding::fail($this->id(), Severity::Low, Message::of('The Two-Factor plugin is not active.'), [], Message::of('Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`.'));
     }
 }

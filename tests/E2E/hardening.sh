@@ -151,6 +151,13 @@ wrong 203.0.113.9 >/dev/null; wrong 203.0.113.9 >/dev/null; wrong 203.0.113.9 >/
 right 203.0.113.9
 check "three failures lock the address: even the right password is refused" sh -c "! grep -qi '^set-cookie: wordpress_logged_in' /tmp/hornet-right.h"
 check "the refusal says why" sh -c "curl -s -b 'wordpress_test_cookie=WP%20Cookie%20check' -H 'X-Forwarded-For: 203.0.113.9' --data 'log=admin&pwd=pass&wp-submit=Log+In&testcookie=1' '$BASE/wp-login.php' | grep -q 'Too many failed login attempts'"
+# An application password does not go through the login form: the REST API must refuse it too
+wp config set WP_ENVIRONMENT_TYPE local >/dev/null 2>&1
+LOCKPW=$(cli user application-password create admin e2e-lock --porcelain 2>/dev/null)
+check "a locked address cannot use the right application password" status_is 401 -u "admin:$LOCKPW" -H 'X-Forwarded-For: 203.0.113.9' "$BASE/?rest_route=/wp/v2/users/me"
+check "another address can use it"                           status_is 200 -u "admin:$LOCKPW" -H 'X-Forwarded-For: 203.0.113.10' "$BASE/?rest_route=/wp/v2/users/me"
+cli user application-password delete admin --all >/dev/null 2>&1
+wp config delete WP_ENVIRONMENT_TYPE >/dev/null 2>&1
 right 203.0.113.10
 check "another address can still log in" logged_in
 for i in 1 2 3 4 5 6; do wrong 203.0.113.50 >/dev/null; done

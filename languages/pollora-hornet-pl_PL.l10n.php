@@ -230,7 +230,7 @@ return [
 		"Two-factor authentication" => "Uwierzytelnianie dwuskładnikowe",
 		"The Two-Factor plugin is active." => "Wtyczka Two-Factor jest włączona.",
 		"The Two-Factor plugin is not active." => "Wtyczka Two-Factor nie jest włączona.",
-		"Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles." => "Zainstaluj wtyczkę Two-Factor. Późniejsza wersja Hornet będzie jej wymagać dla wybranych ról.",
+		"Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`." => "Zainstaluj wtyczkę Two-Factor, a następnie wymagaj jej dla wybranych ról przez `two_factor.require_roles`.",
 		"Two-factor authentication of administrators" => "Uwierzytelnianie dwuskładnikowe administratorów",
 		"The Two-Factor plugin is not active: whether administrators use a second factor cannot be told." => "Wtyczka Two-Factor nie jest włączona: nie można stwierdzić, czy administratorzy używają drugiego składnika.",
 		"Every administrator has set up two-factor authentication." => "Każdy administrator skonfigurował uwierzytelnianie dwuskładnikowe.",

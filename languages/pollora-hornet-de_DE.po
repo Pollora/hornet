@@ -1025,10 +1025,6 @@ msgstr "Das Plugin Two-Factor ist aktiv."
 msgid "The Two-Factor plugin is not active."
 msgstr "Das Plugin Two-Factor ist nicht aktiv."
 
-#: src/Domain/Audit/Checks/TwoFactorCheck.php:35
-msgid "Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles."
-msgstr "Installieren Sie das Plugin Two-Factor. Eine spätere Version von Hornet wird es für ausgewählte Rollen verlangen."
-
 #: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:29
 msgid "Two-factor authentication of administrators"
 msgstr "Zwei-Faktor-Authentifizierung der Administratoren"
@@ -1900,3 +1896,7 @@ msgstr "hat eine javascript:-Adresse in einem Profil"
 #: src/Application/Scan/DatabaseScriptsTask.php:186
 msgid "The database could not be read: nothing can be said of the part that was not."
 msgstr "Die Datenbank konnte nicht gelesen werden: Über den nicht gelesenen Teil lässt sich nichts sagen."
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:37
+msgid "Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`."
+msgstr "Installieren Sie das Plugin Two-Factor und verlangen Sie es mit `two_factor.require_roles` für die gewünschten Rollen."

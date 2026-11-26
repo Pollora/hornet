@@ -230,7 +230,7 @@ return [
 		"Two-factor authentication" => "2단계 인증",
 		"The Two-Factor plugin is active." => "Two-Factor 플러그인이 활성화되어 있습니다.",
 		"The Two-Factor plugin is not active." => "Two-Factor 플러그인이 활성화되어 있지 않습니다.",
-		"Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles." => "Two-Factor 플러그인을 설치하세요. 이후 버전의 Hornet은 선택한 역할에 이를 필수로 요구합니다.",
+		"Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`." => "Two-Factor 플러그인을 설치한 뒤 `two_factor.require_roles`로 원하는 역할에 필수로 지정하세요.",
 		"Two-factor authentication of administrators" => "관리자의 2단계 인증",
 		"The Two-Factor plugin is not active: whether administrators use a second factor cannot be told." => "Two-Factor 플러그인이 활성화되어 있지 않아 관리자가 2차 인증을 사용하는지 알 수 없습니다.",
 		"Every administrator has set up two-factor authentication." => "모든 관리자가 2단계 인증을 설정했습니다.",

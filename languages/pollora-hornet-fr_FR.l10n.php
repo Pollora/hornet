@@ -230,7 +230,7 @@ return [
 		"Two-factor authentication" => "Authentification à deux facteurs",
 		"The Two-Factor plugin is active." => "L'extension Two-Factor est active.",
 		"The Two-Factor plugin is not active." => "L'extension Two-Factor n'est pas active.",
-		"Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles." => "Installez l'extension Two-Factor. Une prochaine version de Hornet l'exigera pour les rôles choisis.",
+		"Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`." => "Installez l'extension Two-Factor, puis imposez-la aux rôles de votre choix avec `two_factor.require_roles`.",
 		"Two-factor authentication of administrators" => "Authentification à deux facteurs des administrateurs",
 		"The Two-Factor plugin is not active: whether administrators use a second factor cannot be told." => "L'extension Two-Factor n'est pas active : impossible de savoir si les administrateurs utilisent un second facteur.",
 		"Every administrator has set up two-factor authentication." => "Tous les administrateurs ont configuré l'authentification à deux facteurs.",
