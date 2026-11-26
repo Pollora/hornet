@@ -26,11 +26,11 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: admin/src/App.js:97 src/Infrastructure/WordPress/Admin/SettingsView.php:60
+#: admin/src/App.js:97 src/Infrastructure/WordPress/Admin/SettingsView.php:61
 msgid "Notifications"
 msgstr ""
 
-#: admin/src/App.js:98 src/Infrastructure/WordPress/Admin/SettingsView.php:57
+#: admin/src/App.js:98 src/Infrastructure/WordPress/Admin/SettingsView.php:58
 msgid "Journal"
 msgstr ""
 
@@ -445,36 +445,202 @@ msgstr ""
 msgid "The check could not run: %s"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:81
+#: src/Application/DefaultChecks.php:84
 msgid "WordPress core files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:82
+#: src/Application/DefaultChecks.php:85
 msgid "Plugin files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:83
-msgid "Theme files"
-msgstr ""
-
-#: src/Application/DefaultChecks.php:84
-msgid "Suspicious files"
-msgstr ""
-
-#: src/Application/DefaultChecks.php:85
-msgid "Scripts in the database"
-msgstr ""
-
 #: src/Application/DefaultChecks.php:86
-msgid "Files given away by the site"
+msgid "Closed or abandoned plugins"
 msgstr ""
 
 #: src/Application/DefaultChecks.php:87
-msgid "Security headers"
+msgid "Theme files"
+msgstr ""
+
+#: src/Application/DefaultChecks.php:88
+msgid "Suspicious files"
 msgstr ""
 
 #: src/Application/DefaultChecks.php:89
+msgid "Scripts in the database"
+msgstr ""
+
+#: src/Application/DefaultChecks.php:90
+msgid "Files given away by the site"
+msgstr ""
+
+#: src/Application/DefaultChecks.php:91
+msgid "Security headers"
+msgstr ""
+
+#: src/Application/DefaultChecks.php:93
 msgid "Known vulnerabilities"
+msgstr ""
+
+#: src/Application/DefaultChecks.php:94
+msgid "Known vulnerabilities in Composer packages"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:106
+msgid "%s: no release on WordPress.org since %s"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:115
+msgid "WordPress.org could not be asked about: %s"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:116
+msgid "%d plugin was not reached in the time allowed."
+msgid_plural "%d plugins were not reached in the time allowed."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:119
+msgid "Same folder name as a plugin that is closed or old on WordPress.org, under another name or version, so probably another plugin and not counted: %s"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:120
+msgid "%d plugin says it is updated from somewhere else and was not asked about."
+msgid_plural "%d plugins say they are updated from somewhere else and were not asked about."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:132
+msgid "No plugin of this site was recognised on WordPress.org: nothing to say about closed or old plugins."
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:133
+msgid "The %d plugin recognised on WordPress.org is open and has had a release in the last two years."
+msgid_plural "The %d plugins recognised on WordPress.org are open and have had a release in the last two years."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:149
+msgid "security issue"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:150
+msgid "at the request of its author"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:151
+msgid "it broke the rules of the directory"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:152
+msgid "licence or trademark violation"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:153
+msgid "now part of WordPress"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:154
+msgid "not used"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:155
+msgid "reason not published"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:159
+msgid "%s: closed by WordPress.org (%s)"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:160
+msgid "%s: closed by WordPress.org on %s (%s)"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:174
+msgid "%d plugin has been closed by WordPress.org: %s."
+msgid_plural "%d plugins have been closed by WordPress.org: %s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:178
+msgid "%d plugin has had no release on WordPress.org for two years or more: %s."
+msgid_plural "%d plugins have had no release on WordPress.org for two years or more: %s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:182 src/Application/Scan/ComposerVulnerabilitiesTask.php:247 src/Application/Scan/DatabaseScriptsTask.php:251 src/Application/Scan/KnownVulnerabilitiesTask.php:116 src/Application/Scan/SuspiciousFilesTask.php:169 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:68 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:65 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:66 src/Domain/Audit/Checks/NewAdministratorsCheck.php:58 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:49 src/Domain/Audit/Checks/UpdatesCheck.php:78
+msgid "and %d more"
+msgstr ""
+
+#: src/Application/Scan/AbandonedPluginsTask.php:189
+msgid "Replace a closed plugin: it gets no more updates from WordPress.org, and WordPress does not warn about it. For one with no release for years, check that its author still answers, or plan its replacement. Hornet changes nothing."
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:61
+msgid "No list of installed Composer packages could be read: nothing was checked."
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:126
+msgid "api.osv.dev did not answer for %d package."
+msgid_plural "api.osv.dev did not answer for %d packages."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:127
+msgid "Not everything was read in the time allowed."
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:128
+msgid "Some records could not be read: their severity and their fix are not known."
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:142
+msgid "The project has no Composer package installed."
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:143
+msgid "No Composer package could be asked about."
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:146
+msgid "No known vulnerability in the %d Composer package asked about."
+msgid_plural "No known vulnerability in the %d Composer packages asked about."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:223
+msgid "%s %s (development package)"
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:224
+msgid "a vulnerability the database does not describe"
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:226 src/Application/Scan/KnownVulnerabilitiesTask.php:115
+msgid "[%s] %s: %s (%s)%s"
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:226 src/Application/Scan/KnownVulnerabilitiesTask.php:130
+msgid ", fixed in %s"
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:235
+msgid "Installed from a branch, so not checked: %s"
+msgstr ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:236
+msgid "%d package does not come from Packagist: its name was not sent and it was not checked."
+msgid_plural "%d packages do not come from Packagist: their names were not sent and they were not checked."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:252
+msgid "%d known vulnerability in the Composer packages of the project."
+msgid_plural "%d known vulnerabilities in the Composer packages of the project."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:254
+msgid "Run `composer update` for the packages listed, to a release that fixes them, then test and deploy. A development package has no place on a production server: install with `composer install --no-dev`. Hornet changes nothing."
 msgstr ""
 
 #: src/Application/Scan/CoreIntegrityTask.php:55
@@ -553,10 +719,6 @@ msgstr ""
 
 #: src/Application/Scan/DatabaseScriptsTask.php:235 src/Application/Scan/SuspiciousFilesTask.php:166
 msgid "[%s] %s: "
-msgstr ""
-
-#: src/Application/Scan/DatabaseScriptsTask.php:251 src/Application/Scan/KnownVulnerabilitiesTask.php:116 src/Application/Scan/SuspiciousFilesTask.php:169 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:68 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:65 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:66 src/Domain/Audit/Checks/NewAdministratorsCheck.php:58 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:49 src/Domain/Audit/Checks/UpdatesCheck.php:78
-msgid "and %d more"
 msgstr ""
 
 #: src/Application/Scan/DatabaseScriptsTask.php:257
@@ -663,10 +825,6 @@ msgstr ""
 msgid "No known vulnerability in the %d versions that were asked about."
 msgstr ""
 
-#: src/Application/Scan/KnownVulnerabilitiesTask.php:115
-msgid "[%s] %s: %s (%s)%s"
-msgstr ""
-
 #: src/Application/Scan/KnownVulnerabilitiesTask.php:121
 msgid "%d known vulnerability in what the site runs."
 msgid_plural "%d known vulnerabilities in what the site runs."
@@ -675,10 +833,6 @@ msgstr[1] ""
 
 #: src/Application/Scan/KnownVulnerabilitiesTask.php:123
 msgid "Update what is listed to the version that fixes it. Where nothing fixes it yet, turn the plugin off or replace it: a vulnerability that is public is being tried on sites like yours. Hornet changes nothing."
-msgstr ""
-
-#: src/Application/Scan/KnownVulnerabilitiesTask.php:130
-msgid ", fixed in %s"
 msgstr ""
 
 #: src/Application/Scan/KnownVulnerabilitiesTask.php:131
@@ -1799,7 +1953,7 @@ msgstr ""
 msgid "Two-factor required"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:52 src/Infrastructure/WordPress/Admin/SettingsView.php:53 src/Infrastructure/WordPress/Admin/SettingsView.php:54 src/Infrastructure/WordPress/Admin/SettingsView.php:55
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52 src/Infrastructure/WordPress/Admin/SettingsView.php:53 src/Infrastructure/WordPress/Admin/SettingsView.php:54 src/Infrastructure/WordPress/Admin/SettingsView.php:55 src/Infrastructure/WordPress/Admin/SettingsView.php:56
 msgid "Scanner"
 msgstr ""
 
@@ -1823,49 +1977,57 @@ msgstr ""
 msgid "name and version of each plugin and theme go to www.wpvulnerability.net"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:57
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Look up Composer packages"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "name and version of each Packagist package of the project go to api.osv.dev"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
 msgid "Security journal"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:57
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
 msgid "kept %d day"
 msgid_plural "kept %d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:58 src/Infrastructure/WordPress/Admin/SettingsView.php:59
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:59 src/Infrastructure/WordPress/Admin/SettingsView.php:60
 msgid "Agents"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
 msgid "Abilities for AI agents (read)"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:60
 msgid "Abilities for AI agents (start a scan, set aside)"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:60
 msgid "at most 20 changes an hour per person"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:60
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:61
 msgid "Notification channels"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:61 src/Infrastructure/WordPress/Admin/SettingsView.php:62 src/Infrastructure/WordPress/Admin/SettingsView.php:63
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:62 src/Infrastructure/WordPress/Admin/SettingsView.php:63 src/Infrastructure/WordPress/Admin/SettingsView.php:64
 msgid "Audit"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:61
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:62
 msgid "Site Health tests"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:62
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:63
 msgid "Checks turned off"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:63
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:64
 msgid "Findings set aside"
 msgstr ""
 

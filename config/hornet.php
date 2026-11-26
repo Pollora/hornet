@@ -115,6 +115,7 @@ return [
     ],
 
     // The file scanner (`wp hornet scan`). It runs when you ask: there is nothing to turn on, and nothing is ever deleted or repaired.
+    // It asks WordPress.org about what is installed (checksums; whether a plugin is closed or left behind, by folder name only).
     'scanner' => [
         // Core files that are meant to differ from WordPress.org (a patch your project applies), relative to the WordPress root.
         // Each is pinned the first time it is seen: a later change is reported. On Pollora and Bedrock the files that the
@@ -143,6 +144,9 @@ return [
     // is what an attacker would like to have.
     'vulnerabilities' => [
         // 'enabled' => true,
+        // Also the Composer packages of the project (Bedrock, Pollora), asked to api.osv.dev; needs `enabled`. The name and version of each package
+        // installed from packagist.org are sent, development packages included when they are installed. The other packages are never named.
+        // 'composer' => true,
     ],
 
     // Tell someone when the audit finds something new. Nothing is sent until a channel is listed.

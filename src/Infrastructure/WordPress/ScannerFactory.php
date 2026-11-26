@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Closure;
+use Pollora\Hornet\Application\Scan\AbandonedPluginsTask;
+use Pollora\Hornet\Application\Scan\ComposerVulnerabilitiesTask;
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
 use Pollora\Hornet\Application\Scan\DatabaseScriptsTask;
 use Pollora\Hornet\Application\Scan\ExposedFilesTask;
@@ -15,6 +17,8 @@ use Pollora\Hornet\Application\Scan\ScanTask;
 use Pollora\Hornet\Application\Scan\SecurityHeadersTask;
 use Pollora\Hornet\Application\Scan\SuspiciousFilesTask;
 use Pollora\Hornet\Domain\Audit\LaravelApplication;
+use Pollora\Hornet\Domain\Scan\CachedAdvisoryDatabase;
+use Pollora\Hornet\Domain\Scan\CachedPluginDirectory;
 use Pollora\Hornet\Domain\Scan\CachedVulnerabilityFeed;
 use Pollora\Hornet\Domain\Scan\FileInspector;
 use Pollora\Hornet\Domain\Scan\NoPublishedChecksums;
@@ -22,7 +26,9 @@ use Pollora\Hornet\Domain\Scan\PluginIntegrity;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Pollora\CorePatches;
+use Pollora\Hornet\Infrastructure\Scan\InstalledComposerPackages;
 use Pollora\Hornet\Infrastructure\Scan\NativeFileSystem;
+use Pollora\Hornet\Infrastructure\Scan\OsvAdvisoryDatabase;
 use Pollora\Hornet\Infrastructure\Scan\UploadsProbeFiles;
 use wpdb;
 
@@ -58,6 +64,10 @@ final class ScannerFactory
             $tasks[] = new PluginIntegrityTask(new WpPluginInventory, new WordPressPluginChecksums($http), new PluginIntegrity($plugins), new OptionBaselineStore, new SystemClock, $cron ? max(5, intdiv(self::cronSeconds(), 2)) : 240);
         }
 
+        // Only the folder name of each plugin goes to api.wordpress.org
+        $directory = new CachedPluginDirectory(new WpPluginDirectory($http), new TransientPluginListingCache, new SystemClock);
+        $tasks[] = new AbandonedPluginsTask($directory, new WpPluginInventory, new SystemClock, $directory->fetched(...), $cron ? max(5, intdiv(self::cronSeconds(), 4)) : 240);
+
         $themes = NativeFileSystem::at(get_theme_root());
 
         if ($themes instanceof NativeFileSystem) {
@@ -87,6 +97,12 @@ final class ScannerFactory
         if ($settings->vulnerabilities->enabled) {
             $feed = new CachedVulnerabilityFeed(new WpVulnerabilityFeed($http), new TransientVulnerabilityCache, new SystemClock);
             $tasks[] = new KnownVulnerabilitiesTask($feed, new WpPluginInventory, new WpThemeInventory($settings->scanner->ownThemes), wp_get_wp_version(), new SystemClock, $feed->staleAnswers(...), $cron ? max(5, intdiv(self::cronSeconds(), 2)) : null);
+        }
+
+        // A second opt-in: the name and version of the Packagist packages of the project go to api.osv.dev
+        if ($settings->vulnerabilities->auditsPackages()) {
+            $advisories = new CachedAdvisoryDatabase(new OsvAdvisoryDatabase($http), new TransientAdvisoryCache);
+            $tasks[] = new ComposerVulnerabilitiesTask($advisories, InstalledComposerPackages::ofProject(), new SystemClock, $advisories->fetched(...), $cron ? max(5, intdiv(self::cronSeconds(), 4)) : 240);
         }
 
         // A scan that is disabled does not run, and asks nothing of the network

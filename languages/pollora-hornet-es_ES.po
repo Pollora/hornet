@@ -1936,3 +1936,165 @@ msgstr "%1$d de 100, nota %2$s"
 #: src/Infrastructure/WordPress/SiteHealthInfo.php:114
 msgid "part of the audit could not be verified"
 msgstr "parte de la auditoría no se pudo verificar"
+
+#: src/Application/DefaultChecks.php:86
+msgid "Closed or abandoned plugins"
+msgstr "Plugins cerrados o abandonados"
+
+#: src/Application/DefaultChecks.php:94
+msgid "Known vulnerabilities in Composer packages"
+msgstr "Vulnerabilidades conocidas en paquetes de Composer"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:106
+msgid "%s: no release on WordPress.org since %s"
+msgstr "%s: sin versiones en WordPress.org desde el %s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:115
+msgid "WordPress.org could not be asked about: %s"
+msgstr "No se pudo consultar a WordPress.org sobre: %s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:116
+msgid "%d plugin was not reached in the time allowed."
+msgid_plural "%d plugins were not reached in the time allowed."
+msgstr[0] "%d plugin no se alcanzó en el tiempo disponible."
+msgstr[1] "%d plugins no se alcanzaron en el tiempo disponible."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:119
+msgid "Same folder name as a plugin that is closed or old on WordPress.org, under another name or version, so probably another plugin and not counted: %s"
+msgstr "Mismo nombre de carpeta que un plugin cerrado o antiguo en WordPress.org, con otro nombre o versión: probablemente sea otro plugin y no se cuenta: %s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:120
+msgid "%d plugin says it is updated from somewhere else and was not asked about."
+msgid_plural "%d plugins say they are updated from somewhere else and were not asked about."
+msgstr[0] "%d plugin indica que se actualiza desde otro sitio y no se ha consultado."
+msgstr[1] "%d plugins indican que se actualizan desde otro sitio y no se han consultado."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:132
+msgid "No plugin of this site was recognised on WordPress.org: nothing to say about closed or old plugins."
+msgstr "No se reconoció ningún plugin de este sitio en WordPress.org: no hay nada que decir sobre plugins cerrados o antiguos."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:133
+msgid "The %d plugin recognised on WordPress.org is open and has had a release in the last two years."
+msgid_plural "The %d plugins recognised on WordPress.org are open and have had a release in the last two years."
+msgstr[0] "El %d plugin reconocido en WordPress.org está abierto y ha tenido una versión en los dos últimos años."
+msgstr[1] "Los %d plugins reconocidos en WordPress.org están abiertos y han tenido una versión en los dos últimos años."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:149
+msgid "security issue"
+msgstr "problema de seguridad"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:150
+msgid "at the request of its author"
+msgstr "a petición de su autor"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:151
+msgid "it broke the rules of the directory"
+msgstr "incumplió las normas del directorio"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:152
+msgid "licence or trademark violation"
+msgstr "infracción de licencia o de marca"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:153
+msgid "now part of WordPress"
+msgstr "ahora forma parte de WordPress"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:154
+msgid "not used"
+msgstr "sin uso"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:155
+msgid "reason not published"
+msgstr "motivo no publicado"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:159
+msgid "%s: closed by WordPress.org (%s)"
+msgstr "%s: cerrado por WordPress.org (%s)"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:160
+msgid "%s: closed by WordPress.org on %s (%s)"
+msgstr "%s: cerrado por WordPress.org el %s (%s)"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:174
+msgid "%d plugin has been closed by WordPress.org: %s."
+msgid_plural "%d plugins have been closed by WordPress.org: %s."
+msgstr[0] "%d plugin ha sido cerrado por WordPress.org: %s."
+msgstr[1] "%d plugins han sido cerrados por WordPress.org: %s."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:178
+msgid "%d plugin has had no release on WordPress.org for two years or more: %s."
+msgid_plural "%d plugins have had no release on WordPress.org for two years or more: %s."
+msgstr[0] "%d plugin lleva dos años o más sin versiones en WordPress.org: %s."
+msgstr[1] "%d plugins llevan dos años o más sin versiones en WordPress.org: %s."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:189
+msgid "Replace a closed plugin: it gets no more updates from WordPress.org, and WordPress does not warn about it. For one with no release for years, check that its author still answers, or plan its replacement. Hornet changes nothing."
+msgstr "Sustituya un plugin cerrado: ya no recibe actualizaciones de WordPress.org y WordPress no avisa de ello. Si lleva años sin versiones, compruebe que su autor sigue respondiendo o planifique su sustitución. Hornet no cambia nada."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:61
+msgid "No list of installed Composer packages could be read: nothing was checked."
+msgstr "No se pudo leer ninguna lista de paquetes de Composer instalados: no se comprobó nada."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:126
+msgid "api.osv.dev did not answer for %d package."
+msgid_plural "api.osv.dev did not answer for %d packages."
+msgstr[0] "api.osv.dev no respondió sobre %d paquete."
+msgstr[1] "api.osv.dev no respondió sobre %d paquetes."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:127
+msgid "Not everything was read in the time allowed."
+msgstr "No se pudo leer todo en el tiempo disponible."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:128
+msgid "Some records could not be read: their severity and their fix are not known."
+msgstr "Algunos registros no se pudieron leer: se desconocen su gravedad y su corrección."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:142
+msgid "The project has no Composer package installed."
+msgstr "El proyecto no tiene ningún paquete de Composer instalado."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:143
+msgid "No Composer package could be asked about."
+msgstr "No se pudo consultar ningún paquete de Composer."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:146
+msgid "No known vulnerability in the %d Composer package asked about."
+msgid_plural "No known vulnerability in the %d Composer packages asked about."
+msgstr[0] "Ninguna vulnerabilidad conocida en el %d paquete de Composer consultado."
+msgstr[1] "Ninguna vulnerabilidad conocida en los %d paquetes de Composer consultados."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:207
+msgid "%s %s (development package)"
+msgstr "%s %s (paquete de desarrollo)"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:208
+msgid "a vulnerability the database does not describe"
+msgstr "una vulnerabilidad que la base de datos no describe"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:219
+msgid "Installed from a branch, so not checked: %s"
+msgstr "Instalados desde una rama, por lo que no se comprobaron: %s"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:220
+msgid "%d package does not come from Packagist: its name was not sent and it was not checked."
+msgid_plural "%d packages do not come from Packagist: their names were not sent and they were not checked."
+msgstr[0] "%d paquete no procede de Packagist: no se envió su nombre y no se comprobó."
+msgstr[1] "%d paquetes no proceden de Packagist: no se enviaron sus nombres y no se comprobaron."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:236
+msgid "%d known vulnerability in the Composer packages of the project."
+msgid_plural "%d known vulnerabilities in the Composer packages of the project."
+msgstr[0] "%d vulnerabilidad conocida en los paquetes de Composer del proyecto."
+msgstr[1] "%d vulnerabilidades conocidas en los paquetes de Composer del proyecto."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:238
+msgid "Run `composer update` for the packages listed, to a release that fixes them, then test and deploy. A development package has no place on a production server: install with `composer install --no-dev`. Hornet changes nothing."
+msgstr "Ejecute `composer update` para los paquetes indicados, hasta una versión que los corrija; después pruebe y despliegue. Un paquete de desarrollo no debe estar en un servidor de producción: instale con `composer install --no-dev`. Hornet no cambia nada."
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Look up Composer packages"
+msgstr "Consultar los paquetes de Composer"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "name and version of each Packagist package of the project go to api.osv.dev"
+msgstr "el nombre y la versión de cada paquete de Packagist del proyecto se envían a api.osv.dev"

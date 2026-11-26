@@ -1906,3 +1906,156 @@ msgstr "100점 만점에 %1$d점, 등급 %2$s"
 #: src/Infrastructure/WordPress/SiteHealthInfo.php:114
 msgid "part of the audit could not be verified"
 msgstr "감사의 일부를 확인할 수 없었습니다"
+
+#: src/Application/DefaultChecks.php:86
+msgid "Closed or abandoned plugins"
+msgstr "폐쇄되었거나 방치된 플러그인"
+
+#: src/Application/DefaultChecks.php:94
+msgid "Known vulnerabilities in Composer packages"
+msgstr "Composer 패키지의 알려진 취약점"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:106
+msgid "%s: no release on WordPress.org since %s"
+msgstr "%s: %s 이후 WordPress.org에 새 버전이 없습니다"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:115
+msgid "WordPress.org could not be asked about: %s"
+msgstr "WordPress.org에 문의할 수 없었습니다: %s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:116
+msgid "%d plugin was not reached in the time allowed."
+msgid_plural "%d plugins were not reached in the time allowed."
+msgstr[0] "제한 시간 안에 확인하지 못한 플러그인이 %d개 있습니다."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:119
+msgid "Same folder name as a plugin that is closed or old on WordPress.org, under another name or version, so probably another plugin and not counted: %s"
+msgstr "WordPress.org에서 폐쇄되었거나 오래된 플러그인과 폴더 이름이 같지만 이름이나 버전이 달라 다른 플러그인으로 보고 세지 않았습니다: %s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:120
+msgid "%d plugin says it is updated from somewhere else and was not asked about."
+msgid_plural "%d plugins say they are updated from somewhere else and were not asked about."
+msgstr[0] "다른 곳에서 업데이트된다고 밝힌 플러그인 %d개는 문의하지 않았습니다."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:132
+msgid "No plugin of this site was recognised on WordPress.org: nothing to say about closed or old plugins."
+msgstr "이 사이트의 플러그인은 WordPress.org에서 확인되지 않았습니다. 폐쇄되었거나 오래된 플러그인에 대해 알릴 것이 없습니다."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:133
+msgid "The %d plugin recognised on WordPress.org is open and has had a release in the last two years."
+msgid_plural "The %d plugins recognised on WordPress.org are open and have had a release in the last two years."
+msgstr[0] "WordPress.org에서 확인된 플러그인 %d개는 공개 중이며 최근 2년 안에 새 버전이 있었습니다."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:149
+msgid "security issue"
+msgstr "보안 문제"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:150
+msgid "at the request of its author"
+msgstr "작성자의 요청"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:151
+msgid "it broke the rules of the directory"
+msgstr "디렉터리 규칙 위반"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:152
+msgid "licence or trademark violation"
+msgstr "라이선스 또는 상표 위반"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:153
+msgid "now part of WordPress"
+msgstr "WordPress에 통합됨"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:154
+msgid "not used"
+msgstr "사용되지 않음"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:155
+msgid "reason not published"
+msgstr "사유 비공개"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:159
+msgid "%s: closed by WordPress.org (%s)"
+msgstr "%s: WordPress.org에서 폐쇄함 (%s)"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:160
+msgid "%s: closed by WordPress.org on %s (%s)"
+msgstr "%s: WordPress.org에서 %s에 폐쇄함 (%s)"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:174
+msgid "%d plugin has been closed by WordPress.org: %s."
+msgid_plural "%d plugins have been closed by WordPress.org: %s."
+msgstr[0] "플러그인 %d개가 WordPress.org에서 폐쇄되었습니다: %s."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:178
+msgid "%d plugin has had no release on WordPress.org for two years or more: %s."
+msgid_plural "%d plugins have had no release on WordPress.org for two years or more: %s."
+msgstr[0] "플러그인 %d개는 2년 이상 WordPress.org에 새 버전이 없습니다: %s."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:189
+msgid "Replace a closed plugin: it gets no more updates from WordPress.org, and WordPress does not warn about it. For one with no release for years, check that its author still answers, or plan its replacement. Hornet changes nothing."
+msgstr "폐쇄된 플러그인은 교체하세요. WordPress.org에서 더 이상 업데이트를 받지 못하며 WordPress는 이를 알려주지 않습니다. 몇 년째 새 버전이 없는 플러그인은 작성자가 아직 응답하는지 확인하거나 교체를 계획하세요. Hornet은 아무것도 변경하지 않습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:61
+msgid "No list of installed Composer packages could be read: nothing was checked."
+msgstr "설치된 Composer 패키지 목록을 읽을 수 없어 아무것도 확인하지 못했습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:126
+msgid "api.osv.dev did not answer for %d package."
+msgid_plural "api.osv.dev did not answer for %d packages."
+msgstr[0] "api.osv.dev가 패키지 %d개에 대해 응답하지 않았습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:127
+msgid "Not everything was read in the time allowed."
+msgstr "제한 시간 안에 모두 읽지 못했습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:128
+msgid "Some records could not be read: their severity and their fix are not known."
+msgstr "일부 기록을 읽을 수 없어 심각도와 수정 버전을 알 수 없습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:142
+msgid "The project has no Composer package installed."
+msgstr "이 프로젝트에는 설치된 Composer 패키지가 없습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:143
+msgid "No Composer package could be asked about."
+msgstr "문의할 수 있는 Composer 패키지가 없었습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:146
+msgid "No known vulnerability in the %d Composer package asked about."
+msgid_plural "No known vulnerability in the %d Composer packages asked about."
+msgstr[0] "문의한 Composer 패키지 %d개에서 알려진 취약점이 없습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:207
+msgid "%s %s (development package)"
+msgstr "%s %s (개발용 패키지)"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:208
+msgid "a vulnerability the database does not describe"
+msgstr "데이터베이스에 설명이 없는 취약점"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:219
+msgid "Installed from a branch, so not checked: %s"
+msgstr "브랜치에서 설치되어 확인하지 않았습니다: %s"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:220
+msgid "%d package does not come from Packagist: its name was not sent and it was not checked."
+msgid_plural "%d packages do not come from Packagist: their names were not sent and they were not checked."
+msgstr[0] "패키지 %d개는 Packagist에서 온 것이 아니어서 이름을 보내지 않았고 확인하지 않았습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:236
+msgid "%d known vulnerability in the Composer packages of the project."
+msgid_plural "%d known vulnerabilities in the Composer packages of the project."
+msgstr[0] "프로젝트의 Composer 패키지에 알려진 취약점이 %d개 있습니다."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:238
+msgid "Run `composer update` for the packages listed, to a release that fixes them, then test and deploy. A development package has no place on a production server: install with `composer install --no-dev`. Hornet changes nothing."
+msgstr "목록의 패키지를 수정된 버전으로 `composer update`한 다음 테스트하고 배포하세요. 개발용 패키지는 운영 서버에 두지 마세요. `composer install --no-dev`로 설치하세요. Hornet은 아무것도 변경하지 않습니다."
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Look up Composer packages"
+msgstr "Composer 패키지 조회"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "name and version of each Packagist package of the project go to api.osv.dev"
+msgstr "프로젝트의 각 Packagist 패키지 이름과 버전이 api.osv.dev로 전송됩니다"

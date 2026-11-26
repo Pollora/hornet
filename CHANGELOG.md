@@ -8,6 +8,8 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 - `hardening.restrict_rest_api` (off by default): the REST API answers 401 to a visitor who is not logged in, with an allow list (`hardening.rest_api_allow`) on top of the defaults. The `user-enumeration` check follows it.
 - A Hornet section in **Tools > Site Health > Info** (version, what is turned on, last scan, score). What is turned on and the score are private: they are left out of the copy.
+- The scan reports plugins that WordPress.org has closed (high) or that had no release there for two years or more (low): the `abandoned-plugins` check. It sends the folder name of each plugin to `api.wordpress.org`; `disabled_checks` stops it.
+- Known vulnerabilities of the Composer packages of the project, asked to OSV: the `composer-vulnerabilities` check, off until `vulnerabilities.composer` (new setting) and `vulnerabilities.enabled` are both on. Only the packages installed from packagist.org are sent.
 - Two-factor events in the journal (Two-Factor plugin): `login.second_factor_passed`, `login.second_factor_failed`, `user.second_factor_enabled`, `user.second_factor_disabled`.
 
 ### Changed

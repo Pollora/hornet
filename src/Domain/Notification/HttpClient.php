@@ -7,7 +7,7 @@ namespace Pollora\Hornet\Domain\Notification;
 use Pollora\Hornet\Domain\Exceptions\TransportException;
 
 /**
- * The only door to the network: one POST, one answer.
+ * The only door to the network: one request, one answer.
  *
  * @internal
  */
@@ -16,10 +16,12 @@ interface HttpClient
     /**
      * @param  array<string, string>  $headers
      * @param  bool  $allowPrivate  whether the address may be a private or local one (a self-hosted ntfy); refused otherwise
+     * @param  int  $maxBytes  how much of the answer is kept: a notification only needs its status, a lookup needs all of it
+     * @param  int  $timeout  seconds to wait
      *
      * @throws TransportException when nothing answered; its message never contains the URL
      */
-    public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false): HttpResponse;
+    public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false, int $maxBytes = 4096, int $timeout = 10): HttpResponse;
 
     /**
      * @param  array<string, string>  $headers

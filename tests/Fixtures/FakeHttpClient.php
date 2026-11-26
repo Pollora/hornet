@@ -20,8 +20,12 @@ final class FakeHttpClient implements HttpClient
     /** @var list<HttpResponse|TransportException> */
     public array $answers = [];
 
-    public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false): HttpResponse
+    /** @var list<array{maxBytes: int, timeout: int}> how much each POST asked to read, and for how long it waited */
+    public array $limits = [];
+
+    public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false, int $maxBytes = 4096, int $timeout = 10): HttpResponse
     {
+        $this->limits[] = ['maxBytes' => $maxBytes, 'timeout' => $timeout];
         $this->posts[] = ['url' => $url->reveal(), 'headers' => $headers, 'body' => $body, 'private' => $allowPrivate];
         $answer = array_shift($this->answers) ?? new HttpResponse(200);
 

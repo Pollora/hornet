@@ -1720,3 +1720,174 @@ msgstr "%1$d na 100, ocena %2$s"
 #: src/Infrastructure/WordPress/SiteHealthInfo.php:114
 msgid "part of the audit could not be verified"
 msgstr "części audytu nie udało się zweryfikować"
+
+#: src/Application/DefaultChecks.php:86
+msgid "Closed or abandoned plugins"
+msgstr "Wtyczki zamknięte lub porzucone"
+
+#: src/Application/DefaultChecks.php:94
+msgid "Known vulnerabilities in Composer packages"
+msgstr "Znane luki w pakietach Composer"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:106
+msgid "%s: no release on WordPress.org since %s"
+msgstr "%s: brak wydań na WordPress.org od %s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:115
+msgid "WordPress.org could not be asked about: %s"
+msgstr "Nie udało się zapytać WordPress.org o: %s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:116
+msgid "%d plugin was not reached in the time allowed."
+msgid_plural "%d plugins were not reached in the time allowed."
+msgstr[0] "%d wtyczka nie została sprawdzona w dostępnym czasie."
+msgstr[1] "%d wtyczki nie zostały sprawdzone w dostępnym czasie."
+msgstr[2] "%d wtyczek nie zostało sprawdzonych w dostępnym czasie."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:119
+msgid "Same folder name as a plugin that is closed or old on WordPress.org, under another name or version, so probably another plugin and not counted: %s"
+msgstr "Ta sama nazwa folderu co zamknięta lub stara wtyczka na WordPress.org, ale inna nazwa lub wersja: prawdopodobnie inna wtyczka, nieliczona: %s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:120
+msgid "%d plugin says it is updated from somewhere else and was not asked about."
+msgid_plural "%d plugins say they are updated from somewhere else and were not asked about."
+msgstr[0] "%d wtyczka deklaruje aktualizacje z innego źródła i nie była sprawdzana."
+msgstr[1] "%d wtyczki deklarują aktualizacje z innego źródła i nie były sprawdzane."
+msgstr[2] "%d wtyczek deklaruje aktualizacje z innego źródła i nie było sprawdzanych."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:132
+msgid "No plugin of this site was recognised on WordPress.org: nothing to say about closed or old plugins."
+msgstr "Żadnej wtyczki tej witryny nie rozpoznano na WordPress.org: nie ma nic do powiedzenia o wtyczkach zamkniętych lub starych."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:133
+msgid "The %d plugin recognised on WordPress.org is open and has had a release in the last two years."
+msgid_plural "The %d plugins recognised on WordPress.org are open and have had a release in the last two years."
+msgstr[0] "%d wtyczka rozpoznana na WordPress.org jest otwarta i miała wydanie w ostatnich dwóch latach."
+msgstr[1] "%d wtyczki rozpoznane na WordPress.org są otwarte i miały wydanie w ostatnich dwóch latach."
+msgstr[2] "%d wtyczek rozpoznanych na WordPress.org jest otwartych i miało wydanie w ostatnich dwóch latach."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:149
+msgid "security issue"
+msgstr "problem z bezpieczeństwem"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:150
+msgid "at the request of its author"
+msgstr "na prośbę autora"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:151
+msgid "it broke the rules of the directory"
+msgstr "naruszenie zasad katalogu"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:152
+msgid "licence or trademark violation"
+msgstr "naruszenie licencji lub znaku towarowego"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:153
+msgid "now part of WordPress"
+msgstr "obecnie część WordPressa"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:154
+msgid "not used"
+msgstr "nieużywana"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:155
+msgid "reason not published"
+msgstr "powód nieopublikowany"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:159
+msgid "%s: closed by WordPress.org (%s)"
+msgstr "%s: zamknięta przez WordPress.org (%s)"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:160
+msgid "%s: closed by WordPress.org on %s (%s)"
+msgstr "%s: zamknięta przez WordPress.org %s (%s)"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:174
+msgid "%d plugin has been closed by WordPress.org: %s."
+msgid_plural "%d plugins have been closed by WordPress.org: %s."
+msgstr[0] "%d wtyczka została zamknięta przez WordPress.org: %s."
+msgstr[1] "%d wtyczki zostały zamknięte przez WordPress.org: %s."
+msgstr[2] "%d wtyczek zostało zamkniętych przez WordPress.org: %s."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:178
+msgid "%d plugin has had no release on WordPress.org for two years or more: %s."
+msgid_plural "%d plugins have had no release on WordPress.org for two years or more: %s."
+msgstr[0] "%d wtyczka nie miała wydania na WordPress.org od co najmniej dwóch lat: %s."
+msgstr[1] "%d wtyczki nie miały wydania na WordPress.org od co najmniej dwóch lat: %s."
+msgstr[2] "%d wtyczek nie miało wydania na WordPress.org od co najmniej dwóch lat: %s."
+
+#: src/Application/Scan/AbandonedPluginsTask.php:189
+msgid "Replace a closed plugin: it gets no more updates from WordPress.org, and WordPress does not warn about it. For one with no release for years, check that its author still answers, or plan its replacement. Hornet changes nothing."
+msgstr "Zastąp zamkniętą wtyczkę: nie dostaje już aktualizacji z WordPress.org, a WordPress o tym nie ostrzega. W przypadku wtyczki bez wydań od lat sprawdź, czy autor nadal odpowiada, albo zaplanuj zastąpienie. Hornet niczego nie zmienia."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:61
+msgid "No list of installed Composer packages could be read: nothing was checked."
+msgstr "Nie udało się odczytać listy zainstalowanych pakietów Composer: nic nie sprawdzono."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:126
+msgid "api.osv.dev did not answer for %d package."
+msgid_plural "api.osv.dev did not answer for %d packages."
+msgstr[0] "api.osv.dev nie odpowiedział w sprawie %d pakietu."
+msgstr[1] "api.osv.dev nie odpowiedział w sprawie %d pakietów."
+msgstr[2] "api.osv.dev nie odpowiedział w sprawie %d pakietów."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:127
+msgid "Not everything was read in the time allowed."
+msgstr "Nie wszystko odczytano w dostępnym czasie."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:128
+msgid "Some records could not be read: their severity and their fix are not known."
+msgstr "Niektórych wpisów nie udało się odczytać: ich waga i poprawka są nieznane."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:142
+msgid "The project has no Composer package installed."
+msgstr "Projekt nie ma zainstalowanych pakietów Composer."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:143
+msgid "No Composer package could be asked about."
+msgstr "Nie można było zapytać o żaden pakiet Composer."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:146
+msgid "No known vulnerability in the %d Composer package asked about."
+msgid_plural "No known vulnerability in the %d Composer packages asked about."
+msgstr[0] "Brak znanych luk w %d sprawdzonym pakiecie Composer."
+msgstr[1] "Brak znanych luk w %d sprawdzonych pakietach Composer."
+msgstr[2] "Brak znanych luk w %d sprawdzonych pakietach Composer."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:207
+msgid "%s %s (development package)"
+msgstr "%s %s (pakiet deweloperski)"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:208
+msgid "a vulnerability the database does not describe"
+msgstr "luka bez opisu w bazie"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:219
+msgid "Installed from a branch, so not checked: %s"
+msgstr "Zainstalowane z gałęzi, więc niesprawdzone: %s"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:220
+msgid "%d package does not come from Packagist: its name was not sent and it was not checked."
+msgid_plural "%d packages do not come from Packagist: their names were not sent and they were not checked."
+msgstr[0] "%d pakiet nie pochodzi z Packagist: jego nazwy nie wysłano i nie został sprawdzony."
+msgstr[1] "%d pakiety nie pochodzą z Packagist: ich nazw nie wysłano i nie zostały sprawdzone."
+msgstr[2] "%d pakietów nie pochodzi z Packagist: ich nazw nie wysłano i nie zostały sprawdzone."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:236
+msgid "%d known vulnerability in the Composer packages of the project."
+msgid_plural "%d known vulnerabilities in the Composer packages of the project."
+msgstr[0] "%d znana luka w pakietach Composer projektu."
+msgstr[1] "%d znane luki w pakietach Composer projektu."
+msgstr[2] "%d znanych luk w pakietach Composer projektu."
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:238
+msgid "Run `composer update` for the packages listed, to a release that fixes them, then test and deploy. A development package has no place on a production server: install with `composer install --no-dev`. Hornet changes nothing."
+msgstr "Uruchom `composer update` dla wymienionych pakietów do wydania z poprawką, następnie przetestuj i wdróż. Pakiet deweloperski nie powinien trafiać na serwer produkcyjny: instaluj przez `composer install --no-dev`. Hornet niczego nie zmienia."
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Look up Composer packages"
+msgstr "Sprawdzaj pakiety Composer"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "name and version of each Packagist package of the project go to api.osv.dev"
+msgstr "nazwa i wersja każdego pakietu Packagist projektu trafiają do api.osv.dev"

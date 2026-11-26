@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Application;
 
+use Pollora\Hornet\Application\Scan\AbandonedPluginsTask;
+use Pollora\Hornet\Application\Scan\ComposerVulnerabilitiesTask;
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
 use Pollora\Hornet\Application\Scan\DatabaseScriptsTask;
 use Pollora\Hornet\Application\Scan\ExposedFilesTask;
@@ -48,9 +50,10 @@ final class DefaultChecks
 {
     /**
      * @param  LaravelApplication|null  $application  the Laravel application around WordPress (Pollora): its checks exist only then
+     * @param  bool  $packages  whether the owner opted in to the lookup of the Composer packages
      * @return list<Check>
      */
-    public static function all(bool $vulnerabilities = false, ?LaravelApplication $application = null): array
+    public static function all(bool $vulnerabilities = false, ?LaravelApplication $application = null, bool $packages = false): array
     {
         return [
             new SaltsCheck,
@@ -80,6 +83,7 @@ final class DefaultChecks
             // What the last scan found: the audit reads it and never scans
             new ScanResultCheck(CoreIntegrityTask::ID, Message::mark('WordPress core files')),
             new ScanResultCheck(PluginIntegrityTask::ID, Message::mark('Plugin files')),
+            new ScanResultCheck(AbandonedPluginsTask::ID, Message::mark('Closed or abandoned plugins')),
             new ScanResultCheck(PluginIntegrityTask::THEMES_ID, Message::mark('Theme files')),
             new ScanResultCheck(SuspiciousFilesTask::ID, Message::mark('Suspicious files')),
             new ScanResultCheck(DatabaseScriptsTask::ID, Message::mark('Scripts in the database')),
@@ -87,6 +91,7 @@ final class DefaultChecks
             new ScanResultCheck(SecurityHeadersTask::ID, Message::mark('Security headers')),
             // Only when the owner opted in: without it the scan never asks, and the check would be "not scanned" for ever
             ...($vulnerabilities ? [new ScanResultCheck(KnownVulnerabilitiesTask::ID, Message::mark('Known vulnerabilities'))] : []),
+            ...($packages ? [new ScanResultCheck(ComposerVulnerabilitiesTask::ID, Message::mark('Known vulnerabilities in Composer packages'))] : []),
         ];
     }
 }

@@ -27,7 +27,7 @@ final class WpPluginInventory implements PluginInventory
             $version = $data['Version'];
 
             if ($slug !== '.' && $version !== '' && ! isset($plugins[$slug])) {
-                $plugins[$slug] = new InstalledPlugin($slug, $version);
+                $plugins[$slug] = new InstalledPlugin($slug, $version, $data['Name'], $data['UpdateURI'] ?? '');
             }
         }
 

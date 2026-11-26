@@ -36,9 +36,9 @@ final class WpHttpClient implements HttpClient
         return $headers;
     }
 
-    public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false): HttpResponse
+    public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false, int $maxBytes = 4096, int $timeout = self::TIMEOUT): HttpResponse
     {
-        $args = ['timeout' => self::TIMEOUT, 'redirection' => 0, 'headers' => $headers, 'body' => $body, 'user-agent' => 'Hornet (WordPress security)'];
+        $args = ['timeout' => $timeout, 'redirection' => 0, 'headers' => $headers, 'body' => $body, 'user-agent' => 'Hornet (WordPress security)'];
         $response = $allowPrivate ? wp_remote_post($url->reveal(), $args) : wp_safe_remote_post($url->reveal(), $args);
 
         if (is_wp_error($response)) {
@@ -48,7 +48,7 @@ final class WpHttpClient implements HttpClient
 
         $retryAfter = wp_remote_retrieve_header($response, 'retry-after');
 
-        return new HttpResponse((int) wp_remote_retrieve_response_code($response), is_string($retryAfter) && ctype_digit($retryAfter) ? (int) $retryAfter : null, substr(wp_remote_retrieve_body($response), 0, 4096));
+        return new HttpResponse((int) wp_remote_retrieve_response_code($response), is_string($retryAfter) && ctype_digit($retryAfter) ? (int) $retryAfter : null, substr(wp_remote_retrieve_body($response), 0, $maxBytes));
     }
 
     public function get(Secret $url, array $headers, int $maxBytes, int $timeout = self::TIMEOUT, bool $allowPrivate = false): HttpResponse
