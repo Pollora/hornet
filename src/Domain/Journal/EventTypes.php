@@ -20,6 +20,14 @@ final class EventTypes
 
     public const string PASSWORD_RESET = 'login.password_reset';
 
+    public const string SECOND_FACTOR_PASSED = 'login.second_factor_passed';
+
+    public const string SECOND_FACTOR_FAILED = 'login.second_factor_failed';
+
+    public const string SECOND_FACTOR_ENABLED = 'user.second_factor_enabled';
+
+    public const string SECOND_FACTOR_DISABLED = 'user.second_factor_disabled';
+
     public const string USER_CREATED = 'user.created';
 
     public const string USER_DELETED = 'user.deleted';
@@ -73,6 +81,7 @@ final class EventTypes
             self::LOGIN_SUCCESS, self::LOGIN_FAILED, self::LOGIN_FLOOD, self::PASSWORD_RESET,
             self::USER_CREATED, self::USER_DELETED, self::USER_ROLE, self::SUPER_ADMIN_GRANTED, self::SUPER_ADMIN_REVOKED,
             self::APP_PASSWORD_CREATED, self::APP_PASSWORD_DELETED,
+            self::SECOND_FACTOR_PASSED, self::SECOND_FACTOR_FAILED, self::SECOND_FACTOR_ENABLED, self::SECOND_FACTOR_DISABLED,
             self::PLUGIN_ACTIVATED, self::PLUGIN_DEACTIVATED, self::PLUGIN_DELETED, self::PLUGIN_INSTALLED, self::PLUGIN_UPDATED,
             self::THEME_SWITCHED, self::THEME_DELETED, self::THEME_INSTALLED, self::THEME_UPDATED,
             self::CORE_UPDATED, self::OPTION_CHANGED,

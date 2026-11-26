@@ -43,6 +43,8 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 
 Site Health shows these checks too, except the four on plugins and themes, which it tests itself.
 
+**Tools > Site Health > Info** has a Hornet section: the version, the date of the last scan, what is turned on and the score. The last two are **private**: WordPress shows them on the screen and leaves them out of "Copy site info to clipboard". No secret, address or URL is in it. Asking for that page runs the audit, never a scan. `site_health => false` removes it with the tests.
+
 A check reads and never writes, and never asks the network. A scan is another thing: see below. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 
 Hornet does not redo what Pollora already does. If `pollora/portcullis` protects the login, the check says so instead of warning.
@@ -113,6 +115,8 @@ define('HORNET_CONFIG', [
         'user_enumeration' => true,  // ?author=1 is a 404; no REST user routes, users sitemap or oEmbed author for visitors
         'hide_version' => true,      // no generator tag
         'file_editor' => true,       // nobody can edit PHP files from the dashboard
+        'restrict_rest_api' => true, // the REST API answers 401 to visitors, but for the routes below
+        'rest_api_allow' => ['wp/v2/posts', 'wp/v2/pages'],   // added to the defaults
     ],
 ]);
 ```
@@ -121,6 +125,17 @@ define('HORNET_CONFIG', [
 - `user_enumeration` blocks `?author=N` before WordPress turns it into `/author/<login>/`, and takes the user routes away from visitors only: a logged-in user keeps them.
 - `file_editor` does what `DISALLOW_FILE_EDIT` does, which a plugin cannot define (`wp-config.php` loads first).
 - Each piece is a filter that is safe to add twice, so it does not matter that `pollora/headless` may do the same.
+
+### Closing the REST API to visitors
+
+`restrict_rest_api` answers `401` to every REST request of a visitor who is not logged in, unknown routes included. **Test your front end before you turn it on**: whatever your pages call without a login stops working until it is listed.
+
+- A logged-in user keeps the whole API, application passwords and the tokens of other plugins that log a user in included. A cookie without its `X-WP-Nonce` counts as not logged in, as for WordPress. A plugin that checks its own key **without logging a user in** (a payment webhook, a licence server) needs its route in `rest_api_allow`.
+- Open by default: `oembed/1.0/embed`, `contact-form-7/v1/contact-forms`, `wc/store` (the WooCommerce cart and checkout blocks) and, when `pollora/headless` is installed, `headless/v1`. **A headless front end also reads `wp/v2`: list the routes it needs.**
+- A prefix is whole segments (`wp/v2/posts` opens the posts and each post, not `wp/v2/postsx`). The batch route (`batch/v1`) cannot be opened: it runs other routes without asking who is calling. `_embed` on an open route still includes what that route links to: with `wp/v2/posts` open, `?_embed` gives the author of each post although the user routes are closed (and the audit says they are not listed). Turn `user_enumeration` on with it: it takes the user routes away from visitors, embeds included.
+- The index `/wp-json/` stays open, since a client reads there where to ask for an application password, but without its routes, and with only the namespaces that have something open.
+- The CORS preflight (`OPTIONS`) is let through and answered empty.
+- Only requests received over HTTP are concerned: `rest_do_request()` in a theme or plugin still works while a page is rendered for a visitor.
 
 ## Accounts: passwords, sessions, two-factor
 
@@ -405,13 +420,15 @@ What it records, each with the **source of the request** (`web`, `admin`, `rest`
 
 | Group | Events |
 | --- | --- |
-| `login` | success, failure (the account and the reason: `incorrect_password`…), password reset |
-| `user` | created (with its role), deleted, role changed (from > to, or added, or removed), super administrator granted or revoked, application password created or deleted (by its name) |
+| `login` | success, failure (the account and the reason: `incorrect_password`…), password reset, second factor passed (the method) or refused (the account and the reason) |
+| `user` | created (with its role), deleted, role changed (from > to, or added, or removed), super administrator granted or revoked, application password created or deleted (by its name), second factor method turned on or off |
 | `plugin`, `theme`, `core` | activated, deactivated, deleted, installed, updated (by name), theme switched, core updated (with the version) |
 | `option` | `siteurl`, `home`, `users_can_register`, `default_role` (with the new value); `admin_email` (that it changed, not to what) |
 | `hornet` | a scan that ended, with how many findings it left |
 
 **What it never keeps**: a password, a salt, an application password, or the name that was typed on a login that matches no account (it may be a password in the wrong field: the event says "unknown account" and the reason, and no more). Details are flat, short, and drop any field whose name looks like a secret.
+
+**Two-factor** events need the official [Two-Factor](https://wordpress.org/plugins/two-factor/) plugin. Methods are named `totp`, `email`, `backup_codes`, `dummy` or `other`; a code or a key is never read. WordPress says "logged in" once the password is right, so a `login.success` of an account with a second factor carries `second_factor: pending`: it is `login.second_factor_passed` that says the visitor got in. A `login.second_factor_failed` means **somebody had the password**. Refused codes have a flood limit of their own (the same numbers), so that wrong passwords cannot be used to hide them. A method turned on or off is read from the user metadata the plugin writes (profile, REST, WP-CLI alike). A nonce the plugin refuses (`two_factor_login_nonce_failed`) is not recorded.
 
 **The address is cut**: the last byte of an IPv4 address, everything after the first 48 bits of an IPv6 address (`203.0.113.0`, `2001:db8:1::`): enough to see "the same network", not to name a household. The command line and the cron have none.
 
@@ -421,7 +438,7 @@ What it records, each with the **source of the request** (`web`, `admin`, `rest`
 - **Privacy tools**: the journal is an exporter (Tools > Export Personal Data: the events that name a person, as the one who did it or the one it was done to) and an eraser (Tools > Erase Personal Data). Erasing **keeps the events** (a security journal that forgets what happened is no journal) and takes the person out of them: their number, their login and the address are blanked.
 - **WP-CLI**: `wp hornet journal list [--type=login.|user.|plugin.|theme.|core.|option.|hornet.|<a type>] [--source=] [--user=] [--days=] [--limit=] [--format=]`, `wp hornet journal purge`, and `wp hornet journal drop --yes` to remove the table and its option (what an uninstall should do).
 - **Multisite**: the journal is per site, and the table goes with the site when it is deleted. Accounts belong to the network, but the **eraser works on the table of the site it is run from**: erase a person on each site where they were active. A view of the whole network is not done.
-- **Not done yet**: a view of the journal on the screen and a network-wide view for a multisite (the journal is per site), the reports of a Content-Security-Policy (a public endpoint that anyone can write to is a risk of its own), and two-factor events.
+- **Not done yet**: a view of the journal on the screen and a network-wide view for a multisite (the journal is per site), the reports of a Content-Security-Policy (a public endpoint that anyone can write to is a risk of its own).
 
 ## Known vulnerabilities
 

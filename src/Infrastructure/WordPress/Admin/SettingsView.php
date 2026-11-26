@@ -35,6 +35,7 @@ final class SettingsView
         $add(Message::mark('Hardening'), 'hardening.user_enumeration', Message::mark('Hide the list of users from visitors'), $settings->hardening->userEnumeration);
         $add(Message::mark('Hardening'), 'hardening.hide_version', Message::mark('Hide the WordPress version'), $settings->hardening->hideVersion);
         $add(Message::mark('Hardening'), 'hardening.file_editor', Message::mark('Refuse the file editor'), $settings->hardening->fileEditor);
+        $add(Message::mark('Hardening'), 'hardening.restrict_rest_api', Message::mark('Close the REST API to visitors'), $settings->hardening->restrictRestApi, $settings->hardening->restrictRestApi ? implode(', ', $settings->hardening->restApiAllow) : '');
 
         $headers = $settings->headers;
         $add(Message::mark('Headers'), 'headers.content_type_options', 'X-Content-Type-Options', $headers->contentTypeOptions);

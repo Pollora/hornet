@@ -4,6 +4,16 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+### Added
+
+- `hardening.restrict_rest_api` (off by default): the REST API answers 401 to a visitor who is not logged in, with an allow list (`hardening.rest_api_allow`) on top of the defaults. The `user-enumeration` check follows it.
+- A Hornet section in **Tools > Site Health > Info** (version, what is turned on, last scan, score). What is turned on and the score are private: they are left out of the copy.
+- Two-factor events in the journal (Two-Factor plugin): `login.second_factor_passed`, `login.second_factor_failed`, `user.second_factor_enabled`, `user.second_factor_disabled`.
+
+### Changed
+
+- With the journal on, a refused second factor is `login.second_factor_failed`, no longer `login.failed`; a `login.success` that still has a second factor to pass says `second_factor: pending`.
+
 ## 0.9.0 - 2026-11-26
 
 First published version. Security for WordPress (classic, Bedrock, Pollora): Hornet reads, tells what to fix and how, and changes nothing until you ask it to.

@@ -53,6 +53,7 @@ final class JournalModule implements Module
 
     /**
      * @param  Closure(): string  $address  the address of the visitor, as it is
+     * @param  (Closure(WP_User): bool)|null  $secondFactorPending  whether this login still has a second factor to pass
      */
     public function __construct(
         private readonly JournalRecorder $recorder,
@@ -61,6 +62,7 @@ final class JournalModule implements Module
         private readonly int $retentionDays,
         private readonly FloodGuard $guard,
         private readonly Closure $address,
+        private readonly ?Closure $secondFactorPending = null,
     ) {}
 
     public function register(HookRegistrar $hooks): void
@@ -132,7 +134,9 @@ final class JournalModule implements Module
     public function loggedIn(mixed $login, mixed $user = null): void
     {
         if ($user instanceof WP_User) {
-            $this->recorder->record(EventTypes::LOGIN_SUCCESS, 'user:'.$user->ID, [], $user->ID, $user->user_login);
+            // WordPress says "logged in" after the password; a second factor may still turn the visitor away
+            $details = $this->secondFactorPending instanceof Closure && ($this->secondFactorPending)($user) ? ['second_factor' => 'pending'] : [];
+            $this->recorder->record(EventTypes::LOGIN_SUCCESS, 'user:'.$user->ID, $details, $user->ID, $user->user_login);
         }
     }
 
@@ -144,6 +148,11 @@ final class JournalModule implements Module
      */
     public function loginFailed(mixed $username, mixed $error = null): void
     {
+        // A refused second factor comes the same way, and is told by TwoFactorJournalModule
+        if (TwoFactorJournalModule::isSecondFactorError($error)) {
+            return;
+        }
+
         $user = is_string($username) && $username !== '' ? (get_user_by('login', $username) ?: get_user_by('email', $username)) : false;
         $why = $error instanceof WP_Error ? $error->get_error_code() : '';
         $subject = $user instanceof WP_User ? 'user:'.$user->ID : 'unknown account';

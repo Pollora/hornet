@@ -90,6 +90,59 @@ check "the file editor is refused to an administrator"       sh -c "[ \"\$(php -
 check "a logged-in administrator still lists users over REST" sh -c "N=\$(curl -s -b '$JAR' '$BASE/wp-admin/admin-ajax.php?action=rest-nonce'); curl -s -b '$JAR' -H \"X-WP-Nonce: \$N\" '$BASE/wp-json/wp/v2/users' | grep -q '\"slug\"'"
 check "the audit sees it: XML-RPC closed, users hidden, editor off" sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -E '^pass.*(xml-rpc|user-enumeration|file-editor)' | wc -l | grep -q '^3\$'"
 
+# --- 2b. the REST API closed to visitors --------------------------------------------------------------------
+echo "2b. REST API closed to visitors"
+configure "array('hardening' => array('restrict_rest_api' => true))"
+check "a visitor is refused the posts"                          status_is 401 "$BASE/wp-json/wp/v2/posts"
+check "and the same with ?rest_route= and other capitals"       status_is 401 "$BASE/?rest_route=/WP/v2/Users"
+check "a route that does not exist is not told apart"           status_is 401 "$BASE/wp-json/nothing/v1/here"
+check "the batch route is closed"                               status_is 401 -X POST -H 'Content-Type: application/json' --data '{"requests":[{"path":"/wp/v2/posts"}]}' "$BASE/wp-json/batch/v1"
+# Over plain http, WordPress only offers application passwords on a local site
+wp config set WP_ENVIRONMENT_TYPE local >/dev/null 2>&1
+check "the index stays open and says where to authorise"        body_has 'application-passwords' "$BASE/wp-json/"
+check "the index names no closed route"                         body_lacks 'wp\/v2' "$BASE/wp-json/"
+check "the embeds of the site are still given"                  status_is 200 "$BASE/wp-json/oembed/1.0/embed?url=$BASE/hello-world/"
+check "a CORS preflight passes"                                 status_is 200 -X OPTIONS -H 'Origin: https://front.example.com' -H 'Access-Control-Request-Method: GET' "$BASE/wp-json/wp/v2/posts"
+check "and describes nothing"                                   body_lacks 'args' -X OPTIONS "$BASE/wp-json/wp/v2/posts"
+check "OPTIONS with _method is not a preflight"                 status_is 401 -X OPTIONS "$BASE/wp-json/wp/v2/posts?_method=GET"
+check "OPTIONS with the override header is not one either"      status_is 401 -X OPTIONS -H 'X-HTTP-Method-Override: GET' "$BASE/wp-json/wp/v2/posts"
+login
+check "a cookie without its nonce is a visitor"                 status_is 401 -b "$JAR" "$BASE/wp-json/wp/v2/posts"
+check "a logged-in user has the API"                            sh -c "N=\$(curl -s -b '$JAR' '$BASE/wp-admin/admin-ajax.php?action=rest-nonce'); curl -s -b '$JAR' -H \"X-WP-Nonce: \$N\" '$BASE/wp-json/wp/v2/users' | grep -q '\"slug\"'"
+RESTPW=$(wp user application-password create admin e2e-rest-closed --porcelain 2>/dev/null)
+check "an application password has the API"                     status_is 200 -u "admin:$RESTPW" "$BASE/wp-json/wp/v2/users/me"
+check "a wrong application password does not"                   status_is 401 -u "admin:wrong wrong wrong" "$BASE/wp-json/wp/v2/users/me"
+wp user application-password delete admin --all >/dev/null 2>&1
+wp config delete WP_ENVIRONMENT_TYPE >/dev/null 2>&1
+check "an internal request of the site is not concerned"        sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'echo rest_do_request(new WP_REST_Request(\"GET\", \"/wp/v2/posts\"))->get_status();' | grep -q '^200\$'"
+check "the audit says users are not listed"                     sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -qE '^pass.*user-enumeration'"
+configure "array('hardening' => array('restrict_rest_api' => true, 'rest_api_allow' => array('wp/v2/posts')))"
+check "a listed prefix is open"                                 status_is 200 "$BASE/wp-json/wp/v2/posts"
+check "and only that one"                                       status_is 401 "$BASE/wp-json/wp/v2/pages"
+reset
+
+# --- 2c. Site Health > Info ----------------------------------------------------------------------------------
+echo "2c. Site Health, the Info tab"
+configure "array('hardening' => array('xmlrpc' => true), 'login' => array('throttle' => true, 'allow_ips' => array('203.0.113.50')), 'notifications' => array('schedule' => 'off', 'channels' => array('ops' => array('type' => 'slack', 'url' => 'https://hooks.example.com/T0/e2esecret'))))"
+login
+curl -s --max-time 40 -b "$JAR" "$BASE/wp-admin/site-health.php?tab=debug" >/tmp/hornet-info.html
+check "the Info tab has a Hornet section"                       grep -q 'health-check-accordion-block-pollora-hornet' /tmp/hornet-info.html
+check "with the score"                                          grep -qE '[0-9]+ out of 100, grade [A-F]' /tmp/hornet-info.html
+check "and what is turned on"                                    grep -q 'Close XML-RPC' /tmp/hornet-info.html
+check "no channel URL and no allowed address in it"             sh -c "! grep -qE 'e2esecret|hooks\.example\.com|203\.0\.113\.50' /tmp/hornet-info.html"
+cat > /tmp/hornet-copy.php <<'PHP'
+<?php
+require_once ABSPATH.'wp-admin/includes/admin.php';
+require_once ABSPATH.'wp-admin/includes/class-wp-debug-data.php';
+require_once ABSPATH.'wp-admin/includes/class-wp-site-health.php';
+$info = WP_Debug_Data::debug_data();
+echo WP_Debug_Data::format(['pollora-hornet' => $info['pollora-hornet']], 'debug');
+PHP
+wp --user=admin eval-file /tmp/hornet-copy.php >/tmp/hornet-copy.txt 2>&1
+check "the copy for support has the version"                    grep -q 'version:' /tmp/hornet-copy.txt
+check "but neither the score nor what is turned on"             sh -c "! grep -qE 'out of 100|XML-RPC|score:|protections:' /tmp/hornet-copy.txt"
+reset
+
 # --- 3. headers --------------------------------------------------------------------------------------------
 echo "3. headers on"
 configure "array('headers' => array('content_type_options' => true, 'referrer_policy' => 'same-origin', 'permissions_policy' => 'camera=()', 'hsts' => array('max_age' => 31536000), 'csp' => array('policy' => \"default-src 'self'\", 'report_uri' => 'https://r.example.com/csp')))"
@@ -509,6 +562,46 @@ journal drop --yes >/dev/null 2>&1
 reset
 check "after the drop, the option is gone"                            sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_journal_schema >/dev/null 2>&1"
 check "and so is the table"                                          sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'require \"$PKG/tests/E2E/journal-table.php\";' | grep -q '^none\$'"
+
+# --- 9b. the journal and the second factor, with the real Two-Factor plugin over real logins ----------------
+echo "9b. journal, two-factor"
+journal drop --yes >/dev/null 2>&1
+configure "array('journal' => array('enabled' => true))"
+journal list >/dev/null 2>&1
+cli user create e2e-2fa e2e-2fa@example.test --role=editor --user_pass=pass2fa >/dev/null 2>&1
+cat > /tmp/hornet-2fa.php <<'PHP'
+<?php
+$user = get_user_by('login', 'e2e-2fa');
+$codes = Two_Factor_Backup_Codes::get_instance()->generate_codes($user);
+Two_Factor_Core::enable_provider_for_user($user->ID, 'Two_Factor_Backup_Codes');
+echo $codes[0];
+PHP
+CODE=$(cli eval-file /tmp/hornet-2fa.php)
+check "a method turned on is told, by its kind"                       sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=user.second_factor_enabled --format=csv | grep -q 'cli.*backup_codes'"
+# The password step: the plugin answers with its form, and its nonce
+password_step() {
+  curl -s -b 'wordpress_test_cookie=WP%20Cookie%20check' --max-time 20 --data 'log=e2e-2fa&pwd=pass2fa&wp-submit=Log+In&testcookie=1' "$BASE/wp-login.php" >/tmp/hornet-2fa.html
+  AUTH_ID=$(grep -o 'name="wp-auth-id"[^>]*value="[0-9]*"' /tmp/hornet-2fa.html | grep -o '[0-9]*"$' | tr -d '"')
+  AUTH_NONCE=$(grep -o 'name="wp-auth-nonce"[^>]*value="[^"]*"' /tmp/hornet-2fa.html | sed 's/.*value="//; s/"$//')
+}
+second_step() { curl -s -o /dev/null -D /tmp/hornet-2fa.h --max-time 20 --data "wp-auth-id=$AUTH_ID&wp-auth-nonce=$AUTH_NONCE&provider=Two_Factor_Backup_Codes&two-factor-backup-code=$1" "$BASE/wp-login.php?action=validate_2fa"; }
+password_step
+check "the password alone does not log in"                             grep -q 'wp-auth-nonce' /tmp/hornet-2fa.html
+check "and its login.success says a second factor is pending"          sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.success --format=csv | grep 'e2e-2fa' | grep -q 'pending'"
+second_step 00000000
+check "a wrong code is told as a refused second factor"                sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.second_factor_failed --format=csv | grep -q 'web.*two_factor_invalid'"
+check "and not as a failed password"                                   sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.failed --format=csv | grep -q 'two_factor'"
+sleep 3
+password_step
+second_step "$CODE"
+check "the right code logs in"                                         grep -qi '^set-cookie: wordpress_logged_in' /tmp/hornet-2fa.h
+check "and is told as a second factor passed, with the method"         sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.second_factor_passed --format=csv | grep -q 'web.*e2e-2fa.*backup_codes'"
+check "no code is anywhere in the journal"                             sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --limit=200 --format=csv | grep -qE '$CODE|00000000'"
+cli eval 'Two_Factor_Core::disable_provider_for_user(get_user_by("login", "e2e-2fa")->ID, "Two_Factor_Backup_Codes");' >/dev/null
+check "a method turned off is told"                                    sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=user.second_factor_disabled --format=csv | grep -q 'backup_codes'"
+cli user delete e2e-2fa --yes >/dev/null 2>&1
+journal drop --yes >/dev/null 2>&1
+reset
 
 # --- 10. abilities for AI agents: real requests to the Abilities API, with an application password -----------
 echo "10. abilities"
