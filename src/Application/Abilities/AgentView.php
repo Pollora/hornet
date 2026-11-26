@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\Journal\IpAnonymizer;
  * What the audit reports comes partly from the site (a file name, a plugin slug, a reason somebody typed): it is data, and a model that reads
  * it must not be able to take it for an instruction. So nothing here is free text of any length, and the descriptions of the abilities say
  * that these values are data. No secret is in a finding to begin with; this does not rely on that: it only ever copies the fields below.
+ *
+ * @internal
  */
 final class AgentView
 {

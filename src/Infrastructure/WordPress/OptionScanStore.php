@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Scan\ScanStore;
  * the files are shared by every site, so one scan tells the same story to all of them.
  *
  * It is stored as JSON, never as a PHP-serialized object.
+ *
+ * @internal
  */
 final class OptionScanStore implements ScanStore
 {

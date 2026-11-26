@@ -15,6 +15,8 @@ use WP_Error;
  * It sees the plain password in two places only: the profile form (which also creates users from the dashboard) and the
  * password reset form. A password set from the REST API, from WP-CLI or by another plugin is not covered. It is never asked at
  * login, and a service that does not answer lets the password through.
+ *
+ * @internal
  */
 final readonly class PasswordModule implements Module
 {

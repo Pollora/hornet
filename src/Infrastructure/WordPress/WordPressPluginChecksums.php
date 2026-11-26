@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\Scan\PluginChecksums;
  * The checksums that downloads.wordpress.org publishes for each release of each plugin of the directory.
  *
  * Only the slug and the version leave the site. A slug or a version that is not a plain name is never put in an address.
+ *
+ * @internal
  */
 final readonly class WordPressPluginChecksums implements PluginChecksums
 {

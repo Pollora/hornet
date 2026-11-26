@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Audit;
 
 /**
  * The findings of one audit.
+ *
+ * @internal
  */
 final readonly class Report
 {

@@ -10,6 +10,8 @@ use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
  * The hooks of a Pollora project: they go through Pollora's hook service, which waits for WordPress to be loaded.
  *
  * The service is typed by duck: this package does not depend on pollora/hook.
+ *
+ * @internal
  */
 final readonly class PolloraHooks implements HookRegistrar
 {

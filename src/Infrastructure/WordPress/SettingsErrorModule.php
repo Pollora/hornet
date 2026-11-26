@@ -8,6 +8,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
  * Hornet's settings are wrong: the site must keep running, and the mistake must not stay quiet.
  *
  * Nothing else is attached; Site Health shows one critical test with the message.
+ *
+ * @internal
  */
 final readonly class SettingsErrorModule implements Module
 {

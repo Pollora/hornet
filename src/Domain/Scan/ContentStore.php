@@ -7,6 +7,8 @@ namespace Pollora\Hornet\Domain\Scan;
 /**
  * The texts of the database, read in small ranges of identifiers: a query never reads more than its range, however large the table.
  * It only reads.
+ *
+ * @internal
  */
 interface ContentStore
 {

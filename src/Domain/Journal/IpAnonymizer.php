@@ -8,6 +8,8 @@ namespace Pollora\Hornet\Domain\Journal;
  * The address of a visitor, cut so that it no longer points at one person: an IPv4 address loses its last byte (`203.0.113.0`),
  * an IPv6 address everything after its first 48 bits (`2001:db8:1::`). Enough to see "the same network", not enough to name a household.
  * What is not an address gives an empty string.
+ *
+ * @internal
  */
 final class IpAnonymizer
 {

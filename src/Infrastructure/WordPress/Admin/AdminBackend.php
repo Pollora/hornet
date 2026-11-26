@@ -36,6 +36,8 @@ use Pollora\Hornet\Infrastructure\WordPress\ScannerFactory;
  * What the screen asks of the site, in one place: where it stands, the journal, setting a finding aside, a test message.
  *
  * The routes check who is asking; this does the work. It reads and writes nothing of the site's settings.
+ *
+ * @internal
  */
 final readonly class AdminBackend
 {

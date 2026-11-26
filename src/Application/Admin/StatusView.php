@@ -20,6 +20,8 @@ use Pollora\Hornet\Domain\Scan\ScanState;
  * What the administration screen shows of the audit and of the last scan, as plain data for the page's script.
  *
  * The text of a finding comes from the site (a file name, a plugin slug, a title from a feed): the script writes it as text, never as HTML.
+ *
+ * @internal
  */
 final class StatusView
 {

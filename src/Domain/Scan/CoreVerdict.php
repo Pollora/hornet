@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * What the core files said when compared with the official list.
+ *
+ * @internal
  */
 final readonly class CoreVerdict
 {

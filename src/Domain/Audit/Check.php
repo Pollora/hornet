@@ -9,6 +9,8 @@ namespace Pollora\Hornet\Domain\Audit;
  *
  * A check reads and never writes: it changes nothing on the site, and asks nothing of the network.
  * What needs a request or a write belongs to the scanner, not here.
+ *
+ * @internal
  */
 interface Check
 {

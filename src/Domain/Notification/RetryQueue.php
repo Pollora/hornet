@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * Messages waiting for another attempt.
+ *
+ * @internal
  */
 interface RetryQueue
 {

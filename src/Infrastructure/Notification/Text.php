@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Notification\Notification;
  * Everything in an alert is data: a plugin name, a file name or a user login may hold a mention (`@everyone`), a link or
  * markup. Each channel escapes for its own syntax; this class does what they all need first: take out control and
  * invisible formatting characters (they hide text and reverse its direction), and cut to a length.
+ *
+ * @internal
  */
 final class Text
 {

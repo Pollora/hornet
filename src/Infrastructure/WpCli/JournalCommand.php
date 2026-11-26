@@ -15,6 +15,8 @@ use Pollora\Hornet\Domain\Journal\Source;
 
 /**
  * Read the security journal, empty it of what is old, or remove it.
+ *
+ * @internal
  */
 final readonly class JournalCommand
 {

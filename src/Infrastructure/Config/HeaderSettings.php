@@ -11,6 +11,8 @@ use Pollora\Hornet\Domain\Http\SecurityHeaders;
 
 /**
  * Reads the `headers` settings into the headers to send. Nothing is sent until a header is asked for.
+ *
+ * @internal
  */
 final class HeaderSettings
 {

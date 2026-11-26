@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
 /**
  * The `journal` settings. Off until the owner turns it on: the journal writes to the database, and what it keeps (who logged in, from
  * which network, who changed a role) is personal data. Turning it on is a decision about what the site tells its users.
+ *
+ * @internal
  */
 final readonly class JournalSettings
 {

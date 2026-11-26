@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * A PHP branch that no longer gets security fixes is a hole that stays open.
+ *
+ * @internal
  */
 final readonly class PhpVersionCheck implements Check
 {

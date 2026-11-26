@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
 
 /**
  * One channel as the settings describe it, checked: the secrets are already resolved and wrapped.
+ *
+ * @internal
  */
 final readonly class ChannelSpec
 {

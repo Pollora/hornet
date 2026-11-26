@@ -10,6 +10,8 @@ namespace Pollora\Hornet\Domain\Network;
  * A forwarding header (`X-Forwarded-For`) is written by whoever sends the request: believing it blindly lets anyone choose
  * their address. It is believed only when the connection comes from a proxy the owner listed, and then read from the right,
  * skipping the trusted proxies: the first address that is not one of them is the visitor.
+ *
+ * @internal
  */
 final readonly class TrustedProxies
 {

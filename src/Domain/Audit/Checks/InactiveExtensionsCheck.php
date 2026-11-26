@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * Code that is installed and not used can often still be reached, and its flaws with it; nobody watches it. For themes, the rule
  * is the one of WordPress: the active theme, its parent and one default theme to fall back on may stay.
+ *
+ * @internal
  */
 final readonly class InactiveExtensionsCheck implements Check
 {

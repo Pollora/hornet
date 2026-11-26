@@ -11,6 +11,8 @@ use Pollora\Hornet\Domain\Network\ClientIp;
 
 /**
  * What WordPress says about the request it is running.
+ *
+ * @internal
  */
 final readonly class WpRequestContext implements RequestContext
 {

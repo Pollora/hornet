@@ -15,6 +15,8 @@ use Pollora\Hornet\Domain\Login\AttemptStore;
  * addresses then writes as many rows, which is one more reason to run an object cache.
  *
  * The lockouts are also listed in one option, so that `wp hornet unlock --all` can find them: a cache cannot be listed.
+ *
+ * @internal
  */
 final class TransientAttemptStore implements AttemptStore
 {

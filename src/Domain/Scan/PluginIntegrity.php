@@ -9,6 +9,8 @@ namespace Pollora\Hornet\Domain\Scan;
  *
  * It reads; it never repairs. A file that is not on the list is reported only when it is a script: a plugin
  * leaves caches, logs and uploads in its folder, and a report full of those would hide the one that matters.
+ *
+ * @internal
  */
 final readonly class PluginIntegrity
 {

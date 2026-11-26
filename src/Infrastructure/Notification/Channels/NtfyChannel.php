@@ -17,6 +17,8 @@ use Pollora\Hornet\Infrastructure\Notification\Text;
  * fields that open a link, attach a file, send an e-mail or place a call are never fed with text from a site.
  * A message holds 4096 bytes; a longer one would become an attachment, so it is cut below that.
  * A private-server token goes in `Authorization: Bearer`; a topic on an open server is a secret too, so the whole URL is kept secret.
+ *
+ * @internal
  */
 final class NtfyChannel extends HttpChannel
 {

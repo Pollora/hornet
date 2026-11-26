@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 /**
  * Which events are wanted: all of them, newest first, unless this narrows it.
+ *
+ * @internal
  */
 final readonly class JournalQuery
 {

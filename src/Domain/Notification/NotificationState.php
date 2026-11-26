@@ -9,6 +9,8 @@ use DateTimeImmutable;
 /**
  * What the notifier remembers between two runs: what each channel was told and when, so that it is not told twice,
  * and how many messages it got in the last hour.
+ *
+ * @internal
  */
 interface NotificationState
 {

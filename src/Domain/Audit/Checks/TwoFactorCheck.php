@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * A second factor makes a stolen password worthless. Hornet relies on the official Two-Factor plugin and does not rewrite it.
+ *
+ * @internal
  */
 final readonly class TwoFactorCheck implements Check
 {

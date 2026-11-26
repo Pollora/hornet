@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Network;
 
 /**
  * Who is asking: the address a rule should be applied to.
+ *
+ * @internal
  */
 final readonly class ClientIp
 {

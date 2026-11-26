@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
  * Signals, from the strongest: a script in the uploads (nothing there should run), a server setting that runs code before every
  * page or turns a picture into a script, a file named like a picture that a server may still run (`shell.php.jpg`), a hidden script,
  * and a PHP file whose code reads like a web shell (see {@see ScriptRules}).
+ *
+ * @internal
  */
 final readonly class FileInspector
 {

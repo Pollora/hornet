@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * An administrator nobody expected is the most usual way somebody stays after getting in. A new one is not a fault: it is a
  * question to the owner, which goes away by itself after two weeks. Accounts are named by number.
+ *
+ * @internal
  */
 final readonly class NewAdministratorsCheck implements Check
 {

@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\I18n\Message;
  * What one check found: a verdict, a sentence, the facts that prove it, and what to do.
  *
  * A finding never carries a secret: a salt, a password or a key is named, never copied.
+ *
+ * @internal
  */
 final readonly class Finding
 {

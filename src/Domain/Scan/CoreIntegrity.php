@@ -10,6 +10,8 @@ namespace Pollora\Hornet\Domain\Scan;
  * Three things are looked at, the way `wp core verify-checksums` does it, and one more: a file that differs, a file that is
  * gone, and a file that WordPress does not ship in a folder it owns (wp-admin, wp-includes, the root: a backdoor lands there).
  * Everything under wp-content is the site's own, and is left to the other scans.
+ *
+ * @internal
  */
 final readonly class CoreIntegrity
 {

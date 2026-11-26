@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * One text of the database that holds something a script would.
+ *
+ * @internal
  */
 final readonly class ContentEntry
 {

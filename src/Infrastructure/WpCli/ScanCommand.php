@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
 
 /**
  * Look at the files of the site: compare the core with WordPress.org.
+ *
+ * @internal
  */
 final readonly class ScanCommand
 {

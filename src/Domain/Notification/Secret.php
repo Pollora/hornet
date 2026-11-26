@@ -12,6 +12,8 @@ use LogicException;
  *
  * It prints as `[redacted]` everywhere (string cast, dump, JSON), and refuses to be serialized, so that it cannot reach
  * a log, an error message, a cache or a status screen by accident. The only way to read it is `reveal()`, at the moment of use.
+ *
+ * @internal
  */
 final readonly class Secret implements \Stringable, JsonSerializable
 {

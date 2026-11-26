@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Scan\PluginInventory;
 /**
  * The themes WordPress knows of, active or not, in the themes directory. The themes the owner writes themselves
  * (`scanner.own_themes`) are left out: they change with every deployment, and a report on each change would say nothing.
+ *
+ * @internal
  */
 final readonly class WpThemeInventory implements PluginInventory
 {

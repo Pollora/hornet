@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * Where the last scan is kept.
+ *
+ * @internal
  */
 interface ScanStore
 {

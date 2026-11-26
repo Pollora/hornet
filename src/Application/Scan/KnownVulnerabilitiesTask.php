@@ -22,6 +22,8 @@ use Pollora\Hornet\Domain\Scan\VulnerabilityFeed;
  * For the WordPress core, each plugin and each theme, the feed is asked about that version. What leaves the site is the name of the
  * software and its version, never the address of the site. It is off until the owner turns it on, because the list of plugins is what
  * an attacker would like to have. An answer that is missing is not "no vulnerability": the finding says what it could not ask.
+ *
+ * @internal
  */
 final readonly class KnownVulnerabilitiesTask implements ScanTask
 {

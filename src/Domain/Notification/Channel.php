@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
 
 /**
  * Somewhere to send alerts: a mailbox, a chat, a webhook.
+ *
+ * @internal
  */
 interface Channel
 {

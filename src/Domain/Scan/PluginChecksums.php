@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Exceptions\TransportException;
 
 /**
  * What WordPress.org says the files of a release of a plugin should look like.
+ *
+ * @internal
  */
 interface PluginChecksums
 {

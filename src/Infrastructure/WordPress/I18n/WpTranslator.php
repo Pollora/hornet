@@ -11,6 +11,8 @@ use Pollora\Hornet\Domain\I18n\Translator;
  *
  * The package is not in a plugin folder: WordPress does not find its translations by itself, so they are loaded here, the first time a text
  * is asked for, and again when the language changes. Never before `init`: WordPress warns about it, and the language is not settled.
+ *
+ * @internal
  */
 final class WpTranslator implements Translator
 {

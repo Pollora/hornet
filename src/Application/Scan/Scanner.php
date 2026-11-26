@@ -21,6 +21,8 @@ use Throwable;
  *
  * It is not a check. A check reads and never asks the network; a scan reads the disk, may ask WordPress.org, and takes time.
  * It runs when someone asks (`wp hornet scan`), never inside a page request.
+ *
+ * @internal
  */
 final readonly class Scanner
 {

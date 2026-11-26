@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
  * An address or a range of addresses (`203.0.113.7`, `10.0.0.0/8`, `2001:db8::/32`), IPv4 or IPv6.
  *
  * An IPv4 address written as IPv6 (`::ffff:203.0.113.7`) is the same address, so it is compared as IPv4.
+ *
+ * @internal
  */
 final readonly class Cidr
 {

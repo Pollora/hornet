@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * With WP_DEBUG off, WordPress leaves `display_errors` as PHP has it: a fatal error then shows paths to the visitor.
  * Not part of the audit on Pollora, where Laravel turns the setting off itself.
+ *
+ * @internal
  */
 final readonly class PhpErrorDisplayCheck implements Check
 {

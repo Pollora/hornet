@@ -13,6 +13,8 @@ use Pollora\Hornet\Infrastructure\Notification\Text;
  *
  * `allowed_mentions.parse` is empty, so nothing is parsed into a ping whatever the text says (users, roles, `@everyone`),
  * and the `@` of the text is also broken. An embed description may hold 4096 characters and the whole message 6000: this stays below.
+ *
+ * @internal
  */
 final class DiscordChannel extends HttpChannel
 {

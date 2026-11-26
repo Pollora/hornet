@@ -24,6 +24,8 @@ use Pollora\Hornet\Domain\Scan\Pins;
  * Built for large databases. The tables are read in ranges of identifiers, whose width follows how long a range takes; the
  * database does the filtering, and only the few entries that hold a mark are read. With a time budget it stops between two
  * ranges, keeps its place and what it found, and goes on next time. It never changes anything.
+ *
+ * @internal
  */
 final readonly class DatabaseScriptsTask implements ScanTask
 {

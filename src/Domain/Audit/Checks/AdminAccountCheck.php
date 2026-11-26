@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * A user named "admin" is the first login every password guesser tries.
+ *
+ * @internal
  */
 final readonly class AdminAccountCheck implements Check
 {

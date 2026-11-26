@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * WordPress core that is behind misses fixes. The check reads the answer WordPress already stored: it asks nothing of the network.
+ *
+ * @internal
  */
 final readonly class WordPressUpdateCheck implements Check
 {

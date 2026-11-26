@@ -11,6 +11,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
  *
  * Report-only is the way in: a policy written blind breaks a site. The dashboard is left out unless `admin` is set: the
  * block editor and TinyMCE need inline styles and scripts that a strict policy refuses.
+ *
+ * @internal
  */
 final readonly class ContentSecurityPolicy
 {

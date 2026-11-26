@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * The versions that a vulnerability concerns: from one version, up to another. A bound that is not given is open.
+ *
+ * @internal
  */
 final readonly class VersionRange
 {

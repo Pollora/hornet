@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * What the files of one plugin said when compared with a list.
+ *
+ * @internal
  */
 final readonly class PluginVerdict
 {

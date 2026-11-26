@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Audit;
 
 /**
  * A finding that someone chose to live with, and why: set aside from the screen, on a reason they wrote.
+ *
+ * @internal
  */
 final readonly class SetAside
 {

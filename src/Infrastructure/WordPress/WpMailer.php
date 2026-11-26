@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Notification\Mailer;
 
 /**
  * `wp_mail()`: the site's own mail setup, whatever it is (SMTP plugin, transactional service).
+ *
+ * @internal
  */
 final class WpMailer implements Mailer
 {

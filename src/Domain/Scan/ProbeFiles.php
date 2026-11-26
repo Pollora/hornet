@@ -7,6 +7,8 @@ namespace Pollora\Hornet\Domain\Scan;
 /**
  * Where the scan may put, for a moment, a file of its own in the uploads folder, to ask the server whether it would run it.
  * It is the one place where the scan writes, and it only ever removes what it wrote.
+ *
+ * @internal
  */
 interface ProbeFiles
 {

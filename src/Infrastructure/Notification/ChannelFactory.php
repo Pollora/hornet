@@ -21,6 +21,8 @@ use Pollora\Hornet\Infrastructure\Notification\Channels\WebhookChannel;
 
 /**
  * Builds the channels the settings describe. The settings are already checked: every option a channel needs is there.
+ *
+ * @internal
  */
 final readonly class ChannelFactory
 {

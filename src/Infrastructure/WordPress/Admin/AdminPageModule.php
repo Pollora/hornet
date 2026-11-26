@@ -18,6 +18,8 @@ use Pollora\Hornet\Infrastructure\WordPress\Module;
  * The script and the style are compiled and kept in the package (`assets/admin`): nothing runs npm on a site. They are not served from
  * the package's folder, which on Bedrock and on Pollora is outside the web root: this module sends them itself, to a person who may
  * see the screen and to nobody else.
+ *
+ * @internal
  */
 final class AdminPageModule implements Module
 {

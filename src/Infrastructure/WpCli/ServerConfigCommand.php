@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Server\ServerRules;
 
 /**
  * Prints the rules for the web server that no plugin can apply. It writes nothing, anywhere.
+ *
+ * @internal
  */
 final readonly class ServerConfigCommand
 {

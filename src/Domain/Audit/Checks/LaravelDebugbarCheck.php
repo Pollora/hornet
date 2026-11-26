@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * Debugbar shows the queries, the session and the request of a page. It keeps itself off in production unless it is forced:
  * only that is reported. Only on Pollora.
+ *
+ * @internal
  */
 final readonly class LaravelDebugbarCheck implements Check
 {

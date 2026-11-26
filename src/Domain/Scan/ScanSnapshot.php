@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Audit\Finding;
 
 /**
  * What the last scan found and when, kept so that the audit, Site Health and `pollora:doctor` can read it without scanning.
+ *
+ * @internal
  */
 final readonly class ScanSnapshot
 {

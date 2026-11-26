@@ -14,6 +14,8 @@ use Throwable;
  *
  * Only a literal of the source goes in the template (the translations are extracted from these calls). Whatever comes from the site, a
  * file name, a slug, something somebody typed, goes in the values: it is never read as a format, and never translated.
+ *
+ * @internal
  */
 final readonly class Message
 {

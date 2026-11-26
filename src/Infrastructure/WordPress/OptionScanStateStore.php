@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Scan\ScanStateStore;
 
 /**
  * Where a scan is, in an option that is not loaded on every page (network-wide on a multisite: the scan is shared). Stored as JSON.
+ *
+ * @internal
  */
 final readonly class OptionScanStateStore implements ScanStateStore
 {

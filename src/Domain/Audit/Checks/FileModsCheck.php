@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
  * Where code is deployed (Bedrock, Composer), the dashboard has no reason to install or update it.
  *
  * Advice only: DISALLOW_FILE_MODS also stops WordPress's own updates, which a classic site may want.
+ *
+ * @internal
  */
 final readonly class FileModsCheck implements Check
 {

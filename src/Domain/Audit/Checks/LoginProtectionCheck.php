@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * The login form is where passwords are guessed. pollora/portcullis already protects it: Hornet looks for it, and does not do
  * its work again. Without it, Hornet's own throttle is the fallback, and the check says whether that throttle can be trusted.
+ *
+ * @internal
  */
 final readonly class LoginProtectionCheck implements Check
 {

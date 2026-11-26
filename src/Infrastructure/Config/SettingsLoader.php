@@ -16,6 +16,8 @@ use Throwable;
  * `HORNET_DISABLED` is the kill switch: defined as true, Hornet attaches nothing. It is the way back when a rule locks someone out.
  * `HORNET_CONFIG`, when defined, wins over the application's configuration. On a multisite network, `sites` holds the settings of one
  * site, keyed by its ID, over the shared ones.
+ *
+ * @internal
  */
 final class SettingsLoader
 {

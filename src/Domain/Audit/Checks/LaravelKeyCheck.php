@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * Without its key Laravel can neither encrypt its cookies nor sign its links. Only on Pollora.
+ *
+ * @internal
  */
 final readonly class LaravelKeyCheck implements Check
 {

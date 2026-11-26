@@ -35,6 +35,8 @@ use Pollora\Hornet\Infrastructure\WordPress\Journal\WpRequestContext;
 
 /**
  * Starts the package: builds the modules the settings ask for and attaches them.
+ *
+ * @internal
  */
 final class Bootstrap
 {

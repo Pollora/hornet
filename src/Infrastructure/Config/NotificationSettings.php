@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\Notification\Secret;
  * A secret (a webhook URL, a token, a signing key) is written as a reference: `['env' => 'HORNET_SLACK_URL']` or
  * `['constant' => 'HORNET_SLACK_URL']`. A plain string is accepted too, for a Pollora `config/pollora/hornet.php` that calls `env()` itself.
  * Nothing is ever read from, or written to, the database.
+ *
+ * @internal
  */
 final readonly class NotificationSettings
 {

@@ -15,6 +15,8 @@ use Pollora\Hornet\Domain\Notification\Secret;
 
 /**
  * A channel that is one POST: the subclass says what to send, the answer is read the same way for all.
+ *
+ * @internal
  */
 abstract class HttpChannel implements Channel
 {

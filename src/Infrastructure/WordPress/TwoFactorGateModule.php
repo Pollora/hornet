@@ -19,6 +19,8 @@ use Pollora\Hornet\Infrastructure\Config\AccountSettings;
  * `two_factor.enforce_after` a notice asks instead of a redirect.
  *
  * It never touches Ajax, cron, REST, XML-RPC or the command line, nor the logout. `HORNET_DISABLED` removes it.
+ *
+ * @internal
  */
 final class TwoFactorGateModule implements Module
 {

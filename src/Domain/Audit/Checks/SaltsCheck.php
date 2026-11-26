@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
  * The keys and salts sign the login cookies and the nonces: a missing, short or sample one lets someone forge them.
  *
  * The finding names the constants that are wrong and never prints a value.
+ *
+ * @internal
  */
 final readonly class SaltsCheck implements Check
 {

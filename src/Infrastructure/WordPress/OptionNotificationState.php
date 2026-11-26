@@ -12,6 +12,8 @@ use Pollora\Hornet\Domain\Notification\NotificationState;
  * What each channel was told, and when, in one option that is not loaded on every request.
  *
  * Only the audit writes it, and the audit holds a lock: no two writers meet. Entries older than 60 days are dropped as they are written.
+ *
+ * @internal
  */
 final class OptionNotificationState implements NotificationState
 {

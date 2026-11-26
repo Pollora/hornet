@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
 
 /**
  * The `hardening` settings: what Hornet closes on the site. Everything is off until it is asked for.
+ *
+ * @internal
  */
 final readonly class HardeningSettings
 {

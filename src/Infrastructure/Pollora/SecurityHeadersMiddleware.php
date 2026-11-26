@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
  * Symfony appends headers when it sends them instead of replacing them, so a double would be sent twice.
  *
  * It has been tested against Symfony responses and has never run inside a Pollora application.
+ *
+ * @internal
  */
 final readonly class SecurityHeadersMiddleware
 {

@@ -14,6 +14,8 @@ use UnexpectedValueException;
 
 /**
  * The disk, read through PHP. It never writes, and it never leaves the root it was given.
+ *
+ * @internal
  */
 final readonly class NativeFileSystem implements FileSystem
 {

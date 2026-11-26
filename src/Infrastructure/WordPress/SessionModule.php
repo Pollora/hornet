@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 /**
  * How long a login lasts: shorter than WordPress's default of two days, or of fourteen with "remember me", when the owner says so.
+ *
+ * @internal
  */
 final readonly class SessionModule implements Module
 {

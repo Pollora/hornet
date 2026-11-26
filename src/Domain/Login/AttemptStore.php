@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Login;
 
 /**
  * Where the failures of each address are kept: a hash of the address, never the address.
+ *
+ * @internal
  */
 interface AttemptStore
 {

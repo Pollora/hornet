@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Journal\Source;
 
 /**
  * What the journal needs to know about the request it is in: where it came from, who is logged in, and from which address.
+ *
+ * @internal
  */
 interface RequestContext
 {

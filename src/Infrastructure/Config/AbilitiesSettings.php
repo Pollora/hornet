@@ -11,6 +11,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
  *
  * Off until the owner turns it on. `writes` is a second, separate switch: reading what the audit found is one decision, letting an agent
  * start a scan or set a finding aside is another. Neither can be turned on from an ability, the screen or REST: only the settings file.
+ *
+ * @internal
  */
 final readonly class AbilitiesSettings
 {

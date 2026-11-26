@@ -8,6 +8,8 @@ use InvalidArgumentException;
 
 /**
  * A setting that does not mean anything: a typo in a key is refused, never ignored, because a protection that was meant to be on must not be silently off.
+ *
+ * @internal
  */
 final class InvalidSettingsException extends InvalidArgumentException
 {

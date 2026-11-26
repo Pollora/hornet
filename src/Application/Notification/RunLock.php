@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Application\Notification;
 
 /**
  * Keeps two runs from notifying at the same time (the cron and a command, two cron runs): the second one steps aside.
+ *
+ * @internal
  */
 interface RunLock
 {

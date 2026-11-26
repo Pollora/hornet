@@ -9,6 +9,8 @@ use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 
 /**
  * What a check may know about the site. Every method reads; none changes anything.
+ *
+ * @internal
  */
 interface Environment
 {

@@ -10,6 +10,8 @@ namespace Pollora\Hornet\Domain\Scan;
  * An allowed file is not trusted for good: it is pinned, and a change after that is reported. Without the pin, the one
  * file that is allowed to differ would be the best place to hide in. A pin holds for one release of the core: an update
  * is a new scope, and pins again.
+ *
+ * @internal
  */
 final readonly class Pins
 {

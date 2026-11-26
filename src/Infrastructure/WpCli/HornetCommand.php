@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
 
 /**
  * Audit the security of the site from the command line.
+ *
+ * @internal
  */
 final readonly class HornetCommand
 {

@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
  *
  * No rule is enough alone: code that is not malware uses `eval`, `base64_decode` or a variable function now and then.
  * Points add up, and a file is reported from {@see ScriptScore::SUSPICIOUS}. The rules only ever read; they never run the code.
+ *
+ * @internal
  */
 final class ScriptRules
 {

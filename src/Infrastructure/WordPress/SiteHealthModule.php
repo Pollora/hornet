@@ -20,6 +20,8 @@ use Pollora\Hornet\Domain\I18n\Translator;
  * One Site Health test per check, so the person who opens Tools > Site Health sees the same findings as `wp hornet status`.
  *
  * The audit runs once per request, when the first test is asked for.
+ *
+ * @internal
  */
 final class SiteHealthModule implements Module
 {

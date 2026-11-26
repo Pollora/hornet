@@ -25,6 +25,8 @@ use Pollora\Hornet\Domain\Notification\Secret;
  *      "alerts":[{"key":"…","severity":"…","title":"…","details":["…"],"fix":null}]}
  *
  * The receiver must compare the signature in constant time, and refuse a timestamp more than five minutes old.
+ *
+ * @internal
  */
 final class WebhookChannel extends HttpChannel
 {

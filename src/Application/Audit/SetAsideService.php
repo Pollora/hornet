@@ -16,6 +16,8 @@ use Pollora\Hornet\Domain\Journal\EventTypes;
  * Sets a finding aside, or brings it back. Setting aside hides a problem, so it asks for a reason, remembers who gave it and when, and says it in the journal.
  *
  * What the settings file sets aside wins and cannot be changed from here. Only a finding that is open can be set aside: a check that passes has nothing to hide.
+ *
+ * @internal
  */
 final readonly class SetAsideService
 {

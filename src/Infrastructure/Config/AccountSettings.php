@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
 
 /**
  * The `passwords`, `session` and `two_factor` settings: the rules about accounts. All off until they are asked for.
+ *
+ * @internal
  */
 final readonly class AccountSettings
 {

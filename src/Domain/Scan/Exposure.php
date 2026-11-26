@@ -11,6 +11,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
  *
  * An address that answers 200 proves nothing: a site that sends its home page for every unknown address would "expose" everything.
  * So the answer must also look like the file: its start is read against `$signature`.
+ *
+ * @internal
  */
 final readonly class Exposure
 {

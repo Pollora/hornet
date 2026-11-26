@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\Scan\CoreChecksums;
  * The checksums that api.wordpress.org publishes for each release of the core.
  *
  * Only the version and the locale leave the site: not its address, not a plugin, not a file name.
+ *
+ * @internal
  */
 final readonly class WordPressCoreChecksums implements CoreChecksums
 {

@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Application\Notification;
 
 /**
  * The result for one channel. The reason never holds a URL or a token.
+ *
+ * @internal
  */
 final readonly class ChannelOutcome
 {

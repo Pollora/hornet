@@ -18,6 +18,8 @@ use Pollora\Hornet\Infrastructure\Notification\Text;
  * The bot token is in the path of the URL, so the URL is a secret and is never printed. Text is escaped for HTML (`&`, `<`, `>`),
  * cut before it is escaped (a message holds 4096 characters after parsing), and the `@` is broken so that a user name in a finding
  * does not become a mention. The reply says what went wrong in its body: `ok`, and `parameters.retry_after` for a flood.
+ *
+ * @internal
  */
 final class TelegramChannel extends HttpChannel
 {

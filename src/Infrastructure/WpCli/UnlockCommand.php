@@ -9,6 +9,8 @@ use Pollora\Hornet\Application\Login\Unlocker;
 
 /**
  * Let an address back in after it was locked out of the login.
+ *
+ * @internal
  */
 final readonly class UnlockCommand
 {

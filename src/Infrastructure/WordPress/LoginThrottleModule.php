@@ -26,6 +26,8 @@ use WP_Error;
  * - **A forwarding header from an address that is not a trusted proxy is not believed**, and the request is counted under the
  *   address that opened the connection: otherwise adding a header would be a way around the lock.
  * - `network`: the addresses in `login.allow_ips` are never counted nor locked.
+ *
+ * @internal
  */
 final readonly class LoginThrottleModule implements Module
 {

@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * How much a PHP source looks like a web shell, and why.
+ *
+ * @internal
  */
 final readonly class ScriptScore
 {

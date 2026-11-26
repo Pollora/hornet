@@ -10,6 +10,8 @@ use Pollora\Hornet\Domain\Network\TrustedProxies;
 /**
  * Who is asking, read from the request of a classic WordPress or Bedrock: the connection, and the forwarding header only when
  * the connection comes from a proxy the owner listed.
+ *
+ * @internal
  */
 final class ClientAddress
 {

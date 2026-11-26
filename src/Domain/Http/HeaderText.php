@@ -8,6 +8,8 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
 
 /**
  * What may go in the value of a header. A line break in a value is how a second header is injected.
+ *
+ * @internal
  */
 final class HeaderText
 {

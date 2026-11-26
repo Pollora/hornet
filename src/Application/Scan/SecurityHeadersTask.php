@@ -21,6 +21,8 @@ use Pollora\Hornet\Domain\Scan\Pins;
  * It judges three: `nosniff`, a protection against framing, and HSTS when the address is HTTPS. A Content-Security-Policy needs
  * work specific to each site, and browsers already have safe defaults for the referrer: neither is judged. It also says when a
  * header that Hornet is set to send does not arrive, which only a request from outside can show.
+ *
+ * @internal
  */
 final readonly class SecurityHeadersTask implements ScanTask
 {

@@ -18,6 +18,8 @@ use Pollora\Hornet\Domain\Exceptions\ServerRulesException;
  * request): `apache` for the virtual host, `htaccess` with mod_rewrite only, which WordPress already needs for its permalinks.
  *
  * The folder is a URL path, which is what both servers match on. It is checked: it goes into a configuration file.
+ *
+ * @internal
  */
 final class ServerRules
 {

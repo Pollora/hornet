@@ -13,6 +13,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * A production site that shows its PHP errors tells a visitor where its files are and what it runs.
+ *
+ * @internal
  */
 final readonly class DebugModeCheck implements Check
 {

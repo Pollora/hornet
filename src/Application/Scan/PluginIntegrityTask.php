@@ -25,6 +25,8 @@ use Pollora\Hornet\Domain\Scan\PluginVerdict;
  * A plugin that WordPress.org lists is compared with its list (SHA-256 of each file of that version). One it does not know
  * (a premium plugin, one installed from elsewhere) has no reference: its files are hashed the first time and compared
  * afterwards, so a change is seen, a plugin that was bad from the start is not. One request per plugin, slug and version only.
+ *
+ * @internal
  */
 final readonly class PluginIntegrityTask implements ScanTask
 {

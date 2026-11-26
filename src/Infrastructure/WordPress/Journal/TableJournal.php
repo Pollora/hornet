@@ -15,6 +15,8 @@ use Pollora\Hornet\Domain\Journal\Source;
 
 /**
  * The journal, in its table. Every value goes through `$wpdb->prepare()` or `$wpdb->insert()`: nothing is built by hand.
+ *
+ * @internal
  */
 final readonly class TableJournal implements Journal
 {

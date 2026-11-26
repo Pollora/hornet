@@ -14,6 +14,8 @@ use Pollora\Hornet\Domain\I18n\Message;
 /**
  * A plugin or a theme that is behind misses fixes. The check reads the list WordPress already stored: it asks nothing of the
  * network, and says "not verified" when that list is missing or old, which is not the same as nothing to update.
+ *
+ * @internal
  */
 final readonly class UpdatesCheck implements Check
 {

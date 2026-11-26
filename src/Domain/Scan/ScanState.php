@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Domain\Scan;
 
 /**
  * Whether a scan is waiting or running, and which task it is at: what the administration screen shows while it waits.
+ *
+ * @internal
  */
 final readonly class ScanState
 {
