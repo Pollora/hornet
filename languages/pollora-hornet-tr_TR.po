@@ -1,0 +1,367 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pollora Hornet\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Pollora (machine translation, to be reviewed by a native speaker)\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: pollora-hornet\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: admin/src/App.js:26
+msgid "The status could not be read."
+msgstr "Durum okunamadı."
+
+#: admin/src/App.js:69
+msgid "The scan could not be started."
+msgstr "Tarama başlatılamadı."
+
+#: admin/src/App.js:85
+msgid "Overview"
+msgstr "Genel Bakış"
+
+#: admin/src/App.js:88
+msgid "Findings"
+msgstr "Bulgular"
+
+#: admin/src/App.js:90
+msgid "Settings"
+msgstr "Ayarlar"
+
+#: admin/src/App.js:91
+msgid "Notifications"
+msgstr "Bildirimler"
+
+#: admin/src/App.js:92
+msgid "Journal"
+msgstr "Günlük"
+
+#: admin/src/Findings.js:58
+msgid "That could not be done."
+msgstr "Bu işlem yapılamadı."
+
+#: admin/src/Findings.js:68
+msgid "Search the findings"
+msgstr "Bulgularda ara"
+
+#: admin/src/Findings.js:75
+msgid "Show"
+msgstr "Göster"
+
+#: admin/src/Findings.js:79
+msgid "What needs attention"
+msgstr "Dikkat gerektirenler"
+
+#: admin/src/Findings.js:80 admin/src/Journal.js:62
+msgid "Everything"
+msgstr "Hepsi"
+
+#: admin/src/Findings.js:87 admin/src/Findings.js:105
+msgid "Severity"
+msgstr "Önem derecesi"
+
+#: admin/src/Findings.js:91
+msgid "Any severity"
+msgstr "Tüm önem dereceleri"
+
+#: admin/src/Findings.js:98
+msgid "No finding matches."
+msgstr "Eşleşen bulgu yok."
+
+#: admin/src/Findings.js:103
+msgid "Check"
+msgstr "Kontrol"
+
+#: admin/src/Findings.js:104
+msgid "Status"
+msgstr "Durum"
+
+#: admin/src/Findings.js:106
+msgid "What was found"
+msgstr "Bulunanlar"
+
+#: admin/src/Findings.js:131 admin/src/Journal.js:128
+msgid "Previous"
+msgstr "Önceki"
+
+#. translators: 1: current page, 2: number of pages
+#: admin/src/Findings.js:135 admin/src/Journal.js:132
+msgid "Page %1$d of %2$d"
+msgstr "Sayfa %1$d / %2$d"
+
+#: admin/src/Findings.js:142 admin/src/Journal.js:139
+msgid "Next"
+msgstr "Sonraki"
+
+#: admin/src/Findings.js:163
+msgid "What to do:"
+msgstr "Yapılacaklar:"
+
+#: admin/src/Findings.js:168
+msgid "Set aside, because:"
+msgstr "Kenara bırakıldı, çünkü:"
+
+#: admin/src/Findings.js:172
+msgid "Set in the settings file: change it there."
+msgstr "Ayar dosyasında belirlenmiş: değişikliği orada yapın."
+
+#. translators: 1: an account name, 2: a date
+#: admin/src/Findings.js:174
+msgid "By %1$s, %2$s."
+msgstr "%1$s tarafından, %2$s."
+
+#: admin/src/Findings.js:190
+msgid "Why is this acceptable on this site?"
+msgstr "Bu neden bu sitede kabul edilebilir?"
+
+#: admin/src/Findings.js:191
+msgid "It is kept with your name and the date, and said in the journal."
+msgstr "Adınız ve tarihle birlikte saklanır ve günlüğe yazılır."
+
+#: admin/src/Findings.js:205
+msgid "Set it aside"
+msgstr "Kenara bırak"
+
+#: admin/src/Findings.js:210
+msgid "Set aside…"
+msgstr "Kenara bırak…"
+
+#: admin/src/Findings.js:221
+msgid "Bring it back"
+msgstr "Geri getir"
+
+#: admin/src/Findings.js:225
+msgid "Close"
+msgstr "Kapat"
+
+#: admin/src/Journal.js:25
+msgid "The journal could not be read."
+msgstr "Günlük okunamadı."
+
+#: admin/src/Journal.js:38
+msgid "The journal is off. It records who logged in, which accounts and roles changed, what was installed or updated, and which settings were touched. It writes personal data (a shortened network address, an account name), so it is turned on in the settings file: \"journal\" => [ \"enabled\" => true ]."
+msgstr "Günlük kapalı. Kimin giriş yaptığını, hangi hesapların ve rollerin değiştiğini, nelerin yüklendiğini veya güncellendiğini ve hangi ayarlara dokunulduğunu kaydeder. Kişisel veri yazar (kısaltılmış bir ağ adresi, bir hesap adı); bu yüzden ayar dosyasından açılır: \"journal\" => [ \"enabled\" => true ]."
+
+#: admin/src/Journal.js:58 admin/src/Journal.js:93
+msgid "What"
+msgstr "Ne"
+
+#: admin/src/Journal.js:69 admin/src/Journal.js:96
+msgid "From"
+msgstr "Nereden"
+
+#: admin/src/Journal.js:73
+msgid "Anywhere"
+msgstr "Her yerden"
+
+#: admin/src/Journal.js:86
+msgid "Nothing recorded yet."
+msgstr "Henüz kayıt yok."
+
+#: admin/src/Journal.js:92
+msgid "When"
+msgstr "Ne zaman"
+
+#: admin/src/Journal.js:94
+msgid "Who"
+msgstr "Kim"
+
+#: admin/src/Journal.js:95
+msgid "About"
+msgstr "Konu"
+
+#. translators: %d: number of days
+#: admin/src/Journal.js:146
+msgid "Kept %d day."
+msgid_plural "Kept %d days."
+msgstr[0] "%d gün saklanır."
+msgstr[1] "%d gün saklanır."
+
+#: admin/src/Notifications.js:14
+msgid "No channel is set up. Add one in the settings file to be told when the audit finds something new (mail, Slack, Teams, Discord, Telegram, ntfy or a signed webhook)."
+msgstr "Hiçbir kanal ayarlanmamış. Denetim yeni bir şey bulduğunda haberdar olmak için ayar dosyasından bir tane ekleyin (e-posta, Slack, Teams, Discord, Telegram, ntfy veya imzalı webhook)."
+
+#. translators: %s: a severity
+#: admin/src/Notifications.js:47
+msgid "from %s"
+msgstr "%s düzeyinden itibaren"
+
+#: admin/src/Notifications.js:58
+msgid "Send a test"
+msgstr "Test gönder"
+
+#: admin/src/Overview.js:25
+msgid "open"
+msgstr "açık"
+
+#: admin/src/Overview.js:29
+msgid "not verified"
+msgstr "doğrulanmadı"
+
+#: admin/src/Overview.js:33
+msgid "set aside"
+msgstr "kenara bırakıldı"
+
+#: admin/src/Overview.js:37
+msgid "pass"
+msgstr "geçti"
+
+#: admin/src/Overview.js:42
+msgid "Worst open finding:"
+msgstr "En kötü açık bulgu:"
+
+#: admin/src/Overview.js:51
+msgid "Scan"
+msgstr "Tarama"
+
+#: admin/src/Overview.js:59
+msgid "Scanning…"
+msgstr "Taranıyor…"
+
+#: admin/src/Overview.js:60
+msgid "Scan now"
+msgstr "Şimdi tara"
+
+#. translators: %s: how long ago
+#: admin/src/Overview.js:71
+msgid "Last scan: %s."
+msgstr "Son tarama: %s."
+
+#. translators: %s: the name of a scan task
+#: admin/src/Overview.js:81
+msgid "Now: %s"
+msgstr "Şu an: %s"
+
+#: admin/src/Overview.js:85
+msgid "Waiting for the cron to start it…"
+msgstr "Cron'un başlatması bekleniyor…"
+
+#: admin/src/Overview.js:91
+msgid "Part of the scan goes on in the background."
+msgstr "Taramanın bir kısmı arka planda sürüyor."
+
+#: admin/src/Settings.js:10
+msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
+msgstr "Bu ayarlar bir dosyada yazılıdır (HORNET_CONFIG sabiti veya Pollora'da config/hornet.php). Bu ekran onları gösterir ancak hiçbirini değiştirmez: bir ekrandan kapatılabilen koruma, çalınmış bir oturumla da kapatılabilir."
+
+#: admin/src/Settings.js:27
+msgid "On"
+msgstr "Etkin"
+
+#: admin/src/Settings.js:27
+msgid "Off"
+msgstr "Devre dışı"
+
+#: admin/src/util.js:11
+msgid "Critical"
+msgstr "Kritik"
+
+#: admin/src/util.js:12
+msgid "High"
+msgstr "Yüksek"
+
+#: admin/src/util.js:13
+msgid "Medium"
+msgstr "Orta"
+
+#: admin/src/util.js:14
+msgid "Low"
+msgstr "Düşük"
+
+#: admin/src/util.js:15
+msgid "Info"
+msgstr "Bilgi"
+
+#: admin/src/util.js:20
+msgid "Open"
+msgstr "Açık"
+
+#: admin/src/util.js:21
+msgid "Not verified"
+msgstr "Doğrulanmadı"
+
+#: admin/src/util.js:22
+msgid "Set aside"
+msgstr "Kenara bırakıldı"
+
+#: admin/src/util.js:23
+msgid "Passes"
+msgstr "Geçti"
+
+#: admin/src/util.js:24
+msgid "Not scanned"
+msgstr "Taranmadı"
+
+#: admin/src/util.js:30
+msgid "never"
+msgstr "asla"
+
+#: admin/src/util.js:33
+msgid "just now"
+msgstr "az önce"
+
+#: admin/src/util.js:37
+msgid "%d minute ago"
+msgid_plural "%d minutes ago"
+msgstr[0] "%d dakika önce"
+msgstr[1] "%d dakika önce"
+
+#: admin/src/util.js:41
+msgid "%d hour ago"
+msgid_plural "%d hours ago"
+msgstr[0] "%d saat önce"
+msgstr[1] "%d saat önce"
+
+#: admin/src/util.js:44
+msgid "%d day ago"
+msgid_plural "%d days ago"
+msgstr[0] "%d gün önce"
+msgstr[1] "%d gün önce"
+
+#: admin/src/util.js:51
+msgid "Nothing needs your attention."
+msgstr "Dikkatinizi gerektiren bir şey yok."
+
+#. translators: %d: number of checks that could not be verified
+#: admin/src/util.js:55
+msgid "No open finding, but %d could not be verified."
+msgid_plural "No open finding, but %d could not be verified."
+msgstr[0] "Açık bulgu yok, ancak %d kontrol doğrulanamadı."
+msgstr[1] "Açık bulgu yok, ancak %d kontrol doğrulanamadı."
+
+#. translators: %d: number of open findings
+#: admin/src/util.js:66
+msgid "%d open finding."
+msgid_plural "%d open findings."
+msgstr[0] "%d açık bulgu."
+msgstr[1] "%d açık bulgu."
+
+#: admin/src/util.js:74
+msgid "Website"
+msgstr "Web sitesi"
+
+#: admin/src/util.js:75
+msgid "Administration"
+msgstr "Yönetim"
+
+#: admin/src/util.js:76
+msgid "REST API"
+msgstr "REST API"
+
+#: admin/src/util.js:77
+msgid "Ajax"
+msgstr "Ajax"
+
+#: admin/src/util.js:78
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+#: admin/src/util.js:79
+msgid "Command line"
+msgstr "Komut satırı"
+
+#: admin/src/util.js:80
+msgid "Scheduled task"
+msgstr "Zamanlanmış görev"

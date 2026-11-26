@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 export const SEVERITIES = [ 'critical', 'high', 'medium', 'low', 'info' ];
 
@@ -34,13 +34,14 @@ export const ago = ( seconds ) => {
 	}
 	const minutes = Math.round( seconds / 60 );
 	if ( minutes < 90 ) {
-		return sprintf( __( '%d minutes ago', 'pollora-hornet' ), minutes );
+		return sprintf( _n( '%d minute ago', '%d minutes ago', minutes, 'pollora-hornet' ), minutes );
 	}
 	const hours = Math.round( minutes / 60 );
 	if ( hours < 48 ) {
-		return sprintf( __( '%d hours ago', 'pollora-hornet' ), hours );
+		return sprintf( _n( '%d hour ago', '%d hours ago', hours, 'pollora-hornet' ), hours );
 	}
-	return sprintf( __( '%d days ago', 'pollora-hornet' ), Math.round( hours / 24 ) );
+	const days = Math.round( hours / 24 );
+	return sprintf( _n( '%d day ago', '%d days ago', days, 'pollora-hornet' ), days );
 };
 
 /** The sentence at the top of the overview. */
@@ -52,13 +53,18 @@ export const headline = ( status ) => {
 	if ( open === 0 ) {
 		return sprintf(
 			/* translators: %d: number of checks that could not be verified */
-			__( 'No open finding, but %d could not be verified.', 'pollora-hornet' ),
+			_n(
+				'No open finding, but %d could not be verified.',
+				'No open finding, but %d could not be verified.',
+				unknown,
+				'pollora-hornet'
+			),
 			unknown
 		);
 	}
 	return sprintf(
 		/* translators: %d: number of open findings */
-		__( '%d open findings.', 'pollora-hornet' ),
+		_n( '%d open finding.', '%d open findings.', open, 'pollora-hornet' ),
 		open
 	);
 };

@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Button, Notice, SelectControl, Spinner } from '@wordpress/components';
 import { getJournal } from './api';
@@ -144,7 +144,7 @@ export default function Journal( { enabled, groups } ) {
 				<p className="description">
 					{ sprintf(
 						/* translators: %d: number of days */
-						__( 'Kept %d days.', 'pollora-hornet' ),
+						_n( 'Kept %d day.', 'Kept %d days.', data.retention_days ?? 0, 'pollora-hornet' ),
 						data.retention_days ?? 0
 					) }
 				</p>

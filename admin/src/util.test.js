@@ -52,6 +52,10 @@ describe( 'headline', () => {
 		expect( headline( status( 0, 3 ) ) ).toBe( 'No open finding, but 3 could not be verified.' );
 	} );
 
+	it( 'says one open finding in the singular', () => {
+		expect( headline( status( 1, 0 ) ) ).toBe( '1 open finding.' );
+	} );
+
 	it( 'counts the open findings', () => {
 		expect( headline( status( 2, 1 ) ) ).toBe( '2 open findings.' );
 	} );

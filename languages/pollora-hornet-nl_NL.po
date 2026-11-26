@@ -1,0 +1,367 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pollora Hornet\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Pollora (machine translation, to be reviewed by a native speaker)\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: pollora-hornet\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: admin/src/App.js:26
+msgid "The status could not be read."
+msgstr "De status kon niet worden gelezen."
+
+#: admin/src/App.js:69
+msgid "The scan could not be started."
+msgstr "De scan kon niet worden gestart."
+
+#: admin/src/App.js:85
+msgid "Overview"
+msgstr "Overzicht"
+
+#: admin/src/App.js:88
+msgid "Findings"
+msgstr "Bevindingen"
+
+#: admin/src/App.js:90
+msgid "Settings"
+msgstr "Instellingen"
+
+#: admin/src/App.js:91
+msgid "Notifications"
+msgstr "Meldingen"
+
+#: admin/src/App.js:92
+msgid "Journal"
+msgstr "Logboek"
+
+#: admin/src/Findings.js:58
+msgid "That could not be done."
+msgstr "Dat kon niet worden uitgevoerd."
+
+#: admin/src/Findings.js:68
+msgid "Search the findings"
+msgstr "Bevindingen zoeken"
+
+#: admin/src/Findings.js:75
+msgid "Show"
+msgstr "Tonen"
+
+#: admin/src/Findings.js:79
+msgid "What needs attention"
+msgstr "Wat aandacht nodig heeft"
+
+#: admin/src/Findings.js:80 admin/src/Journal.js:62
+msgid "Everything"
+msgstr "Alles"
+
+#: admin/src/Findings.js:87 admin/src/Findings.js:105
+msgid "Severity"
+msgstr "Ernst"
+
+#: admin/src/Findings.js:91
+msgid "Any severity"
+msgstr "Elke ernst"
+
+#: admin/src/Findings.js:98
+msgid "No finding matches."
+msgstr "Geen bevinding komt overeen."
+
+#: admin/src/Findings.js:103
+msgid "Check"
+msgstr "Controle"
+
+#: admin/src/Findings.js:104
+msgid "Status"
+msgstr "Status"
+
+#: admin/src/Findings.js:106
+msgid "What was found"
+msgstr "Wat is gevonden"
+
+#: admin/src/Findings.js:131 admin/src/Journal.js:128
+msgid "Previous"
+msgstr "Vorige"
+
+#. translators: 1: current page, 2: number of pages
+#: admin/src/Findings.js:135 admin/src/Journal.js:132
+msgid "Page %1$d of %2$d"
+msgstr "Pagina %1$d van %2$d"
+
+#: admin/src/Findings.js:142 admin/src/Journal.js:139
+msgid "Next"
+msgstr "Volgende"
+
+#: admin/src/Findings.js:163
+msgid "What to do:"
+msgstr "Wat te doen:"
+
+#: admin/src/Findings.js:168
+msgid "Set aside, because:"
+msgstr "Genegeerd, omdat:"
+
+#: admin/src/Findings.js:172
+msgid "Set in the settings file: change it there."
+msgstr "Ingesteld in het instellingenbestand: wijzig het daar."
+
+#. translators: 1: an account name, 2: a date
+#: admin/src/Findings.js:174
+msgid "By %1$s, %2$s."
+msgstr "Door %1$s, %2$s."
+
+#: admin/src/Findings.js:190
+msgid "Why is this acceptable on this site?"
+msgstr "Waarom is dit acceptabel op deze site?"
+
+#: admin/src/Findings.js:191
+msgid "It is kept with your name and the date, and said in the journal."
+msgstr "Het wordt bewaard met je naam en de datum, en vermeld in het logboek."
+
+#: admin/src/Findings.js:205
+msgid "Set it aside"
+msgstr "Negeren"
+
+#: admin/src/Findings.js:210
+msgid "Set aside…"
+msgstr "Negeren…"
+
+#: admin/src/Findings.js:221
+msgid "Bring it back"
+msgstr "Terugzetten"
+
+#: admin/src/Findings.js:225
+msgid "Close"
+msgstr "Sluiten"
+
+#: admin/src/Journal.js:25
+msgid "The journal could not be read."
+msgstr "Het logboek kon niet worden gelezen."
+
+#: admin/src/Journal.js:38
+msgid "The journal is off. It records who logged in, which accounts and roles changed, what was installed or updated, and which settings were touched. It writes personal data (a shortened network address, an account name), so it is turned on in the settings file: \"journal\" => [ \"enabled\" => true ]."
+msgstr "Het logboek staat uit. Het registreert wie er is ingelogd, welke accounts en rollen zijn gewijzigd, wat is geïnstalleerd of bijgewerkt en welke instellingen zijn aangepast. Het schrijft persoonsgegevens weg (een ingekort netwerkadres, een accountnaam), dus het wordt ingeschakeld in het instellingenbestand: \"journal\" => [ \"enabled\" => true ]."
+
+#: admin/src/Journal.js:58 admin/src/Journal.js:93
+msgid "What"
+msgstr "Wat"
+
+#: admin/src/Journal.js:69 admin/src/Journal.js:96
+msgid "From"
+msgstr "Van"
+
+#: admin/src/Journal.js:73
+msgid "Anywhere"
+msgstr "Overal"
+
+#: admin/src/Journal.js:86
+msgid "Nothing recorded yet."
+msgstr "Nog niets vastgelegd."
+
+#: admin/src/Journal.js:92
+msgid "When"
+msgstr "Wanneer"
+
+#: admin/src/Journal.js:94
+msgid "Who"
+msgstr "Wie"
+
+#: admin/src/Journal.js:95
+msgid "About"
+msgstr "Over"
+
+#. translators: %d: number of days
+#: admin/src/Journal.js:146
+msgid "Kept %d day."
+msgid_plural "Kept %d days."
+msgstr[0] "%d dag bewaard."
+msgstr[1] "%d dagen bewaard."
+
+#: admin/src/Notifications.js:14
+msgid "No channel is set up. Add one in the settings file to be told when the audit finds something new (mail, Slack, Teams, Discord, Telegram, ntfy or a signed webhook)."
+msgstr "Er is geen kanaal ingesteld. Voeg er een toe in het instellingenbestand om een melding te krijgen wanneer de audit iets nieuws vindt (e-mail, Slack, Teams, Discord, Telegram, ntfy of een ondertekende webhook)."
+
+#. translators: %s: a severity
+#: admin/src/Notifications.js:47
+msgid "from %s"
+msgstr "vanaf %s"
+
+#: admin/src/Notifications.js:58
+msgid "Send a test"
+msgstr "Test versturen"
+
+#: admin/src/Overview.js:25
+msgid "open"
+msgstr "open"
+
+#: admin/src/Overview.js:29
+msgid "not verified"
+msgstr "niet geverifieerd"
+
+#: admin/src/Overview.js:33
+msgid "set aside"
+msgstr "genegeerd"
+
+#: admin/src/Overview.js:37
+msgid "pass"
+msgstr "geslaagd"
+
+#: admin/src/Overview.js:42
+msgid "Worst open finding:"
+msgstr "Ernstigste open bevinding:"
+
+#: admin/src/Overview.js:51
+msgid "Scan"
+msgstr "Scan"
+
+#: admin/src/Overview.js:59
+msgid "Scanning…"
+msgstr "Bezig met scannen…"
+
+#: admin/src/Overview.js:60
+msgid "Scan now"
+msgstr "Nu scannen"
+
+#. translators: %s: how long ago
+#: admin/src/Overview.js:71
+msgid "Last scan: %s."
+msgstr "Laatste scan: %s."
+
+#. translators: %s: the name of a scan task
+#: admin/src/Overview.js:81
+msgid "Now: %s"
+msgstr "Nu: %s"
+
+#: admin/src/Overview.js:85
+msgid "Waiting for the cron to start it…"
+msgstr "Wachten tot de cron de scan start…"
+
+#: admin/src/Overview.js:91
+msgid "Part of the scan goes on in the background."
+msgstr "Een deel van de scan gaat op de achtergrond verder."
+
+#: admin/src/Settings.js:10
+msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
+msgstr "Deze instellingen staan in een bestand (de constante HORNET_CONFIG, of config/hornet.php op Pollora). Dit scherm toont ze en wijzigt er geen: een beveiliging die een scherm kan uitschakelen, kan ook door een gestolen sessie worden uitgeschakeld."
+
+#: admin/src/Settings.js:27
+msgid "On"
+msgstr "Aan"
+
+#: admin/src/Settings.js:27
+msgid "Off"
+msgstr "Uit"
+
+#: admin/src/util.js:11
+msgid "Critical"
+msgstr "Kritiek"
+
+#: admin/src/util.js:12
+msgid "High"
+msgstr "Hoog"
+
+#: admin/src/util.js:13
+msgid "Medium"
+msgstr "Gemiddeld"
+
+#: admin/src/util.js:14
+msgid "Low"
+msgstr "Laag"
+
+#: admin/src/util.js:15
+msgid "Info"
+msgstr "Info"
+
+#: admin/src/util.js:20
+msgid "Open"
+msgstr "Open"
+
+#: admin/src/util.js:21
+msgid "Not verified"
+msgstr "Niet geverifieerd"
+
+#: admin/src/util.js:22
+msgid "Set aside"
+msgstr "Genegeerd"
+
+#: admin/src/util.js:23
+msgid "Passes"
+msgstr "Geslaagd"
+
+#: admin/src/util.js:24
+msgid "Not scanned"
+msgstr "Niet gescand"
+
+#: admin/src/util.js:30
+msgid "never"
+msgstr "nooit"
+
+#: admin/src/util.js:33
+msgid "just now"
+msgstr "zojuist"
+
+#: admin/src/util.js:37
+msgid "%d minute ago"
+msgid_plural "%d minutes ago"
+msgstr[0] "%d minuut geleden"
+msgstr[1] "%d minuten geleden"
+
+#: admin/src/util.js:41
+msgid "%d hour ago"
+msgid_plural "%d hours ago"
+msgstr[0] "%d uur geleden"
+msgstr[1] "%d uur geleden"
+
+#: admin/src/util.js:44
+msgid "%d day ago"
+msgid_plural "%d days ago"
+msgstr[0] "%d dag geleden"
+msgstr[1] "%d dagen geleden"
+
+#: admin/src/util.js:51
+msgid "Nothing needs your attention."
+msgstr "Niets heeft je aandacht nodig."
+
+#. translators: %d: number of checks that could not be verified
+#: admin/src/util.js:55
+msgid "No open finding, but %d could not be verified."
+msgid_plural "No open finding, but %d could not be verified."
+msgstr[0] "Geen open bevinding, maar %d kon niet worden geverifieerd."
+msgstr[1] "Geen open bevinding, maar %d konden niet worden geverifieerd."
+
+#. translators: %d: number of open findings
+#: admin/src/util.js:66
+msgid "%d open finding."
+msgid_plural "%d open findings."
+msgstr[0] "%d open bevinding."
+msgstr[1] "%d open bevindingen."
+
+#: admin/src/util.js:74
+msgid "Website"
+msgstr "Website"
+
+#: admin/src/util.js:75
+msgid "Administration"
+msgstr "Beheer"
+
+#: admin/src/util.js:76
+msgid "REST API"
+msgstr "REST API"
+
+#: admin/src/util.js:77
+msgid "Ajax"
+msgstr "Ajax"
+
+#: admin/src/util.js:78
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+#: admin/src/util.js:79
+msgid "Command line"
+msgstr "Opdrachtregel"
+
+#: admin/src/util.js:80
+msgid "Scheduled task"
+msgstr "Geplande taak"

@@ -105,6 +105,8 @@ final class AdminPageModule implements Module
         }
 
         wp_enqueue_script('hornet-admin', $this->url('index.js', $version), $dependencies, $version, true);
+        // The screen speaks the language of the person: the JSON of languages/ is read by WordPress for the locale of the user, with the handle
+        wp_set_script_translations('hornet-admin', 'pollora-hornet', dirname($this->assets, 2).'/languages');
         wp_enqueue_style('wp-components');
 
         $style = is_rtl() ? 'style-index-rtl.css' : 'style-index.css';
