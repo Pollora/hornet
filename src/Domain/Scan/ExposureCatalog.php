@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Domain\Scan;
 
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * What a WordPress site leaves reachable by mistake, most often: environment files, a repository, backups of the configuration
@@ -26,33 +27,33 @@ final class ExposureCatalog
         $exposures = [];
 
         foreach (['.env', '.env.local', '.env.production', '.env.backup'] as $file) {
-            $exposures[] = new Exposure(Exposure::SITE, $file, 'environment variables (passwords, keys)', Severity::High, $env);
+            $exposures[] = new Exposure(Exposure::SITE, $file, Message::mark('environment variables (passwords, keys)'), Severity::High, $env);
         }
 
-        $exposures[] = new Exposure(Exposure::SITE, '.git/HEAD', 'the Git repository (the source of the site)', Severity::High, '/^ref:\s*refs\//D');
-        $exposures[] = new Exposure(Exposure::SITE, '.git/config', 'the Git repository (the source of the site)', Severity::High, '/\[core\]/');
+        $exposures[] = new Exposure(Exposure::SITE, '.git/HEAD', Message::mark('the Git repository (the source of the site)'), Severity::High, '/^ref:\s*refs\//D');
+        $exposures[] = new Exposure(Exposure::SITE, '.git/config', Message::mark('the Git repository (the source of the site)'), Severity::High, '/\[core\]/');
 
         foreach (['wp-config.php.bak', 'wp-config.php~', 'wp-config.php.old', 'wp-config.php.save', 'wp-config.php.orig', 'wp-config.bak', 'wp-config.txt'] as $file) {
-            $exposures[] = new Exposure(Exposure::SITE, $file, 'a copy of wp-config.php (database password, keys)', Severity::High, $config);
+            $exposures[] = new Exposure(Exposure::SITE, $file, Message::mark('a copy of wp-config.php (database password, keys)'), Severity::High, $config);
         }
 
         foreach (['backup.sql', 'dump.sql', 'db.sql', 'database.sql', 'site.sql'] as $file) {
-            $exposures[] = new Exposure(Exposure::SITE, $file, 'a copy of the database', Severity::High, $sql);
+            $exposures[] = new Exposure(Exposure::SITE, $file, Message::mark('a copy of the database'), Severity::High, $sql);
         }
 
         foreach (['backup.zip', 'site.zip', 'wordpress.zip'] as $file) {
-            $exposures[] = new Exposure(Exposure::SITE, $file, 'an archive of the site', Severity::High, '/^PK\x03\x04/D');
+            $exposures[] = new Exposure(Exposure::SITE, $file, Message::mark('an archive of the site'), Severity::High, '/^PK\x03\x04/D');
         }
 
-        $exposures[] = new Exposure(Exposure::SITE, '.htpasswd', 'the password file of the web server', Severity::Medium, '/^[^:\s]+:(?:\$apr1\$|\$2[aby]\$|\{SHA\}|[A-Za-z0-9.\/]{13}\s*$)/mD');
-        $exposures[] = new Exposure(Exposure::SITE, 'phpinfo.php', 'phpinfo() (the PHP and server configuration)', Severity::Medium, '/PHP Version|phpinfo\(\)/');
-        $exposures[] = new Exposure(Exposure::SITE, 'info.php', 'phpinfo() (the PHP and server configuration)', Severity::Medium, '/PHP Version|phpinfo\(\)/');
-        $exposures[] = new Exposure(Exposure::SITE, 'error_log', 'a PHP error log (paths, queries)', Severity::Medium, $log);
-        $exposures[] = new Exposure(Exposure::SITE, 'composer.json', 'composer.json (the list of what the site runs)', Severity::Low, '/"require"\s*:/');
+        $exposures[] = new Exposure(Exposure::SITE, '.htpasswd', Message::mark('the password file of the web server'), Severity::Medium, '/^[^:\s]+:(?:\$apr1\$|\$2[aby]\$|\{SHA\}|[A-Za-z0-9.\/]{13}\s*$)/mD');
+        $exposures[] = new Exposure(Exposure::SITE, 'phpinfo.php', Message::mark('phpinfo() (the PHP and server configuration)'), Severity::Medium, '/PHP Version|phpinfo\(\)/');
+        $exposures[] = new Exposure(Exposure::SITE, 'info.php', Message::mark('phpinfo() (the PHP and server configuration)'), Severity::Medium, '/PHP Version|phpinfo\(\)/');
+        $exposures[] = new Exposure(Exposure::SITE, 'error_log', Message::mark('a PHP error log (paths, queries)'), Severity::Medium, $log);
+        $exposures[] = new Exposure(Exposure::SITE, 'composer.json', Message::mark('composer.json (the list of what the site runs)'), Severity::Low, '/"require"\s*:/');
 
-        $exposures[] = new Exposure(Exposure::CONTENT, 'debug.log', 'the WordPress debug log (paths, queries, sometimes data)', Severity::Medium, $log);
-        $exposures[] = new Exposure(Exposure::CONTENT, 'uploads/', 'a listing of the uploads folder', Severity::Low, $listing);
-        $exposures[] = new Exposure(Exposure::CONTENT, 'plugins/', 'a listing of the plugins folder', Severity::Low, $listing);
+        $exposures[] = new Exposure(Exposure::CONTENT, 'debug.log', Message::mark('the WordPress debug log (paths, queries, sometimes data)'), Severity::Medium, $log);
+        $exposures[] = new Exposure(Exposure::CONTENT, 'uploads/', Message::mark('a listing of the uploads folder'), Severity::Low, $listing);
+        $exposures[] = new Exposure(Exposure::CONTENT, 'plugins/', Message::mark('a listing of the plugins folder'), Severity::Low, $listing);
 
         return $exposures;
     }

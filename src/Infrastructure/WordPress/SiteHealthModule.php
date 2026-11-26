@@ -6,12 +6,15 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Closure;
 use Pollora\Hornet\Application\Auditor;
+use Pollora\Hornet\Application\I18n\FindingTranslator;
 use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\I18n\Message;
+use Pollora\Hornet\Domain\I18n\Translator;
 
 /**
  * One Site Health test per check, so the person who opens Tools > Site Health sees the same findings as `wp hornet status`.
@@ -27,6 +30,7 @@ final class SiteHealthModule implements Module
     public function __construct(
         private readonly Auditor|Closure $auditor,
         private readonly Environment $environment,
+        private readonly ?Translator $translator = null,
     ) {}
 
     /**
@@ -52,7 +56,7 @@ final class SiteHealthModule implements Module
 
         foreach ($this->auditor()->checks() as $check) {
             $direct['hornet_'.str_replace('-', '_', $check->id())] = [
-                'label' => 'Hornet: '.$check->label(),
+                'label' => 'Hornet: '.Message::known($check->label())->render($this->translator),
                 'test' => fn (): array => $this->result($check),
             ];
         }
@@ -68,9 +72,9 @@ final class SiteHealthModule implements Module
     public function result(Check $check): array
     {
         $this->report ??= $this->auditor()->run($this->environment);
-        $finding = $this->report->find($check->id()) ?? Finding::unknown($check->id(), 'The check did not run.');
+        $finding = $this->report->find($check->id()) ?? Finding::unknown($check->id(), Message::of('The check did not run.'));
 
-        return self::format($finding, $check->label());
+        return self::format($finding, Message::known($check->label())->render($this->translator), $this->translator);
     }
 
     /**
@@ -78,23 +82,23 @@ final class SiteHealthModule implements Module
      *
      * @return array<string, mixed>
      */
-    public static function format(Finding $finding, string $label): array
+    public static function format(Finding $finding, string $label, ?Translator $translator = null): array
     {
-        $description = '<p>'.esc_html($finding->summary).'</p>';
+        $description = '<p>'.esc_html(FindingTranslator::summary($finding, $translator)).'</p>';
 
         if ($finding->details !== []) {
-            $description .= '<ul>'.implode('', array_map(static fn (string $line): string => '<li>'.esc_html($line).'</li>', $finding->details)).'</ul>';
+            $description .= '<ul>'.implode('', array_map(static fn (string $line): string => '<li>'.esc_html($line).'</li>', FindingTranslator::details($finding, $translator))).'</ul>';
         }
 
         if ($finding->isIgnored()) {
-            $description .= '<p>'.esc_html('Set aside on purpose: '.$finding->ignoredReason).'</p>';
+            $description .= '<p>'.esc_html(Message::of('Set aside on purpose: %s', (string) $finding->ignoredReason)->render($translator)).'</p>';
         }
 
         [$status, $badge] = match (true) {
-            $finding->outcome === Outcome::Unknown => ['good', ['label' => 'Not verified', 'color' => 'gray']],
-            $finding->outcome === Outcome::Pass || $finding->isIgnored() => ['good', ['label' => 'Security', 'color' => 'blue']],
-            $finding->severity->atLeast(Severity::High) => ['critical', ['label' => 'Security', 'color' => 'red']],
-            default => ['recommended', ['label' => 'Security', 'color' => 'orange']],
+            $finding->outcome === Outcome::Unknown => ['good', ['label' => Message::of('Not verified')->render($translator), 'color' => 'gray']],
+            $finding->outcome === Outcome::Pass || $finding->isIgnored() => ['good', ['label' => Message::of('Security')->render($translator), 'color' => 'blue']],
+            $finding->severity->atLeast(Severity::High) => ['critical', ['label' => Message::of('Security')->render($translator), 'color' => 'red']],
+            default => ['recommended', ['label' => Message::of('Security')->render($translator), 'color' => 'orange']],
         };
 
         return [
@@ -102,7 +106,7 @@ final class SiteHealthModule implements Module
             'status' => $status,
             'badge' => $badge,
             'description' => $description,
-            'actions' => $finding->isOpen() && $finding->fix !== null ? '<p>'.esc_html($finding->fix).'</p>' : '',
+            'actions' => $finding->isOpen() && $finding->fix !== null ? '<p>'.esc_html((string) FindingTranslator::fix($finding, $translator)).'</p>' : '',
             'test' => 'hornet_'.str_replace('-', '_', $finding->checkId),
         ];
     }

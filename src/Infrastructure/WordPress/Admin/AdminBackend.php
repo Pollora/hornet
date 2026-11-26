@@ -13,6 +13,7 @@ use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\SetAside;
 use Pollora\Hornet\Domain\Exceptions\SetAsideException;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Journal\Event;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
@@ -23,6 +24,7 @@ use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
 use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
+use Pollora\Hornet\Infrastructure\WordPress\I18n\WpTranslator;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
 use Pollora\Hornet\Infrastructure\WordPress\OptionScanStore;
 use Pollora\Hornet\Infrastructure\WordPress\OptionSetAsideStore;
@@ -57,11 +59,11 @@ final readonly class AdminBackend
             $labels[$check->id()] = $check->label();
         }
 
-        $view = StatusView::build($auditor->run($this->environment), $labels, (new OptionScanStore)->last(), $this->job->state(), (new SystemClock)->now(), ScannerFactory::forWordPress($this->settings)?->tasks() ?? [], (new OptionSetAsideStore)->all(), array_keys($this->settings->ignored));
+        $view = StatusView::build($auditor->run($this->environment), $labels, (new OptionScanStore)->last(), $this->job->state(), (new SystemClock)->now(), ScannerFactory::forWordPress($this->settings)?->tasks() ?? [], (new OptionSetAsideStore)->all(), array_keys($this->settings->ignored), WpTranslator::forPackage());
 
         return [
             ...$view,
-            'settings' => SettingsView::build($this->settings),
+            'settings' => SettingsView::build($this->settings, WpTranslator::forPackage()),
             // By name and kind only: where a channel goes is a secret
             'channels' => array_map(static fn (ChannelSpec $channel): array => ['name' => $channel->name, 'type' => $channel->type->value, 'min_severity' => $channel->minSeverity->value], $this->settings->notifications->channels),
             'network' => is_multisite(),
@@ -109,7 +111,7 @@ final readonly class AdminBackend
     public function requestScan(): array
     {
         if ($this->job->state()->isActive(time())) {
-            return ['queued' => false, 'reason' => 'A scan is already in progress.', 'state' => $this->job->state()->toArray()];
+            return ['queued' => false, 'reason' => Message::of('A scan is already in progress.')->render(WpTranslator::forPackage()), 'state' => $this->job->state()->toArray()];
         }
 
         $this->job->queued();

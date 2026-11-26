@@ -8,6 +8,7 @@ use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * The keys and salts sign the login cookies and the nonces: a missing, short or sample one lets someone forge them.
@@ -30,7 +31,7 @@ final readonly class SaltsCheck implements Check
 
     public function label(): string
     {
-        return 'Authentication keys and salts';
+        return Message::mark('Authentication keys and salts');
     }
 
     public function run(Environment $environment): Finding
@@ -46,15 +47,15 @@ final readonly class SaltsCheck implements Check
         }
 
         if ($weak === []) {
-            return Finding::pass($this->id(), 'The eight keys and salts are set.');
+            return Finding::pass($this->id(), Message::of('The eight keys and salts are set.'));
         }
 
         return Finding::fail(
             $this->id(),
             Severity::High,
-            sprintf('%d of the 8 keys and salts are missing, shorter than 32 characters, or the sample value.', count($weak)),
-            $weak,
-            'Generate new ones at https://api.wordpress.org/secret-key/1.1/salt/ and replace them in wp-config.php (or the Bedrock .env). This logs everyone out.',
+            Message::plural('%d of the 8 keys and salts is missing, shorter than 32 characters, or the sample value.', '%d of the 8 keys and salts are missing, shorter than 32 characters, or the sample value.', count($weak), count($weak)),
+            array_map(Message::raw(...), $weak),
+            Message::of('Generate new ones at https://api.wordpress.org/secret-key/1.1/salt/ and replace them in wp-config.php (or the Bedrock .env). This logs everyone out.'),
         );
     }
 }

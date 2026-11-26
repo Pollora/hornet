@@ -6,9 +6,11 @@ namespace Pollora\Hornet\Infrastructure\WordPress\Admin;
 
 use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Domain\Exceptions\SetAsideException;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\Source;
 use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
+use Pollora\Hornet\Infrastructure\WordPress\I18n\WpTranslator;
 use Pollora\Hornet\Infrastructure\WordPress\Module;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -138,7 +140,7 @@ final readonly class AdminRestModule implements Module
 
     private static function refused(SetAsideException $exception): WP_REST_Response
     {
-        return new WP_REST_Response(['ok' => false, 'message' => $exception->getMessage(), 'kind' => $exception->kind], match ($exception->kind) {
+        return new WP_REST_Response(['ok' => false, 'message' => $exception->say->render(WpTranslator::forPackage()), 'kind' => $exception->kind], match ($exception->kind) {
             SetAsideException::UNKNOWN => 404,
             SetAsideException::REASON => 422,
             default => 409,
@@ -166,7 +168,7 @@ final readonly class AdminRestModule implements Module
         $result = is_string($channel) ? $this->backend->testChannel($channel) : null;
 
         return $result === null
-            ? new WP_REST_Response(['status' => 'unknown', 'reason' => 'There is no such channel.'], 404)
+            ? new WP_REST_Response(['status' => 'unknown', 'reason' => Message::of('There is no such channel.')->render(WpTranslator::forPackage())], 404)
             : new WP_REST_Response($result);
     }
 }

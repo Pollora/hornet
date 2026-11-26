@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Pollora\Hornet\Application\Password\BreachCheck;
+use Pollora\Hornet\Domain\I18n\Message;
+use Pollora\Hornet\Domain\I18n\Translator;
 use WP_Error;
 
 /**
@@ -19,6 +21,7 @@ final readonly class PasswordModule implements Module
     public function __construct(
         private BreachCheck $breach,
         private int $threshold,
+        private ?Translator $translator = null,
     ) {}
 
     public function register(HookRegistrar $hooks): void
@@ -47,7 +50,7 @@ final readonly class PasswordModule implements Module
         $count = $this->breach->occurrences($password);
 
         if ($count !== null && $count >= $this->threshold) {
-            $errors->add('hornet_breached_password', '<strong>Error:</strong> That password appears in known data breaches. Choose another one.');
+            $errors->add('hornet_breached_password', sprintf('<strong>%s</strong> %s', Message::of('Error:')->render($this->translator), Message::of('That password appears in known data breaches. Choose another one.')->render($this->translator)));
         }
     }
 }

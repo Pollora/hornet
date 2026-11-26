@@ -7,6 +7,7 @@ namespace Pollora\Hornet\Application\Notification;
 use Pollora\Hornet\Application\AlertFactory;
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Domain\Audit\Environment;
+use Pollora\Hornet\Domain\I18n\Translator;
 use Pollora\Hornet\Domain\Notification\RetryQueue;
 
 /**
@@ -26,6 +27,7 @@ final readonly class NotificationService
         private string $siteName,
         private string $siteUrl,
         private array $channels,
+        private ?Translator $translator = null,
     ) {}
 
     /**
@@ -52,7 +54,7 @@ final readonly class NotificationService
 
         try {
             $report = $this->auditor->run($this->environment);
-            $outcomes = [...$this->notifier->dispatch(AlertFactory::fromReport($report), $this->siteName, $this->siteUrl), ...$this->notifier->retryDue()];
+            $outcomes = [...$this->notifier->dispatch(AlertFactory::fromReport($report, $this->translator), $this->siteName, $this->siteUrl), ...$this->notifier->retryDue()];
         } finally {
             $this->lock->release();
         }

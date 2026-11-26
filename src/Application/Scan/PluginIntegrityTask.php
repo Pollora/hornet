@@ -9,6 +9,7 @@ use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Clock;
 use Pollora\Hornet\Domain\Exceptions\TransportException;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Scan\Baseline;
 use Pollora\Hornet\Domain\Scan\BaselineStore;
 use Pollora\Hornet\Domain\Scan\InstalledPlugin;
@@ -61,7 +62,7 @@ final readonly class PluginIntegrityTask implements ScanTask
         $plugins = $this->inventory->plugins();
 
         if ($plugins === []) {
-            return new TaskResult(Finding::pass($this->id, sprintf('No %s has a folder of its own.', $this->kind)));
+            return new TaskResult(Finding::pass($this->id, $this->isPlugin() ? Message::of('No plugin has a folder of its own.') : Message::of('No theme has a folder of its own.')));
         }
 
         $deadline = $this->clock->now()->add(new DateInterval('PT'.$this->budget.'S'));
@@ -76,7 +77,7 @@ final readonly class PluginIntegrityTask implements ScanTask
 
         foreach ($plugins as $plugin) {
             if ($this->clock->now() > $deadline) {
-                $unchecked[] = $plugin->slug.' (out of time)';
+                $unchecked[] = Message::of('%s (out of time)', $plugin->slug);
 
                 continue;
             }
@@ -90,7 +91,7 @@ final readonly class PluginIntegrityTask implements ScanTask
                 $verdicts[] = $look->verdict;
                 $look->fromBaseline ? $byBaseline++ : $byList++;
             } else {
-                $unchecked[] = $plugin->slug.' ('.$look->why.')';
+                $unchecked[] = Message::of('%s (%s)', $plugin->slug, Message::known((string) $look->why));
             }
         }
 
@@ -112,13 +113,13 @@ final readonly class PluginIntegrityTask implements ScanTask
         try {
             $list = $this->official->checksums($plugin->slug, $plugin->version);
         } catch (TransportException) {
-            return PluginLook::failed('WordPress.org did not answer');
+            return PluginLook::failed(Message::mark('WordPress.org did not answer'));
         }
 
         if ($list !== null) {
             $verdict = $this->integrity->inspect($plugin->slug, $list);
 
-            return $verdict instanceof PluginVerdict ? PluginLook::listed($verdict) : PluginLook::failed('folder cannot be read');
+            return $verdict instanceof PluginVerdict ? PluginLook::listed($verdict) : PluginLook::failed(Message::mark('folder cannot be read'));
         }
 
         $known = $baselines[$plugin->slug] ?? null;
@@ -126,14 +127,14 @@ final readonly class PluginIntegrityTask implements ScanTask
         if ($known instanceof Baseline && $known->version === $plugin->version) {
             $verdict = $this->integrity->inspect($plugin->slug, array_map(static fn (string $hash): array => [$hash], $known->hashes));
 
-            return $verdict instanceof PluginVerdict ? PluginLook::againstFirstLook($verdict) : PluginLook::failed('folder cannot be read');
+            return $verdict instanceof PluginVerdict ? PluginLook::againstFirstLook($verdict) : PluginLook::failed(Message::mark('folder cannot be read'));
         }
 
         $hashes = $this->integrity->hashes($plugin->slug);
 
         return match (true) {
-            $hashes === null => PluginLook::failed('folder cannot be read'),
-            count($hashes) > self::BASELINE_FILES => PluginLook::failed('too many files to keep a first look'),
+            $hashes === null => PluginLook::failed(Message::mark('folder cannot be read')),
+            count($hashes) > self::BASELINE_FILES => PluginLook::failed(Message::mark('too many files to keep a first look')),
             default => PluginLook::firstLook(new Baseline($plugin->version, $hashes)),
         };
     }
@@ -141,48 +142,102 @@ final readonly class PluginIntegrityTask implements ScanTask
     /**
      * @param  list<PluginVerdict>  $verdicts
      * @param  list<string>  $recorded
-     * @param  list<string>  $unchecked
+     * @param  list<Message>  $unchecked
      */
     private function finding(array $verdicts, int $byList, int $byBaseline, array $recorded, array $unchecked): Finding
     {
         $problems = array_values(array_filter($verdicts, static fn (PluginVerdict $verdict): bool => ! $verdict->isClean()));
-        $notes = [
-            ...($recorded === [] ? [] : [sprintf('First look kept for %d %s(s) WordPress.org does not know, nothing to compare with yet: %s', count($recorded), $this->kind, implode(', ', $recorded))]),
-            ...($unchecked === [] ? [] : [sprintf('Not checked: %s', implode(', ', $unchecked))]),
-        ];
+        $notes = $this->notes($recorded, $unchecked);
+        $lines = array_map(static fn (array $parts): Message => Message::join('', $parts), $notes);
 
         if ($problems !== []) {
             $details = [
-                ...$this->listed('Changed', $problems, static fn (PluginVerdict $verdict): array => $verdict->modified),
-                ...$this->listed('Script that does not belong', $problems, static fn (PluginVerdict $verdict): array => $verdict->unexpectedCode),
-                ...$this->listed('Missing', $problems, static fn (PluginVerdict $verdict): array => $verdict->missing),
-                ...$notes,
+                ...$this->listed(Message::mark('Changed'), $problems, static fn (PluginVerdict $verdict): array => $verdict->modified),
+                ...$this->listed(Message::mark('Script that does not belong'), $problems, static fn (PluginVerdict $verdict): array => $verdict->unexpectedCode),
+                ...$this->listed(Message::mark('Missing'), $problems, static fn (PluginVerdict $verdict): array => $verdict->missing),
+                ...$lines,
             ];
             $hard = array_filter($problems, static fn (PluginVerdict $verdict): bool => $verdict->modified !== [] || $verdict->unexpectedCode !== []);
+            $count = count($problems);
+            $slugs = implode(', ', array_map(static fn (PluginVerdict $verdict): string => $verdict->slug, array_slice($problems, 0, 5)));
 
             return Finding::fail(
                 $this->id,
                 $hard === [] ? Severity::Medium : Severity::High,
-                sprintf('%d %s changed since it was published or first seen: %s.', count($problems), count($problems) === 1 ? $this->kind.' has' : $this->kind.'s have', implode(', ', array_map(static fn (PluginVerdict $verdict): string => $verdict->slug, array_slice($problems, 0, 5)))),
+                $this->isPlugin()
+                    ? Message::plural('%d plugin has changed since it was published or first seen: %s.', '%d plugins have changed since it was published or first seen: %s.', $count, $count, $slugs)
+                    : Message::plural('%d theme has changed since it was published or first seen: %s.', '%d themes have changed since it was published or first seen: %s.', $count, $count, $slugs),
                 $details,
-                'Look at each file. If you did not change it, reinstall the '.$this->kind.' from its source after a backup, and find how it was changed. Hornet never changes a file.',
+                $this->isPlugin()
+                    ? Message::of('Look at each file. If you did not change it, reinstall the plugin from its source after a backup, and find how it was changed. Hornet never changes a file.')
+                    : Message::of('Look at each file. If you did not change it, reinstall the theme from its source after a backup, and find how it was changed. Hornet never changes a file.'),
             );
         }
 
         if ($byList + $byBaseline === 0) {
-            return Finding::unknown($this->id, $notes === [] ? sprintf('No %s could be compared.', $this->kind) : implode(' ', $notes));
+            if ($notes === []) {
+                return Finding::unknown($this->id, $this->isPlugin() ? Message::of('No plugin could be compared.') : Message::of('No theme could be compared.'));
+            }
+
+            // One flat list of parts: a stored message keeps only a few levels, and a scan that is kept adds one around this
+            $parts = [];
+
+            foreach ($notes as $note) {
+                $parts = [...$parts, ...($parts === [] ? [] : [Message::raw(' ')]), ...$note];
+            }
+
+            return Finding::unknown($this->id, Message::join('', $parts));
         }
 
         // A theme has no list on WordPress.org: only what was first seen can be matched
-        $matched = $this->kind === 'plugin' ? sprintf('%d plugin(s) match WordPress.org, %d match what was first seen', $byList, $byBaseline) : sprintf('%d %s(s) match what was first seen', $byBaseline, $this->kind);
+        $matched = $this->isPlugin()
+            ? Message::of('%d plugin(s) match WordPress.org, %d match what was first seen', $byList, $byBaseline)
+            : Message::of('%d theme(s) match what was first seen', $byBaseline);
+        $new = $recorded === [] ? [] : [Message::of(', %d first seen now', count($recorded))];
 
-        return Finding::pass($this->id, sprintf('%s%s.', $matched, $recorded === [] ? '' : sprintf(', %d first seen now', count($recorded))), $notes);
+        return Finding::pass($this->id, Message::join('', [$matched, ...$new, Message::raw('.')]), $lines);
+    }
+
+    /**
+     * What is to be said beside the verdict, each note as the parts it is made of.
+     *
+     * @param  list<string>  $recorded
+     * @param  list<Message>  $unchecked
+     * @return list<list<Message>>
+     */
+    private function notes(array $recorded, array $unchecked): array
+    {
+        $notes = [];
+
+        if ($recorded !== []) {
+            $notes[] = [$this->isPlugin()
+                ? Message::of('First look kept for %d plugin(s) WordPress.org does not know, nothing to compare with yet: %s', count($recorded), implode(', ', $recorded))
+                : Message::of('First look kept for %d theme(s) WordPress.org does not know, nothing to compare with yet: %s', count($recorded), implode(', ', $recorded))];
+        }
+
+        if ($unchecked !== []) {
+            $parts = [Message::of('Not checked:')];
+
+            foreach ($unchecked as $index => $one) {
+                $parts[] = Message::raw($index === 0 ? ' ' : ', ');
+                $parts[] = $one;
+            }
+
+            $notes[] = $parts;
+        }
+
+        return $notes;
+    }
+
+    private function isPlugin(): bool
+    {
+        return $this->kind === 'plugin';
     }
 
     /**
      * @param  list<PluginVerdict>  $problems
      * @param  callable(PluginVerdict): list<string>  $of
-     * @return list<string>
+     * @return list<Message>
      */
     private function listed(string $label, array $problems, callable $of): array
     {
@@ -190,12 +245,12 @@ final readonly class PluginIntegrityTask implements ScanTask
 
         foreach ($problems as $verdict) {
             foreach ($of($verdict) as $path) {
-                $lines[] = sprintf('%s: %s/%s', $label, $verdict->slug, $path);
+                $lines[] = Message::of('%s: %s/%s', Message::known($label), $verdict->slug, $path);
             }
         }
 
         $shown = array_slice($lines, 0, self::LISTED);
 
-        return count($lines) > self::LISTED ? [...$shown, sprintf('%s: and %d more', $label, count($lines) - self::LISTED)] : $shown;
+        return count($lines) > self::LISTED ? [...$shown, Message::of('%s: and %d more', Message::known($label), count($lines) - self::LISTED)] : $shown;
     }
 }

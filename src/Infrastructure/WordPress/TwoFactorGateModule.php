@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Closure;
 use Pollora\Hornet\Domain\Clock;
+use Pollora\Hornet\Domain\I18n\Message;
+use Pollora\Hornet\Domain\I18n\Translator;
 use Pollora\Hornet\Infrastructure\Config\AccountSettings;
 
 /**
@@ -33,6 +35,7 @@ final class TwoFactorGateModule implements Module
         private readonly Clock $clock,
         private readonly Closure $redirect,
         private readonly Closure $user,
+        private readonly ?Translator $translator = null,
     ) {}
 
     public function register(HookRegistrar $hooks): void
@@ -56,15 +59,15 @@ final class TwoFactorGateModule implements Module
             return;
         }
 
-        $message = $this->inGrace()
-            ? sprintf('Your role must set up two-factor authentication before %s.', $this->settings->enforceAfter?->format('j F Y'))
-            : 'Your role must set up two-factor authentication. Choose a method below to continue.';
+        $message = ($this->inGrace()
+            ? Message::of('Your role must set up two-factor authentication before %s.', (string) $this->settings->enforceAfter?->format('j F Y'))
+            : Message::of('Your role must set up two-factor authentication. Choose a method below to continue.'))->render($this->translator);
 
         printf(
             '<div class="notice notice-warning"><p>%s <a href="%s">%s</a></p></div>',
             esc_html($message),
             esc_url(admin_url('profile.php#two-factor-options')),
-            esc_html('Set it up'),
+            esc_html(Message::of('Set it up')->render($this->translator)),
         );
     }
 

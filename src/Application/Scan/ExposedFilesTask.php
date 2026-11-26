@@ -10,6 +10,7 @@ use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Clock;
 use Pollora\Hornet\Domain\Exceptions\TransportException;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Notification\HttpClient;
 use Pollora\Hornet\Domain\Notification\Secret;
 use Pollora\Hornet\Domain\Scan\Exposure;
@@ -72,7 +73,7 @@ final readonly class ExposedFilesTask implements ScanTask
 
         foreach ($catalog as $index => $exposure) {
             if ($deadline instanceof \DateTimeImmutable && $this->clock->now() > $deadline) {
-                $notes[] = sprintf('Not asked (out of time): %d addresses.', count($catalog) - $index);
+                $notes[] = Message::of('Not asked (out of time): %d addresses.', count($catalog) - $index);
 
                 break;
             }
@@ -88,16 +89,16 @@ final readonly class ExposedFilesTask implements ScanTask
             $answered++;
 
             if ($exposure->isExposedBy($response->status, $response->body)) {
-                $exposed[] = [$exposure->severity, sprintf('/%s%s answers, and it is %s', $exposure->root === Exposure::CONTENT ? 'wp-content/' : '', $exposure->path, $exposure->what)];
+                $exposed[] = [$exposure->severity, Message::of('/%s%s answers, and it is %s', $exposure->root === Exposure::CONTENT ? 'wp-content/' : '', $exposure->path, Message::known($exposure->what))];
             }
         }
 
         if ($answered === 0) {
-            return new TaskResult(Finding::unknown(self::ID, 'The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): nothing was asked of it.'));
+            return new TaskResult(Finding::unknown(self::ID, Message::of('The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): nothing was asked of it.')));
         }
 
         if ($answered < $asked) {
-            $notes[] = sprintf('%d of the %d addresses did not answer.', $asked - $answered, $asked);
+            $notes[] = Message::of('%d of the %d addresses did not answer.', $asked - $answered, $asked);
         }
 
         [$ran, $note] = $this->executionProbe();
@@ -113,7 +114,7 @@ final readonly class ExposedFilesTask implements ScanTask
     }
 
     /**
-     * @return array{string|null, string|null} what was found, and what is to be said when the question could not be asked
+     * @return array{Message|null, Message|null} what was found, and what is to be said when the question could not be asked
      */
     private function executionProbe(): array
     {
@@ -126,19 +127,19 @@ final readonly class ExposedFilesTask implements ScanTask
 
         // The file prints the token from its reverse, so that the token is not in its source: a server that sends the file as text cannot be mistaken for one that runs it
         if (! $this->probeFiles->plant($name, "<?php echo strrev('".strrev($token)."');\n")) {
-            return [null, 'Not asked: the uploads folder cannot be written to, so whether it runs PHP could not be tried.'];
+            return [null, Message::of('Not asked: the uploads folder cannot be written to, so whether it runs PHP could not be tried.')];
         }
 
         try {
             $response = $this->http->get(Secret::of($this->uploads.'/'.$name), [], 256, self::TIMEOUT, true);
         } catch (TransportException) {
-            return [null, 'Not asked: the server did not answer for the file put in the uploads.'];
+            return [null, Message::of('Not asked: the server did not answer for the file put in the uploads.')];
         } finally {
             $this->probeFiles->remove($name);
         }
 
         return $response->status === 200 && hash_equals($token, trim($response->body))
-            ? ['The server runs PHP that sits in the uploads folder: a file that is uploaded there is run', null]
+            ? [Message::of('The server runs PHP that sits in the uploads folder: a file that is uploaded there is run'), null]
             : [null, null];
     }
 
@@ -148,24 +149,24 @@ final readonly class ExposedFilesTask implements ScanTask
     }
 
     /**
-     * @param  list<array{Severity, string}>  $exposed
-     * @param  list<string>  $notes
+     * @param  list<array{Severity, Message}>  $exposed
+     * @param  list<Message>  $notes
      */
     private function finding(array $exposed, int $answered, array $notes): Finding
     {
         if ($exposed === []) {
-            return Finding::pass(self::ID, sprintf('None of the %d addresses asked gives away a file it should not.', $answered), $notes);
+            return Finding::pass(self::ID, Message::of('None of the %d addresses asked gives away a file it should not.', $answered), $notes);
         }
 
         usort($exposed, static fn (array $a, array $b): int => $b[0]->rank() <=> $a[0]->rank());
-        $lines = array_map(static fn (array $one): string => sprintf('[%s] %s', $one[0]->value, $one[1]), $exposed);
+        $lines = array_map(static fn (array $one): Message => Message::of('[%s] %s', $one[0]->value, $one[1]), $exposed);
 
         return Finding::fail(
             self::ID,
             $exposed[0][0],
-            sprintf('%d %s given away by the site itself.', count($exposed), count($exposed) === 1 ? 'thing is' : 'things are'),
+            Message::plural('%d thing is given away by the site itself.', '%d things are given away by the site itself.', count($exposed), count($exposed)),
             [...$lines, ...$notes],
-            'Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read.',
+            Message::of('Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read.'),
         );
     }
 }

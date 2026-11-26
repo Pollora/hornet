@@ -9,6 +9,7 @@ use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Exceptions\UnknownCheckException;
+use Pollora\Hornet\Domain\I18n\Message;
 use Throwable;
 
 /**
@@ -73,7 +74,7 @@ final readonly class Auditor
         try {
             return $check->run($environment);
         } catch (Throwable $throwable) {
-            return Finding::unknown($check->id(), sprintf('The check could not run: %s', $throwable::class));
+            return Finding::unknown($check->id(), Message::of('The check could not run: %s', $throwable::class));
         }
     }
 }

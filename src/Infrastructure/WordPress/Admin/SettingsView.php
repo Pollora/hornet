@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress\Admin;
 
 use Pollora\Hornet\Domain\Http\ContentSecurityPolicy;
 use Pollora\Hornet\Domain\Http\Hsts;
+use Pollora\Hornet\Domain\I18n\Message;
+use Pollora\Hornet\Domain\I18n\Translator;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 
 /**
@@ -20,42 +22,42 @@ final class SettingsView
     /**
      * @return list<array{group: string, key: string, label: string, on: bool, detail: string}>
      */
-    public static function build(Settings $settings): array
+    public static function build(Settings $settings, ?Translator $translator = null): array
     {
         $rows = [];
-        $add = static function (string $group, string $key, string $label, bool $on, string $detail = '') use (&$rows): void {
-            $rows[] = ['group' => $group, 'key' => $key, 'label' => $label, 'on' => $on, 'detail' => $detail];
+        $add = static function (string $group, string $key, string $label, bool $on, string|Message $detail = '') use (&$rows, $translator): void {
+            $rows[] = ['group' => Message::known($group)->render($translator), 'key' => $key, 'label' => Message::known($label)->render($translator), 'on' => $on, 'detail' => $detail instanceof Message ? $detail->render($translator) : $detail];
         };
 
-        $add('Hardening', 'hardening.xmlrpc', 'Close XML-RPC', $settings->hardening->xmlRpc);
-        $add('Hardening', 'hardening.user_enumeration', 'Hide the list of users from visitors', $settings->hardening->userEnumeration);
-        $add('Hardening', 'hardening.hide_version', 'Hide the WordPress version', $settings->hardening->hideVersion);
-        $add('Hardening', 'hardening.file_editor', 'Refuse the file editor', $settings->hardening->fileEditor);
+        $add(Message::mark('Hardening'), 'hardening.xmlrpc', Message::mark('Close XML-RPC'), $settings->hardening->xmlRpc);
+        $add(Message::mark('Hardening'), 'hardening.user_enumeration', Message::mark('Hide the list of users from visitors'), $settings->hardening->userEnumeration);
+        $add(Message::mark('Hardening'), 'hardening.hide_version', Message::mark('Hide the WordPress version'), $settings->hardening->hideVersion);
+        $add(Message::mark('Hardening'), 'hardening.file_editor', Message::mark('Refuse the file editor'), $settings->hardening->fileEditor);
 
         $headers = $settings->headers;
-        $add('Headers', 'headers.content_type_options', 'X-Content-Type-Options', $headers->contentTypeOptions);
-        $add('Headers', 'headers.referrer_policy', 'Referrer-Policy', $headers->referrerPolicy !== null, $headers->referrerPolicy ?? '');
-        $add('Headers', 'headers.permissions_policy', 'Permissions-Policy', $headers->permissionsPolicy !== null);
-        $add('Headers', 'headers.hsts', 'Strict-Transport-Security', $headers->hsts instanceof Hsts);
-        $add('Headers', 'headers.csp', 'Content-Security-Policy', $headers->csp instanceof ContentSecurityPolicy, $headers->csp instanceof ContentSecurityPolicy ? ($headers->csp->enforce ? 'enforced' : 'report only') : '');
+        $add(Message::mark('Headers'), 'headers.content_type_options', 'X-Content-Type-Options', $headers->contentTypeOptions);
+        $add(Message::mark('Headers'), 'headers.referrer_policy', 'Referrer-Policy', $headers->referrerPolicy !== null, $headers->referrerPolicy ?? '');
+        $add(Message::mark('Headers'), 'headers.permissions_policy', 'Permissions-Policy', $headers->permissionsPolicy !== null);
+        $add(Message::mark('Headers'), 'headers.hsts', 'Strict-Transport-Security', $headers->hsts instanceof Hsts);
+        $add(Message::mark('Headers'), 'headers.csp', 'Content-Security-Policy', $headers->csp instanceof ContentSecurityPolicy, $headers->csp instanceof ContentSecurityPolicy ? ($headers->csp->enforce ? Message::of('enforced') : Message::of('report only')) : '');
 
-        $add('Accounts', 'login.throttle', 'Login throttle', $settings->login->throttle, $settings->login->throttle ? sprintf('%d failures in %d seconds', $settings->login->policy->maxAttempts, $settings->login->policy->window) : '');
-        $add('Accounts', 'passwords.check_breached', 'Refuse a password found in a breach', $settings->accounts->checkBreached);
-        $add('Accounts', 'session', 'Shorter login sessions', $settings->accounts->sessionLifetime !== null || $settings->accounts->rememberLifetime !== null);
-        $add('Accounts', 'two_factor.require_roles', 'Two-factor required', $settings->accounts->requireRoles !== [], implode(', ', $settings->accounts->requireRoles));
+        $add(Message::mark('Accounts'), 'login.throttle', Message::mark('Login throttle'), $settings->login->throttle, $settings->login->throttle ? Message::of('%1$d failures in %2$d seconds', $settings->login->policy->maxAttempts, $settings->login->policy->window) : '');
+        $add(Message::mark('Accounts'), 'passwords.check_breached', Message::mark('Refuse a password found in a breach'), $settings->accounts->checkBreached);
+        $add(Message::mark('Accounts'), 'session', Message::mark('Shorter login sessions'), $settings->accounts->sessionLifetime !== null || $settings->accounts->rememberLifetime !== null);
+        $add(Message::mark('Accounts'), 'two_factor.require_roles', Message::mark('Two-factor required'), $settings->accounts->requireRoles !== [], implode(', ', $settings->accounts->requireRoles));
 
-        $add('Scanner', 'scanner.schedule', 'Scheduled scan', $settings->scanner->schedule !== 'off', $settings->scanner->schedule);
-        $add('Scanner', 'scanner.probes', 'Ask the site what it gives away', $settings->scanner->probes);
-        $add('Scanner', 'scanner.probe_uploads', 'Try to run PHP in the uploads', $settings->scanner->probeUploads);
-        $add('Scanner', 'vulnerabilities.enabled', 'Look up known vulnerabilities', $settings->vulnerabilities->enabled, $settings->vulnerabilities->enabled ? 'name and version of each plugin and theme go to www.wpvulnerability.net' : '');
+        $add(Message::mark('Scanner'), 'scanner.schedule', Message::mark('Scheduled scan'), $settings->scanner->schedule !== 'off', $settings->scanner->schedule);
+        $add(Message::mark('Scanner'), 'scanner.probes', Message::mark('Ask the site what it gives away'), $settings->scanner->probes);
+        $add(Message::mark('Scanner'), 'scanner.probe_uploads', Message::mark('Try to run PHP in the uploads'), $settings->scanner->probeUploads);
+        $add(Message::mark('Scanner'), 'vulnerabilities.enabled', Message::mark('Look up known vulnerabilities'), $settings->vulnerabilities->enabled, $settings->vulnerabilities->enabled ? Message::of('name and version of each plugin and theme go to www.wpvulnerability.net') : '');
 
-        $add('Journal', 'journal.enabled', 'Security journal', $settings->journal->enabled, $settings->journal->enabled ? sprintf('kept %d days', $settings->journal->retentionDays) : '');
-        $add('Agents', 'abilities.enabled', 'Abilities for AI agents (read)', $settings->abilities->enabled);
-        $add('Agents', 'abilities.writes', 'Abilities for AI agents (start a scan, set aside)', $settings->abilities->writes, $settings->abilities->writes ? 'at most 20 changes an hour per person' : '');
-        $add('Notifications', 'notifications.channels', 'Notification channels', $settings->notifications->channels !== [], sprintf('%d, %s', count($settings->notifications->channels), $settings->notifications->schedule));
-        $add('Audit', 'site_health', 'Site Health tests', $settings->siteHealth);
-        $add('Audit', 'disabled_checks', 'Checks turned off', $settings->disabledChecks !== [], implode(', ', $settings->disabledChecks));
-        $add('Audit', 'ignore', 'Findings set aside', $settings->ignored !== [], implode(', ', array_keys($settings->ignored)));
+        $add(Message::mark('Journal'), 'journal.enabled', Message::mark('Security journal'), $settings->journal->enabled, $settings->journal->enabled ? Message::plural('kept %d day', 'kept %d days', $settings->journal->retentionDays, $settings->journal->retentionDays) : '');
+        $add(Message::mark('Agents'), 'abilities.enabled', Message::mark('Abilities for AI agents (read)'), $settings->abilities->enabled);
+        $add(Message::mark('Agents'), 'abilities.writes', Message::mark('Abilities for AI agents (start a scan, set aside)'), $settings->abilities->writes, $settings->abilities->writes ? Message::of('at most 20 changes an hour per person') : '');
+        $add(Message::mark('Notifications'), 'notifications.channels', Message::mark('Notification channels'), $settings->notifications->channels !== [], sprintf('%d, %s', count($settings->notifications->channels), $settings->notifications->schedule));
+        $add(Message::mark('Audit'), 'site_health', Message::mark('Site Health tests'), $settings->siteHealth);
+        $add(Message::mark('Audit'), 'disabled_checks', Message::mark('Checks turned off'), $settings->disabledChecks !== [], implode(', ', $settings->disabledChecks));
+        $add(Message::mark('Audit'), 'ignore', Message::mark('Findings set aside'), $settings->ignored !== [], implode(', ', array_keys($settings->ignored)));
 
         return $rows;
     }

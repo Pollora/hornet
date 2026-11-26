@@ -4,7 +4,9 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
-- The Tools > Security screen is translated in 12 languages (fr, es, de, pt-BR, it, nl, ja, zh-CN, ko, ru, pl, tr), machine-made, to be reviewed; what the server writes stays in English. Counts use plural forms (`1 open finding.`, not `1 open findings.`). `npm run i18n` / `i18n:check`.
+- What the server writes is translated in the same 12 languages: check names, findings (summary, details, fix), scan tasks, settings rows, menu and page title, Site Health, login and password messages, the findings of notifications (site language). WP-CLI, abilities and `pollora:doctor` stay in English. Findings are stored in English with a translatable form; older stored scans are read as before. New: `Domain\I18n\Message`, `Translator`, `WpTranslator`.
+
+- The Tools > Security screen is translated in 12 languages (fr, es, de, pt-BR, it, nl, ja, zh-CN, ko, ru, pl, tr), machine-made, to be reviewed; what the server writes is translated too (see below). Counts use plural forms (`1 open finding.`, not `1 open findings.`). `npm run i18n` / `i18n:check`.
 
 From the security audit of the package (an independent reviewer, three reproductions):
 

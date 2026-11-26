@@ -7,6 +7,7 @@ namespace Pollora\Hornet\Application\Scan;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Exceptions\TransportException;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Scan\CoreChecksums;
 use Pollora\Hornet\Domain\Scan\CoreIntegrity;
 use Pollora\Hornet\Domain\Scan\CoreVerdict;
@@ -49,11 +50,11 @@ final readonly class CoreIntegrityTask implements ScanTask
         try {
             $list = $this->official->checksums($this->version, $this->locale);
         } catch (TransportException $transportException) {
-            return $this->unknown(sprintf('WordPress.org did not answer, so the core files were not compared: %s', $transportException->getMessage()), $pinned);
+            return $this->unknown(Message::of('WordPress.org did not answer, so the core files were not compared: %s', $transportException->getMessage()), $pinned);
         }
 
         if ($list === null) {
-            return $this->unknown(sprintf('WordPress.org publishes no checksums for WordPress %s: a beta, a development build or an unreleased version cannot be verified.', $scope), $pinned);
+            return $this->unknown(Message::of('WordPress.org publishes no checksums for WordPress %s: a beta, a development build or an unreleased version cannot be verified.', $scope), $pinned);
         }
 
         // A pin belongs to one release: an update, or another locale, starts over
@@ -61,7 +62,7 @@ final readonly class CoreIntegrityTask implements ScanTask
         $verdict = (new CoreIntegrity($this->files))->inspect($list, $this->allowed, $current);
 
         if (! $verdict instanceof CoreVerdict) {
-            return $this->unknown('The core files cannot be listed from here (open_basedir or permissions).', $pinned);
+            return $this->unknown(Message::of('The core files cannot be listed from here (open_basedir or permissions).'), $pinned);
         }
 
         // A file seen for the first time is pinned as it is. One that changed keeps its old pin, so that it keeps being reported.
@@ -79,17 +80,17 @@ final readonly class CoreIntegrityTask implements ScanTask
     private function finding(CoreVerdict $verdict, string $scope): Finding
     {
         $details = [
-            ...$this->listed('Changed', $verdict->modified),
-            ...$this->listed('Changed since first seen', $verdict->changedSincePinned),
-            ...$this->listed('Missing', $verdict->missing),
-            ...$this->listed('Not part of WordPress', $verdict->unexpected),
-            ...$this->listed('Could not be read', $verdict->unreadable),
+            ...$this->listed(Message::mark('Changed'), $verdict->modified),
+            ...$this->listed(Message::mark('Changed since first seen'), $verdict->changedSincePinned),
+            ...$this->listed(Message::mark('Missing'), $verdict->missing),
+            ...$this->listed(Message::mark('Not part of WordPress'), $verdict->unexpected),
+            ...$this->listed(Message::mark('Could not be read'), $verdict->unreadable),
         ];
 
         if ($verdict->isClean()) {
             $allowed = array_keys($verdict->patched);
 
-            return Finding::pass(self::ID, sprintf('The %d core files match WordPress %s on WordPress.org.', $verdict->checked, $scope), [...$details, ...($allowed === [] ? [] : [sprintf('Allowed to differ, and unchanged since first seen: %s', implode(', ', $allowed))])]);
+            return Finding::pass(self::ID, Message::of('The %d core files match WordPress %s on WordPress.org.', $verdict->checked, $scope), [...$details, ...($allowed === [] ? [] : [Message::of('Allowed to differ, and unchanged since first seen: %s', implode(', ', $allowed))])]);
         }
 
         $severity = match (true) {
@@ -103,15 +104,15 @@ final readonly class CoreIntegrityTask implements ScanTask
         return Finding::fail(
             self::ID,
             $severity,
-            sprintf('%d core %s differ from WordPress %s on WordPress.org.', $found, $found === 1 ? 'file' : 'files', $scope),
+            Message::plural('%d core file differs from WordPress %s on WordPress.org.', '%d core files differ from WordPress %s on WordPress.org.', $found, $found, $scope),
             $details,
-            'Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file.',
+            Message::of('Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file.'),
         );
     }
 
     /**
      * @param  list<string>  $paths
-     * @return list<string>
+     * @return list<Message>
      */
     private function listed(string $label, array $paths): array
     {
@@ -119,16 +120,16 @@ final readonly class CoreIntegrityTask implements ScanTask
             return [];
         }
 
-        $lines = array_map(static fn (string $path): string => $label.': '.$path, array_slice($paths, 0, self::LISTED));
+        $lines = array_map(static fn (string $path): Message => Message::of('%s: %s', Message::known($label), $path), array_slice($paths, 0, self::LISTED));
 
         if (count($paths) > self::LISTED) {
-            $lines[] = sprintf('%s: and %d more', $label, count($paths) - self::LISTED);
+            $lines[] = Message::of('%s: and %d more', Message::known($label), count($paths) - self::LISTED);
         }
 
         return $lines;
     }
 
-    private function unknown(string $reason, ?Pins $pinned): TaskResult
+    private function unknown(Message $reason, ?Pins $pinned): TaskResult
     {
         // Nothing was learned: keep the pins as they were
         return new TaskResult(Finding::unknown(self::ID, $reason), $pinned);

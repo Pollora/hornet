@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Infrastructure\WordPress\Admin;
 
 use Closure;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
+use Pollora\Hornet\Infrastructure\WordPress\I18n\WpTranslator;
 use Pollora\Hornet\Infrastructure\WordPress\Module;
 
 /**
@@ -53,8 +55,8 @@ final class AdminPageModule implements Module
     public function menu(): void
     {
         $screen = $this->network
-            ? add_submenu_page('settings.php', 'Security', 'Security', 'manage_network_options', self::PAGE, $this->render(...))
-            : add_management_page('Security', 'Security', 'manage_options', self::PAGE, $this->render(...));
+            ? add_submenu_page('settings.php', $this->title(), $this->title(), 'manage_network_options', self::PAGE, $this->render(...))
+            : add_management_page($this->title(), $this->title(), 'manage_options', self::PAGE, $this->render(...));
 
         $this->screen = is_string($screen) ? $screen : null;
     }
@@ -70,18 +72,23 @@ final class AdminPageModule implements Module
     public function render(): void
     {
         if (! AdminAccess::allowed()) {
-            wp_die(esc_html('You are not allowed to see this page.'), '', ['response' => 403]);
+            wp_die(esc_html(Message::of('You are not allowed to see this page.')->render(WpTranslator::forPackage())), '', ['response' => 403]);
         }
 
-        echo '<div class="wrap"><h1 class="wp-heading-inline">'.esc_html('Security').'</h1><hr class="wp-header-end">';
+        echo '<div class="wrap"><h1 class="wp-heading-inline">'.esc_html($this->title()).'</h1><hr class="wp-header-end">';
 
         // A script that WordPress does not know is not printed, and the page would stay empty without a word: say it
         if ($this->missing !== []) {
-            echo '<div class="notice notice-error inline"><p>'.esc_html(sprintf('This screen needs scripts that this version of WordPress does not have (%s). Use `wp hornet status` and `wp hornet scan`: they give the same information.', implode(', ', $this->missing))).'</p></div>';
+            echo '<div class="notice notice-error inline"><p>'.esc_html(Message::of('This screen needs scripts that this version of WordPress does not have (%s). Use `wp hornet status` and `wp hornet scan`: they give the same information.', implode(', ', $this->missing))->render(WpTranslator::forPackage())).'</p></div>';
         }
 
         echo '<div id="hornet-admin"></div>';
-        echo '<noscript><p>'.esc_html('This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`.').'</p></noscript></div>';
+        echo '<noscript><p>'.esc_html(Message::of('This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`.')->render(WpTranslator::forPackage())).'</p></noscript></div>';
+    }
+
+    private function title(): string
+    {
+        return Message::of('Security')->render(WpTranslator::forPackage());
     }
 
     public function enqueue(string $hook): void

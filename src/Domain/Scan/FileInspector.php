@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Domain\Scan;
 
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * Looks at one file of the content folder and says whether it would not be left unsaid. It reads; it never runs, moves or deletes anything.
@@ -45,24 +46,24 @@ final readonly class FileInspector
             $contents = $this->content->read($path, 65536) ?? '';
 
             if (preg_match(self::DANGEROUS_SETTING, $contents) === 1) {
-                $flag($inUploads ? Severity::High : Severity::Medium, $name === '.htaccess' ? 'a server setting that runs PHP code or makes a file run as PHP' : 'a setting that runs a PHP file before or after every script');
+                $flag($inUploads ? Severity::High : Severity::Medium, $name === '.htaccess' ? Message::mark('a server setting that runs PHP code or makes a file run as PHP') : Message::mark('a setting that runs a PHP file before or after every script'));
             }
         }
 
         // `shell.php.jpg` is a picture to WordPress and a script to a server that is set to run any name that holds `.php`
         if (! $script && preg_match('/\.(?:php\d?|phtml|pht|phar)\.[A-Za-z0-9]{1,6}$/iD', $name) === 1) {
-            $flag(Severity::Medium, 'a name with a PHP extension in the middle (shell.php.jpg): some servers run it');
+            $flag(Severity::Medium, Message::mark('a name with a PHP extension in the middle (shell.php.jpg): some servers run it'));
         }
 
         if ($script) {
             $contents = $this->content->read($path, self::READ);
 
             if ($inUploads && ! ($contents !== null && ScriptRules::isSilence($contents))) {
-                $flag(Severity::High, 'a PHP file in the uploads folder, where nothing should run');
+                $flag(Severity::High, Message::mark('a PHP file in the uploads folder, where nothing should run'));
             }
 
             if (str_starts_with($name, '.')) {
-                $flag(Severity::Medium, 'a hidden PHP file');
+                $flag(Severity::Medium, Message::mark('a hidden PHP file'));
             }
 
             // The first 512 KB of a larger file are read and scored: a shell is not excused by its size (a payload after the first 512 KB is not seen)

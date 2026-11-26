@@ -42,7 +42,7 @@ final readonly class ScanSnapshot
     {
         return [
             'at' => $this->at->getTimestamp(),
-            'findings' => array_map(static fn (Finding $finding): array => $finding->toArray(), $this->findings),
+            'findings' => array_map(static fn (Finding $finding): array => $finding->toStoredArray(), $this->findings),
             'pins' => array_map(static fn (Pins $pins): array => $pins->toArray(), $this->pins),
             'unfinished' => $this->unfinished,
         ];

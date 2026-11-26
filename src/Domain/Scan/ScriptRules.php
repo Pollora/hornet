@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Domain\Scan;
 
+use Pollora\Hornet\Domain\I18n\Message;
+
 /**
  * Hornet's own rules for a PHP source that does what a web shell does. They are read from the tokens of the file
  * (`token_get_all`, in PHP itself: no extension, nothing to install), not from a list of known malware: the rules
@@ -97,52 +99,52 @@ final class ScriptRules
         };
 
         if ($inputCall) {
-            $add(7, 'calls a function whose name is request input');
+            $add(7, Message::mark('calls a function whose name is request input'));
         }
 
         if ($inputCallback) {
-            $add(7, 'hands request input to a callback that runs it');
+            $add(7, Message::mark('hands request input to a callback that runs it'));
         }
 
         if ($inputInclude) {
-            $add(7, 'includes a file named by request input');
+            $add(7, Message::mark('includes a file named by request input'));
         }
 
         if ($eval) {
-            $add(4, 'eval()');
+            $add(4, Message::mark('eval()'));
         }
 
         if ($executors !== []) {
-            $add(3, 'runs a command ('.implode(', ', array_keys($executors)).')');
+            $add(3, sprintf(Message::mark('runs a command (%s)'), implode(', ', array_keys($executors))));
         }
 
         if ($backtick) {
-            $add(3, 'runs a command (backticks)');
+            $add(3, Message::mark('runs a command (backticks)'));
         }
 
         if ($regex) {
-            $add(3, 'preg_replace with the /e modifier');
+            $add(3, Message::mark('preg_replace with the /e modifier'));
         }
 
         if ($decoders !== []) {
-            $add(min(count($decoders), 3), 'decodes hidden data ('.implode(', ', array_keys($decoders)).')');
+            $add(min(count($decoders), 3), sprintf(Message::mark('decodes hidden data (%s)'), implode(', ', array_keys($decoders))));
         }
 
         if ($blob) {
-            $add(2, 'a very long string with no space in it');
+            $add(2, Message::mark('a very long string with no space in it'));
         }
 
         if ($varVar) {
-            $add(1, 'variable variables');
+            $add(1, Message::mark('variable variables'));
         }
 
         if ($varCall) {
-            $add(1, 'calls a function named by a variable');
+            $add(1, Message::mark('calls a function named by a variable'));
         }
 
         // What a visitor sends reaches something that runs it: the signature of a web shell
         if ($input && ($eval || $executors !== [] || $backtick)) {
-            $add(3, 'passes request input to it');
+            $add(3, Message::mark('passes request input to it'));
         }
 
         return new ScriptScore($score, $reasons);

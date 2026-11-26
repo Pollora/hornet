@@ -359,3 +359,1005 @@ msgstr "명령줄"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "예약된 작업"
+
+#: src/Application/Admin/StatusView.php:102
+msgid "Not scanned yet."
+msgstr "아직 검사하지 않았습니다."
+
+#: src/Application/Auditor.php:77
+msgid "The check could not run: %s"
+msgstr "점검을 실행할 수 없었습니다: %s"
+
+#: src/Application/DefaultChecks.php:56
+msgid "WordPress core files"
+msgstr "WordPress 코어 파일"
+
+#: src/Application/DefaultChecks.php:57
+msgid "Plugin files"
+msgstr "플러그인 파일"
+
+#: src/Application/DefaultChecks.php:58
+msgid "Theme files"
+msgstr "테마 파일"
+
+#: src/Application/DefaultChecks.php:59
+msgid "Suspicious files"
+msgstr "의심스러운 파일"
+
+#: src/Application/DefaultChecks.php:60
+msgid "Files given away by the site"
+msgstr "사이트가 외부에 노출하는 파일"
+
+#: src/Application/DefaultChecks.php:62
+msgid "Known vulnerabilities"
+msgstr "알려진 취약점"
+
+#: src/Application/Scan/CoreIntegrityTask.php:53
+msgid "WordPress.org did not answer, so the core files were not compared: %s"
+msgstr "WordPress.org가 응답하지 않아 코어 파일을 비교하지 못했습니다: %s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:57
+msgid "WordPress.org publishes no checksums for WordPress %s: a beta, a development build or an unreleased version cannot be verified."
+msgstr "WordPress.org은 WordPress %s의 체크섬을 공개하지 않습니다. 베타, 개발 빌드 또는 출시되지 않은 버전은 확인할 수 없습니다."
+
+#: src/Application/Scan/CoreIntegrityTask.php:65
+msgid "The core files cannot be listed from here (open_basedir or permissions)."
+msgstr "여기에서는 코어 파일 목록을 가져올 수 없습니다(open_basedir 또는 권한)."
+
+#: src/Application/Scan/CoreIntegrityTask.php:83 src/Application/Scan/PluginIntegrityTask.php:155
+msgid "Changed"
+msgstr "변경됨"
+
+#: src/Application/Scan/CoreIntegrityTask.php:84
+msgid "Changed since first seen"
+msgstr "처음 확인한 이후 변경됨"
+
+#: src/Application/Scan/CoreIntegrityTask.php:85 src/Application/Scan/PluginIntegrityTask.php:157
+msgid "Missing"
+msgstr "누락됨"
+
+#: src/Application/Scan/CoreIntegrityTask.php:86
+msgid "Not part of WordPress"
+msgstr "WordPress에 속하지 않음"
+
+#: src/Application/Scan/CoreIntegrityTask.php:87
+msgid "Could not be read"
+msgstr "읽을 수 없음"
+
+#: src/Application/Scan/CoreIntegrityTask.php:93
+msgid "The %d core files match WordPress %s on WordPress.org."
+msgstr "코어 파일 %1$d개가 WordPress.org의 WordPress %2$s과(와) 일치합니다."
+
+#: src/Application/Scan/CoreIntegrityTask.php:93
+msgid "Allowed to differ, and unchanged since first seen: %s"
+msgstr "차이가 허용되며 처음 확인한 이후 변경되지 않음: %s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:107
+msgid "%d core file differs from WordPress %s on WordPress.org."
+msgid_plural "%d core files differ from WordPress %s on WordPress.org."
+msgstr[0] "코어 파일 %1$d개가 WordPress.org의 WordPress %2$s과(와) 다릅니다."
+
+#: src/Application/Scan/CoreIntegrityTask.php:109
+msgid "Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file."
+msgstr "각 파일을 확인하세요. 직접 변경하지 않았다면 백업 후 코어를 복원하고(`wp core download --force --skip-content`) 어떻게 변경되었는지 알아내세요. 직접 변경한 것이라면 scanner.allow_modified에 추가하세요. Hornet은 어떤 파일도 변경하지 않습니다."
+
+#: src/Application/Scan/CoreIntegrityTask.php:123
+msgid "%s: %s"
+msgstr "%s: %s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:126 src/Application/Scan/PluginIntegrityTask.php:254
+msgid "%s: and %d more"
+msgstr "%s: 외 %d개"
+
+#: src/Application/Scan/ExposedFilesTask.php:76
+msgid "Not asked (out of time): %d addresses."
+msgstr "요청하지 않음(시간 초과): 주소 %d개."
+
+#: src/Application/Scan/ExposedFilesTask.php:92
+msgid "/%s%s answers, and it is %s"
+msgstr "/%s%s에서 응답합니다. 내용: %s"
+
+#: src/Application/Scan/ExposedFilesTask.php:97
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): nothing was asked of it."
+msgstr "서버에서 자기 사이트 주소로 보낸 요청에 응답이 없었습니다(DNS, 방화벽, 신뢰할 수 없는 인증서). 아무것도 확인하지 못했습니다."
+
+#: src/Application/Scan/ExposedFilesTask.php:101
+msgid "%d of the %d addresses did not answer."
+msgstr "주소 %2$d개 중 %1$d개가 응답하지 않았습니다."
+
+#: src/Application/Scan/ExposedFilesTask.php:130
+msgid "Not asked: the uploads folder cannot be written to, so whether it runs PHP could not be tried."
+msgstr "요청하지 않음: 업로드 폴더에 쓸 수 없어 그곳에서 PHP가 실행되는지 시험하지 못했습니다."
+
+#: src/Application/Scan/ExposedFilesTask.php:136
+msgid "Not asked: the server did not answer for the file put in the uploads."
+msgstr "요청하지 않음: 업로드 폴더에 넣은 파일에 대해 서버가 응답하지 않았습니다."
+
+#: src/Application/Scan/ExposedFilesTask.php:142
+msgid "The server runs PHP that sits in the uploads folder: a file that is uploaded there is run"
+msgstr "서버가 업로드 폴더에 있는 PHP를 실행합니다. 그곳에 업로드된 파일은 실행됩니다"
+
+#: src/Application/Scan/ExposedFilesTask.php:158
+msgid "None of the %d addresses asked gives away a file it should not."
+msgstr "요청한 주소 %d개 중 노출해서는 안 되는 파일을 내주는 곳은 없습니다."
+
+#: src/Application/Scan/ExposedFilesTask.php:162
+msgid "[%s] %s"
+msgstr "[%s] %s"
+
+#: src/Application/Scan/ExposedFilesTask.php:167
+msgid "%d thing is given away by the site itself."
+msgid_plural "%d things are given away by the site itself."
+msgstr[0] "사이트 자체가 %d개 항목을 외부에 노출하고 있습니다."
+
+#: src/Application/Scan/ExposedFilesTask.php:169
+msgid "Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
+msgstr "파일을 웹 루트에서 제거하거나 웹 서버에서 접근을 차단하세요(Hornet은 그곳에 아무것도 쓸 수 없습니다). 접근할 수 있었던 비밀번호, 키, 솔트는 반드시 변경해야 합니다. 이미 읽혔다고 간주하세요."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:57
+msgid "%s %s (plugin)"
+msgstr "%s %s(플러그인)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:61
+msgid "%s %s (theme)"
+msgstr "%s %s(테마)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:70
+msgid "%d more (out of time)"
+msgstr "외 %d개(시간 초과)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:91
+msgid "The vulnerability feed did not answer: nothing was checked."
+msgstr "취약점 피드가 응답하지 않아 아무것도 확인하지 못했습니다."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:95
+msgid "Not checked: %s"
+msgstr "확인하지 않음: %s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:96
+msgid "From a copy of a few days ago, the feed being down: %s"
+msgstr "피드가 중단되어 며칠 전의 사본을 사용함: %s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:109
+msgid "No known vulnerability in the %d versions that were asked about."
+msgstr "조회한 버전 %d개에서 알려진 취약점이 없습니다."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:113
+msgid "[%s] %s: %s (%s)%s"
+msgstr "[%s] %s: %s (%s)%s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47
+msgid "and %d more"
+msgstr "외 %d개"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:119
+msgid "%d known vulnerability in what the site runs."
+msgid_plural "%d known vulnerabilities in what the site runs."
+msgstr[0] "사이트에서 실행 중인 소프트웨어에 알려진 취약점이 %d개 있습니다."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:121
+msgid "Update what is listed to the version that fixes it. Where nothing fixes it yet, turn the plugin off or replace it: a vulnerability that is public is being tried on sites like yours. Hornet changes nothing."
+msgstr "목록의 항목을 수정된 버전으로 업데이트하세요. 아직 수정 버전이 없다면 플러그인을 비활성화하거나 교체하세요. 공개된 취약점은 이 사이트와 같은 곳을 대상으로 실제 공격이 시도되고 있습니다. Hornet은 아무것도 변경하지 않습니다."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:128
+msgid ", fixed in %s"
+msgstr ", %s에서 수정됨"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:129
+msgid ", not fixed"
+msgstr ", 수정되지 않음"
+
+#: src/Application/Scan/PluginIntegrityTask.php:65
+msgid "No plugin has a folder of its own."
+msgstr "자체 폴더를 가진 플러그인이 없습니다."
+
+#: src/Application/Scan/PluginIntegrityTask.php:65
+msgid "No theme has a folder of its own."
+msgstr "자체 폴더를 가진 테마가 없습니다."
+
+#: src/Application/Scan/PluginIntegrityTask.php:80
+msgid "%s (out of time)"
+msgstr "%s(시간 초과)"
+
+#: src/Application/Scan/PluginIntegrityTask.php:94
+msgid "%s (%s)"
+msgstr "%s(%s)"
+
+#: src/Application/Scan/PluginIntegrityTask.php:116
+msgid "WordPress.org did not answer"
+msgstr "WordPress.org가 응답하지 않음"
+
+#: src/Application/Scan/PluginIntegrityTask.php:122 src/Application/Scan/PluginIntegrityTask.php:130 src/Application/Scan/PluginIntegrityTask.php:136
+msgid "folder cannot be read"
+msgstr "폴더를 읽을 수 없음"
+
+#: src/Application/Scan/PluginIntegrityTask.php:137
+msgid "too many files to keep a first look"
+msgstr "파일이 너무 많아 최초 기록을 보관할 수 없음"
+
+#: src/Application/Scan/PluginIntegrityTask.php:156
+msgid "Script that does not belong"
+msgstr "원래 없어야 할 스크립트"
+
+#: src/Application/Scan/PluginIntegrityTask.php:168
+msgid "%d plugin has changed since it was published or first seen: %s."
+msgid_plural "%d plugins have changed since it was published or first seen: %s."
+msgstr[0] "플러그인 %d개가 배포 또는 처음 확인한 이후 변경되었습니다: %s."
+
+#: src/Application/Scan/PluginIntegrityTask.php:169
+msgid "%d theme has changed since it was published or first seen: %s."
+msgid_plural "%d themes have changed since it was published or first seen: %s."
+msgstr[0] "테마 %d개가 배포 또는 처음 확인한 이후 변경되었습니다: %s."
+
+#: src/Application/Scan/PluginIntegrityTask.php:172
+msgid "Look at each file. If you did not change it, reinstall the plugin from its source after a backup, and find how it was changed. Hornet never changes a file."
+msgstr "각 파일을 확인하세요. 직접 변경하지 않았다면 백업 후 원본 출처에서 플러그인을 다시 설치하고 어떻게 변경되었는지 알아내세요. Hornet은 어떤 파일도 변경하지 않습니다."
+
+#: src/Application/Scan/PluginIntegrityTask.php:173
+msgid "Look at each file. If you did not change it, reinstall the theme from its source after a backup, and find how it was changed. Hornet never changes a file."
+msgstr "각 파일을 확인하세요. 직접 변경하지 않았다면 백업 후 원본 출처에서 테마를 다시 설치하고 어떻게 변경되었는지 알아내세요. Hornet은 어떤 파일도 변경하지 않습니다."
+
+#: src/Application/Scan/PluginIntegrityTask.php:179
+msgid "No plugin could be compared."
+msgstr "비교할 수 있는 플러그인이 없었습니다."
+
+#: src/Application/Scan/PluginIntegrityTask.php:179
+msgid "No theme could be compared."
+msgstr "비교할 수 있는 테마가 없었습니다."
+
+#: src/Application/Scan/PluginIntegrityTask.php:194
+msgid "%d plugin(s) match WordPress.org, %d match what was first seen"
+msgstr "플러그인 %d개가 WordPress.org와 일치하고, %d개가 처음 확인한 내용과 일치합니다"
+
+#: src/Application/Scan/PluginIntegrityTask.php:195
+msgid "%d theme(s) match what was first seen"
+msgstr "테마 %d개가 처음 확인한 내용과 일치합니다"
+
+#: src/Application/Scan/PluginIntegrityTask.php:196
+msgid ", %d first seen now"
+msgstr ", %d개는 이번에 처음 확인함"
+
+#: src/Application/Scan/PluginIntegrityTask.php:214
+msgid "First look kept for %d plugin(s) WordPress.org does not know, nothing to compare with yet: %s"
+msgstr "WordPress.org에 없는 플러그인 %d개의 최초 기록을 보관했으며 아직 비교할 대상이 없습니다: %s"
+
+#: src/Application/Scan/PluginIntegrityTask.php:215
+msgid "First look kept for %d theme(s) WordPress.org does not know, nothing to compare with yet: %s"
+msgstr "WordPress.org에 없는 테마 %d개의 최초 기록을 보관했으며 아직 비교할 대상이 없습니다: %s"
+
+#: src/Application/Scan/PluginIntegrityTask.php:219
+msgid "Not checked:"
+msgstr "확인하지 않음:"
+
+#: src/Application/Scan/PluginIntegrityTask.php:248
+msgid "%s: %s/%s"
+msgstr "%s: %s/%s"
+
+#: src/Application/Scan/Scanner.php:138
+msgid "Not verified again on %s UTC: %s"
+msgstr "%s UTC에 다시 확인하지 못함: %s"
+
+#: src/Application/Scan/Scanner.php:151
+msgid "The scan could not run: %s"
+msgstr "검사를 실행할 수 없었습니다: %s"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:67
+msgid "The content folder cannot be listed from here (open_basedir or permissions)."
+msgstr "여기에서는 콘텐츠 폴더 목록을 가져올 수 없습니다(open_basedir 또는 권한)."
+
+#: src/Application/Scan/SuspiciousFilesTask.php:121
+msgid "The walk of the content folder is not finished: %d files looked at in this run, it goes on from %s next time."
+msgstr "콘텐츠 폴더 탐색이 끝나지 않았습니다. 이번에 파일 %d개를 확인했으며 다음에는 %s부터 계속합니다."
+
+#: src/Application/Scan/SuspiciousFilesTask.php:158
+msgid "Nothing suspicious in the %d files of the content folder that were looked at."
+msgstr "확인한 콘텐츠 폴더의 파일 %d개에서 의심스러운 항목이 없습니다."
+
+#: src/Application/Scan/SuspiciousFilesTask.php:164
+msgid "[%s] %s: "
+msgstr "[%s] %s: "
+
+#: src/Application/Scan/SuspiciousFilesTask.php:171
+msgid "and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all"
+msgstr "이전 실행에서 %d개가 더 발견되었으나 보관되지 않았습니다. 전체 목록을 보려면 명령줄에서 `wp hornet scan`을 실행하세요"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:177
+msgid "%d file in the content folder would not be left unsaid."
+msgid_plural "%d files in the content folder would not be left unsaid."
+msgstr[0] "콘텐츠 폴더의 파일 %d개는 그냥 넘길 수 없습니다."
+
+#: src/Application/Scan/SuspiciousFilesTask.php:179
+msgid "Look at each file before anything else, and do not open it in a browser. A file you know and trust can be left alone with scanner.ignore_paths. If you do not know it, find how it came there (an old plugin, a form that accepts uploads) before you remove it. Hornet never changes a file."
+msgstr "무엇보다 먼저 각 파일을 확인하되 브라우저에서 열지 마세요. 알고 있고 신뢰하는 파일은 scanner.ignore_paths로 제외할 수 있습니다. 모르는 파일이라면 삭제하기 전에 어떻게 들어왔는지(오래된 플러그인, 업로드를 받는 양식) 알아내세요. Hornet은 어떤 파일도 변경하지 않습니다."
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:25
+msgid "Default administrator name"
+msgstr "기본 관리자 이름"
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:31
+msgid "A user is named \"admin\"."
+msgstr "\"admin\"이라는 이름의 사용자가 있습니다."
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:31
+msgid "Create an administrator with another login, hand the content over to it, and delete \"admin\"."
+msgstr "다른 로그인 이름으로 관리자를 만들고 콘텐츠를 넘긴 다음 \"admin\"을 삭제하세요."
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:34
+msgid "No user is named \"admin\"."
+msgstr "\"admin\"이라는 이름의 사용자가 없습니다."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:25
+msgid "wp-config.php permissions"
+msgstr "wp-config.php 권한"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:33
+msgid "wp-config.php was not found or cannot be read from here (open_basedir, or the secrets are in the environment)."
+msgstr "wp-config.php를 찾을 수 없거나 여기에서 읽을 수 없습니다(open_basedir, 또는 비밀 값이 환경 변수에 있음)."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:39
+msgid "The server does not tell the permissions of wp-config.php."
+msgstr "서버가 wp-config.php의 권한을 알려주지 않습니다."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46
+msgid "wp-config.php can be written by any account on the server."
+msgstr "서버의 모든 계정이 wp-config.php에 쓸 수 있습니다."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46 src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51 src/Domain/Audit/Checks/ConfigPermissionsCheck.php:54
+msgid "mode %s"
+msgstr "모드 %s"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46
+msgid "chmod 640 wp-config.php (or 400)."
+msgstr "chmod 640 wp-config.php(또는 400)."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51
+msgid "wp-config.php can be read by any account on the server."
+msgstr "서버의 모든 계정이 wp-config.php를 읽을 수 있습니다."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51
+msgid "chmod 640 wp-config.php (the WordPress hardening guide advises 400 or 440)."
+msgstr "chmod 640 wp-config.php(WordPress 보안 강화 가이드는 400 또는 440을 권장합니다)."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:54
+msgid "wp-config.php is not readable by other accounts."
+msgstr "다른 계정은 wp-config.php를 읽을 수 없습니다."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:25
+msgid "Debug mode"
+msgstr "디버그 모드"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:31
+msgid "Not a production site: debug mode is not judged."
+msgstr "운영 사이트가 아니므로 디버그 모드는 판정하지 않습니다."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "PHP errors are shown to visitors."
+msgstr "PHP 오류가 방문자에게 표시됩니다."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "WP_DEBUG is on and WP_DEBUG_DISPLAY is not false"
+msgstr "WP_DEBUG가 켜져 있고 WP_DEBUG_DISPLAY가 false가 아닙니다"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "Set WP_DEBUG to false, or define('WP_DEBUG_DISPLAY', false)."
+msgstr "WP_DEBUG를 false로 설정하거나 define('WP_DEBUG_DISPLAY', false)를 지정하세요."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:44
+msgid "WP_DEBUG is on in production."
+msgstr "운영 환경에서 WP_DEBUG가 켜져 있습니다."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:44
+msgid "Define('WP_DEBUG', false) in production."
+msgstr "운영 환경에서는 define('WP_DEBUG', false)를 지정하세요."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:48
+msgid "WP_DEBUG_LOG writes wp-content/debug.log, a public URL unless the server blocks it."
+msgstr "WP_DEBUG_LOG는 wp-content/debug.log에 기록하며, 서버에서 차단하지 않으면 공개 URL이 됩니다."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:48
+msgid "Set WP_DEBUG_LOG to a path outside the web root, or to false."
+msgstr "WP_DEBUG_LOG를 웹 루트 밖의 경로로 설정하거나 false로 설정하세요."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:51
+msgid "Debug mode is off."
+msgstr "디버그 모드가 꺼져 있습니다."
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:26
+msgid "Theme and plugin editor"
+msgstr "테마 및 플러그인 편집기"
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:32
+msgid "The file editor is disabled."
+msgstr "파일 편집기가 비활성화되어 있습니다."
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:35
+msgid "pollora/headless is installed: it defines DISALLOW_FILE_EDIT only when its REST security module runs."
+msgstr "pollora/headless가 설치되어 있습니다. REST 보안 모듈이 실행될 때만 DISALLOW_FILE_EDIT를 정의합니다."
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:37
+msgid "An administrator can edit PHP files from the dashboard."
+msgstr "관리자가 알림판에서 PHP 파일을 편집할 수 있습니다."
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:37
+msgid "Turn on Hornet's `hardening.file_editor`, or define('DISALLOW_FILE_EDIT', true) in wp-config.php."
+msgstr "Hornet의 `hardening.file_editor`를 켜거나 wp-config.php에 define('DISALLOW_FILE_EDIT', true)를 지정하세요."
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:27
+msgid "Installing code from the dashboard"
+msgstr "알림판에서 코드 설치"
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:33
+msgid "Plugins, themes and updates cannot be installed from the dashboard."
+msgstr "알림판에서 플러그인, 테마, 업데이트를 설치할 수 없습니다."
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31
+msgid "Not a production site: not judged."
+msgstr "운영 사이트가 아니므로 판정하지 않습니다."
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:40
+msgid "Plugins and themes can be installed from the dashboard."
+msgstr "알림판에서 플러그인과 테마를 설치할 수 있습니다."
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:40
+msgid "If the code is deployed by Composer or a pipeline, define('DISALLOW_FILE_MODS', true). It also stops WordPress's own updates."
+msgstr "코드를 Composer나 파이프라인으로 배포한다면 define('DISALLOW_FILE_MODS', true)를 지정하세요. WordPress 자체 업데이트도 중단됩니다."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:25
+msgid "HTTPS"
+msgstr "HTTPS"
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:35
+msgid "The site address does not use HTTPS."
+msgstr "사이트 주소가 HTTPS를 사용하지 않습니다."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:35
+msgid "Serve the site over HTTPS and set the WordPress and site addresses to https://."
+msgstr "사이트를 HTTPS로 제공하고 WordPress 주소와 사이트 주소를 https://로 설정하세요."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:40
+msgid "The login and the dashboard are not forced onto HTTPS."
+msgstr "로그인과 알림판에 HTTPS가 강제되지 않습니다."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:40
+msgid "Define('FORCE_SSL_ADMIN', true) in wp-config.php."
+msgstr "wp-config.php에 define('FORCE_SSL_ADMIN', true)를 지정하세요."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:43
+msgid "The site uses HTTPS, and the dashboard is forced onto it."
+msgstr "사이트가 HTTPS를 사용하며 알림판에도 강제 적용됩니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:27
+msgid "Login protection"
+msgstr "로그인 보호"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:33
+msgid "pollora/portcullis is installed: it guards the login, locks out brute force and stops account enumeration."
+msgstr "pollora/portcullis가 설치되어 있습니다. 로그인을 보호하고 무차별 대입 공격을 차단하며 계정 열거를 막습니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "The login throttle is on but cannot tell visitors apart: every request seems to come from one private address, the proxy or load balancer in front of the site, so it refuses to lock anybody."
+msgstr "로그인 시도 제한이 켜져 있지만 방문자를 구분할 수 없습니다. 모든 요청이 사설 주소 하나(사이트 앞단의 프록시 또는 로드 밸런서)에서 오는 것처럼 보이므로 아무도 잠그지 않습니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "Locking that address would lock every visitor out at once."
+msgstr "그 주소를 잠그면 모든 방문자가 한꺼번에 차단됩니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "List the proxy in `network.trusted_proxies` (and set `network.forwarded_header` if it is not X-Forwarded-For)."
+msgstr "프록시를 `network.trusted_proxies`에 추가하세요(X-Forwarded-For가 아니라면 `network.forwarded_header`도 설정하세요)."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "The login throttle sees a forwarding header from an address that is not a trusted proxy. If the site is behind a CDN or a proxy, visitors share its address and can lock each other out."
+msgstr "로그인 시도 제한이 신뢰할 수 있는 프록시가 아닌 주소에서 온 전달 헤더를 발견했습니다. 사이트가 CDN이나 프록시 뒤에 있다면 방문자들이 그 주소를 공유하여 서로를 잠글 수 있습니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "Requests are counted under the address that opened the connection, which a header cannot change."
+msgstr "요청은 연결을 연 주소를 기준으로 집계되며, 이 주소는 헤더로 바꿀 수 없습니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "List the CDN or proxy in `network.trusted_proxies`."
+msgstr "CDN 또는 프록시를 `network.trusted_proxies`에 추가하세요."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:40
+msgid "Hornet's login throttle is on: an address that fails too often is locked out for a while."
+msgstr "Hornet의 로그인 시도 제한이 켜져 있습니다. 너무 자주 실패한 주소는 한동안 잠깁니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "No login protection from Pollora was found."
+msgstr "Pollora의 로그인 보호가 발견되지 않았습니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "Another plugin or the server may protect the login: Hornet only knows pollora/portcullis and its own throttle."
+msgstr "다른 플러그인이나 서버가 로그인을 보호하고 있을 수 있습니다. Hornet은 pollora/portcullis와 자체 시도 제한만 인식합니다."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "composer require pollora/portcullis, or turn on Hornet's `login.throttle`."
+msgstr "composer require pollora/portcullis를 실행하거나 Hornet의 `login.throttle`를 켜세요."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:39
+msgid "PHP version"
+msgstr "PHP 버전"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:48
+msgid "PHP %s no longer gets security fixes."
+msgstr "PHP %s은(는) 더 이상 보안 수정이 제공되지 않습니다."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:48
+msgid "Move the site to PHP 8.3 or later."
+msgstr "사이트를 PHP 8.3 이상으로 옮기세요."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:54
+msgid "PHP %s is newer than the support table of this version of Hornet."
+msgstr "PHP %s은(는) 이 Hornet 버전의 지원 표보다 최신 버전입니다."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:61
+msgid "PHP %s no longer gets security fixes (since %s)."
+msgstr "PHP %s은(는) 더 이상 보안 수정이 제공되지 않습니다(%s부터)."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:61
+msgid "Move the site to a supported PHP branch."
+msgstr "사이트를 지원 중인 PHP 브랜치로 옮기세요."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:65 src/Domain/Audit/Checks/PhpVersionCheck.php:68
+msgid "PHP %s gets security fixes until %s."
+msgstr "PHP %s은(는) %s까지 보안 수정이 제공됩니다."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:65
+msgid "Plan the move to a newer PHP branch."
+msgstr "더 새로운 PHP 브랜치로 이전할 계획을 세우세요."
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:34
+msgid "Authentication keys and salts"
+msgstr "인증 키와 솔트"
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:50
+msgid "The eight keys and salts are set."
+msgstr "8개의 키와 솔트가 모두 설정되어 있습니다."
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:56
+msgid "%d of the 8 keys and salts is missing, shorter than 32 characters, or the sample value."
+msgid_plural "%d of the 8 keys and salts are missing, shorter than 32 characters, or the sample value."
+msgstr[0] "8개의 키와 솔트 중 %d개가 없거나 32자 미만이거나 예시 값입니다."
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:58
+msgid "Generate new ones at https://api.wordpress.org/secret-key/1.1/salt/ and replace them in wp-config.php (or the Bedrock .env). This logs everyone out."
+msgstr "https://api.wordpress.org/secret-key/1.1/salt/에서 새 값을 생성해 wp-config.php(또는 Bedrock의 .env)에서 교체하세요. 모든 사용자가 로그아웃됩니다."
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:47
+msgid "The site was never scanned: run `wp hornet scan`."
+msgstr "사이트를 한 번도 검사하지 않았습니다. `wp hornet scan`을 실행하세요."
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:53
+msgid "The last scan did not cover this: run `wp hornet scan`."
+msgstr "마지막 검사에는 이 항목이 포함되지 않았습니다. `wp hornet scan`을 실행하세요."
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "The last scan is more than %d day old, so it says little about the files today."
+msgid_plural "The last scan is more than %d days old, so it says little about the files today."
+msgstr[0] "마지막 검사 후 %d일이 넘게 지나 현재 파일에 대해 알려주는 것이 거의 없습니다."
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "Last scan: %s UTC"
+msgstr "마지막 검사: %s UTC"
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "Run `wp hornet scan`."
+msgstr "`wp hornet scan`을 실행하세요."
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:26
+msgid "Two-factor authentication"
+msgstr "2단계 인증"
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:32
+msgid "The Two-Factor plugin is active."
+msgstr "Two-Factor 플러그인이 활성화되어 있습니다."
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:35
+msgid "The Two-Factor plugin is not active."
+msgstr "Two-Factor 플러그인이 활성화되어 있지 않습니다."
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:35
+msgid "Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles."
+msgstr "Two-Factor 플러그인을 설치하세요. 이후 버전의 Hornet은 선택한 역할에 이를 필수로 요구합니다."
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:29
+msgid "Two-factor authentication of administrators"
+msgstr "관리자의 2단계 인증"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:37
+msgid "The Two-Factor plugin is not active: whether administrators use a second factor cannot be told."
+msgstr "Two-Factor 플러그인이 활성화되어 있지 않아 관리자가 2차 인증을 사용하는지 알 수 없습니다."
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:41
+msgid "Every administrator has set up two-factor authentication."
+msgstr "모든 관리자가 2단계 인증을 설정했습니다."
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
+msgid "user #%d"
+msgstr "사용자 #%d"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:53
+msgid "%d administrator has not set up two-factor authentication."
+msgid_plural "%d administrators have not set up two-factor authentication."
+msgstr[0] "관리자 %d명이 2단계 인증을 설정하지 않았습니다."
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:55
+msgid "Ask them to set it up in their profile, or turn on Hornet's `two_factor.require_roles` to send them there."
+msgstr "프로필에서 설정하도록 요청하거나 Hornet의 `two_factor.require_roles`를 켜서 그곳으로 안내하세요."
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:25
+msgid "User list in the REST API"
+msgstr "REST API의 사용자 목록"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:31
+msgid "Whether the REST API lists users to visitors could not be found out from here."
+msgstr "REST API가 방문자에게 사용자 목록을 보여주는지 여기에서는 알 수 없었습니다."
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "The REST API lists the users of the site to visitors."
+msgstr "REST API가 방문자에게 사이트의 사용자 목록을 보여줍니다."
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "/wp/v2/users answers an anonymous request"
+msgstr "/wp/v2/users가 익명 요청에 응답합니다"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "Turn on Hornet's `hardening.user_enumeration`, or use pollora/headless."
+msgstr "Hornet의 `hardening.user_enumeration`을 켜거나 pollora/headless를 사용하세요."
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:33
+msgid "The REST API does not list users to visitors."
+msgstr "REST API가 방문자에게 사용자 목록을 보여주지 않습니다."
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:25
+msgid "WordPress version"
+msgstr "WordPress 버전"
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:33
+msgid "WordPress %s: no update was found at the last check."
+msgstr "WordPress %s: 마지막 확인 시 업데이트가 없었습니다."
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:36
+msgid "WordPress %s is installed, %s is available."
+msgstr "WordPress %s이(가) 설치되어 있으며 %s을(를) 사용할 수 있습니다."
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:36
+msgid "Update WordPress core (a Composer project: composer update johnpbloch/wordpress-core)."
+msgstr "WordPress 코어를 업데이트하세요(Composer 프로젝트: composer update johnpbloch/wordpress-core)."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:36
+msgid "XML-RPC is closed: no method answers."
+msgstr "XML-RPC가 닫혀 있어 응답하는 메서드가 없습니다."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:37
+msgid "XML-RPC refuses logins, but pingbacks and other methods that need none still answer."
+msgstr "XML-RPC는 로그인을 거부하지만 핑백 등 로그인이 필요 없는 메서드는 여전히 응답합니다."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:37
+msgid "Close it altogether with Hornet's `hardening.xmlrpc`, or return an empty list from the `xmlrpc_methods` filter."
+msgstr "Hornet의 `hardening.xmlrpc`로 완전히 닫거나 `xmlrpc_methods` 필터에서 빈 목록을 반환하세요."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:38
+msgid "XML-RPC is open."
+msgstr "XML-RPC가 열려 있습니다."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:38
+msgid "Close it unless Jetpack or the mobile app needs it: Hornet's `hardening.xmlrpc` does it, or use pollora/headless."
+msgstr "Jetpack이나 모바일 앱에 필요하지 않다면 닫으세요. Hornet의 `hardening.xmlrpc`로 닫거나 pollora/headless를 사용하세요."
+
+#: src/Domain/Exceptions/SetAsideException.php:30
+msgid "There is no check \"%s\"."
+msgstr "\"%s\" 점검은 없습니다."
+
+#: src/Domain/Exceptions/SetAsideException.php:35
+msgid "Say why, in at least %d characters: a finding that is set aside without a reason is a finding that is forgotten."
+msgstr "%d자 이상으로 사유를 적으세요. 사유 없이 제외한 발견 항목은 잊히는 발견 항목입니다."
+
+#: src/Domain/Exceptions/SetAsideException.php:40
+msgid "\"%s\" is set aside in the settings file, which wins over the screen: change it there."
+msgstr "\"%s\"은(는) 설정 파일에서 제외되어 있으며 이 화면보다 우선합니다. 그곳에서 변경하세요."
+
+#: src/Domain/Exceptions/SetAsideException.php:45
+msgid "\"%s\" has nothing open to set aside."
+msgstr "\"%s\"에는 제외할 미해결 항목이 없습니다."
+
+#: src/Domain/Scan/ExposureCatalog.php:30
+msgid "environment variables (passwords, keys)"
+msgstr "환경 변수(비밀번호, 키)"
+
+#: src/Domain/Scan/ExposureCatalog.php:33 src/Domain/Scan/ExposureCatalog.php:34
+msgid "the Git repository (the source of the site)"
+msgstr "Git 저장소(사이트 소스)"
+
+#: src/Domain/Scan/ExposureCatalog.php:37
+msgid "a copy of wp-config.php (database password, keys)"
+msgstr "wp-config.php 사본(데이터베이스 비밀번호, 키)"
+
+#: src/Domain/Scan/ExposureCatalog.php:41
+msgid "a copy of the database"
+msgstr "데이터베이스 사본"
+
+#: src/Domain/Scan/ExposureCatalog.php:45
+msgid "an archive of the site"
+msgstr "사이트 압축 파일"
+
+#: src/Domain/Scan/ExposureCatalog.php:48
+msgid "the password file of the web server"
+msgstr "웹 서버의 비밀번호 파일"
+
+#: src/Domain/Scan/ExposureCatalog.php:49 src/Domain/Scan/ExposureCatalog.php:50
+msgid "phpinfo() (the PHP and server configuration)"
+msgstr "phpinfo()(PHP 및 서버 구성)"
+
+#: src/Domain/Scan/ExposureCatalog.php:51
+msgid "a PHP error log (paths, queries)"
+msgstr "PHP 오류 로그(경로, 쿼리)"
+
+#: src/Domain/Scan/ExposureCatalog.php:52
+msgid "composer.json (the list of what the site runs)"
+msgstr "composer.json(사이트에서 실행하는 항목 목록)"
+
+#: src/Domain/Scan/ExposureCatalog.php:54
+msgid "the WordPress debug log (paths, queries, sometimes data)"
+msgstr "WordPress 디버그 로그(경로, 쿼리, 때로는 데이터)"
+
+#: src/Domain/Scan/ExposureCatalog.php:55
+msgid "a listing of the uploads folder"
+msgstr "업로드 폴더의 목록"
+
+#: src/Domain/Scan/ExposureCatalog.php:56
+msgid "a listing of the plugins folder"
+msgstr "플러그인 폴더의 목록"
+
+#: src/Domain/Scan/FileInspector.php:49
+msgid "a server setting that runs PHP code or makes a file run as PHP"
+msgstr "PHP 코드를 실행하거나 파일을 PHP로 실행되게 하는 서버 설정"
+
+#: src/Domain/Scan/FileInspector.php:49
+msgid "a setting that runs a PHP file before or after every script"
+msgstr "모든 스크립트 전후에 PHP 파일을 실행하는 설정"
+
+#: src/Domain/Scan/FileInspector.php:55
+msgid "a name with a PHP extension in the middle (shell.php.jpg): some servers run it"
+msgstr "중간에 PHP 확장자가 있는 이름(shell.php.jpg): 일부 서버는 이를 실행합니다"
+
+#: src/Domain/Scan/FileInspector.php:62
+msgid "a PHP file in the uploads folder, where nothing should run"
+msgstr "아무것도 실행되어서는 안 되는 업로드 폴더에 있는 PHP 파일"
+
+#: src/Domain/Scan/FileInspector.php:66
+msgid "a hidden PHP file"
+msgstr "숨겨진 PHP 파일"
+
+#: src/Domain/Scan/ScriptRules.php:102
+msgid "calls a function whose name is request input"
+msgstr "이름이 요청 입력인 함수를 호출함"
+
+#: src/Domain/Scan/ScriptRules.php:106
+msgid "hands request input to a callback that runs it"
+msgstr "요청 입력을 이를 실행하는 콜백에 전달함"
+
+#: src/Domain/Scan/ScriptRules.php:110
+msgid "includes a file named by request input"
+msgstr "요청 입력으로 이름이 지정된 파일을 포함함"
+
+#: src/Domain/Scan/ScriptRules.php:114
+msgid "eval()"
+msgstr "eval()"
+
+#: src/Domain/Scan/ScriptRules.php:118 src/Domain/Scan/Suspicion.php:81
+msgid "runs a command (%s)"
+msgstr "명령을 실행함(%s)"
+
+#: src/Domain/Scan/ScriptRules.php:122
+msgid "runs a command (backticks)"
+msgstr "명령을 실행함(백틱)"
+
+#: src/Domain/Scan/ScriptRules.php:126
+msgid "preg_replace with the /e modifier"
+msgstr "/e 수정자를 사용한 preg_replace"
+
+#: src/Domain/Scan/ScriptRules.php:130 src/Domain/Scan/Suspicion.php:85
+msgid "decodes hidden data (%s)"
+msgstr "숨겨진 데이터를 디코딩함(%s)"
+
+#: src/Domain/Scan/ScriptRules.php:134
+msgid "a very long string with no space in it"
+msgstr "공백이 없는 매우 긴 문자열"
+
+#: src/Domain/Scan/ScriptRules.php:138
+msgid "variable variables"
+msgstr "가변 변수"
+
+#: src/Domain/Scan/ScriptRules.php:142
+msgid "calls a function named by a variable"
+msgstr "변수로 이름이 지정된 함수를 호출함"
+
+#: src/Domain/Scan/ScriptRules.php:147
+msgid "passes request input to it"
+msgstr "요청 입력을 거기에 전달함"
+
+#: src/Domain/Scan/Suspicion.php:56
+msgid "reads like a web shell (score %d):"
+msgstr "웹 셸로 보임(점수 %d):"
+
+#: src/Infrastructure/WordPress/Admin/AdminBackend.php:114
+msgid "A scan is already in progress."
+msgstr "이미 검사가 진행 중입니다."
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:75
+msgid "You are not allowed to see this page."
+msgstr "이 페이지를 볼 권한이 없습니다."
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:82
+msgid "This screen needs scripts that this version of WordPress does not have (%s). Use `wp hornet status` and `wp hornet scan`: they give the same information."
+msgstr "이 화면에는 이 WordPress 버전에 없는 스크립트가 필요합니다(%s). `wp hornet status`와 `wp hornet scan`을 사용하세요. 같은 정보를 제공합니다."
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:86
+msgid "This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`."
+msgstr "이 화면에는 JavaScript가 필요합니다. `wp hornet status`와 `wp hornet scan`에서 같은 정보를 확인할 수 있습니다."
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:91 src/Infrastructure/WordPress/SiteHealthModule.php:99 src/Infrastructure/WordPress/SiteHealthModule.php:100 src/Infrastructure/WordPress/SiteHealthModule.php:101
+msgid "Security"
+msgstr "보안"
+
+#: src/Infrastructure/WordPress/Admin/AdminRestModule.php:171
+msgid "There is no such channel."
+msgstr "그런 채널은 없습니다."
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:32 src/Infrastructure/WordPress/Admin/SettingsView.php:33 src/Infrastructure/WordPress/Admin/SettingsView.php:34 src/Infrastructure/WordPress/Admin/SettingsView.php:35
+msgid "Hardening"
+msgstr "보안 강화"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:32
+msgid "Close XML-RPC"
+msgstr "XML-RPC 닫기"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:33
+msgid "Hide the list of users from visitors"
+msgstr "방문자에게 사용자 목록 숨기기"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:34
+msgid "Hide the WordPress version"
+msgstr "WordPress 버전 숨기기"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:35
+msgid "Refuse the file editor"
+msgstr "파일 편집기 거부"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:38 src/Infrastructure/WordPress/Admin/SettingsView.php:39 src/Infrastructure/WordPress/Admin/SettingsView.php:40 src/Infrastructure/WordPress/Admin/SettingsView.php:41 src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "Headers"
+msgstr "헤더"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "enforced"
+msgstr "강제 적용"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "report only"
+msgstr "보고만"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44 src/Infrastructure/WordPress/Admin/SettingsView.php:45 src/Infrastructure/WordPress/Admin/SettingsView.php:46 src/Infrastructure/WordPress/Admin/SettingsView.php:47
+msgid "Accounts"
+msgstr "계정"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44
+msgid "Login throttle"
+msgstr "로그인 시도 제한"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44
+msgid "%1$d failures in %2$d seconds"
+msgstr "%2$d초 안에 %1$d회 실패"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:45
+msgid "Refuse a password found in a breach"
+msgstr "유출에서 발견된 비밀번호 거부"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:46
+msgid "Shorter login sessions"
+msgstr "로그인 세션 단축"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:47
+msgid "Two-factor required"
+msgstr "2단계 인증 필수"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:49 src/Infrastructure/WordPress/Admin/SettingsView.php:50 src/Infrastructure/WordPress/Admin/SettingsView.php:51 src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "Scanner"
+msgstr "검사기"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:49
+msgid "Scheduled scan"
+msgstr "예약 검사"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:50
+msgid "Ask the site what it gives away"
+msgstr "사이트가 무엇을 노출하는지 요청해 보기"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:51
+msgid "Try to run PHP in the uploads"
+msgstr "업로드 폴더에서 PHP 실행 시도"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "Look up known vulnerabilities"
+msgstr "알려진 취약점 조회"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "name and version of each plugin and theme go to www.wpvulnerability.net"
+msgstr "각 플러그인과 테마의 이름과 버전이 www.wpvulnerability.net으로 전송됩니다"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
+msgid "Security journal"
+msgstr "보안 기록"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
+msgid "kept %d day"
+msgid_plural "kept %d days"
+msgstr[0] "%d일 동안 보관"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:55 src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Agents"
+msgstr "에이전트"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:55
+msgid "Abilities for AI agents (read)"
+msgstr "AI 에이전트용 Abilities(읽기)"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Abilities for AI agents (start a scan, set aside)"
+msgstr "AI 에이전트용 Abilities(검사 시작, 제외)"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "at most 20 changes an hour per person"
+msgstr "1인당 1시간에 최대 20회 변경"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:57
+msgid "Notification channels"
+msgstr "알림 채널"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58 src/Infrastructure/WordPress/Admin/SettingsView.php:59 src/Infrastructure/WordPress/Admin/SettingsView.php:60
+msgid "Audit"
+msgstr "점검"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
+msgid "Site Health tests"
+msgstr "사이트 상태 테스트"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
+msgid "Checks turned off"
+msgstr "끈 점검"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:60
+msgid "Findings set aside"
+msgstr "제외한 발견 항목"
+
+#: src/Infrastructure/WordPress/LoginThrottleModule.php:77 src/Infrastructure/WordPress/PasswordModule.php:53
+msgid "Error:"
+msgstr "오류:"
+
+#: src/Infrastructure/WordPress/LoginThrottleModule.php:78
+msgid "Too many failed login attempts. Try again in %d minute(s)."
+msgstr "로그인 실패가 너무 많습니다. %d분 후에 다시 시도하세요."
+
+#: src/Infrastructure/WordPress/PasswordModule.php:53
+msgid "That password appears in known data breaches. Choose another one."
+msgstr "그 비밀번호는 알려진 데이터 유출에 포함되어 있습니다. 다른 비밀번호를 선택하세요."
+
+#: src/Infrastructure/WordPress/SiteHealthModule.php:75
+msgid "The check did not run."
+msgstr "점검이 실행되지 않았습니다."
+
+#: src/Infrastructure/WordPress/SiteHealthModule.php:94
+msgid "Set aside on purpose: %s"
+msgstr "의도적으로 제외함: %s"
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:63
+msgid "Your role must set up two-factor authentication before %s."
+msgstr "회원님의 역할은 %s 전에 2단계 인증을 설정해야 합니다."
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:64
+msgid "Your role must set up two-factor authentication. Choose a method below to continue."
+msgstr "회원님의 역할은 2단계 인증을 설정해야 합니다. 계속하려면 아래에서 방법을 선택하세요."
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:70
+msgid "Set it up"
+msgstr "설정하기"
