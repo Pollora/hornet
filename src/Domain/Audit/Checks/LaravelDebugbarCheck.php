@@ -12,8 +12,8 @@ use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\I18n\Message;
 
 /**
- * Debugbar shows the queries, the session and the request of a page. Only on Pollora; Debugbar that merely follows APP_DEBUG
- * is judged by the Debug mode check.
+ * Debugbar shows the queries, the session and the request of a page. It keeps itself off in production unless it is forced:
+ * only that is reported. Only on Pollora.
  */
 final readonly class LaravelDebugbarCheck implements Check
 {
@@ -35,10 +35,14 @@ final readonly class LaravelDebugbarCheck implements Check
             return Finding::pass($this->id(), Message::of('Not a production site: not judged.'));
         }
 
-        if ($this->application->debugbarForced()) {
-            return Finding::fail($this->id(), Severity::High, Message::of('Debugbar is turned on in production: it shows the queries, the session and the request to visitors.'), [], Message::of('Remove DEBUGBAR_ENABLED=true from the .env of the production site, and install Debugbar as a development dependency only.'));
+        if (! $this->application->debugbarForced()) {
+            return Finding::pass($this->id(), Message::of('Debugbar is not forced on.'));
         }
 
-        return Finding::pass($this->id(), Message::of('Debugbar is not turned on by its own setting.'));
+        $fix = Message::of('Remove DEBUGBAR_FORCE_ALLOW_ENABLE and DEBUGBAR_ENABLED from the .env of the production site, and install Debugbar as a development dependency only.');
+
+        return $this->application->debugbarRestricted()
+            ? Finding::fail($this->id(), Severity::Medium, Message::of('Debugbar is forced on in production: the accounts allowed to see it get the queries, the session and the request.'), [], $fix)
+            : Finding::fail($this->id(), Severity::High, Message::of('Debugbar is forced on in production: it shows the queries, the session and the request to visitors.'), [], $fix);
     }
 }

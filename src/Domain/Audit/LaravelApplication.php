@@ -16,6 +16,9 @@ interface LaravelApplication
     /** Whether the application key is set. Its value is never read by a check. */
     public function hasKey(): bool;
 
-    /** Whether Debugbar is installed and turned on by its own setting, whatever `app.debug` says. */
+    /** Whether Debugbar is installed and set to run even on a production site. */
     public function debugbarForced(): bool;
+
+    /** Whether Debugbar is only shown to signed-in users with a capability (pollora/debugbar does that). */
+    public function debugbarRestricted(): bool;
 }

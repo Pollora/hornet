@@ -1509,18 +1509,6 @@ msgstr "Impostate APP_DEBUG=false nel .env del sito di produzione."
 msgid "Laravel Debugbar"
 msgstr "Laravel Debugbar"
 
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
-msgid "Debugbar is turned on in production: it shows the queries, the session and the request to visitors."
-msgstr "Debugbar è attiva in produzione: mostra ai visitatori le query, la sessione e la richiesta."
-
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
-msgid "Remove DEBUGBAR_ENABLED=true from the .env of the production site, and install Debugbar as a development dependency only."
-msgstr "Rimuovete DEBUGBAR_ENABLED=true dal .env del sito di produzione e installate Debugbar solo come dipendenza di sviluppo."
-
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
-msgid "Debugbar is not turned on by its own setting."
-msgstr "Debugbar non è attivata dalla propria impostazione."
-
 #: src/Domain/Audit/Checks/LaravelKeyCheck.php:28
 msgid "Laravel application key"
 msgstr "Chiave dell'applicazione Laravel"
@@ -1592,3 +1580,19 @@ msgstr "PHP non mostra i suoi errori."
 #: src/Domain/Scan/ExposureCatalog.php:70
 msgid "the log of the Laravel application (paths, queries, sometimes data)"
 msgstr "il log dell'applicazione Laravel (percorsi, query, a volte dati)"
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Debugbar is not forced on."
+msgstr "Debugbar non è forzata."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
+msgid "Remove DEBUGBAR_FORCE_ALLOW_ENABLE and DEBUGBAR_ENABLED from the .env of the production site, and install Debugbar as a development dependency only."
+msgstr "Rimuovete DEBUGBAR_FORCE_ALLOW_ENABLE e DEBUGBAR_ENABLED dal .env del sito di produzione e installate Debugbar solo come dipendenza di sviluppo."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:45
+msgid "Debugbar is forced on in production: the accounts allowed to see it get the queries, the session and the request."
+msgstr "Debugbar è forzata in produzione: gli account autorizzati a vederla ottengono le query, la sessione e la richiesta."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:46
+msgid "Debugbar is forced on in production: it shows the queries, the session and the request to visitors."
+msgstr "Debugbar è forzata in produzione: mostra ai visitatori le query, la sessione e la richiesta."

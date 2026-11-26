@@ -30,11 +30,26 @@ final readonly class ConfiguredApplication implements LaravelApplication
         return is_string($key) && trim($key) !== '';
     }
 
+    /**
+     * Debugbar 4 refuses to run in production, whatever `debugbar.enabled` says, unless `debugbar.force_allow_enable` is on.
+     * Debugbar 3 has no such key and runs wherever `debugbar.enabled` says so. Neither key exists when it is not installed.
+     */
     public function debugbarForced(): bool
     {
-        // The key only exists when Debugbar is installed; null means it follows app.debug
         $enabled = ($this->config)('debugbar.enabled');
+        $force = ($this->config)('debugbar.force_allow_enable');
 
-        return $enabled !== null && filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+        if ($force === null) {
+            return $enabled !== null && filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        // Forced: it then runs when its own setting says so, or follows app.debug
+        return filter_var($force, FILTER_VALIDATE_BOOLEAN) && ($enabled === null ? $this->debug() : filter_var($enabled, FILTER_VALIDATE_BOOLEAN));
+    }
+
+    public function debugbarRestricted(): bool
+    {
+        // The key comes with pollora/debugbar, which shows the bar to the users who have the capability only
+        return ($this->config)('debugbar-pollora.capability') !== null;
     }
 }
