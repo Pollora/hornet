@@ -425,3 +425,107 @@ it('reads the application passwords of administrators, and nothing but their dat
         wp_delete_user($reader);
     }
 });
+
+it('reads the plugin updates WordPress stored, and drops one that was applied since', function (): void {
+    require_once ABSPATH.'wp-admin/includes/plugin.php';
+    $files = ['hornet-behind/hornet-behind.php' => '1.0', 'hornet-done.php' => '2.0', 'hornet-custom/hornet-custom.php' => '1.0'];
+
+    foreach ($files as $file => $version) {
+        wp_mkdir_p(dirname(WP_PLUGIN_DIR.'/'.$file));
+        file_put_contents(WP_PLUGIN_DIR.'/'.$file, "<?php\n/**\n * Plugin Name: {$file}\n * Version: {$version}\n */\n");
+    }
+
+    $before = get_site_transient('update_plugins');
+    $active = get_option('active_plugins', []);
+
+    try {
+        wp_clean_plugins_cache(false);
+        // The filter that asks WordPress.org again must not answer here
+        add_filter('pre_site_transient_update_plugins', $stored = static fn (): object => (object) [
+            'last_checked' => 1_790_000_000,
+            'response' => [
+                'hornet-behind/hornet-behind.php' => (object) ['new_version' => '1.1'],
+                'hornet-done.php' => (object) ['new_version' => '2.0'],
+            ],
+            'no_update' => [],
+        ]);
+        $updates = (new WordPressEnvironment)->pluginUpdates();
+
+        expect($updates['checked'])->toBe(1_790_000_000)
+            ->and($updates['waiting'])->toBe([['slug' => 'hornet-behind', 'installed' => '1.0', 'available' => '1.1']])
+            ->and($updates['unfollowed'])->toBeGreaterThanOrEqual(1);
+
+        // One of them is active: it is not reported
+        update_option('active_plugins', [...(array) $active, 'hornet-done.php']);
+        $inactive = (new WordPressEnvironment)->inactivePlugins();
+
+        is_multisite()
+            ? expect($inactive)->toBeNull()
+            : expect($inactive)->toContain('hornet-behind', 'hornet-custom')->not->toContain('hornet-done');
+
+        remove_filter('pre_site_transient_update_plugins', $stored);
+        add_filter('pre_site_transient_update_plugins', '__return_null');
+        add_filter('site_transient_update_plugins', '__return_false');
+
+        expect((new WordPressEnvironment)->pluginUpdates())->toBeNull();
+    } finally {
+        remove_all_filters('pre_site_transient_update_plugins');
+        remove_all_filters('site_transient_update_plugins');
+        update_option('active_plugins', $active);
+
+        foreach (array_keys($files) as $file) {
+            unlink(WP_PLUGIN_DIR.'/'.$file);
+
+            if (dirname($file) !== '.') {
+                rmdir(WP_PLUGIN_DIR.'/'.dirname($file));
+            }
+        }
+
+        wp_clean_plugins_cache(false);
+        expect(get_site_transient('update_plugins'))->toEqual($before);
+    }
+});
+
+it('keeps the active theme, its parent and one default theme, and reports the others', function (): void {
+    $root = get_theme_root();
+    $themes = ['hornet-parent' => '', 'hornet-child' => 'hornet-parent', 'hornet-left' => ''];
+
+    foreach ($themes as $slug => $parent) {
+        wp_mkdir_p($root.'/'.$slug);
+        file_put_contents($root.'/'.$slug.'/style.css', "/*\nTheme Name: {$slug}\nVersion: 1.0\n".($parent === '' ? '' : "Template: {$parent}\n").'*/');
+        file_put_contents($root.'/'.$slug.'/index.php', "<?php\n");
+    }
+
+    $before = get_stylesheet();
+
+    try {
+        wp_clean_themes_cache();
+        switch_theme('hornet-child');
+        $unused = (new WordPressEnvironment)->unusedThemes();
+
+        is_multisite()
+            ? expect($unused)->toBeNull()
+            : expect($unused)->toContain('hornet-left')->not->toContain('hornet-child', 'hornet-parent', wp_get_theme(WP_DEFAULT_THEME)->exists() ? WP_DEFAULT_THEME : WP_Theme::get_core_default_theme()->get_stylesheet());
+
+        // A theme written for the site is not looked up
+        $settings = Settings::fromArray(['scanner' => ['own_themes' => ['hornet-left']]]);
+        add_filter('pre_site_transient_update_themes', static fn (): object => (object) [
+            'last_checked' => 1_790_000_000,
+            'response' => ['hornet-left' => ['new_version' => '9.0'], 'hornet-parent' => ['new_version' => '1.2']],
+            'no_update' => [],
+        ]);
+
+        expect((new WordPressEnvironment($settings))->themeUpdates()['waiting'])->toBe([['slug' => 'hornet-parent', 'installed' => '1.0', 'available' => '1.2']]);
+    } finally {
+        remove_all_filters('pre_site_transient_update_themes');
+        switch_theme($before);
+
+        foreach (array_keys($themes) as $slug) {
+            unlink($root.'/'.$slug.'/style.css');
+            unlink($root.'/'.$slug.'/index.php');
+            rmdir($root.'/'.$slug);
+        }
+
+        wp_clean_themes_cache();
+    }
+});

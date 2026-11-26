@@ -313,7 +313,7 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: admin/src/util.js:22 src/Infrastructure/WordPress/SiteHealthModule.php:98
+#: admin/src/util.js:22 src/Infrastructure/WordPress/SiteHealthModule.php:106
 msgid "Not verified"
 msgstr ""
 
@@ -429,27 +429,27 @@ msgstr ""
 msgid "The check could not run: %s"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:67
+#: src/Application/DefaultChecks.php:73
 msgid "WordPress core files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:68
+#: src/Application/DefaultChecks.php:74
 msgid "Plugin files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:69
+#: src/Application/DefaultChecks.php:75
 msgid "Theme files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:70
+#: src/Application/DefaultChecks.php:76
 msgid "Suspicious files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:71
+#: src/Application/DefaultChecks.php:77
 msgid "Files given away by the site"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:73
+#: src/Application/DefaultChecks.php:79
 msgid "Known vulnerabilities"
 msgstr ""
 
@@ -589,7 +589,7 @@ msgstr ""
 msgid "[%s] %s: %s (%s)%s"
 msgstr ""
 
-#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:64 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47 src/Domain/Audit/Checks/UpdatesCheck.php:76
 msgid "and %d more"
 msgstr ""
 
@@ -897,7 +897,7 @@ msgstr ""
 msgid "Plugins, themes and updates cannot be installed from the dashboard."
 msgstr ""
 
-#: src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31 src/Domain/Audit/Checks/LaravelDebugbarCheck.php:35 src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:32
+#: src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:46 src/Domain/Audit/Checks/LaravelDebugbarCheck.php:35 src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:32
 msgid "Not a production site: not judged."
 msgstr ""
 
@@ -931,6 +931,46 @@ msgstr ""
 
 #: src/Domain/Audit/Checks/HttpsCheck.php:43
 msgid "The site uses HTTPS, and the dashboard is forced onto it."
+msgstr ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive themes"
+msgstr ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive plugins"
+msgstr ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:52
+msgid "On a network another site may use what this one does not: not judged."
+msgstr ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "No theme is installed without a use."
+msgstr ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "Every installed plugin is active."
+msgstr ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:71
+msgid "%d theme is installed and not used."
+msgid_plural "%d themes are installed and not used."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:72
+msgid "%d plugin is installed and not active."
+msgid_plural "%d plugins are installed and not active."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:75
+msgid "Delete the themes you do not use (or composer remove them). Keep the active one, its parent and one default theme."
+msgstr ""
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
+msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
 msgstr ""
 
 #: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:29
@@ -1183,6 +1223,66 @@ msgstr[1] ""
 msgid "Ask them to set it up in their profile, or turn on Hornet's `two_factor.require_roles` to send them there."
 msgstr ""
 
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Theme updates"
+msgstr ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Plugin updates"
+msgstr ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:52
+msgid "WordPress has not looked for theme updates in the last 7 days."
+msgstr ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:53
+msgid "WordPress has not looked for plugin updates in the last 7 days."
+msgstr ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:60
+msgid "%d theme is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d themes are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:61
+msgid "%d plugin is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d plugins are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No theme update is waiting."
+msgstr ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No plugin update is waiting."
+msgstr ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:71
+msgid "%s: %s is installed, %s is available."
+msgstr ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:83
+msgid "%d theme has an update waiting."
+msgid_plural "%d themes have an update waiting."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:84
+msgid "%d plugin has an update waiting."
+msgid_plural "%d plugins have an update waiting."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:87
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-theme/<slug>), after reading what changed."
+msgstr ""
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:88
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-plugin/<slug>), after reading what changed."
+msgstr ""
+
 #: src/Domain/Audit/Checks/UserEnumerationCheck.php:25
 msgid "User list in the REST API"
 msgstr ""
@@ -1427,7 +1527,7 @@ msgstr ""
 msgid "This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`."
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:91 src/Infrastructure/WordPress/SiteHealthModule.php:99 src/Infrastructure/WordPress/SiteHealthModule.php:100 src/Infrastructure/WordPress/SiteHealthModule.php:101
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:91 src/Infrastructure/WordPress/SiteHealthModule.php:107 src/Infrastructure/WordPress/SiteHealthModule.php:108 src/Infrastructure/WordPress/SiteHealthModule.php:109
 msgid "Security"
 msgstr ""
 
@@ -1573,11 +1673,11 @@ msgstr ""
 msgid "That password appears in known data breaches. Choose another one."
 msgstr ""
 
-#: src/Infrastructure/WordPress/SiteHealthModule.php:75
+#: src/Infrastructure/WordPress/SiteHealthModule.php:83
 msgid "The check did not run."
 msgstr ""
 
-#: src/Infrastructure/WordPress/SiteHealthModule.php:94
+#: src/Infrastructure/WordPress/SiteHealthModule.php:102
 msgid "Set aside on purpose: %s"
 msgstr ""
 

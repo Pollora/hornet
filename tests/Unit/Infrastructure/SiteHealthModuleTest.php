@@ -27,7 +27,10 @@ it('adds one direct test per check and keeps the tests that were there', functio
 
     expect($tests['direct'])->toHaveKey('existing')->toHaveKey('hornet_salts')->toHaveKey('hornet_xml_rpc')
         ->and($tests['async'])->toBe(['a' => 1])
-        ->and(array_keys($tests['direct']))->toHaveCount(1 + count(DefaultChecks::all()));
+        // Site Health tests the plugins and the themes itself
+        ->and($tests['direct'])->not->toHaveKey('hornet_plugin_updates')->not->toHaveKey('hornet_theme_updates')
+        ->not->toHaveKey('hornet_inactive_plugins')->not->toHaveKey('hornet_inactive_themes')
+        ->and(array_keys($tests['direct']))->toHaveCount(1 + count(DefaultChecks::all()) - 4);
 });
 
 it('leaves out a disabled check', function (): void {

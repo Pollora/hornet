@@ -4,6 +4,8 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+- **Four more checks**: `plugin-updates` and `theme-updates` (from the lists WordPress stored; unknown after 7 days without a look), `inactive-plugins` and `inactive-themes` (production only, not on a network). Not repeated in Site Health, which tests the same. `Environment` has four more methods.
+
 - **Five new checks**: `open-registration` (anyone can register with a role that may write, change others' content or take the site over), `application-passwords` (those of administrators unused for 90 days), `php-error-display` (PHP shows errors although `WP_DEBUG` is off; not on Pollora), and on Pollora only `laravel-app-key` and `laravel-debugbar`. `debug-mode` names `APP_DEBUG` there. The scan asks for `storage/logs/laravel.log` on Pollora only. New `Domain\Audit\LaravelApplication`; `Environment` has three more methods.
 - Dates of the screen (journal, findings set aside) follow the format and time zone of the site, in the language of the person.
 

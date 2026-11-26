@@ -1576,3 +1576,97 @@ msgstr "本番環境で Debugbar が強制的に有効です。閲覧を許可�
 #: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:46
 msgid "Debugbar is forced on in production: it shows the queries, the session and the request to visitors."
 msgstr "本番環境で Debugbar が強制的に有効です。クエリ、セッション、リクエストが訪問者に表示されます。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Plugin updates"
+msgstr "プラグインの更新"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Theme updates"
+msgstr "テーマの更新"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:53
+msgid "WordPress has not looked for plugin updates in the last 7 days."
+msgstr "WordPress は過去 7 日間、プラグインの更新を確認していません。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:52
+msgid "WordPress has not looked for theme updates in the last 7 days."
+msgstr "WordPress は過去 7 日間、テーマの更新を確認していません。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:60
+msgid "%d theme is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d themes are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "%d 件のテーマは WordPress.org の管理外です。更新はご自身で確認してください。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:61
+msgid "%d plugin is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d plugins are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "%d 件のプラグインは WordPress.org の管理外です。更新はご自身で確認してください。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No theme update is waiting."
+msgstr "適用待ちのテーマ更新はありません。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No plugin update is waiting."
+msgstr "適用待ちのプラグイン更新はありません。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:71
+msgid "%s: %s is installed, %s is available."
+msgstr "%s: %s がインストールされています。%s が利用可能です。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:83
+msgid "%d theme has an update waiting."
+msgid_plural "%d themes have an update waiting."
+msgstr[0] "%d 件のテーマに更新があります。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:84
+msgid "%d plugin has an update waiting."
+msgid_plural "%d plugins have an update waiting."
+msgstr[0] "%d 件のプラグインに更新があります。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:87
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-theme/<slug>), after reading what changed."
+msgstr "変更内容を確認してから、ダッシュボードか Composer（composer update wpackagist-theme/<slug>）で更新してください。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:88
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-plugin/<slug>), after reading what changed."
+msgstr "変更内容を確認してから、ダッシュボードか Composer（composer update wpackagist-plugin/<slug>）で更新してください。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive themes"
+msgstr "未使用のテーマ"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive plugins"
+msgstr "停止中のプラグイン"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:52
+msgid "On a network another site may use what this one does not: not judged."
+msgstr "ネットワークでは、このサイトで使わないものを別のサイトが使う場合があるため、判定しません。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "No theme is installed without a use."
+msgstr "使われていないテーマはありません。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "Every installed plugin is active."
+msgstr "インストール済みのプラグインはすべて有効です。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:71
+msgid "%d theme is installed and not used."
+msgid_plural "%d themes are installed and not used."
+msgstr[0] "%d 件のテーマがインストールされたまま使われていません。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:72
+msgid "%d plugin is installed and not active."
+msgid_plural "%d plugins are installed and not active."
+msgstr[0] "%d 件のプラグインがインストールされたまま停止しています。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:75
+msgid "Delete the themes you do not use (or composer remove them). Keep the active one, its parent and one default theme."
+msgstr "使わないテーマは削除してください（または composer remove）。有効なテーマ、その親テーマ、デフォルトテーマ 1 つは残してください。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
+msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
+msgstr "使わないものは削除してください（または composer remove）。ファイルにはアクセスでき、脆弱性も残ります。"

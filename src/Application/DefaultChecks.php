@@ -17,6 +17,7 @@ use Pollora\Hornet\Domain\Audit\Checks\DebugModeCheck;
 use Pollora\Hornet\Domain\Audit\Checks\FileEditorCheck;
 use Pollora\Hornet\Domain\Audit\Checks\FileModsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\HttpsCheck;
+use Pollora\Hornet\Domain\Audit\Checks\InactiveExtensionsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\LaravelDebugbarCheck;
 use Pollora\Hornet\Domain\Audit\Checks\LaravelKeyCheck;
 use Pollora\Hornet\Domain\Audit\Checks\LoginProtectionCheck;
@@ -27,6 +28,7 @@ use Pollora\Hornet\Domain\Audit\Checks\SaltsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\ScanResultCheck;
 use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCheck;
 use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCoverageCheck;
+use Pollora\Hornet\Domain\Audit\Checks\UpdatesCheck;
 use Pollora\Hornet\Domain\Audit\Checks\UserEnumerationCheck;
 use Pollora\Hornet\Domain\Audit\Checks\WordPressUpdateCheck;
 use Pollora\Hornet\Domain\Audit\Checks\XmlRpcCheck;
@@ -55,6 +57,10 @@ final class DefaultChecks
             new ConfigPermissionsCheck,
             new PhpVersionCheck,
             new WordPressUpdateCheck,
+            UpdatesCheck::plugins(),
+            UpdatesCheck::themes(),
+            InactiveExtensionsCheck::plugins(),
+            InactiveExtensionsCheck::themes(),
             new XmlRpcCheck,
             new UserEnumerationCheck,
             new AdminAccountCheck,

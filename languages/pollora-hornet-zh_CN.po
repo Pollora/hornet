@@ -1576,3 +1576,97 @@ msgstr "生产环境中强制开启了 Debugbar：有权查看的账户可以获
 #: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:46
 msgid "Debugbar is forced on in production: it shows the queries, the session and the request to visitors."
 msgstr "生产环境中强制开启了 Debugbar：它会向访问者显示查询、会话和请求。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Plugin updates"
+msgstr "插件更新"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Theme updates"
+msgstr "主题更新"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:53
+msgid "WordPress has not looked for plugin updates in the last 7 days."
+msgstr "WordPress 在最近 7 天内未检查过插件更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:52
+msgid "WordPress has not looked for theme updates in the last 7 days."
+msgstr "WordPress 在最近 7 天内未检查过主题更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:60
+msgid "%d theme is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d themes are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "有 %d 个主题不受 WordPress.org 跟踪：请自行检查其更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:61
+msgid "%d plugin is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d plugins are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "有 %d 个插件不受 WordPress.org 跟踪：请自行检查其更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No theme update is waiting."
+msgstr "没有待处理的主题更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No plugin update is waiting."
+msgstr "没有待处理的插件更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:71
+msgid "%s: %s is installed, %s is available."
+msgstr "%s：已安装 %s，可用版本 %s。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:83
+msgid "%d theme has an update waiting."
+msgid_plural "%d themes have an update waiting."
+msgstr[0] "有 %d 个主题待更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:84
+msgid "%d plugin has an update waiting."
+msgid_plural "%d plugins have an update waiting."
+msgstr[0] "有 %d 个插件待更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:87
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-theme/<slug>), after reading what changed."
+msgstr "阅读变更内容后，通过仪表盘或 Composer（composer update wpackagist-theme/<slug>）进行更新。"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:88
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-plugin/<slug>), after reading what changed."
+msgstr "阅读变更内容后，通过仪表盘或 Composer（composer update wpackagist-plugin/<slug>）进行更新。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive themes"
+msgstr "未使用的主题"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive plugins"
+msgstr "未启用的插件"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:52
+msgid "On a network another site may use what this one does not: not judged."
+msgstr "在多站点网络中，本站未用的内容可能被其他站点使用：不作评判。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "No theme is installed without a use."
+msgstr "没有安装后闲置的主题。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "Every installed plugin is active."
+msgstr "所有已安装的插件均已启用。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:71
+msgid "%d theme is installed and not used."
+msgid_plural "%d themes are installed and not used."
+msgstr[0] "有 %d 个主题已安装但未使用。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:72
+msgid "%d plugin is installed and not active."
+msgid_plural "%d plugins are installed and not active."
+msgstr[0] "有 %d 个插件已安装但未启用。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:75
+msgid "Delete the themes you do not use (or composer remove them). Keep the active one, its parent and one default theme."
+msgstr "请删除不使用的主题（或执行 composer remove）。保留当前主题、其父主题和一个默认主题。"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
+msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
+msgstr "请删除不使用的内容（或执行 composer remove）：其文件仍可被访问，漏洞也随之存在。"

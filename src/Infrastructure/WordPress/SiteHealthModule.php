@@ -41,6 +41,9 @@ final class SiteHealthModule implements Module
         return $this->built ??= $this->auditor instanceof Closure ? ($this->auditor)() : $this->auditor;
     }
 
+    /** The checks whose subject Site Health already covers. */
+    private const array SAID_BY_WORDPRESS = ['plugin-updates', 'theme-updates', 'inactive-plugins', 'inactive-themes'];
+
     public function register(HookRegistrar $hooks): void
     {
         $hooks->addFilter('site_status_tests', $this->tests(...));
@@ -55,6 +58,11 @@ final class SiteHealthModule implements Module
         $direct = is_array($tests['direct'] ?? null) ? $tests['direct'] : [];
 
         foreach ($this->auditor()->checks() as $check) {
+            // Site Health has its own tests of the plugins and the themes: the same news is not said twice on one page
+            if (in_array($check->id(), self::SAID_BY_WORDPRESS, true)) {
+                continue;
+            }
+
             $direct['hornet_'.str_replace('-', '_', $check->id())] = [
                 'label' => 'Hornet: '.Message::known($check->label())->render($this->translator),
                 'test' => fn (): array => $this->result($check),
