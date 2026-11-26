@@ -30,12 +30,15 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `login-protection` | whether [pollora/portcullis](https://github.com/Pollora/portcullis) is there |
 | `two-factor` | whether the official Two-Factor plugin is active |
 | `two-factor-coverage` | the administrators who have not set up a second factor, named by number |
+| `new-administrators` | in production, accounts that became administrators in the last 14 days (registered, or promoted when the [journal](#the-journal) is on: without it an older account that is promoted is not seen). A question, not a fault: it goes by itself |
+| `dormant-administrators` | in production, administrators not seen for 90 days. WordPress keeps no date of the last login: Hornet notes it on the administrator's account (`hornet_last_login`, personal data, given and erased by the privacy tools), and also reads open sessions, application passwords and the journal. `unknown` until it has watched for 90 days. Turning the check off stops the noting |
 | `application-passwords` | application passwords of administrators unused for 90 days (only their dates are read) |
 | `core-integrity` | what the last [scan](#scan-the-files) found about the WordPress core files (it reads the result: it never scans) |
 | `plugin-integrity` | what the last scan found about the files of the plugins |
 | `theme-integrity` | what the last scan found about the files of the themes |
 | `suspicious-files` | what the last scan found in the content folder (scripts in the uploads, web shells) |
 | `exposed-files` | what the site gave away when the last scan asked it (a `.env`, a repository, a backup, a log) |
+| `security-headers` | in production, the headers of the home page as the last scan received them, whoever set them: `nosniff`, a protection against framing, HSTS on HTTPS. And the headers Hornet is set to send that do not arrive. Content-Security-Policy and Referrer-Policy are not judged. Off with `scanner.probes` |
 
 Site Health shows these checks too, except the four on plugins and themes, which it tests itself.
 

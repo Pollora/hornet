@@ -47,6 +47,8 @@ login() {
 
 # --- setup -------------------------------------------------------------------------------------------------
 mkdir -p "$WP_DIR/wp-content/mu-plugins"
+# What an earlier run in the same folder left behind
+rm -f "$WP_DIR"/wp-content/mu-plugins/zz-*.php
 printf '<?php\nrequire "%s/vendor/autoload.php";\nrequire "%s/stubs/pollora-hornet.php";\n' "$PKG" "$PKG" > "$WP_DIR/wp-content/mu-plugins/hornet.php"
 wp option update home "$BASE" >/dev/null
 wp option update siteurl "$BASE" >/dev/null
@@ -236,6 +238,9 @@ scan_show() { sed 's/^/        | /' /tmp/hornet-scan.out; return 1; }
 scan_says() { needle=$1; shift; scan_try "$@"; { [ "$scan_status" -eq 0 ] && grep -qF "$needle" /tmp/hornet-scan.out; } || scan_show; }
 # scan_fails_with <text> [scan args]: the scan ends with a failing exit code and says the text
 scan_fails_with() { needle=$1; shift; scan_try "$@"; { [ "$scan_status" -ne 0 ] && grep -qF "$needle" /tmp/hornet-scan.out; } || scan_show; }
+# From here the test site sends the headers the scan asks for, as a site that is set up does: a "clean" scan stays clean
+send_headers() { printf "<?php\nadd_action('template_redirect', static function () { header('X-Content-Type-Options: nosniff'); header('X-Frame-Options: SAMEORIGIN'); });\n" > "$WP_DIR/wp-content/mu-plugins/zz-e2e-headers.php"; }
+send_headers
 core_file="$WP_DIR/wp-includes/version.php"
 cp "$core_file" /tmp/hornet-version.php.orig
 cli option delete hornet_scan >/dev/null 2>&1
@@ -372,6 +377,21 @@ check "with the probes off nothing is asked of the site"             sh -c "php 
 reset
 cli option delete hornet_scan >/dev/null 2>&1
 cli option delete hornet_baseline_themes >/dev/null 2>&1
+
+# --- 8d-bis. the security headers a visitor gets ---------------------------------------------------------------
+echo "8d-bis. security headers"
+scan_prints() { needle=$1; scan_try; grep -qF "$needle" /tmp/hornet-scan.out || scan_show; }
+reset
+rm -f "$WP_DIR/wp-content/mu-plugins/zz-e2e-headers.php"
+check "a site that sends none is told which"                          scan_prints 'Nothing stops another site from showing this one in a frame'
+configure "array('headers' => array('content_type_options' => true, 'csp' => array('mode' => 'enforce', 'policy' => \"frame-ancestors 'self'\")))"
+check "with Hornet sending them, the home page passes"                scan_prints 'The home page sends the security headers that are judged'
+printf "<?php\nadd_action('template_redirect', static function () { header_remove('X-Content-Type-Options'); }, PHP_INT_MAX);\n" > "$WP_DIR/wp-content/mu-plugins/zz-strip.php"
+check "a header that is set and does not arrive is said so"           scan_prints 'X-Content-Type-Options is turned on in the settings of Hornet but does not reach the visitor'
+rm -f "$WP_DIR/wp-content/mu-plugins/zz-strip.php"
+reset
+send_headers
+cli option delete hornet_scan >/dev/null 2>&1
 
 # --- 8e. known vulnerabilities: the real feed, opt-in -------------------------------------------------------
 echo "8e. vulnerabilities"

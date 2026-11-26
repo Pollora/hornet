@@ -8,12 +8,14 @@ use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
 use Pollora\Hornet\Application\Scan\ExposedFilesTask;
 use Pollora\Hornet\Application\Scan\KnownVulnerabilitiesTask;
 use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
+use Pollora\Hornet\Application\Scan\SecurityHeadersTask;
 use Pollora\Hornet\Application\Scan\SuspiciousFilesTask;
 use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Checks\AdminAccountCheck;
 use Pollora\Hornet\Domain\Audit\Checks\ApplicationPasswordsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\ConfigPermissionsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\DebugModeCheck;
+use Pollora\Hornet\Domain\Audit\Checks\DormantAdministratorsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\FileEditorCheck;
 use Pollora\Hornet\Domain\Audit\Checks\FileModsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\HttpsCheck;
@@ -21,6 +23,7 @@ use Pollora\Hornet\Domain\Audit\Checks\InactiveExtensionsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\LaravelDebugbarCheck;
 use Pollora\Hornet\Domain\Audit\Checks\LaravelKeyCheck;
 use Pollora\Hornet\Domain\Audit\Checks\LoginProtectionCheck;
+use Pollora\Hornet\Domain\Audit\Checks\NewAdministratorsCheck;
 use Pollora\Hornet\Domain\Audit\Checks\OpenRegistrationCheck;
 use Pollora\Hornet\Domain\Audit\Checks\PhpErrorDisplayCheck;
 use Pollora\Hornet\Domain\Audit\Checks\PhpVersionCheck;
@@ -69,12 +72,15 @@ final class DefaultChecks
             new TwoFactorCheck,
             new TwoFactorCoverageCheck,
             new ApplicationPasswordsCheck,
+            new NewAdministratorsCheck,
+            new DormantAdministratorsCheck,
             // What the last scan found: the audit reads it and never scans
             new ScanResultCheck(CoreIntegrityTask::ID, Message::mark('WordPress core files')),
             new ScanResultCheck(PluginIntegrityTask::ID, Message::mark('Plugin files')),
             new ScanResultCheck(PluginIntegrityTask::THEMES_ID, Message::mark('Theme files')),
             new ScanResultCheck(SuspiciousFilesTask::ID, Message::mark('Suspicious files')),
             new ScanResultCheck(ExposedFilesTask::ID, Message::mark('Files given away by the site')),
+            new ScanResultCheck(SecurityHeadersTask::ID, Message::mark('Security headers')),
             // Only when the owner opted in: without it the scan never asks, and the check would be "not scanned" for ever
             ...($vulnerabilities ? [new ScanResultCheck(KnownVulnerabilitiesTask::ID, Message::mark('Known vulnerabilities'))] : []),
         ];

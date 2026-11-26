@@ -9,9 +9,13 @@ namespace Pollora\Hornet\Domain\Notification;
  */
 final readonly class HttpResponse
 {
+    /**
+     * @param  array<string, string>  $headers  the headers of the answer, their names in lower case; empty when the caller does not need them
+     */
     public function __construct(
         public int $status,
         public ?int $retryAfter = null,
         public string $body = '',
+        public array $headers = [],
     ) {}
 }

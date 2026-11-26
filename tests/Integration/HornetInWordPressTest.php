@@ -9,12 +9,19 @@ use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
 use Pollora\Hornet\Domain\Exceptions\TransportException;
+use Pollora\Hornet\Domain\Journal\Event;
+use Pollora\Hornet\Domain\Journal\EventTypes;
+use Pollora\Hornet\Domain\Journal\Source;
 use Pollora\Hornet\Domain\Login\Attempts;
 use Pollora\Hornet\Domain\Notification\Secret;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\Login\TransientAttemptStore;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
 use Pollora\Hornet\Infrastructure\WordPress\HardeningModule;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalSchema;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
+use Pollora\Hornet\Infrastructure\WordPress\LoginDates;
+use Pollora\Hornet\Infrastructure\WordPress\LoginDatesModule;
 use Pollora\Hornet\Infrastructure\WordPress\ThrottleProblemNote;
 use Pollora\Hornet\Infrastructure\WordPress\TwoFactorEnrollment;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
@@ -527,5 +534,55 @@ it('keeps the active theme, its parent and one default theme, and reports the ot
         }
 
         wp_clean_themes_cache();
+    }
+});
+
+it('reads when each administrator was last seen, from what it noted and from the open sessions', function (): void {
+    $user = wp_insert_user(['user_login' => 'second-admin', 'user_email' => 'second-admin@example.test', 'user_pass' => wp_generate_password(), 'role' => 'administrator']);
+    $reader = wp_insert_user(['user_login' => 'just-a-reader', 'user_pass' => wp_generate_password(), 'role' => 'subscriber']);
+    $dates = new LoginDates;
+    $find = static fn (): array => array_values(array_filter((new WordPressEnvironment)->administrators(), static fn (array $one): bool => $one['user'] === $user))[0];
+
+    try {
+        expect($find()['last_seen'])->toBeNull()
+            ->and($find()['since'])->toBeGreaterThan(time() - 3600)
+            ->and(array_column((new WordPressEnvironment)->administrators(), 'user'))->not->toContain($reader);
+
+        WP_Session_Tokens::get_instance($user)->create(time() + 3600);
+        expect($find()['last_seen'])->toBeGreaterThan(time() - 60);
+
+        WP_Session_Tokens::get_instance($user)->destroy_all();
+        $module = new LoginDatesModule($dates);
+        $module->loggedIn('second-admin', get_user_by('id', $user));
+        $module->loggedIn('just-a-reader', get_user_by('id', $reader));
+
+        expect($find()['last_seen'])->toBeGreaterThan(time() - 60)
+            ->and($dates->since())->not->toBeNull()
+            ->and($dates->last($reader))->toBeNull()
+            ->and($module->export(get_user_by('id', $user)->user_email)['data'])->toHaveCount(1)
+            ->and($module->erase(get_user_by('id', $user)->user_email)['items_removed'])->toBeTrue()
+            ->and($dates->last($user))->toBeNull();
+    } finally {
+        require_once ABSPATH.'wp-admin/includes/user.php';
+        wp_delete_user($user);
+        wp_delete_user($reader);
+    }
+});
+
+it('takes the date of a promotion from the journal, for an older account made an administrator', function (): void {
+    $settings = Settings::fromArray(['journal' => ['enabled' => true]]);
+    JournalSchema::ensure();
+    $user = wp_insert_user(['user_login' => 'promoted-later', 'user_pass' => wp_generate_password(), 'role' => 'subscriber', 'user_registered' => '2020-01-01 00:00:00']);
+    $find = static fn (WordPressEnvironment $environment): int => array_values(array_filter($environment->administrators(), static fn (array $one): bool => $one['user'] === $user))[0]['since'];
+
+    try {
+        (new WP_User($user))->set_role('administrator');
+        (new TableJournal)->record(new Event(new DateTimeImmutable('now', new DateTimeZone('UTC')), EventTypes::USER_ROLE, Source::Cli, 1, 'admin', 'user:'.$user, '', ['from' => 'subscriber', 'to' => 'administrator']));
+
+        expect($find(new WordPressEnvironment))->toBeLessThan(time() - 86400 * 365)
+            ->and($find(new WordPressEnvironment($settings)))->toBeGreaterThan(time() - 3600);
+    } finally {
+        require_once ABSPATH.'wp-admin/includes/user.php';
+        wp_delete_user($user);
     }
 });

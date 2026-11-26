@@ -105,6 +105,11 @@ final class Bootstrap
                 $modules[] = new SiteHealthModule(static fn (): Auditor => AuditorFactory::forWordPress($settings), $environment, WpTranslator::forPackage());
             }
 
+            // On every request: a login happens on a page of the site, not of the dashboard
+            if (! in_array('dormant-administrators', $settings->disabledChecks, true)) {
+                $modules[] = new LoginDatesModule(new LoginDates);
+            }
+
             if ($settings->hardening->isActive()) {
                 $modules[] = new HardeningModule($settings->hardening);
             }

@@ -1670,3 +1670,90 @@ msgstr "请删除不使用的主题（或执行 composer remove）。保留当�
 #: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
 msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
 msgstr "请删除不使用的内容（或执行 composer remove）：其文件仍可被访问，漏洞也随之存在。"
+
+#: src/Application/DefaultChecks.php:83
+msgid "Security headers"
+msgstr "安全响应头"
+
+#: src/Application/Scan/SecurityHeadersTask.php:64
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): its headers were not seen."
+msgstr "网站未能从服务器响应自身地址（DNS、防火墙、不受信任的证书）：未能看到其响应头。"
+
+#: src/Application/Scan/SecurityHeadersTask.php:68
+msgid "The home page answered %d: its headers were not judged."
+msgstr "首页返回 %d：未评判其响应头。"
+
+#: src/Application/Scan/SecurityHeadersTask.php:77
+msgid "X-Content-Type-Options: nosniff is missing (a browser may take a file for something else than it is)."
+msgstr "缺少 X-Content-Type-Options: nosniff（浏览器可能把文件当作其他类型处理）。"
+
+#: src/Application/Scan/SecurityHeadersTask.php:81
+msgid "Nothing stops another site from showing this one in a frame (X-Frame-Options, or frame-ancestors)."
+msgstr "没有任何措施阻止其他网站在框架中嵌入本站（X-Frame-Options 或 frame-ancestors）。"
+
+#: src/Application/Scan/SecurityHeadersTask.php:85
+msgid "Strict-Transport-Security is missing (a browser may still come over plain HTTP)."
+msgstr "缺少 Strict-Transport-Security（浏览器仍可能通过明文 HTTP 访问）。"
+
+#: src/Application/Scan/SecurityHeadersTask.php:92
+msgid "%s is turned on in the settings of Hornet but does not reach the visitor: something in front (a page cache served without PHP, a proxy) drops it."
+msgstr "%s 已在 Hornet 设置中开启，但未送达访问者：前端的某个环节（不经过 PHP 的页面缓存、代理）将其丢弃。"
+
+#: src/Application/Scan/SecurityHeadersTask.php:99
+msgid "The home page sends the security headers that are judged."
+msgstr "首页发送了所评判的安全响应头。"
+
+#: src/Application/Scan/SecurityHeadersTask.php:105
+msgid "%d security header problem on the home page."
+msgid_plural "%d security header problems on the home page."
+msgstr[0] "首页存在 %d 个安全响应头问题。"
+
+#: src/Application/Scan/SecurityHeadersTask.php:107
+msgid "Turn on Hornet's `headers` settings, or set the headers in the web server (`wp hornet server-config nginx --headers`). Against framing, send X-Frame-Options: SAMEORIGIN or a Content-Security-Policy with frame-ancestors 'self'. If a CDN adds them where this server cannot see them, set this finding aside."
+msgstr "请开启 Hornet 的 `headers` 设置，或在 Web 服务器中设置响应头（`wp hornet server-config nginx --headers`）。为防止被框架嵌入，请发送 X-Frame-Options: SAMEORIGIN 或带 frame-ancestors 'self' 的 Content-Security-Policy。如果由 CDN 在本服务器看不到的位置添加，请将此项发现搁置。"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:31
+msgid "Dormant administrators"
+msgstr "休眠管理员"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:69
+msgid "%d administrator has not been seen for 90 days."
+msgid_plural "%d administrators have not been seen for 90 days."
+msgstr[0] "有 %d 位管理员已 90 天未出现。"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:71
+msgid "Delete the accounts that are not needed any more, or give them a lesser role."
+msgstr "请删除不再需要的账户，或将其降为权限更低的角色。"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:77
+msgid "Logins are not noted yet: they are from the next visit to the dashboard."
+msgstr "尚未记录登录：将从下次访问仪表盘起记录。"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:78
+msgid "Logins are noted since %s: whether an administrator is dormant can be told 90 days after that."
+msgstr "自 %s 起记录登录：需再过 90 天才能判断管理员是否休眠。"
+
+#: src/Domain/Audit/Checks/DormantAdministratorsCheck.php:81
+msgid "Every administrator is recent or has been seen in the last 90 days."
+msgstr "所有管理员均为新账户或最近 90 天内出现过。"
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:31
+msgid "New administrators"
+msgstr "新增管理员"
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:45
+msgid "No account became an administrator in the last 14 days."
+msgstr "最近 14 天内没有账户成为管理员。"
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:50
+msgid "Every administrator account is recent: there is no older one to compare with."
+msgstr "所有管理员账户都是新建的：没有更早的账户可供比较。"
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:62
+msgid "%d account became an administrator in the last 14 days."
+msgid_plural "%d accounts became administrators in the last 14 days."
+msgstr[0] "最近 14 天内有 %d 个账户成为管理员。"
+
+#: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
+msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
+msgstr "请确认每个账户由谁创建。若有无法识别的账户：删除它，更换所有密码和盐值，并查明它是如何创建的。"
