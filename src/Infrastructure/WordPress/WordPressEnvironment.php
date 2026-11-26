@@ -10,6 +10,7 @@ use DateTimeZone;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Pollora\Hornet\Domain\Http\RestAllowList;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
@@ -126,6 +127,12 @@ final class WordPressEnvironment implements Environment
      */
     public function usersListedToVisitors(): ?bool
     {
+        // The request below is an internal one, which a closed REST API does not stop: ask what a visitor's HTTP request would be told
+        if ($this->settings instanceof Settings && $this->settings->enabled && $this->settings->hardening->restrictRestApi
+            && ! RestAllowList::with($this->settings->hardening->restApiAllow, $this->isActive(Component::Headless))->allows('/wp/v2/users')) {
+            return false;
+        }
+
         $previous = get_current_user_id();
 
         try {

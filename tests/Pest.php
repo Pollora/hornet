@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Brain\Monkey;
 use Pollora\Hornet\Infrastructure\WordPress\HostApplication;
+use Pollora\Hornet\Tests\Fixtures\FakeRestResponse;
 use Pollora\Hornet\Tests\Fixtures\FakeWpError;
 
 // The part of pollora/framework's doctor that the bridge implements: the package does not require the framework
@@ -12,6 +13,10 @@ require_once __DIR__.'/Stubs/doctor.php';
 // The unit suite has no WordPress: WP_Error is a small stand-in
 if (! class_exists('WP_Error', false)) {
     class_alias(FakeWpError::class, 'WP_Error');
+}
+
+if (! class_exists('WP_REST_Response', false)) {
+    class_alias(FakeRestResponse::class, 'WP_REST_Response');
 }
 
 /*

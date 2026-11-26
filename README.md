@@ -113,6 +113,8 @@ define('HORNET_CONFIG', [
         'user_enumeration' => true,  // ?author=1 is a 404; no REST user routes, users sitemap or oEmbed author for visitors
         'hide_version' => true,      // no generator tag
         'file_editor' => true,       // nobody can edit PHP files from the dashboard
+        'restrict_rest_api' => true, // the REST API answers 401 to visitors, but for the routes below
+        'rest_api_allow' => ['wp/v2/posts', 'wp/v2/pages'],   // added to the defaults
     ],
 ]);
 ```
@@ -121,6 +123,17 @@ define('HORNET_CONFIG', [
 - `user_enumeration` blocks `?author=N` before WordPress turns it into `/author/<login>/`, and takes the user routes away from visitors only: a logged-in user keeps them.
 - `file_editor` does what `DISALLOW_FILE_EDIT` does, which a plugin cannot define (`wp-config.php` loads first).
 - Each piece is a filter that is safe to add twice, so it does not matter that `pollora/headless` may do the same.
+
+### Closing the REST API to visitors
+
+`restrict_rest_api` answers `401` to every REST request of a visitor who is not logged in, unknown routes included. **Test your front end before you turn it on**: whatever your pages call without a login stops working until it is listed.
+
+- A logged-in user keeps the whole API, application passwords and the tokens of other plugins that log a user in included. A cookie without its `X-WP-Nonce` counts as not logged in, as for WordPress. A plugin that checks its own key **without logging a user in** (a payment webhook, a licence server) needs its route in `rest_api_allow`.
+- Open by default: `oembed/1.0/embed`, `contact-form-7/v1/contact-forms`, `wc/store` (the WooCommerce cart and checkout blocks) and, when `pollora/headless` is installed, `headless/v1`. **A headless front end also reads `wp/v2`: list the routes it needs.**
+- A prefix is whole segments (`wp/v2/posts` opens the posts and each post, not `wp/v2/postsx`). The batch route (`batch/v1`) cannot be opened: it runs other routes without asking who is calling. `_embed` on an open route still includes what that route links to.
+- The index `/wp-json/` stays open, since a client reads there where to ask for an application password, but without its routes, and with only the namespaces that have something open.
+- The CORS preflight (`OPTIONS`) is let through and answered empty.
+- Only requests received over HTTP are concerned: `rest_do_request()` in a theme or plugin still works while a page is rendered for a visitor.
 
 ## Accounts: passwords, sessions, two-factor
 

@@ -26,11 +26,11 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: admin/src/App.js:97 src/Infrastructure/WordPress/Admin/SettingsView.php:59
+#: admin/src/App.js:97 src/Infrastructure/WordPress/Admin/SettingsView.php:60
 msgid "Notifications"
 msgstr ""
 
-#: admin/src/App.js:98 src/Infrastructure/WordPress/Admin/SettingsView.php:56
+#: admin/src/App.js:98 src/Infrastructure/WordPress/Admin/SettingsView.php:57
 msgid "Journal"
 msgstr ""
 
@@ -1739,7 +1739,7 @@ msgstr ""
 msgid "There is no such channel."
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:34 src/Infrastructure/WordPress/Admin/SettingsView.php:35 src/Infrastructure/WordPress/Admin/SettingsView.php:36 src/Infrastructure/WordPress/Admin/SettingsView.php:37
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:34 src/Infrastructure/WordPress/Admin/SettingsView.php:35 src/Infrastructure/WordPress/Admin/SettingsView.php:36 src/Infrastructure/WordPress/Admin/SettingsView.php:37 src/Infrastructure/WordPress/Admin/SettingsView.php:38
 msgid "Hardening"
 msgstr ""
 
@@ -1759,109 +1759,113 @@ msgstr ""
 msgid "Refuse the file editor"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:40 src/Infrastructure/WordPress/Admin/SettingsView.php:41 src/Infrastructure/WordPress/Admin/SettingsView.php:42 src/Infrastructure/WordPress/Admin/SettingsView.php:43 src/Infrastructure/WordPress/Admin/SettingsView.php:44
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:38
+msgid "Close the REST API to visitors"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:41 src/Infrastructure/WordPress/Admin/SettingsView.php:42 src/Infrastructure/WordPress/Admin/SettingsView.php:43 src/Infrastructure/WordPress/Admin/SettingsView.php:44 src/Infrastructure/WordPress/Admin/SettingsView.php:45
 msgid "Headers"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:44
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:45
 msgid "enforced"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:44
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:45
 msgid "report only"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:46 src/Infrastructure/WordPress/Admin/SettingsView.php:47 src/Infrastructure/WordPress/Admin/SettingsView.php:48 src/Infrastructure/WordPress/Admin/SettingsView.php:49
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:47 src/Infrastructure/WordPress/Admin/SettingsView.php:48 src/Infrastructure/WordPress/Admin/SettingsView.php:49 src/Infrastructure/WordPress/Admin/SettingsView.php:50
 msgid "Accounts"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:46
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:47
 msgid "Login throttle"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:46
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:47
 msgid "%1$d failures in %2$d seconds"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:47
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:48
 msgid "Refuse a password found in a breach"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:48
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:49
 msgid "Shorter login sessions"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:49
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:50
 msgid "Two-factor required"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:51 src/Infrastructure/WordPress/Admin/SettingsView.php:52 src/Infrastructure/WordPress/Admin/SettingsView.php:53 src/Infrastructure/WordPress/Admin/SettingsView.php:54
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52 src/Infrastructure/WordPress/Admin/SettingsView.php:53 src/Infrastructure/WordPress/Admin/SettingsView.php:54 src/Infrastructure/WordPress/Admin/SettingsView.php:55
 msgid "Scanner"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:51
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52
 msgid "Scheduled scan"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:52
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:53
 msgid "Ask the site what it gives away"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:53
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
 msgid "Try to run PHP in the uploads"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:55
 msgid "Look up known vulnerabilities"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:55
 msgid "name and version of each plugin and theme go to www.wpvulnerability.net"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:57
 msgid "Security journal"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:57
 msgid "kept %d day"
 msgid_plural "kept %d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:57 src/Infrastructure/WordPress/Admin/SettingsView.php:58
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58 src/Infrastructure/WordPress/Admin/SettingsView.php:59
 msgid "Agents"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:57
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
 msgid "Abilities for AI agents (read)"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
 msgid "Abilities for AI agents (start a scan, set aside)"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
 msgid "at most 20 changes an hour per person"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:60
 msgid "Notification channels"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:60 src/Infrastructure/WordPress/Admin/SettingsView.php:61 src/Infrastructure/WordPress/Admin/SettingsView.php:62
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:61 src/Infrastructure/WordPress/Admin/SettingsView.php:62 src/Infrastructure/WordPress/Admin/SettingsView.php:63
 msgid "Audit"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:60
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:61
 msgid "Site Health tests"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:61
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:62
 msgid "Checks turned off"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:62
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:63
 msgid "Findings set aside"
 msgstr ""
 
@@ -1875,6 +1879,10 @@ msgstr ""
 
 #: src/Infrastructure/WordPress/PasswordModule.php:55
 msgid "That password appears in known data breaches. Choose another one."
+msgstr ""
+
+#: src/Infrastructure/WordPress/RestAccessModule.php:75
+msgid "The REST API of this site is closed to visitors who are not logged in."
 msgstr ""
 
 #: src/Infrastructure/WordPress/SiteHealthModule.php:85

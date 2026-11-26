@@ -1684,3 +1684,11 @@ msgstr "Nie udało się odczytać bazy danych: o nieodczytanej części nic nie 
 #: src/Domain/Audit/Checks/TwoFactorCheck.php:37
 msgid "Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`."
 msgstr "Zainstaluj wtyczkę Two-Factor, a następnie wymagaj jej dla wybranych ról przez `two_factor.require_roles`."
+
+#: src/Infrastructure/WordPress/RestAccessModule.php:75
+msgid "The REST API of this site is closed to visitors who are not logged in."
+msgstr "REST API tej witryny jest zamknięte dla niezalogowanych odwiedzających."
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:38
+msgid "Close the REST API to visitors"
+msgstr "Zamknij REST API dla odwiedzających"

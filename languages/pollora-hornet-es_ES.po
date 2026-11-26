@@ -1900,3 +1900,11 @@ msgstr "No se pudo leer la base de datos: no se puede decir nada de la parte no 
 #: src/Domain/Audit/Checks/TwoFactorCheck.php:37
 msgid "Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`."
 msgstr "Instale el plugin Two-Factor y exíjalo a los perfiles que elija con `two_factor.require_roles`."
+
+#: src/Infrastructure/WordPress/RestAccessModule.php:75
+msgid "The REST API of this site is closed to visitors who are not logged in."
+msgstr "La API REST de este sitio está cerrada a los visitantes que no han iniciado sesión."
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:38
+msgid "Close the REST API to visitors"
+msgstr "Cerrar la API REST a los visitantes"

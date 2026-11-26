@@ -13,8 +13,10 @@ use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Password\BreachCheck;
 use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Application\Scan\Scanner;
+use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\LaravelApplication;
+use Pollora\Hornet\Domain\Http\RestAllowList;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
@@ -114,6 +116,10 @@ final class Bootstrap
 
             if ($settings->hardening->isActive()) {
                 $modules[] = new HardeningModule($settings->hardening);
+            }
+
+            if ($settings->hardening->restrictRestApi) {
+                $modules[] = new RestAccessModule(RestAllowList::with($settings->hardening->restApiAllow, $environment->isActive(Component::Headless)), WpTranslator::forPackage());
             }
 
             if ($settings->headers->isActive()) {

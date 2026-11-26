@@ -90,6 +90,36 @@ check "the file editor is refused to an administrator"       sh -c "[ \"\$(php -
 check "a logged-in administrator still lists users over REST" sh -c "N=\$(curl -s -b '$JAR' '$BASE/wp-admin/admin-ajax.php?action=rest-nonce'); curl -s -b '$JAR' -H \"X-WP-Nonce: \$N\" '$BASE/wp-json/wp/v2/users' | grep -q '\"slug\"'"
 check "the audit sees it: XML-RPC closed, users hidden, editor off" sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -E '^pass.*(xml-rpc|user-enumeration|file-editor)' | wc -l | grep -q '^3\$'"
 
+# --- 2b. the REST API closed to visitors --------------------------------------------------------------------
+echo "2b. REST API closed to visitors"
+configure "array('hardening' => array('restrict_rest_api' => true))"
+check "a visitor is refused the posts"                          status_is 401 "$BASE/wp-json/wp/v2/posts"
+check "and the same with ?rest_route= and other capitals"       status_is 401 "$BASE/?rest_route=/WP/v2/Users"
+check "a route that does not exist is not told apart"           status_is 401 "$BASE/wp-json/nothing/v1/here"
+check "the batch route is closed"                               status_is 401 -X POST -H 'Content-Type: application/json' --data '{"requests":[{"path":"/wp/v2/posts"}]}' "$BASE/wp-json/batch/v1"
+check "the index stays open and says where to authorise"        body_has 'application-passwords' "$BASE/wp-json/"
+check "the index names no closed route"                         body_lacks 'wp\/v2' "$BASE/wp-json/"
+check "the embeds of the site are still given"                  status_is 200 "$BASE/wp-json/oembed/1.0/embed?url=$BASE/hello-world/"
+check "a CORS preflight passes"                                 status_is 200 -X OPTIONS -H 'Origin: https://front.example.com' -H 'Access-Control-Request-Method: GET' "$BASE/wp-json/wp/v2/posts"
+check "and describes nothing"                                   body_lacks 'args' -X OPTIONS "$BASE/wp-json/wp/v2/posts"
+check "OPTIONS with _method is not a preflight"                 status_is 401 -X OPTIONS "$BASE/wp-json/wp/v2/posts?_method=GET"
+check "OPTIONS with the override header is not one either"      status_is 401 -X OPTIONS -H 'X-HTTP-Method-Override: GET' "$BASE/wp-json/wp/v2/posts"
+login
+check "a cookie without its nonce is a visitor"                 status_is 401 -b "$JAR" "$BASE/wp-json/wp/v2/posts"
+check "a logged-in user has the API"                            sh -c "N=\$(curl -s -b '$JAR' '$BASE/wp-admin/admin-ajax.php?action=rest-nonce'); curl -s -b '$JAR' -H \"X-WP-Nonce: \$N\" '$BASE/wp-json/wp/v2/users' | grep -q '\"slug\"'"
+wp config set WP_ENVIRONMENT_TYPE local >/dev/null 2>&1
+RESTPW=$(wp user application-password create admin e2e-rest-closed --porcelain 2>/dev/null)
+check "an application password has the API"                     status_is 200 -u "admin:$RESTPW" "$BASE/wp-json/wp/v2/users/me"
+check "a wrong application password does not"                   status_is 401 -u "admin:wrong wrong wrong" "$BASE/wp-json/wp/v2/users/me"
+wp user application-password delete admin --all >/dev/null 2>&1
+wp config delete WP_ENVIRONMENT_TYPE >/dev/null 2>&1
+check "an internal request of the site is not concerned"        sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'echo rest_do_request(new WP_REST_Request(\"GET\", \"/wp/v2/posts\"))->get_status();' | grep -q '^200\$'"
+check "the audit says users are not listed"                     sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -qE '^pass.*user-enumeration'"
+configure "array('hardening' => array('restrict_rest_api' => true, 'rest_api_allow' => array('wp/v2/posts')))"
+check "a listed prefix is open"                                 status_is 200 "$BASE/wp-json/wp/v2/posts"
+check "and only that one"                                       status_is 401 "$BASE/wp-json/wp/v2/pages"
+reset
+
 # --- 3. headers --------------------------------------------------------------------------------------------
 echo "3. headers on"
 configure "array('headers' => array('content_type_options' => true, 'referrer_policy' => 'same-origin', 'permissions_policy' => 'camera=()', 'hsts' => array('max_age' => 31536000), 'csp' => array('policy' => \"default-src 'self'\", 'report_uri' => 'https://r.example.com/csp')))"
