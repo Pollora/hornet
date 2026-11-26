@@ -118,12 +118,21 @@ it('reports a missing key and a forced Debugbar, and never the key itself', func
         ->and((new LaravelKeyCheck(laravelApp(['app.key' => null])))->run(new FakeEnvironment)->outcome)->toBe(Outcome::Fail)
         ->and(json_encode((new LaravelKeyCheck(laravelApp()))->run(new FakeEnvironment)->toStoredArray()))->not->toContain('not-a-real-key');
 
-    $debugbar = static fn (mixed $enabled, string $type = 'production') => (new LaravelDebugbarCheck(laravelApp(['debugbar.enabled' => $enabled])))->run(new FakeEnvironment(type: $type));
+    $debugbar = static fn (array $config, string $type = 'production') => (new LaravelDebugbarCheck(laravelApp($config)))->run(new FakeEnvironment(type: $type));
+    // Debugbar 4: its own setting alone does nothing in production
+    $four = static fn (mixed $enabled, mixed $force, array $more = []): array => ['debugbar.enabled' => $enabled, 'debugbar.force_allow_enable' => $force, ...$more];
 
-    expect($debugbar(true)->severity)->toBe(Severity::High)
-        ->and($debugbar('true')->outcome)->toBe(Outcome::Fail)
-        // Not installed, or following app.debug, or turned off
-        ->and($debugbar(null)->outcome)->toBe(Outcome::Pass)
-        ->and($debugbar(false)->outcome)->toBe(Outcome::Pass)
-        ->and($debugbar(true, 'local')->outcome)->toBe(Outcome::Pass);
+    expect($debugbar($four(true, false))->outcome)->toBe(Outcome::Pass)
+        ->and($debugbar($four(true, true))->severity)->toBe(Severity::High)
+        ->and($debugbar($four('true', 'true'))->outcome)->toBe(Outcome::Fail)
+        ->and($debugbar($four(false, true))->outcome)->toBe(Outcome::Pass)
+        // Forced and following app.debug
+        ->and($debugbar($four(null, true))->outcome)->toBe(Outcome::Pass)
+        ->and($debugbar($four(null, true, ['app.debug' => true]))->outcome)->toBe(Outcome::Fail)
+        // pollora/debugbar shows it to the allowed accounts only
+        ->and($debugbar($four(true, true, ['debugbar-pollora.capability' => 'manage_options']))->severity)->toBe(Severity::Medium)
+        // Debugbar 3 has no such key; not installed has neither
+        ->and($debugbar(['debugbar.enabled' => true])->severity)->toBe(Severity::High)
+        ->and($debugbar([])->outcome)->toBe(Outcome::Pass)
+        ->and($debugbar($four(true, true), 'local')->outcome)->toBe(Outcome::Pass);
 });

@@ -43,6 +43,20 @@ it('recognizes the file by what it holds, and not by a 200', function (string $p
     ['uploads/', '<html><head><title>Index of /wp-content/uploads</title>', true],
     ['uploads/', '<html><head><title>Uploads</title>', false],
     ['plugins/', '<h1>Index of /wp-content/plugins</h1>', true],
+    ['.vscode/sftp.json', '{ "name": "prod", "host": "example.com", "username": "deploy" }', true],
+    ['.vscode/sftp.json', '<html>Not found</html>', false],
+    ['auth.json', '{"http-basic": {"repo.example.com": {"username": "x"}}}', true],
+    ['auth.json', '{"message": "Unauthorized"}', false],
+    ['composer.lock', '{"_readme": [], "content-hash": "abc", "packages": []}', true],
+    ['composer.lock', '<html>Home</html>', false],
+    ['vendor/composer/installed.json', '{"packages": [{"name": "a/b"}]}', true],
+    ['vendor/composer/installed.json', '<html>Home</html>', false],
+    ['.htaccess', "# BEGIN WordPress\n<IfModule mod_rewrite.c>\nRewriteEngine On\n", true],
+    ['.htaccess', '<html><body>Options and rewrites are explained here</body></html>', false],
+    ['.DS_Store', "\x00\x00\x00\x01Bud1\x00\x00", true],
+    ['.DS_Store', '<html>Bud1</html>', false],
+    ['.idea/workspace.xml', '<?xml version="1.0"?><project version="4">', true],
+    ['.idea/workspace.xml', '<html>Home</html>', false],
 ]);
 
 it('is not an exposure unless the answer is a 200', function (int $status): void {
@@ -64,4 +78,11 @@ it('has no address twice, and none that leaves the site', function (): void {
 
     expect($paths)->toBe(array_values(array_unique($paths)))
         ->and(array_filter(ExposureCatalog::all(), static fn (Exposure $one): bool => str_contains($one->path, '..') || str_starts_with($one->path, '/') || str_contains($one->path, '://')))->toBe([]);
+});
+
+it('recognizes the log of a Laravel application', function (): void {
+    $log = array_values(array_filter(ExposureCatalog::all(true), static fn (Exposure $one): bool => $one->path === 'storage/logs/laravel.log'))[0];
+
+    expect($log->isExposedBy(200, "[2026-11-26 10:00:00] production.ERROR: something failed\n"))->toBeTrue()
+        ->and($log->isExposedBy(200, '<html>[2026-11-26] Home</html>'))->toBeFalse();
 });

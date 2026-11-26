@@ -14,7 +14,7 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `debug-mode` | `WP_DEBUG`, `WP_DEBUG_DISPLAY`, `WP_DEBUG_LOG` on a production site; on Pollora, `APP_DEBUG` |
 | `php-error-display` | PHP showing its errors although `WP_DEBUG` is off, as the web server last showed it on a dashboard page (not on Pollora, where Laravel turns it off) |
 | `laravel-app-key` | **Pollora only**: `APP_KEY` is set (its value is never read) |
-| `laravel-debugbar` | **Pollora only**: Debugbar turned on by its own setting in production |
+| `laravel-debugbar` | **Pollora only**: Debugbar forced on in production (`debugbar.force_allow_enable`) |
 | `https` | the site address, and `FORCE_SSL_ADMIN` |
 | `file-editor` | whether the theme and plugin editor is refused, whoever refused it (`DISALLOW_FILE_EDIT`, `DISALLOW_FILE_MODS`, Hornet's `hardening.file_editor`) |
 | `file-mods` | installing code from the dashboard (advice: it also stops WordPress's own updates) |

@@ -1489,18 +1489,6 @@ msgstr "운영 사이트의 .env에서 APP_DEBUG=false로 설정하세요."
 msgid "Laravel Debugbar"
 msgstr "Laravel Debugbar"
 
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
-msgid "Debugbar is turned on in production: it shows the queries, the session and the request to visitors."
-msgstr "운영 환경에서 Debugbar가 켜져 있습니다. 쿼리, 세션, 요청이 방문자에게 표시됩니다."
-
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
-msgid "Remove DEBUGBAR_ENABLED=true from the .env of the production site, and install Debugbar as a development dependency only."
-msgstr "운영 사이트의 .env에서 DEBUGBAR_ENABLED=true를 제거하고, Debugbar는 개발 의존성으로만 설치하세요."
-
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
-msgid "Debugbar is not turned on by its own setting."
-msgstr "Debugbar가 자체 설정으로 켜져 있지 않습니다."
-
 #: src/Domain/Audit/Checks/LaravelKeyCheck.php:28
 msgid "Laravel application key"
 msgstr "Laravel 애플리케이션 키"
@@ -1572,3 +1560,19 @@ msgstr "PHP가 오류를 표시하지 않습니다."
 #: src/Domain/Scan/ExposureCatalog.php:70
 msgid "the log of the Laravel application (paths, queries, sometimes data)"
 msgstr "Laravel 애플리케이션 로그(경로, 쿼리, 때로는 데이터)"
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Debugbar is not forced on."
+msgstr "Debugbar가 강제로 켜져 있지 않습니다."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
+msgid "Remove DEBUGBAR_FORCE_ALLOW_ENABLE and DEBUGBAR_ENABLED from the .env of the production site, and install Debugbar as a development dependency only."
+msgstr "운영 사이트의 .env에서 DEBUGBAR_FORCE_ALLOW_ENABLE와 DEBUGBAR_ENABLED를 제거하고, Debugbar는 개발 의존성으로만 설치하세요."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:45
+msgid "Debugbar is forced on in production: the accounts allowed to see it get the queries, the session and the request."
+msgstr "운영 환경에서 Debugbar가 강제로 켜져 있습니다. 볼 권한이 있는 계정은 쿼리, 세션, 요청을 볼 수 있습니다."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:46
+msgid "Debugbar is forced on in production: it shows the queries, the session and the request to visitors."
+msgstr "운영 환경에서 Debugbar가 강제로 켜져 있습니다. 쿼리, 세션, 요청이 방문자에게 표시됩니다."

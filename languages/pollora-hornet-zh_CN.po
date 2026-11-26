@@ -1489,18 +1489,6 @@ msgstr "请在生产站点的 .env 中设置 APP_DEBUG=false。"
 msgid "Laravel Debugbar"
 msgstr "Laravel Debugbar"
 
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
-msgid "Debugbar is turned on in production: it shows the queries, the session and the request to visitors."
-msgstr "生产环境中开启了 Debugbar：它会向访问者显示查询、会话和请求。"
-
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
-msgid "Remove DEBUGBAR_ENABLED=true from the .env of the production site, and install Debugbar as a development dependency only."
-msgstr "请从生产站点的 .env 中删除 DEBUGBAR_ENABLED=true，并仅将 Debugbar 作为开发依赖安装。"
-
-#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
-msgid "Debugbar is not turned on by its own setting."
-msgstr "Debugbar 未通过其自身设置开启。"
-
 #: src/Domain/Audit/Checks/LaravelKeyCheck.php:28
 msgid "Laravel application key"
 msgstr "Laravel 应用密钥"
@@ -1572,3 +1560,19 @@ msgstr "PHP 不显示错误。"
 #: src/Domain/Scan/ExposureCatalog.php:70
 msgid "the log of the Laravel application (paths, queries, sometimes data)"
 msgstr "Laravel 应用日志（路径、查询，有时包含数据）"
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Debugbar is not forced on."
+msgstr "Debugbar 未被强制开启。"
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
+msgid "Remove DEBUGBAR_FORCE_ALLOW_ENABLE and DEBUGBAR_ENABLED from the .env of the production site, and install Debugbar as a development dependency only."
+msgstr "请从生产站点的 .env 中删除 DEBUGBAR_FORCE_ALLOW_ENABLE 和 DEBUGBAR_ENABLED，并仅将 Debugbar 作为开发依赖安装。"
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:45
+msgid "Debugbar is forced on in production: the accounts allowed to see it get the queries, the session and the request."
+msgstr "生产环境中强制开启了 Debugbar：有权查看的账户可以获取查询、会话和请求。"
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:46
+msgid "Debugbar is forced on in production: it shows the queries, the session and the request to visitors."
+msgstr "生产环境中强制开启了 Debugbar：它会向访问者显示查询、会话和请求。"
