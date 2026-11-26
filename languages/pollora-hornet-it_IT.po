@@ -1786,3 +1786,19 @@ msgstr[1] "%d account sono diventati amministratori negli ultimi 14 giorni."
 #: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
 msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
 msgstr "Assicuratevi di sapere chi ha creato ciascuno. Se uno vi è sconosciuto: rimuovetelo, cambiate tutte le password e i salt e scoprite come è stato creato."
+
+#: admin/src/Waiting.js:12
+msgid "The scan is waiting for the scheduled tasks of WordPress, which have not run."
+msgstr "La scansione attende le attività pianificate di WordPress, che non sono state eseguite."
+
+#: admin/src/Waiting.js:17
+msgid "This site does not run them when it is visited (DISABLE_WP_CRON, which Pollora sets): the server has to. Add this line to its crontab:"
+msgstr "Questo sito non le esegue alle visite (DISABLE_WP_CRON, impostato da Pollora): deve farlo il server. Aggiungete questa riga al suo crontab:"
+
+#: admin/src/Waiting.js:28
+msgid "The site could not call itself to start them (a certificate, a firewall, a password in front of the site). Check Tools > Site Health, or add a cron on the server."
+msgstr "Il sito non è riuscito a chiamare se stesso per avviarle (un certificato, un firewall, una password davanti al sito). Controllate Strumenti > Salute del sito o aggiungete un cron sul server."
+
+#: admin/src/Waiting.js:35
+msgid "To run the scan now, from the command line:"
+msgstr "Per eseguire subito la scansione da riga di comando:"

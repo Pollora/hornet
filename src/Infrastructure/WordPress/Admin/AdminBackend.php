@@ -63,6 +63,7 @@ final readonly class AdminBackend
 
         return [
             ...$view,
+            'scan' => [...$view['scan'], ...$this->cron()],
             'settings' => SettingsView::build($this->settings, WpTranslator::forPackage()),
             // By name and kind only: where a channel goes is a secret
             'channels' => array_map(static fn (ChannelSpec $channel): array => ['name' => $channel->name, 'type' => $channel->type->value, 'min_severity' => $channel->minSeverity->value], $this->settings->notifications->channels),
@@ -100,6 +101,21 @@ final readonly class AdminBackend
             'pages' => max(1, (int) ceil($total / $perPage)),
             'types' => EventTypes::groups(),
             'retention_days' => $this->settings->journal->retentionDays,
+        ];
+    }
+
+    /**
+     * What the screen needs to say why a scan does not start: whether the task that was asked for is overdue, and who should run it.
+     *
+     * @return array{overdue: bool, cron: array{disabled: bool, url: string}}
+     */
+    private function cron(): array
+    {
+        $at = wp_next_scheduled(ScanModule::NOW_HOOK);
+
+        return [
+            'overdue' => is_int($at) && $at < time() - 75,
+            'cron' => ['disabled' => defined('DISABLE_WP_CRON') && DISABLE_WP_CRON, 'url' => site_url('wp-cron.php')],
         ];
     }
 

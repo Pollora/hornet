@@ -1757,3 +1757,19 @@ msgstr[0] "최근 14일 동안 계정 %d개가 관리자가 되었습니다."
 #: src/Domain/Audit/Checks/NewAdministratorsCheck.php:64
 msgid "Make sure you know who made each of them. If you do not recognise one: remove it, change every password and the salts, and find how it was made."
 msgstr "각 계정을 누가 만들었는지 확인하세요. 모르는 계정이 있으면 삭제하고, 모든 비밀번호와 솔트를 바꾼 뒤 생성 경위를 확인하세요."
+
+#: admin/src/Waiting.js:12
+msgid "The scan is waiting for the scheduled tasks of WordPress, which have not run."
+msgstr "검사가 WordPress 예약 작업을 기다리고 있지만 실행되지 않았습니다."
+
+#: admin/src/Waiting.js:17
+msgid "This site does not run them when it is visited (DISABLE_WP_CRON, which Pollora sets): the server has to. Add this line to its crontab:"
+msgstr "이 사이트는 방문 시 작업을 실행하지 않습니다(Pollora가 설정하는 DISABLE_WP_CRON). 서버가 실행해야 합니다. crontab에 다음 줄을 추가하세요."
+
+#: admin/src/Waiting.js:28
+msgid "The site could not call itself to start them (a certificate, a firewall, a password in front of the site). Check Tools > Site Health, or add a cron on the server."
+msgstr "사이트가 자신을 호출해 작업을 시작할 수 없었습니다(인증서, 방화벽, 사이트 앞의 비밀번호). 도구 > 사이트 건강을 확인하거나 서버에 cron을 추가하세요."
+
+#: admin/src/Waiting.js:35
+msgid "To run the scan now, from the command line:"
+msgstr "지금 명령줄에서 검사를 실행하려면:"

@@ -18,6 +18,9 @@ export default function App() {
 	const [ scanError, setScanError ] = useState( null );
 	const [ scanning, setScanning ] = useState( false );
 	const timer = useRef( null );
+	// Since when the screen has seen the scan wait, in milliseconds; and how long that is, in seconds
+	const queuedSince = useRef( null );
+	const [ waitedFor, setWaitedFor ] = useState( 0 );
 
 	const load = useCallback( async () => {
 		try {
@@ -41,6 +44,8 @@ export default function App() {
 		timer.current = setTimeout( async () => {
 			try {
 				const state = await getScanState();
+				queuedSince.current = state.status === 'queued' ? queuedSince.current ?? Date.now() : null;
+				setWaitedFor( queuedSince.current ? Math.round( ( Date.now() - queuedSince.current ) / 1000 ) : 0 );
 				if ( state.status === 'idle' ) {
 					setScanning( false );
 					await load();
@@ -120,6 +125,7 @@ export default function App() {
 								status={ status }
 								onScan={ onScan }
 								scanning={ scanning }
+								waitedFor={ waitedFor }
 								error={ scanError }
 							/>
 						);

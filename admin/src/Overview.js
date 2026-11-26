@@ -1,12 +1,13 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Button, Notice, Spinner } from '@wordpress/components';
-import { ago, fixFirst, headline } from './util';
+import { ago, fixFirst, headline, isStuck } from './util';
 import { SeverityBadge } from './Severity';
 import ScoreRing from './ScoreRing';
 import Hive from './Hive';
 import Text from './Text';
+import Waiting from './Waiting';
 
-export default function Overview( { status, onScan, scanning, error } ) {
+export default function Overview( { status, onScan, scanning, error, waitedFor } ) {
 	const { counts, scan, score, findings } = status;
 	const running = scan.running || scanning;
 	const first = fixFirst( findings, score.costs );
@@ -133,6 +134,7 @@ export default function Overview( { status, onScan, scanning, error } ) {
 						{ error }
 					</Notice>
 				) }
+				{ scan.cron && isStuck( scan, waitedFor ) && <Waiting cron={ scan.cron } /> }
 				{ scan.unfinished.length > 0 && (
 					<Notice status="info" isDismissible={ false }>
 						{ __( 'Part of the scan goes on in the background.', 'pollora-hornet' ) }

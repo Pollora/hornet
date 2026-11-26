@@ -6,31 +6,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: pollora-hornet\n"
 
-#: admin/src/App.js:27
+#: admin/src/App.js:30
 msgid "The status could not be read."
 msgstr ""
 
-#: admin/src/App.js:70
+#: admin/src/App.js:75
 msgid "The scan could not be started."
 msgstr ""
 
-#: admin/src/App.js:86
+#: admin/src/App.js:91
 msgid "Overview"
 msgstr ""
 
-#: admin/src/App.js:89
+#: admin/src/App.js:94
 msgid "Findings"
 msgstr ""
 
-#: admin/src/App.js:91
+#: admin/src/App.js:96
 msgid "Settings"
 msgstr ""
 
-#: admin/src/App.js:92 src/Infrastructure/WordPress/Admin/SettingsView.php:57
+#: admin/src/App.js:97 src/Infrastructure/WordPress/Admin/SettingsView.php:57
 msgid "Notifications"
 msgstr ""
 
-#: admin/src/App.js:93 src/Infrastructure/WordPress/Admin/SettingsView.php:54
+#: admin/src/App.js:98 src/Infrastructure/WordPress/Admin/SettingsView.php:54
 msgid "Journal"
 msgstr ""
 
@@ -137,7 +137,7 @@ msgstr ""
 msgid "%1$d of %2$d steps done"
 msgstr ""
 
-#: admin/src/Hive.js:56 admin/src/Overview.js:127
+#: admin/src/Hive.js:56 admin/src/Overview.js:128
 msgid "Scanning…"
 msgstr ""
 
@@ -205,70 +205,70 @@ msgstr ""
 msgid "Send a test"
 msgstr ""
 
-#: admin/src/Overview.js:19
+#: admin/src/Overview.js:20
 msgid "Security score"
 msgstr ""
 
-#: admin/src/Overview.js:24
+#: admin/src/Overview.js:25
 msgid "open"
 msgstr ""
 
-#: admin/src/Overview.js:28
+#: admin/src/Overview.js:29
 msgid "not verified"
 msgstr ""
 
-#: admin/src/Overview.js:32
+#: admin/src/Overview.js:33
 msgid "set aside"
 msgstr ""
 
-#: admin/src/Overview.js:36
+#: admin/src/Overview.js:37
 msgid "pass"
 msgstr ""
 
 #. translators: 1: checks that could be verified, 2: all the checks
-#: admin/src/Overview.js:42
+#: admin/src/Overview.js:43
 msgid "Provisional: %1$d of %2$d checks could be verified."
 msgstr ""
 
-#: admin/src/Overview.js:52
+#: admin/src/Overview.js:53
 msgid "%d accepted risk is not counted."
 msgid_plural "%d accepted risks are not counted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/src/Overview.js:67
+#: admin/src/Overview.js:68
 msgid "Fix first"
 msgstr ""
 
-#: admin/src/Overview.js:76
+#: admin/src/Overview.js:77
 msgid "%d point"
 msgid_plural "%d points"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/src/Overview.js:98
+#: admin/src/Overview.js:99
 msgid "Scan"
 msgstr ""
 
 #. translators: %s: how long ago
-#: admin/src/Overview.js:101
+#: admin/src/Overview.js:102
 msgid "Last scan: %s."
 msgstr ""
 
 #. translators: %s: the name of a scan task
-#: admin/src/Overview.js:111
+#: admin/src/Overview.js:112
 msgid "Now: %s"
 msgstr ""
 
-#: admin/src/Overview.js:115
+#: admin/src/Overview.js:116
 msgid "Waiting for the cron to start it…"
 msgstr ""
 
-#: admin/src/Overview.js:128
+#: admin/src/Overview.js:129
 msgid "Scan now"
 msgstr ""
 
-#: admin/src/Overview.js:138
+#: admin/src/Overview.js:140
 msgid "Part of the scan goes on in the background."
 msgstr ""
 
@@ -289,7 +289,23 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
-#: admin/src/util.js:12 admin/src/util.js:96
+#: admin/src/Waiting.js:12
+msgid "The scan is waiting for the scheduled tasks of WordPress, which have not run."
+msgstr ""
+
+#: admin/src/Waiting.js:17
+msgid "This site does not run them when it is visited (DISABLE_WP_CRON, which Pollora sets): the server has to. Add this line to its crontab:"
+msgstr ""
+
+#: admin/src/Waiting.js:28
+msgid "The site could not call itself to start them (a certificate, a firewall, a password in front of the site). Check Tools > Site Health, or add a cron on the server."
+msgstr ""
+
+#: admin/src/Waiting.js:35
+msgid "To run the scan now, from the command line:"
+msgstr ""
+
+#: admin/src/util.js:12 admin/src/util.js:106
 msgid "Critical"
 msgstr ""
 
@@ -355,69 +371,69 @@ msgid_plural "%d days ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/src/util.js:52
+#: admin/src/util.js:62
 msgid "Nothing needs your attention."
 msgstr ""
 
 #. translators: %d: number of checks that could not be verified
-#: admin/src/util.js:56
+#: admin/src/util.js:66
 msgid "No open finding, but %d could not be verified."
 msgid_plural "No open finding, but %d could not be verified."
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of open findings
-#: admin/src/util.js:67
+#: admin/src/util.js:77
 msgid "%d open finding."
 msgid_plural "%d open findings."
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/src/util.js:75
+#: admin/src/util.js:85
 msgid "Website"
 msgstr ""
 
-#: admin/src/util.js:76
+#: admin/src/util.js:86
 msgid "Administration"
 msgstr ""
 
-#: admin/src/util.js:77
+#: admin/src/util.js:87
 msgid "REST API"
 msgstr ""
 
-#: admin/src/util.js:78
+#: admin/src/util.js:88
 msgid "Ajax"
 msgstr ""
 
-#: admin/src/util.js:79 src/Domain/Audit/Checks/XmlRpcCheck.php:30
+#: admin/src/util.js:89 src/Domain/Audit/Checks/XmlRpcCheck.php:30
 msgid "XML-RPC"
 msgstr ""
 
-#: admin/src/util.js:80
+#: admin/src/util.js:90
 msgid "Command line"
 msgstr ""
 
-#: admin/src/util.js:81
+#: admin/src/util.js:91
 msgid "Scheduled task"
 msgstr ""
 
-#: admin/src/util.js:91
+#: admin/src/util.js:101
 msgid "Solid"
 msgstr ""
 
-#: admin/src/util.js:92
+#: admin/src/util.js:102
 msgid "Good"
 msgstr ""
 
-#: admin/src/util.js:93
+#: admin/src/util.js:103
 msgid "Fragile"
 msgstr ""
 
-#: admin/src/util.js:94
+#: admin/src/util.js:104
 msgid "Weak"
 msgstr ""
 
-#: admin/src/util.js:95
+#: admin/src/util.js:105
 msgid "At risk"
 msgstr ""
 
@@ -1601,7 +1617,7 @@ msgstr ""
 msgid "reads like a web shell (score %d):"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/AdminBackend.php:114
+#: src/Infrastructure/WordPress/Admin/AdminBackend.php:130
 msgid "A scan is already in progress."
 msgstr ""
 

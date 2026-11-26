@@ -4,6 +4,8 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+- The screen says **why a scan that was asked for does not start** (the scheduled tasks have not run: `DISABLE_WP_CRON` with no system cron, as on a new Pollora site, or a site that cannot call itself) and how to unblock it.
+
 - **Three more checks**: `security-headers` (the scan asks for the home page; also says when a header Hornet sends is dropped on the way), `new-administrators` (last 14 days) and `dormant-administrators` (90 days). The logins of administrators are now noted, one date per account, to know the latter. `HttpResponse` carries the response headers; `Environment` has two more methods.
 
 - **Four more checks**: `plugin-updates` and `theme-updates` (from the lists WordPress stored; unknown after 7 days without a look), `inactive-plugins` and `inactive-themes` (production only, not on a network). Not repeated in Site Health, which tests the same. `Environment` has four more methods.
