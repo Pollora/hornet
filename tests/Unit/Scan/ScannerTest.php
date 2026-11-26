@@ -206,3 +206,32 @@ it('says which task it is about to run, before each one', function (): void {
     // On a continuation, a task that is not run again is not announced
     expect($seen)->toBe(['one', 'two', 'one', 'two']);
 });
+
+it('starts no task past its time box, and leaves them for the run that goes on', function (): void {
+    $clock = new FakeClock('2026-11-25 10:00:00');
+    $store = new InMemoryScanStore;
+    $slow = new class($clock) implements ScanTask
+    {
+        public function __construct(private FakeClock $clock) {}
+
+        public function id(): string
+        {
+            return 'slow';
+        }
+
+        public function run(?Pins $pinned, bool $repin): TaskResult
+        {
+            $this->clock->advance('PT30S');
+
+            return new TaskResult(Finding::pass('slow', 'done'));
+        }
+    };
+    $tasks = [$slow, fixedTask('later', new TaskResult(Finding::pass('later', 'done')))];
+    $first = (new Scanner($tasks, $store, $clock, timeBox: 10))->run();
+
+    expect($first->unfinished)->toBe(['later'])->and($first->finding('later'))->toBeNull();
+
+    $second = (new Scanner($tasks, $store, $clock, timeBox: 10))->run(false, $first->unfinished);
+
+    expect($second->unfinished)->toBe([])->and($second->finding('later')?->summary)->toBe('done');
+});

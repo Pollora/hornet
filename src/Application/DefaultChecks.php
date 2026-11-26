@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Application;
 
 use Pollora\Hornet\Application\Scan\CoreIntegrityTask;
+use Pollora\Hornet\Application\Scan\DatabaseScriptsTask;
 use Pollora\Hornet\Application\Scan\ExposedFilesTask;
 use Pollora\Hornet\Application\Scan\KnownVulnerabilitiesTask;
 use Pollora\Hornet\Application\Scan\PluginIntegrityTask;
@@ -79,6 +80,7 @@ final class DefaultChecks
             new ScanResultCheck(PluginIntegrityTask::ID, Message::mark('Plugin files')),
             new ScanResultCheck(PluginIntegrityTask::THEMES_ID, Message::mark('Theme files')),
             new ScanResultCheck(SuspiciousFilesTask::ID, Message::mark('Suspicious files')),
+            new ScanResultCheck(DatabaseScriptsTask::ID, Message::mark('Scripts in the database')),
             new ScanResultCheck(ExposedFilesTask::ID, Message::mark('Files given away by the site')),
             new ScanResultCheck(SecurityHeadersTask::ID, Message::mark('Security headers')),
             // Only when the owner opted in: without it the scan never asks, and the check would be "not scanned" for ever

@@ -1802,3 +1802,101 @@ msgstr "Le site n'a pas pu s'appeler lui-même pour les lancer (certificat, pare
 #: admin/src/Waiting.js:35
 msgid "To run the scan now, from the command line:"
 msgstr "Pour lancer l'analyse maintenant, en ligne de commande :"
+
+#: src/Application/DefaultChecks.php:83
+msgid "Scripts in the database"
+msgstr "Scripts dans la base de données"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:192 src/Application/Scan/DatabaseScriptsTask.php:196
+msgid "The database is not read through yet: it goes on next time."
+msgstr "La base n'est pas encore entièrement lue : la suite au prochain passage."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "No disguised script in the database (%d entries holding code were looked at)."
+msgstr "Aucun script dissimulé dans la base (%d entrées contenant du code ont été examinées)."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "Scripts are loaded from: %s (not judged)."
+msgstr "Des scripts sont chargés depuis : %s (non jugé)."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:229
+msgid "%d entry of the database holds a script that looks disguised."
+msgid_plural "%d entries of the database hold a script that looks disguised."
+msgstr[0] "%d entrée de la base contient un script qui semble dissimulé."
+msgstr[1] "%d entrées de la base contiennent un script qui semble dissimulé."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:231
+msgid "Read each entry in the database or with WP-CLI, not on the page that shows it. If you did not put that code there: remove it, change every password and the salts, and find how it got in. A script you know can be left alone with scanner.ignore_content. Hornet changes nothing."
+msgstr "Lisez chaque entrée dans la base ou avec WP-CLI, pas sur la page qui l'affiche. Si vous n'avez pas mis ce code là : retirez-le, changez tous les mots de passe et les sels, et cherchez comment il est entré. Un script que vous connaissez peut être laissé de côté avec scanner.ignore_content. Hornet ne modifie rien."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:238
+msgid "post #%d"
+msgstr "contenu n° %d"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:239
+msgid "comment #%d"
+msgstr "commentaire n° %d"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option %s"
+msgstr "option %s"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option #%d"
+msgstr "option n° %d"
+
+#: src/Domain/Scan/ContentRules.php:96
+msgid "runs code that is decoded first"
+msgstr "exécute un code d'abord décodé"
+
+#: src/Domain/Scan/ContentRules.php:97
+msgid "writes decoded code into the page"
+msgstr "écrit un code décodé dans la page"
+
+#: src/Domain/Scan/ContentRules.php:98
+msgid "sends the visitor to a hidden address"
+msgstr "envoie le visiteur vers une adresse dissimulée"
+
+#: src/Domain/Scan/ContentRules.php:99
+msgid "loads a script from a hidden address"
+msgstr "charge un script depuis une adresse dissimulée"
+
+#: src/Domain/Scan/ContentRules.php:100
+msgid "builds text from a long list of character codes"
+msgstr "construit du texte à partir d'une longue liste de codes de caractères"
+
+#: src/Domain/Scan/ContentRules.php:101
+msgid "holds a long run of escaped characters"
+msgstr "contient une longue suite de caractères échappés"
+
+#: src/Domain/Scan/ContentRules.php:102
+msgid "decodes a long hidden block"
+msgstr "décode un long bloc dissimulé"
+
+#: src/Domain/Scan/ContentRules.php:103
+msgid "has names made unreadable by an obfuscator"
+msgstr "a des noms rendus illisibles par un obfuscateur"
+
+#: src/Domain/Scan/ContentRules.php:104
+msgid "loads a script from a bare IP address"
+msgstr "charge un script depuis une simple adresse IP"
+
+#: src/Domain/Scan/ContentRules.php:105
+msgid "holds a hidden frame to another site"
+msgstr "contient un cadre invisible vers un autre site"
+
+#: src/Domain/Scan/ContentRules.php:106
+msgid "has a script in the name or the address of the site"
+msgstr "a un script dans le nom ou l'adresse du site"
+
+#: src/Domain/Scan/ContentRules.php:107
+msgid "has a script in a comment"
+msgstr "a un script dans un commentaire"
+
+#: src/Domain/Scan/ContentRules.php:108
+msgid "has a javascript: address in a profile"
+msgstr "a une adresse javascript: dans un profil"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "La base de données n'a pas pu être lue : rien ne peut être dit de la partie non lue."

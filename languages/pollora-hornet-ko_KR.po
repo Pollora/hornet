@@ -1773,3 +1773,100 @@ msgstr "사이트가 자신을 호출해 작업을 시작할 수 없었습니다
 #: admin/src/Waiting.js:35
 msgid "To run the scan now, from the command line:"
 msgstr "지금 명령줄에서 검사를 실행하려면:"
+
+#: src/Application/DefaultChecks.php:83
+msgid "Scripts in the database"
+msgstr "데이터베이스의 스크립트"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:192 src/Application/Scan/DatabaseScriptsTask.php:196
+msgid "The database is not read through yet: it goes on next time."
+msgstr "데이터베이스를 아직 다 읽지 않았습니다. 다음에 이어서 읽습니다."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "No disguised script in the database (%d entries holding code were looked at)."
+msgstr "데이터베이스에 위장된 스크립트가 없습니다(코드가 있는 항목 %d개 확인)."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "Scripts are loaded from: %s (not judged)."
+msgstr "스크립트를 불러오는 곳: %s(판단하지 않음)."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:229
+msgid "%d entry of the database holds a script that looks disguised."
+msgid_plural "%d entries of the database hold a script that looks disguised."
+msgstr[0] "데이터베이스 항목 %d개에 위장한 것으로 보이는 스크립트가 있습니다."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:231
+msgid "Read each entry in the database or with WP-CLI, not on the page that shows it. If you did not put that code there: remove it, change every password and the salts, and find how it got in. A script you know can be left alone with scanner.ignore_content. Hornet changes nothing."
+msgstr "각 항목은 표시되는 페이지가 아니라 데이터베이스나 WP-CLI에서 확인하세요. 직접 넣은 코드가 아니면 제거하고 모든 비밀번호와 솔트를 바꾼 뒤 유입 경로를 찾으세요. 알고 있는 스크립트는 scanner.ignore_content로 제외할 수 있습니다. Hornet은 아무것도 변경하지 않습니다."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:238
+msgid "post #%d"
+msgstr "글 #%d"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:239
+msgid "comment #%d"
+msgstr "댓글 #%d"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option %s"
+msgstr "옵션 %s"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option #%d"
+msgstr "옵션 #%d"
+
+#: src/Domain/Scan/ContentRules.php:96
+msgid "runs code that is decoded first"
+msgstr "먼저 디코딩한 코드를 실행함"
+
+#: src/Domain/Scan/ContentRules.php:97
+msgid "writes decoded code into the page"
+msgstr "디코딩한 코드를 페이지에 씀"
+
+#: src/Domain/Scan/ContentRules.php:98
+msgid "sends the visitor to a hidden address"
+msgstr "방문자를 숨겨진 주소로 보냄"
+
+#: src/Domain/Scan/ContentRules.php:99
+msgid "loads a script from a hidden address"
+msgstr "숨겨진 주소에서 스크립트를 불러옴"
+
+#: src/Domain/Scan/ContentRules.php:100
+msgid "builds text from a long list of character codes"
+msgstr "긴 문자 코드 목록으로 텍스트를 만듦"
+
+#: src/Domain/Scan/ContentRules.php:101
+msgid "holds a long run of escaped characters"
+msgstr "긴 이스케이프 문자열을 포함함"
+
+#: src/Domain/Scan/ContentRules.php:102
+msgid "decodes a long hidden block"
+msgstr "긴 숨겨진 블록을 디코딩함"
+
+#: src/Domain/Scan/ContentRules.php:103
+msgid "has names made unreadable by an obfuscator"
+msgstr "난독화 도구가 이름을 읽기 어렵게 만듦"
+
+#: src/Domain/Scan/ContentRules.php:104
+msgid "loads a script from a bare IP address"
+msgstr "IP 주소에서 직접 스크립트를 불러옴"
+
+#: src/Domain/Scan/ContentRules.php:105
+msgid "holds a hidden frame to another site"
+msgstr "다른 사이트를 가리키는 숨겨진 프레임을 포함함"
+
+#: src/Domain/Scan/ContentRules.php:106
+msgid "has a script in the name or the address of the site"
+msgstr "사이트 이름이나 주소에 스크립트가 있음"
+
+#: src/Domain/Scan/ContentRules.php:107
+msgid "has a script in a comment"
+msgstr "댓글에 스크립트가 있음"
+
+#: src/Domain/Scan/ContentRules.php:108
+msgid "has a javascript: address in a profile"
+msgstr "프로필에 javascript: 주소가 있음"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "데이터베이스를 읽을 수 없었습니다. 읽지 못한 부분에 대해서는 판단할 수 없습니다."

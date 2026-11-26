@@ -31,6 +31,7 @@ final readonly class Scanner
      * @param  list<ScanTask>  $tasks
      * @param  Closure(string): void|null  $progress  called with the id of each task before it runs
      * @param  array<string, string>  $ignored  id of a task => why its finding is set aside (the `ignore` setting)
+     * @param  int|null  $timeBox  seconds after which no further task is started: it is left for a run that goes on; null for no limit
      */
     public function __construct(
         private array $tasks,
@@ -38,6 +39,7 @@ final readonly class Scanner
         private Clock $clock,
         private array $ignored = [],
         private ?Closure $progress = null,
+        private ?int $timeBox = null,
     ) {}
 
     /**
@@ -60,6 +62,10 @@ final readonly class Scanner
         $findings = [];
         $pins = [];
         $unfinished = [];
+
+        $deadline = $this->timeBox === null ? null : $now->getTimestamp() + $this->timeBox;
+        $started = 0;
+        $left = false;
 
         // What an earlier scan found stays until the task that found it has run again
         foreach ($ids as $id) {
@@ -86,6 +92,16 @@ final readonly class Scanner
                 continue;
             }
 
+            // A request has a limit, and one task after another would pass it. One task at least runs, or nothing would move
+            if ($deadline !== null && $started > 0 && $this->clock->now()->getTimestamp() >= $deadline) {
+                $unfinished[] = $id;
+                $left = true;
+
+                continue;
+            }
+
+            $started++;
+
             // Told before the task, so that someone who waits knows which one it is at
             if ($this->progress instanceof Closure) {
                 ($this->progress)($id);
@@ -107,7 +123,8 @@ final readonly class Scanner
             $this->store->save(new ScanSnapshot($previous instanceof ScanSnapshot ? $previous->at : $now, $findings, $pins, $unfinished));
         }
 
-        $snapshot = new ScanSnapshot($now, $findings, $pins, $unfinished);
+        // Tasks that were not reached keep the scan at its old date: what was not looked at again does not look fresh
+        $snapshot = new ScanSnapshot($left && $previous instanceof ScanSnapshot ? $previous->at : $now, $findings, $pins, $unfinished);
         $this->store->save($snapshot);
 
         return $snapshot;

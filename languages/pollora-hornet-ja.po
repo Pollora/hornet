@@ -1773,3 +1773,100 @@ msgstr "サイトが自分自身を呼び出せず、タスクを開始できま
 #: admin/src/Waiting.js:35
 msgid "To run the scan now, from the command line:"
 msgstr "コマンドラインから今すぐスキャンするには:"
+
+#: src/Application/DefaultChecks.php:83
+msgid "Scripts in the database"
+msgstr "データベース内のスクリプト"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:192 src/Application/Scan/DatabaseScriptsTask.php:196
+msgid "The database is not read through yet: it goes on next time."
+msgstr "データベースはまだ読み終えていません。次回に続きを読みます。"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "No disguised script in the database (%d entries holding code were looked at)."
+msgstr "データベースに偽装されたスクリプトはありません（コードを含む %d 件を確認）。"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "Scripts are loaded from: %s (not judged)."
+msgstr "スクリプトの読み込み元: %s（判定対象外）。"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:229
+msgid "%d entry of the database holds a script that looks disguised."
+msgid_plural "%d entries of the database hold a script that looks disguised."
+msgstr[0] "データベースの %d 件に、偽装されたように見えるスクリプトがあります。"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:231
+msgid "Read each entry in the database or with WP-CLI, not on the page that shows it. If you did not put that code there: remove it, change every password and the salts, and find how it got in. A script you know can be left alone with scanner.ignore_content. Hornet changes nothing."
+msgstr "各項目は表示ページではなく、データベースか WP-CLI で確認してください。自分で入れたコードでなければ削除し、すべてのパスワードとソルトを変更して、侵入経路を調べてください。把握しているスクリプトは scanner.ignore_content で除外できます。Hornet は何も変更しません。"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:238
+msgid "post #%d"
+msgstr "投稿 #%d"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:239
+msgid "comment #%d"
+msgstr "コメント #%d"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option %s"
+msgstr "オプション %s"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option #%d"
+msgstr "オプション #%d"
+
+#: src/Domain/Scan/ContentRules.php:96
+msgid "runs code that is decoded first"
+msgstr "復号してからコードを実行する"
+
+#: src/Domain/Scan/ContentRules.php:97
+msgid "writes decoded code into the page"
+msgstr "復号したコードをページに書き込む"
+
+#: src/Domain/Scan/ContentRules.php:98
+msgid "sends the visitor to a hidden address"
+msgstr "訪問者を隠されたアドレスへ送る"
+
+#: src/Domain/Scan/ContentRules.php:99
+msgid "loads a script from a hidden address"
+msgstr "隠されたアドレスからスクリプトを読み込む"
+
+#: src/Domain/Scan/ContentRules.php:100
+msgid "builds text from a long list of character codes"
+msgstr "長い文字コード列から文字列を組み立てる"
+
+#: src/Domain/Scan/ContentRules.php:101
+msgid "holds a long run of escaped characters"
+msgstr "エスケープ文字の長い並びを含む"
+
+#: src/Domain/Scan/ContentRules.php:102
+msgid "decodes a long hidden block"
+msgstr "長い隠されたブロックを復号する"
+
+#: src/Domain/Scan/ContentRules.php:103
+msgid "has names made unreadable by an obfuscator"
+msgstr "難読化ツールで読めなくした名前を持つ"
+
+#: src/Domain/Scan/ContentRules.php:104
+msgid "loads a script from a bare IP address"
+msgstr "IP アドレスを直接指定してスクリプトを読み込む"
+
+#: src/Domain/Scan/ContentRules.php:105
+msgid "holds a hidden frame to another site"
+msgstr "別サイトを指す見えないフレームを含む"
+
+#: src/Domain/Scan/ContentRules.php:106
+msgid "has a script in the name or the address of the site"
+msgstr "サイト名やアドレスにスクリプトがある"
+
+#: src/Domain/Scan/ContentRules.php:107
+msgid "has a script in a comment"
+msgstr "コメントにスクリプトがある"
+
+#: src/Domain/Scan/ContentRules.php:108
+msgid "has a javascript: address in a profile"
+msgstr "プロフィールに javascript: アドレスがある"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "データベースを読み取れませんでした。読めなかった部分については何も判断できません。"

@@ -12,7 +12,7 @@ use Pollora\Hornet\Domain\Scan\CoreIntegrity;
  */
 final readonly class ScannerSettings
 {
-    private const array KEYS = ['allow_modified', 'ignore_paths', 'schedule', 'own_themes', 'probes', 'probe_uploads'];
+    private const array KEYS = ['allow_modified', 'ignore_paths', 'schedule', 'own_themes', 'probes', 'probe_uploads', 'ignore_content'];
 
     private const array SCHEDULES = ['off', 'hourly', 'twicedaily', 'daily'];
 
@@ -23,6 +23,7 @@ final readonly class ScannerSettings
      * @param  list<string>  $ownThemes  slugs of the themes written for this site: their files change with every deployment, and are not compared with a first look
      * @param  bool  $probes  whether the scan asks the site itself for the files it should not give away
      * @param  bool  $probeUploads  whether the scan puts a file in the uploads for a moment, to ask whether the server runs PHP there
+     * @param  list<string>  $ignoreContent  entries of the database that the database-scripts scan leaves alone (`post:12`, `option:widget_text`)
      */
     private function __construct(
         public array $allowModified,
@@ -31,6 +32,7 @@ final readonly class ScannerSettings
         public array $ownThemes,
         public bool $probes,
         public bool $probeUploads,
+        public array $ignoreContent = [],
     ) {}
 
     public static function none(): self
@@ -63,7 +65,7 @@ final readonly class ScannerSettings
 
         $own = self::slugs($value['own_themes'] ?? []);
 
-        return new self($allowed, $ignored, $schedule, $own, self::flag($value, 'probes', true), self::flag($value, 'probe_uploads', false));
+        return new self($allowed, $ignored, $schedule, $own, self::flag($value, 'probes', true), self::flag($value, 'probe_uploads', false), self::entries($value['ignore_content'] ?? []));
     }
 
     /**
@@ -100,6 +102,26 @@ final readonly class ScannerSettings
 
         foreach ($slugs as $slug) {
             $clean[] = is_string($slug) && preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]*$/D', $slug) === 1 ? $slug : throw InvalidSettingsException::invalid('scanner.own_themes', $expected);
+        }
+
+        return $clean;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function entries(mixed $entries): array
+    {
+        $expected = "a list of database entries (for example 'post:12', 'comment:3', 'user:5' or 'option:widget_text')";
+
+        if (! is_array($entries) || ! array_is_list($entries)) {
+            throw InvalidSettingsException::invalid('scanner.ignore_content', $expected);
+        }
+
+        $clean = [];
+
+        foreach ($entries as $entry) {
+            $clean[] = is_string($entry) && preg_match('/^(?:(?:post|comment|user):[1-9]\d*|option:[A-Za-z0-9_.:-]{1,64})$/D', $entry) === 1 ? $entry : throw InvalidSettingsException::invalid('scanner.ignore_content', $expected);
         }
 
         return $clean;

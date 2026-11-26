@@ -37,6 +37,7 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `plugin-integrity` | what the last scan found about the files of the plugins |
 | `theme-integrity` | what the last scan found about the files of the themes |
 | `suspicious-files` | what the last scan found in the content folder (scripts in the uploads, web shells) |
+| `database-scripts` | what the last scan found of **disguised JavaScript in the database** (see [Scan the files](#scan-the-files)) |
 | `exposed-files` | what the site gave away when the last scan asked it (a `.env`, a repository, a backup, a log) |
 | `security-headers` | in production, the headers of the home page as the last scan received them, whoever set them: `nosniff`, a protection against framing, HSTS on HTTPS. And the headers Hornet is set to send that do not arrive. Content-Security-Policy and Referrer-Policy are not judged. Off with `scanner.probes` |
 
@@ -281,6 +282,10 @@ The result is kept (in one option that WordPress does not load on every page; on
 ```
 
 An allowed file is not trusted for good: its hash is pinned the first time it is seen, and a later change is reported (the one file that may differ would otherwise be the best place to hide in). A pin belongs to one release of the core: an update pins again. After you change a patch on purpose, `wp hornet scan --repin` accepts the files as they are.
+
+**Scripts in the database.** What an SQL injection or a stolen account leaves: posts (not revisions nor trash), options (not transients), approved comments and the website of the profiles. A `<script>` alone is **never** reported: embeds, analytics and header plugins put it there on purpose. What is reported is code that hides what it does (runs or writes decoded code, redirects to a hidden address, long lists of character codes, obfuscated names, a script from a bare IP address, a hidden frame outside `<noscript>`), and code where none belongs (the name or address of the site: critical; a comment; a profile). A finding names the entry (`post #12`, `option widget_text`) and never repeats its content. An entry you know is left alone with `scanner.ignore_content` (`['post:12', 'option:widget_text']`).
+
+It is built for large databases: the tables are read in ranges of primary keys, the database filters, and only the few matching texts reach PHP. Measured with one million posts: MySQL 8 (2.6 GB) a full pass in 20 s, no query over 105 ms; MariaDB 11 (1.8 GB) 21 s, no query over 127 ms; 6 MB more memory. A table the database refuses to read is said `unknown`, never clean. With WP-Cron's time budget it stops, keeps its place and goes on at the next run. Not read: post meta (page builders keep scripts there on purpose), the other sites of a network, and what an injection hides outside the first and last 128 KB of a very long text. It is not a malware scanner with signatures: a script written plainly, loaded from an ordinary domain, is not told from a legitimate one.
 
 **Plugins.** Each plugin that has a folder of its own (active or not) is compared with the list that `downloads.wordpress.org` publishes for its slug and version: SHA-256 of every file, one request per plugin, and only the slug and the version are sent. A file that differs, a file that is gone and a **script that is not in the list** are reported; other unlisted files (logs, caches, uploads) and the `node_modules` and `.git` folders are not, so that the one that matters is not lost in noise.
 

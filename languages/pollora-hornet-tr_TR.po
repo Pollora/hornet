@@ -1555,3 +1555,101 @@ msgstr "Site, görevleri başlatmak için kendisini çağıramadı (sertifika, g
 #: admin/src/Waiting.js:35
 msgid "To run the scan now, from the command line:"
 msgstr "Taramayı şimdi komut satırından çalıştırmak için:"
+
+#: src/Application/DefaultChecks.php:83
+msgid "Scripts in the database"
+msgstr "Veritabanındaki betikler"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:192 src/Application/Scan/DatabaseScriptsTask.php:196
+msgid "The database is not read through yet: it goes on next time."
+msgstr "Veritabanı henüz tamamen okunmadı: bir dahaki sefere devam edecek."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "No disguised script in the database (%d entries holding code were looked at)."
+msgstr "Veritabanında gizlenmiş betik yok (kod içeren %d kayıt incelendi)."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:199
+msgid "Scripts are loaded from: %s (not judged)."
+msgstr "Betiklerin yüklendiği yerler: %s (değerlendirilmedi)."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:229
+msgid "%d entry of the database holds a script that looks disguised."
+msgid_plural "%d entries of the database hold a script that looks disguised."
+msgstr[0] "Veritabanındaki %d kayıt gizlenmiş görünen bir betik içeriyor."
+msgstr[1] "Veritabanındaki %d kayıt gizlenmiş görünen bir betik içeriyor."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:231
+msgid "Read each entry in the database or with WP-CLI, not on the page that shows it. If you did not put that code there: remove it, change every password and the salts, and find how it got in. A script you know can be left alone with scanner.ignore_content. Hornet changes nothing."
+msgstr "Her kaydı onu gösteren sayfada değil, veritabanında veya WP-CLI ile okuyun. Bu kodu siz koymadıysanız: kaldırın, tüm parolaları ve tuzları değiştirin ve nasıl girdiğini bulun. Bildiğiniz bir betik scanner.ignore_content ile hariç tutulabilir. Hornet hiçbir şeyi değiştirmez."
+
+#: src/Application/Scan/DatabaseScriptsTask.php:238
+msgid "post #%d"
+msgstr "yazı #%d"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:239
+msgid "comment #%d"
+msgstr "yorum #%d"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option %s"
+msgstr "seçenek %s"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:241
+msgid "option #%d"
+msgstr "seçenek #%d"
+
+#: src/Domain/Scan/ContentRules.php:96
+msgid "runs code that is decoded first"
+msgstr "önce çözülen kodu çalıştırıyor"
+
+#: src/Domain/Scan/ContentRules.php:97
+msgid "writes decoded code into the page"
+msgstr "çözülen kodu sayfaya yazıyor"
+
+#: src/Domain/Scan/ContentRules.php:98
+msgid "sends the visitor to a hidden address"
+msgstr "ziyaretçiyi gizli bir adrese gönderiyor"
+
+#: src/Domain/Scan/ContentRules.php:99
+msgid "loads a script from a hidden address"
+msgstr "gizli bir adresten betik yüklüyor"
+
+#: src/Domain/Scan/ContentRules.php:100
+msgid "builds text from a long list of character codes"
+msgstr "uzun bir karakter kodu listesinden metin oluşturuyor"
+
+#: src/Domain/Scan/ContentRules.php:101
+msgid "holds a long run of escaped characters"
+msgstr "uzun bir kaçış karakteri dizisi içeriyor"
+
+#: src/Domain/Scan/ContentRules.php:102
+msgid "decodes a long hidden block"
+msgstr "uzun bir gizli bloğu çözüyor"
+
+#: src/Domain/Scan/ContentRules.php:103
+msgid "has names made unreadable by an obfuscator"
+msgstr "adlar bir karartıcı tarafından okunmaz hale getirilmiş"
+
+#: src/Domain/Scan/ContentRules.php:104
+msgid "loads a script from a bare IP address"
+msgstr "doğrudan bir IP adresinden betik yüklüyor"
+
+#: src/Domain/Scan/ContentRules.php:105
+msgid "holds a hidden frame to another site"
+msgstr "başka bir siteye giden gizli bir çerçeve içeriyor"
+
+#: src/Domain/Scan/ContentRules.php:106
+msgid "has a script in the name or the address of the site"
+msgstr "sitenin adında veya adresinde betik var"
+
+#: src/Domain/Scan/ContentRules.php:107
+msgid "has a script in a comment"
+msgstr "bir yorumda betik var"
+
+#: src/Domain/Scan/ContentRules.php:108
+msgid "has a javascript: address in a profile"
+msgstr "bir profilde javascript: adresi var"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "Veritabanı okunamadı: okunmayan kısım hakkında bir şey söylenemez."
