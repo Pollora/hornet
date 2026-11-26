@@ -1446,3 +1446,129 @@ msgstr "macOS 폴더 색인(파일 이름)"
 #: src/Domain/Scan/ExposureCatalog.php:55
 msgid "the settings of a code editor (paths, history)"
 msgstr "코드 편집기 설정(경로, 기록)"
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:31
+msgid "Application passwords"
+msgstr "애플리케이션 비밀번호"
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:39
+msgid "Application passwords are turned off."
+msgstr "애플리케이션 비밀번호가 꺼져 있습니다."
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:43
+msgid "No administrator has an application password."
+msgstr "애플리케이션 비밀번호가 있는 관리자가 없습니다."
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:56
+msgid "%d application password of an administrator, used or made in the last 90 days."
+msgid_plural "%d application passwords of administrators, all used or made in the last 90 days."
+msgstr[0] "관리자의 애플리케이션 비밀번호 %d개가 모두 최근 90일 안에 사용되었거나 만들어졌습니다."
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:62
+msgid "user #%d: %d"
+msgstr "사용자 #%d: %d"
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:74
+msgid "%d application password of an administrator has not been used for 90 days."
+msgid_plural "%d application passwords of administrators have not been used for 90 days."
+msgstr[0] "관리자의 애플리케이션 비밀번호 %d개가 90일 동안 사용되지 않았습니다."
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:76
+msgid "Revoke what is not needed, in the profile of the account: such a password enters the REST API with its rights and no second factor."
+msgstr "계정 프로필에서 필요 없는 것을 해지하세요. 이런 비밀번호는 2단계 인증 없이 계정 권한으로 REST API에 접근합니다."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:41
+msgid "APP_DEBUG is on in production: an error page shows the code and the request."
+msgstr "운영 환경에서 APP_DEBUG가 켜져 있습니다. 오류 페이지에 코드와 요청이 표시됩니다."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:41
+msgid "Set APP_DEBUG=false in the .env of the production site."
+msgstr "운영 사이트의 .env에서 APP_DEBUG=false로 설정하세요."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:29
+msgid "Laravel Debugbar"
+msgstr "Laravel Debugbar"
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Debugbar is turned on in production: it shows the queries, the session and the request to visitors."
+msgstr "운영 환경에서 Debugbar가 켜져 있습니다. 쿼리, 세션, 요청이 방문자에게 표시됩니다."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Remove DEBUGBAR_ENABLED=true from the .env of the production site, and install Debugbar as a development dependency only."
+msgstr "운영 사이트의 .env에서 DEBUGBAR_ENABLED=true를 제거하고, Debugbar는 개발 의존성으로만 설치하세요."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
+msgid "Debugbar is not turned on by its own setting."
+msgstr "Debugbar가 자체 설정으로 켜져 있지 않습니다."
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:28
+msgid "Laravel application key"
+msgstr "Laravel 애플리케이션 키"
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:34
+msgid "APP_KEY is not set: Laravel can neither encrypt nor sign anything."
+msgstr "APP_KEY가 설정되지 않았습니다. Laravel이 암호화나 서명을 할 수 없습니다."
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:34
+msgid "Run `php artisan key:generate` once, and keep the value secret."
+msgstr "`php artisan key:generate`를 한 번 실행하고 값은 비밀로 유지하세요."
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:37
+msgid "The application key is set."
+msgstr "애플리케이션 키가 설정되어 있습니다."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:35
+msgid "Open registration"
+msgstr "열린 회원 가입"
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:43
+msgid "Visitors cannot give themselves a role on this site."
+msgstr "방문자는 이 사이트에서 스스로 역할을 얻을 수 없습니다."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:47
+msgid "Turn off \"Anyone can register\" in the general settings, or make Subscriber the default role. Then look at the accounts created while it was open."
+msgstr "일반 설정에서 ‘누구나 회원 가입 가능’을 끄거나 기본 역할을 구독자로 지정하세요. 그런 다음 열려 있던 동안 만들어진 계정을 확인하세요."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:51
+msgid "Anyone can register with the role \"%s\", which can take the site over."
+msgstr "누구나 “%s” 역할로 가입할 수 있으며, 이 역할은 사이트를 장악할 수 있습니다."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:52
+msgid "Anyone can register with the role \"%s\", which can change the content of others."
+msgstr "누구나 “%s” 역할로 가입할 수 있으며, 이 역할은 다른 사람의 콘텐츠를 변경할 수 있습니다."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:53
+msgid "Anyone can register with the role \"%s\", which can write or upload on the site."
+msgstr "누구나 “%s” 역할로 가입할 수 있으며, 이 역할은 사이트에 글을 쓰거나 파일을 올릴 수 있습니다."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:54
+msgid "Anyone can register, with the role \"%s\", which cannot write on the site."
+msgstr "누구나 “%s” 역할로 가입할 수 있지만, 이 역할은 사이트에 글을 쓸 수 없습니다."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:26
+msgid "PHP error display"
+msgstr "PHP 오류 표시"
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:36
+msgid "WP_DEBUG is on: what is shown is judged by the Debug mode check."
+msgstr "WP_DEBUG가 켜져 있습니다. 표시 내용은 디버그 모드 점검에서 판단합니다."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:42
+msgid "Not seen yet: it is read from the web server when somebody opens the dashboard."
+msgstr "아직 확인되지 않았습니다. 누군가 알림판을 열 때 웹 서버에서 읽습니다."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:46
+msgid "PHP shows its errors to visitors, although WP_DEBUG is off."
+msgstr "WP_DEBUG가 꺼져 있는데도 PHP가 방문자에게 오류를 표시합니다."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:46
+msgid "Set display_errors to Off in php.ini, in the PHP-FPM pool or in .user.ini."
+msgstr "php.ini, PHP-FPM 풀 또는 .user.ini에서 display_errors를 Off로 설정하세요."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:49
+msgid "PHP does not show its errors."
+msgstr "PHP가 오류를 표시하지 않습니다."
+
+#: src/Domain/Scan/ExposureCatalog.php:70
+msgid "the log of the Laravel application (paths, queries, sometimes data)"
+msgstr "Laravel 애플리케이션 로그(경로, 쿼리, 때로는 데이터)"

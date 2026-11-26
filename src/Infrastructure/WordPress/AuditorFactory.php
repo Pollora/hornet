@@ -18,9 +18,20 @@ use Pollora\Hornet\Infrastructure\Config\Settings;
  */
 final class AuditorFactory
 {
+    /**
+     * The checks of this site. Every auditor is built from this list, so that the screen, Site Health, the command line and the
+     * notifications agree on whether the site is a Pollora one.
+     *
+     * @return list<Check>
+     */
+    public static function checks(Settings $settings): array
+    {
+        return DefaultChecks::all($settings->vulnerabilities->enabled, HostApplication::laravel());
+    }
+
     public static function forWordPress(Settings $settings): Auditor
     {
-        $checks = DefaultChecks::all($settings->vulnerabilities->enabled);
+        $checks = self::checks($settings);
         $known = array_map(static fn (Check $check): string => $check->id(), $checks);
         $screen = [];
 

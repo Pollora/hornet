@@ -7,6 +7,7 @@ namespace Pollora\Hornet\Domain\Audit\Checks;
 use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
+use Pollora\Hornet\Domain\Audit\LaravelApplication;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\I18n\Message;
 
@@ -15,6 +16,11 @@ use Pollora\Hornet\Domain\I18n\Message;
  */
 final readonly class DebugModeCheck implements Check
 {
+    /**
+     * @param  LaravelApplication|null  $application  on Pollora, where APP_DEBUG is what turns WP_DEBUG on and is the thing to change
+     */
+    public function __construct(private ?LaravelApplication $application = null) {}
+
     public function id(): string
     {
         return 'debug-mode';
@@ -29,6 +35,10 @@ final readonly class DebugModeCheck implements Check
     {
         if ($environment->environmentType() !== 'production') {
             return Finding::pass($this->id(), Message::of('Not a production site: debug mode is not judged.'));
+        }
+
+        if ($this->application?->debug() === true) {
+            return Finding::fail($this->id(), Severity::High, Message::of('APP_DEBUG is on in production: an error page shows the code and the request.'), [], Message::of('Set APP_DEBUG=false in the .env of the production site.'));
         }
 
         $debug = $environment->constant('WP_DEBUG') === true;

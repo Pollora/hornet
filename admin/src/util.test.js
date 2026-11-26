@@ -1,3 +1,4 @@
+import { getSettings, setSettings } from '@wordpress/date';
 import { ago, headline, severityLabel, severityRank, statusLabel, sourceLabel, whenLabel, fixFirst, gradeLabel, codeSegments } from './util';
 
 describe( 'severityRank', () => {
@@ -71,6 +72,20 @@ describe( 'sourceLabel and whenLabel', () => {
 		expect( whenLabel( 0 ) ).toBe( '—' );
 		expect( whenLabel( null ) ).toBe( '—' );
 		expect( whenLabel( 1795600000 ) ).not.toBe( '—' );
+	} );
+
+	it( 'writes a date as the site does, in its language and time zone, not as the browser does', () => {
+		const settings = getSettings();
+		setSettings( {
+			...settings,
+			l10n: { ...settings.l10n, locale: 'fr', months: [ 'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre' ] },
+			formats: { ...settings.formats, datetime: 'j F Y H:i' },
+			timezone: { offset: '2', offsetFormatted: '2', string: '', abbr: '' },
+		} );
+
+		expect( whenLabel( Date.UTC( 2026, 10, 26, 13, 5 ) / 1000 ) ).toBe( '26 novembre 2026 15:05' );
+
+		setSettings( settings );
 	} );
 } );
 

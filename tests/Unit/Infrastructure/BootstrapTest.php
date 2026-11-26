@@ -8,6 +8,7 @@ use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
+use Pollora\Hornet\Infrastructure\WordPress\ErrorDisplayModule;
 use Pollora\Hornet\Infrastructure\WordPress\LoginThrottleModule;
 use Pollora\Hornet\Infrastructure\WordPress\NotificationModule;
 use Pollora\Hornet\Infrastructure\WordPress\ScanModule;
@@ -163,7 +164,7 @@ it('attaches the page and the scan that it asks for on the administration, and t
 
     $classes = array_map(static fn ($module): string => $module::class, Bootstrap::modules(Settings::fromArray([]), new FakeEnvironment));
 
-    expect($classes)->toBe([SiteHealthModule::class, ScanModule::class, AdminRestModule::class, AdminPageModule::class]);
+    expect($classes)->toBe([ErrorDisplayModule::class, SiteHealthModule::class, ScanModule::class, AdminRestModule::class, AdminPageModule::class]);
 });
 
 it('attaches the scan on a cron run, but not the page', function (): void {
@@ -184,5 +185,5 @@ it('leaves the screen to the main site of a network', function (): void {
 
     $classes = array_map(static fn ($module): string => $module::class, Bootstrap::modules(Settings::fromArray([]), new FakeEnvironment));
 
-    expect($classes)->toBe([SiteHealthModule::class]);
+    expect($classes)->toBe([ErrorDisplayModule::class, SiteHealthModule::class]);
 });

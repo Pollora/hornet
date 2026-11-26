@@ -11,7 +11,10 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | Check | Looks at |
 | --- | --- |
 | `salts` | the eight keys and salts: set, 32 characters or more, not the sample value. It names the constants and never prints a value |
-| `debug-mode` | `WP_DEBUG`, `WP_DEBUG_DISPLAY`, `WP_DEBUG_LOG` on a production site |
+| `debug-mode` | `WP_DEBUG`, `WP_DEBUG_DISPLAY`, `WP_DEBUG_LOG` on a production site; on Pollora, `APP_DEBUG` |
+| `php-error-display` | PHP showing its errors although `WP_DEBUG` is off, as the web server last showed it on a dashboard page (not on Pollora, where Laravel turns it off) |
+| `laravel-app-key` | **Pollora only**: `APP_KEY` is set (its value is never read) |
+| `laravel-debugbar` | **Pollora only**: Debugbar turned on by its own setting in production |
 | `https` | the site address, and `FORCE_SSL_ADMIN` |
 | `file-editor` | whether the theme and plugin editor is refused, whoever refused it (`DISALLOW_FILE_EDIT`, `DISALLOW_FILE_MODS`, Hornet's `hardening.file_editor`) |
 | `file-mods` | installing code from the dashboard (advice: it also stops WordPress's own updates) |
@@ -21,9 +24,11 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `xml-rpc` | what XML-RPC answers: open, logins refused only (pingbacks still answer), or closed |
 | `user-enumeration` | whether the REST API lists the users to a visitor |
 | `admin-account` | a user named `admin` |
+| `open-registration` | anyone can register with a default role that may write, change others' content or take the site over (judged by what the role may do) |
 | `login-protection` | whether [pollora/portcullis](https://github.com/Pollora/portcullis) is there |
 | `two-factor` | whether the official Two-Factor plugin is active |
 | `two-factor-coverage` | the administrators who have not set up a second factor, named by number |
+| `application-passwords` | application passwords of administrators unused for 90 days (only their dates are read) |
 | `core-integrity` | what the last [scan](#scan-the-files) found about the WordPress core files (it reads the result: it never scans) |
 | `plugin-integrity` | what the last scan found about the files of the plugins |
 | `theme-integrity` | what the last scan found about the files of the themes |

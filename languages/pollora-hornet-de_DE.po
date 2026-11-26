@@ -1464,3 +1464,131 @@ msgstr "ein macOS-Ordnerindex (die Namen der Dateien)"
 #: src/Domain/Scan/ExposureCatalog.php:55
 msgid "the settings of a code editor (paths, history)"
 msgstr "die Einstellungen eines Code-Editors (Pfade, Verlauf)"
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:31
+msgid "Application passwords"
+msgstr "Anwendungspasswörter"
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:39
+msgid "Application passwords are turned off."
+msgstr "Anwendungspasswörter sind deaktiviert."
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:43
+msgid "No administrator has an application password."
+msgstr "Kein Administrator hat ein Anwendungspasswort."
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:56
+msgid "%d application password of an administrator, used or made in the last 90 days."
+msgid_plural "%d application passwords of administrators, all used or made in the last 90 days."
+msgstr[0] "%d Anwendungspasswort eines Administrators, in den letzten 90 Tagen benutzt oder erstellt."
+msgstr[1] "%d Anwendungspasswörter von Administratoren, alle in den letzten 90 Tagen benutzt oder erstellt."
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:62
+msgid "user #%d: %d"
+msgstr "Benutzer #%d: %d"
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:74
+msgid "%d application password of an administrator has not been used for 90 days."
+msgid_plural "%d application passwords of administrators have not been used for 90 days."
+msgstr[0] "%d Anwendungspasswort eines Administrators wurde seit 90 Tagen nicht benutzt."
+msgstr[1] "%d Anwendungspasswörter von Administratoren wurden seit 90 Tagen nicht benutzt."
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:76
+msgid "Revoke what is not needed, in the profile of the account: such a password enters the REST API with its rights and no second factor."
+msgstr "Widerrufen Sie im Profil des Kontos, was nicht gebraucht wird: Ein solches Passwort gelangt mit dessen Rechten und ohne zweiten Faktor in die REST-API."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:41
+msgid "APP_DEBUG is on in production: an error page shows the code and the request."
+msgstr "APP_DEBUG ist in der Produktion aktiv: Eine Fehlerseite zeigt den Code und die Anfrage."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:41
+msgid "Set APP_DEBUG=false in the .env of the production site."
+msgstr "Setzen Sie APP_DEBUG=false in der .env der Produktionswebsite."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:29
+msgid "Laravel Debugbar"
+msgstr "Laravel Debugbar"
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Debugbar is turned on in production: it shows the queries, the session and the request to visitors."
+msgstr "Debugbar ist in der Produktion aktiviert: Sie zeigt Besuchern die Datenbankabfragen, die Sitzung und die Anfrage."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Remove DEBUGBAR_ENABLED=true from the .env of the production site, and install Debugbar as a development dependency only."
+msgstr "Entfernen Sie DEBUGBAR_ENABLED=true aus der .env der Produktionswebsite und installieren Sie Debugbar nur als Entwicklungsabhängigkeit."
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
+msgid "Debugbar is not turned on by its own setting."
+msgstr "Debugbar ist nicht über die eigene Einstellung aktiviert."
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:28
+msgid "Laravel application key"
+msgstr "Laravel-Anwendungsschlüssel"
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:34
+msgid "APP_KEY is not set: Laravel can neither encrypt nor sign anything."
+msgstr "APP_KEY ist nicht gesetzt: Laravel kann weder verschlüsseln noch signieren."
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:34
+msgid "Run `php artisan key:generate` once, and keep the value secret."
+msgstr "Führen Sie einmal `php artisan key:generate` aus und halten Sie den Wert geheim."
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:37
+msgid "The application key is set."
+msgstr "Der Anwendungsschlüssel ist gesetzt."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:35
+msgid "Open registration"
+msgstr "Offene Registrierung"
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:43
+msgid "Visitors cannot give themselves a role on this site."
+msgstr "Besucher können sich auf dieser Website keine Rolle verschaffen."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:47
+msgid "Turn off \"Anyone can register\" in the general settings, or make Subscriber the default role. Then look at the accounts created while it was open."
+msgstr "Deaktivieren Sie „Jeder kann sich registrieren“ in den allgemeinen Einstellungen oder machen Sie Abonnent zur Standardrolle. Prüfen Sie danach die in dieser Zeit angelegten Konten."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:51
+msgid "Anyone can register with the role \"%s\", which can take the site over."
+msgstr "Jeder kann sich mit der Rolle „%s“ registrieren, die die Website übernehmen kann."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:52
+msgid "Anyone can register with the role \"%s\", which can change the content of others."
+msgstr "Jeder kann sich mit der Rolle „%s“ registrieren, die Inhalte anderer ändern kann."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:53
+msgid "Anyone can register with the role \"%s\", which can write or upload on the site."
+msgstr "Jeder kann sich mit der Rolle „%s“ registrieren, die auf der Website schreiben oder Dateien hochladen kann."
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:54
+msgid "Anyone can register, with the role \"%s\", which cannot write on the site."
+msgstr "Jeder kann sich registrieren, mit der Rolle „%s“, die auf der Website nichts schreiben kann."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:26
+msgid "PHP error display"
+msgstr "Anzeige von PHP-Fehlern"
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:36
+msgid "WP_DEBUG is on: what is shown is judged by the Debug mode check."
+msgstr "WP_DEBUG ist aktiv: Was angezeigt wird, bewertet die Prüfung des Debug-Modus."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:42
+msgid "Not seen yet: it is read from the web server when somebody opens the dashboard."
+msgstr "Noch nicht erfasst: Der Wert wird vom Webserver gelesen, wenn jemand das Dashboard öffnet."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:46
+msgid "PHP shows its errors to visitors, although WP_DEBUG is off."
+msgstr "PHP zeigt Besuchern seine Fehler, obwohl WP_DEBUG deaktiviert ist."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:46
+msgid "Set display_errors to Off in php.ini, in the PHP-FPM pool or in .user.ini."
+msgstr "Setzen Sie display_errors in php.ini, im PHP-FPM-Pool oder in .user.ini auf Off."
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:49
+msgid "PHP does not show its errors."
+msgstr "PHP zeigt seine Fehler nicht an."
+
+#: src/Domain/Scan/ExposureCatalog.php:70
+msgid "the log of the Laravel application (paths, queries, sometimes data)"
+msgstr "das Protokoll der Laravel-Anwendung (Pfade, Abfragen, manchmal Daten)"

@@ -16,6 +16,7 @@ use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
 use Pollora\Hornet\Infrastructure\Login\ClientAddress;
 use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
+use Pollora\Hornet\Infrastructure\WordPress\HostApplication;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Throwable;
 
@@ -43,6 +44,9 @@ final class HornetServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__, 3).'/config/hornet.php', 'pollora.hornet');
+
+        // Said as soon as the provider is registered: the console (pollora:doctor, WP-CLI) builds an audit without ever starting
+        HostApplication::set(new ConfiguredApplication(fn (string $key): mixed => $this->app->make('config')->get($key)));
 
         $this->startOnPluginsLoaded();
 

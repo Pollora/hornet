@@ -289,135 +289,135 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
-#: admin/src/util.js:11 admin/src/util.js:95
+#: admin/src/util.js:12 admin/src/util.js:96
 msgid "Critical"
 msgstr ""
 
-#: admin/src/util.js:12
+#: admin/src/util.js:13
 msgid "High"
 msgstr ""
 
-#: admin/src/util.js:13
+#: admin/src/util.js:14
 msgid "Medium"
 msgstr ""
 
-#: admin/src/util.js:14
+#: admin/src/util.js:15
 msgid "Low"
 msgstr ""
 
-#: admin/src/util.js:15
+#: admin/src/util.js:16
 msgid "Info"
 msgstr ""
 
-#: admin/src/util.js:20
+#: admin/src/util.js:21
 msgid "Open"
 msgstr ""
 
-#: admin/src/util.js:21 src/Infrastructure/WordPress/SiteHealthModule.php:98
+#: admin/src/util.js:22 src/Infrastructure/WordPress/SiteHealthModule.php:98
 msgid "Not verified"
 msgstr ""
 
-#: admin/src/util.js:22
+#: admin/src/util.js:23
 msgid "Set aside"
 msgstr ""
 
-#: admin/src/util.js:23
+#: admin/src/util.js:24
 msgid "Passes"
 msgstr ""
 
-#: admin/src/util.js:24
+#: admin/src/util.js:25
 msgid "Not scanned"
 msgstr ""
 
-#: admin/src/util.js:30
+#: admin/src/util.js:31
 msgid "never"
 msgstr ""
 
-#: admin/src/util.js:33
+#: admin/src/util.js:34
 msgid "just now"
 msgstr ""
 
-#: admin/src/util.js:37
+#: admin/src/util.js:38
 msgid "%d minute ago"
 msgid_plural "%d minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/src/util.js:41
+#: admin/src/util.js:42
 msgid "%d hour ago"
 msgid_plural "%d hours ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/src/util.js:44
+#: admin/src/util.js:45
 msgid "%d day ago"
 msgid_plural "%d days ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/src/util.js:51
+#: admin/src/util.js:52
 msgid "Nothing needs your attention."
 msgstr ""
 
 #. translators: %d: number of checks that could not be verified
-#: admin/src/util.js:55
+#: admin/src/util.js:56
 msgid "No open finding, but %d could not be verified."
 msgid_plural "No open finding, but %d could not be verified."
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of open findings
-#: admin/src/util.js:66
+#: admin/src/util.js:67
 msgid "%d open finding."
 msgid_plural "%d open findings."
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/src/util.js:74
+#: admin/src/util.js:75
 msgid "Website"
 msgstr ""
 
-#: admin/src/util.js:75
+#: admin/src/util.js:76
 msgid "Administration"
 msgstr ""
 
-#: admin/src/util.js:76
+#: admin/src/util.js:77
 msgid "REST API"
 msgstr ""
 
-#: admin/src/util.js:77
+#: admin/src/util.js:78
 msgid "Ajax"
 msgstr ""
 
-#: admin/src/util.js:78 src/Domain/Audit/Checks/XmlRpcCheck.php:30
+#: admin/src/util.js:79 src/Domain/Audit/Checks/XmlRpcCheck.php:30
 msgid "XML-RPC"
 msgstr ""
 
-#: admin/src/util.js:79
+#: admin/src/util.js:80
 msgid "Command line"
 msgstr ""
 
-#: admin/src/util.js:80
+#: admin/src/util.js:81
 msgid "Scheduled task"
 msgstr ""
 
-#: admin/src/util.js:90
+#: admin/src/util.js:91
 msgid "Solid"
 msgstr ""
 
-#: admin/src/util.js:91
+#: admin/src/util.js:92
 msgid "Good"
 msgstr ""
 
-#: admin/src/util.js:92
+#: admin/src/util.js:93
 msgid "Fragile"
 msgstr ""
 
-#: admin/src/util.js:93
+#: admin/src/util.js:94
 msgid "Weak"
 msgstr ""
 
-#: admin/src/util.js:94
+#: admin/src/util.js:95
 msgid "At risk"
 msgstr ""
 
@@ -429,27 +429,27 @@ msgstr ""
 msgid "The check could not run: %s"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:56
+#: src/Application/DefaultChecks.php:67
 msgid "WordPress core files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:57
+#: src/Application/DefaultChecks.php:68
 msgid "Plugin files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:58
+#: src/Application/DefaultChecks.php:69
 msgid "Theme files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:59
+#: src/Application/DefaultChecks.php:70
 msgid "Suspicious files"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:60
+#: src/Application/DefaultChecks.php:71
 msgid "Files given away by the site"
 msgstr ""
 
-#: src/Application/DefaultChecks.php:62
+#: src/Application/DefaultChecks.php:73
 msgid "Known vulnerabilities"
 msgstr ""
 
@@ -511,49 +511,49 @@ msgstr ""
 msgid "%s: and %d more"
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:76
+#: src/Application/Scan/ExposedFilesTask.php:78
 msgid "Not asked (out of time): %d addresses."
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:92
+#: src/Application/Scan/ExposedFilesTask.php:94
 msgid "/%s%s answers, and it is %s"
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:97
+#: src/Application/Scan/ExposedFilesTask.php:99
 msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): nothing was asked of it."
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:101
+#: src/Application/Scan/ExposedFilesTask.php:103
 msgid "%d of the %d addresses did not answer."
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:130
+#: src/Application/Scan/ExposedFilesTask.php:132
 msgid "Not asked: the uploads folder cannot be written to, so whether it runs PHP could not be tried."
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:136
+#: src/Application/Scan/ExposedFilesTask.php:138
 msgid "Not asked: the server did not answer for the file put in the uploads."
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:142
+#: src/Application/Scan/ExposedFilesTask.php:144
 msgid "The server runs PHP that sits in the uploads folder: a file that is uploaded there is run"
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:158
+#: src/Application/Scan/ExposedFilesTask.php:160
 msgid "None of the %d addresses asked gives away a file it should not."
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:162
+#: src/Application/Scan/ExposedFilesTask.php:164
 msgid "[%s] %s"
 msgstr ""
 
-#: src/Application/Scan/ExposedFilesTask.php:167
+#: src/Application/Scan/ExposedFilesTask.php:169
 msgid "%d thing is given away by the site itself."
 msgid_plural "%d things are given away by the site itself."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Application/Scan/ExposedFilesTask.php:169
+#: src/Application/Scan/ExposedFilesTask.php:171
 msgid "Remove the file from the web root, or deny it in the web server: `wp hornet server-config nginx`, `apache` or `htaccess` prints the rules (Hornet writes nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
 msgstr ""
 
@@ -589,7 +589,7 @@ msgstr ""
 msgid "[%s] %s: %s (%s)%s"
 msgstr ""
 
-#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47
 msgid "and %d more"
 msgstr ""
 
@@ -753,6 +753,38 @@ msgstr ""
 msgid "No user is named \"admin\"."
 msgstr ""
 
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:31
+msgid "Application passwords"
+msgstr ""
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:39
+msgid "Application passwords are turned off."
+msgstr ""
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:43
+msgid "No administrator has an application password."
+msgstr ""
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:56
+msgid "%d application password of an administrator, used or made in the last 90 days."
+msgid_plural "%d application passwords of administrators, all used or made in the last 90 days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:62
+msgid "user #%d: %d"
+msgstr ""
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:74
+msgid "%d application password of an administrator has not been used for 90 days."
+msgid_plural "%d application passwords of administrators have not been used for 90 days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:76
+msgid "Revoke what is not needed, in the profile of the account: such a password enters the REST API with its rights and no second factor."
+msgstr ""
+
 #: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:25
 msgid "wp-config.php permissions"
 msgstr ""
@@ -789,43 +821,51 @@ msgstr ""
 msgid "wp-config.php is not readable by other accounts."
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:25
+#: src/Domain/Audit/Checks/DebugModeCheck.php:31
 msgid "Debug mode"
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:31
+#: src/Domain/Audit/Checks/DebugModeCheck.php:37
 msgid "Not a production site: debug mode is not judged."
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+#: src/Domain/Audit/Checks/DebugModeCheck.php:41
+msgid "APP_DEBUG is on in production: an error page shows the code and the request."
+msgstr ""
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:41
+msgid "Set APP_DEBUG=false in the .env of the production site."
+msgstr ""
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:50
 msgid "PHP errors are shown to visitors."
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+#: src/Domain/Audit/Checks/DebugModeCheck.php:50
 msgid "WP_DEBUG is on and WP_DEBUG_DISPLAY is not false"
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+#: src/Domain/Audit/Checks/DebugModeCheck.php:50
 msgid "Set WP_DEBUG to false, or define('WP_DEBUG_DISPLAY', false)."
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:44
+#: src/Domain/Audit/Checks/DebugModeCheck.php:54
 msgid "WP_DEBUG is on in production."
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:44
+#: src/Domain/Audit/Checks/DebugModeCheck.php:54
 msgid "Define('WP_DEBUG', false) in production."
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:48
+#: src/Domain/Audit/Checks/DebugModeCheck.php:58
 msgid "WP_DEBUG_LOG writes wp-content/debug.log, a public URL unless the server blocks it."
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:48
+#: src/Domain/Audit/Checks/DebugModeCheck.php:58
 msgid "Set WP_DEBUG_LOG to a path outside the web root, or to false."
 msgstr ""
 
-#: src/Domain/Audit/Checks/DebugModeCheck.php:51
+#: src/Domain/Audit/Checks/DebugModeCheck.php:61
 msgid "Debug mode is off."
 msgstr ""
 
@@ -857,7 +897,7 @@ msgstr ""
 msgid "Plugins, themes and updates cannot be installed from the dashboard."
 msgstr ""
 
-#: src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31
+#: src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31 src/Domain/Audit/Checks/LaravelDebugbarCheck.php:35 src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:32
 msgid "Not a production site: not judged."
 msgstr ""
 
@@ -891,6 +931,38 @@ msgstr ""
 
 #: src/Domain/Audit/Checks/HttpsCheck.php:43
 msgid "The site uses HTTPS, and the dashboard is forced onto it."
+msgstr ""
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:29
+msgid "Laravel Debugbar"
+msgstr ""
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Debugbar is turned on in production: it shows the queries, the session and the request to visitors."
+msgstr ""
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:39
+msgid "Remove DEBUGBAR_ENABLED=true from the .env of the production site, and install Debugbar as a development dependency only."
+msgstr ""
+
+#: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:42
+msgid "Debugbar is not turned on by its own setting."
+msgstr ""
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:28
+msgid "Laravel application key"
+msgstr ""
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:34
+msgid "APP_KEY is not set: Laravel can neither encrypt nor sign anything."
+msgstr ""
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:34
+msgid "Run `php artisan key:generate` once, and keep the value secret."
+msgstr ""
+
+#: src/Domain/Audit/Checks/LaravelKeyCheck.php:37
+msgid "The application key is set."
 msgstr ""
 
 #: src/Domain/Audit/Checks/LoginProtectionCheck.php:27
@@ -939,6 +1011,58 @@ msgstr ""
 
 #: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
 msgid "composer require pollora/portcullis, or turn on Hornet's `login.throttle`."
+msgstr ""
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:35
+msgid "Open registration"
+msgstr ""
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:43
+msgid "Visitors cannot give themselves a role on this site."
+msgstr ""
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:47
+msgid "Turn off \"Anyone can register\" in the general settings, or make Subscriber the default role. Then look at the accounts created while it was open."
+msgstr ""
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:51
+msgid "Anyone can register with the role \"%s\", which can take the site over."
+msgstr ""
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:52
+msgid "Anyone can register with the role \"%s\", which can change the content of others."
+msgstr ""
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:53
+msgid "Anyone can register with the role \"%s\", which can write or upload on the site."
+msgstr ""
+
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:54
+msgid "Anyone can register, with the role \"%s\", which cannot write on the site."
+msgstr ""
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:26
+msgid "PHP error display"
+msgstr ""
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:36
+msgid "WP_DEBUG is on: what is shown is judged by the Debug mode check."
+msgstr ""
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:42
+msgid "Not seen yet: it is read from the web server when somebody opens the dashboard."
+msgstr ""
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:46
+msgid "PHP shows its errors to visitors, although WP_DEBUG is off."
+msgstr ""
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:46
+msgid "Set display_errors to Off in php.ini, in the PHP-FPM pool or in .user.ini."
+msgstr ""
+
+#: src/Domain/Audit/Checks/PhpErrorDisplayCheck.php:49
+msgid "PHP does not show its errors."
 msgstr ""
 
 #: src/Domain/Audit/Checks/PhpVersionCheck.php:39
@@ -1131,80 +1255,84 @@ msgstr ""
 msgid "\"%s\" has nothing open to set aside."
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:30
+#: src/Domain/Scan/ExposureCatalog.php:31
 msgid "environment variables (passwords, keys)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:33 src/Domain/Scan/ExposureCatalog.php:34
+#: src/Domain/Scan/ExposureCatalog.php:34 src/Domain/Scan/ExposureCatalog.php:35
 msgid "the Git repository (the source of the site)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:37
+#: src/Domain/Scan/ExposureCatalog.php:38
 msgid "a copy of wp-config.php (database password, keys)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:41
+#: src/Domain/Scan/ExposureCatalog.php:42
 msgid "a copy of the database"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:45
+#: src/Domain/Scan/ExposureCatalog.php:46
 msgid "an archive of the site"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:49
+#: src/Domain/Scan/ExposureCatalog.php:50
 msgid "the settings of an SFTP deployment (the password of the server)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:50
+#: src/Domain/Scan/ExposureCatalog.php:51
 msgid "the Composer credentials (tokens to private packages)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:51
+#: src/Domain/Scan/ExposureCatalog.php:52
 msgid "composer.lock (the exact versions the site runs)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:52
+#: src/Domain/Scan/ExposureCatalog.php:53
 msgid "the list of the PHP packages installed"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:53
+#: src/Domain/Scan/ExposureCatalog.php:54
 msgid "the .htaccess file (how the server is set)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:54
+#: src/Domain/Scan/ExposureCatalog.php:55
 msgid "a macOS folder index (the names of the files)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:55
+#: src/Domain/Scan/ExposureCatalog.php:56
 msgid "the settings of a code editor (paths, history)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:57
+#: src/Domain/Scan/ExposureCatalog.php:58
 msgid "the password file of the web server"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:58 src/Domain/Scan/ExposureCatalog.php:59
+#: src/Domain/Scan/ExposureCatalog.php:59 src/Domain/Scan/ExposureCatalog.php:60
 msgid "phpinfo() (the PHP and server configuration)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:60
+#: src/Domain/Scan/ExposureCatalog.php:61
 msgid "a PHP error log (paths, queries)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:61
+#: src/Domain/Scan/ExposureCatalog.php:62
 msgid "composer.json (the list of what the site runs)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:63
+#: src/Domain/Scan/ExposureCatalog.php:64
 msgid "the WordPress debug log (paths, queries, sometimes data)"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:64
+#: src/Domain/Scan/ExposureCatalog.php:65
 msgid "a listing of the uploads folder"
 msgstr ""
 
-#: src/Domain/Scan/ExposureCatalog.php:65
+#: src/Domain/Scan/ExposureCatalog.php:66
 msgid "a listing of the plugins folder"
+msgstr ""
+
+#: src/Domain/Scan/ExposureCatalog.php:70
+msgid "the log of the Laravel application (paths, queries, sometimes data)"
 msgstr ""
 
 #: src/Domain/Scan/FileInspector.php:49

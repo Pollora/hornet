@@ -7,7 +7,6 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 use Closure;
 use InvalidArgumentException;
 use Pollora\Hornet\Application\Auditor;
-use Pollora\Hornet\Application\DefaultChecks;
 use Pollora\Hornet\Application\Journal\FloodGuard;
 use Pollora\Hornet\Application\Journal\JournalRecorder;
 use Pollora\Hornet\Application\Notification\NotificationService;
@@ -15,6 +14,7 @@ use Pollora\Hornet\Application\Password\BreachCheck;
 use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Domain\Audit\Environment;
+use Pollora\Hornet\Domain\Audit\LaravelApplication;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
@@ -93,10 +93,15 @@ final class Bootstrap
 
         $modules = [];
 
+        // Not on Pollora, where Laravel sets the display of errors itself and no check reads it
+        if (! HostApplication::laravel() instanceof LaravelApplication && function_exists('is_admin') && is_admin()) {
+            $modules[] = new ErrorDisplayModule(new ErrorDisplayNote);
+        }
+
         try {
             if ($settings->siteHealth) {
                 // The settings are checked now, without touching the database; the auditor itself is built when Site Health asks for it
-                new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored);
+                new Auditor(AuditorFactory::checks($settings), $settings->disabledChecks, $settings->ignored);
                 $modules[] = new SiteHealthModule(static fn (): Auditor => AuditorFactory::forWordPress($settings), $environment, WpTranslator::forPackage());
             }
 
@@ -190,7 +195,7 @@ final class Bootstrap
                 // Built once to be sure the settings hold together; the cron builds its own when it runs
                 $factory = NotificationFactory::forWordPress();
                 // Only to be sure the settings hold together: no auditor of the site, which would read the database on every request
-                $factory->service($settings, $environment, '', '', new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored));
+                $factory->service($settings, $environment, '', '', new Auditor(AuditorFactory::checks($settings), $settings->disabledChecks, $settings->ignored));
                 $modules[] = new NotificationModule(static fn (): NotificationService => $factory->service($settings, $environment, get_bloginfo('name'), home_url()), $settings->notifications->schedule);
             }
         } catch (InvalidArgumentException $invalidArgumentException) {

@@ -12,6 +12,7 @@ use Pollora\Hornet\Domain\Audit\XmlRpcState;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Throwable;
+use WP_Application_Passwords;
 use WP_REST_Request;
 
 /**
@@ -162,6 +163,54 @@ final class WordPressEnvironment implements Environment
     public function loginThrottleProblem(): ?string
     {
         return (new ThrottleProblemNote)->read();
+    }
+
+    public function registrationRole(): ?array
+    {
+        if (is_multisite() || ! get_option('users_can_register')) {
+            return null;
+        }
+
+        $name = get_option('default_role');
+
+        if (! is_string($name) || $name === '') {
+            return null;
+        }
+
+        $role = get_role($name);
+
+        return $role === null ? null : ['role' => $name, 'capabilities' => array_map(strval(...), array_keys(array_filter($role->capabilities)))];
+    }
+
+    /**
+     * Core also asks whether the current request is HTTPS, which the command line never is: the address of the site is asked
+     * instead, so that the audit says the same thing wherever it runs.
+     */
+    public function administratorApplicationPasswords(): ?array
+    {
+        if (! apply_filters('wp_is_application_passwords_available', $this->usesHttps() || wp_get_environment_type() === 'local')) {
+            return null;
+        }
+
+        $ids = get_users(['capability' => 'manage_options', 'meta_key' => '_application_passwords', 'fields' => 'ID', 'number' => 500]);
+        $passwords = [];
+
+        foreach ($ids as $id) {
+            foreach (WP_Application_Passwords::get_user_application_passwords((int) $id) as $password) {
+                $passwords[] = [
+                    'user' => (int) $id,
+                    'created' => (int) ($password['created'] ?? 0),
+                    'last_used' => isset($password['last_used']) ? (int) $password['last_used'] : null,
+                ];
+            }
+        }
+
+        return $passwords;
+    }
+
+    public function displaysPhpErrors(): ?bool
+    {
+        return (new ErrorDisplayNote)->read();
     }
 
     public function lastScan(): ?ScanSnapshot
