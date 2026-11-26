@@ -22,6 +22,12 @@ use Pollora\Hornet\Infrastructure\WordPress\WpPluginInventory;
 use Pollora\Hornet\Tests\Fixtures\InMemoryPluginListingCache;
 use Pollora\Hornet\Tests\Fixtures\RoutedHttpClient;
 
+// A scan run by an earlier test of the suite leaves its answers in the cache
+beforeEach(function (): void {
+    delete_site_transient('hornet_wporg_'.md5('two-factor'));
+    delete_site_transient('hornet_osv_'.md5('match:a/b:1.0'));
+});
+
 afterEach(function (): void {
     delete_site_transient('hornet_wporg_'.md5('two-factor'));
     delete_site_transient('hornet_osv_'.md5('match:a/b:1.0'));
