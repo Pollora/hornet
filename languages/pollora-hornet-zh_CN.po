@@ -1,0 +1,361 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pollora Hornet\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Pollora (machine translation, to be reviewed by a native speaker)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: pollora-hornet\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: admin/src/App.js:26
+msgid "The status could not be read."
+msgstr "无法读取状态。"
+
+#: admin/src/App.js:69
+msgid "The scan could not be started."
+msgstr "无法开始扫描。"
+
+#: admin/src/App.js:85
+msgid "Overview"
+msgstr "概览"
+
+#: admin/src/App.js:88
+msgid "Findings"
+msgstr "发现项"
+
+#: admin/src/App.js:90
+msgid "Settings"
+msgstr "设置"
+
+#: admin/src/App.js:91
+msgid "Notifications"
+msgstr "通知"
+
+#: admin/src/App.js:92
+msgid "Journal"
+msgstr "日志"
+
+#: admin/src/Findings.js:58
+msgid "That could not be done."
+msgstr "无法完成该操作。"
+
+#: admin/src/Findings.js:68
+msgid "Search the findings"
+msgstr "搜索发现项"
+
+#: admin/src/Findings.js:75
+msgid "Show"
+msgstr "显示"
+
+#: admin/src/Findings.js:79
+msgid "What needs attention"
+msgstr "需要关注的项目"
+
+#: admin/src/Findings.js:80 admin/src/Journal.js:62
+msgid "Everything"
+msgstr "全部"
+
+#: admin/src/Findings.js:87 admin/src/Findings.js:105
+msgid "Severity"
+msgstr "严重程度"
+
+#: admin/src/Findings.js:91
+msgid "Any severity"
+msgstr "所有严重程度"
+
+#: admin/src/Findings.js:98
+msgid "No finding matches."
+msgstr "没有匹配的发现项。"
+
+#: admin/src/Findings.js:103
+msgid "Check"
+msgstr "检查项"
+
+#: admin/src/Findings.js:104
+msgid "Status"
+msgstr "状态"
+
+#: admin/src/Findings.js:106
+msgid "What was found"
+msgstr "发现的内容"
+
+#: admin/src/Findings.js:131 admin/src/Journal.js:128
+msgid "Previous"
+msgstr "上一页"
+
+#. translators: 1: current page, 2: number of pages
+#: admin/src/Findings.js:135 admin/src/Journal.js:132
+msgid "Page %1$d of %2$d"
+msgstr "第 %1$d 页,共 %2$d 页"
+
+#: admin/src/Findings.js:142 admin/src/Journal.js:139
+msgid "Next"
+msgstr "下一页"
+
+#: admin/src/Findings.js:163
+msgid "What to do:"
+msgstr "应对措施:"
+
+#: admin/src/Findings.js:168
+msgid "Set aside, because:"
+msgstr "已搁置,原因:"
+
+#: admin/src/Findings.js:172
+msgid "Set in the settings file: change it there."
+msgstr "已在设置文件中设定:请在那里修改。"
+
+#. translators: 1: an account name, 2: a date
+#: admin/src/Findings.js:174
+msgid "By %1$s, %2$s."
+msgstr "由 %1$s 于 %2$s。"
+
+#: admin/src/Findings.js:190
+msgid "Why is this acceptable on this site?"
+msgstr "为什么这在本站是可以接受的?"
+
+#: admin/src/Findings.js:191
+msgid "It is kept with your name and the date, and said in the journal."
+msgstr "该记录将与您的姓名和日期一并保存,并写入日志。"
+
+#: admin/src/Findings.js:205
+msgid "Set it aside"
+msgstr "搁置"
+
+#: admin/src/Findings.js:210
+msgid "Set aside…"
+msgstr "搁置…"
+
+#: admin/src/Findings.js:221
+msgid "Bring it back"
+msgstr "恢复"
+
+#: admin/src/Findings.js:225
+msgid "Close"
+msgstr "关闭"
+
+#: admin/src/Journal.js:25
+msgid "The journal could not be read."
+msgstr "无法读取日志。"
+
+#: admin/src/Journal.js:38
+msgid "The journal is off. It records who logged in, which accounts and roles changed, what was installed or updated, and which settings were touched. It writes personal data (a shortened network address, an account name), so it is turned on in the settings file: \"journal\" => [ \"enabled\" => true ]."
+msgstr "日志已关闭。它会记录谁登录过、哪些账户和角色被更改、安装或更新了什么,以及哪些设置被修改。由于它会写入个人数据(缩短的网络地址、账户名),因此需要在设置文件中启用:\"journal\" => [ \"enabled\" => true ]。"
+
+#: admin/src/Journal.js:58 admin/src/Journal.js:93
+msgid "What"
+msgstr "事件"
+
+#: admin/src/Journal.js:69 admin/src/Journal.js:96
+msgid "From"
+msgstr "来源"
+
+#: admin/src/Journal.js:73
+msgid "Anywhere"
+msgstr "任何位置"
+
+#: admin/src/Journal.js:86
+msgid "Nothing recorded yet."
+msgstr "尚无记录。"
+
+#: admin/src/Journal.js:92
+msgid "When"
+msgstr "时间"
+
+#: admin/src/Journal.js:94
+msgid "Who"
+msgstr "操作者"
+
+#: admin/src/Journal.js:95
+msgid "About"
+msgstr "对象"
+
+#. translators: %d: number of days
+#: admin/src/Journal.js:146
+msgid "Kept %d day."
+msgid_plural "Kept %d days."
+msgstr[0] "保留 %d 天。"
+
+#: admin/src/Notifications.js:14
+msgid "No channel is set up. Add one in the settings file to be told when the audit finds something new (mail, Slack, Teams, Discord, Telegram, ntfy or a signed webhook)."
+msgstr "尚未设置通知渠道。请在设置文件中添加渠道,以便在审计发现新问题时收到通知(邮件、Slack、Teams、Discord、Telegram、ntfy 或签名 webhook)。"
+
+#. translators: %s: a severity
+#: admin/src/Notifications.js:47
+msgid "from %s"
+msgstr "从 %s 起"
+
+#: admin/src/Notifications.js:58
+msgid "Send a test"
+msgstr "发送测试"
+
+#: admin/src/Overview.js:25
+msgid "open"
+msgstr "未处理"
+
+#: admin/src/Overview.js:29
+msgid "not verified"
+msgstr "未验证"
+
+#: admin/src/Overview.js:33
+msgid "set aside"
+msgstr "已搁置"
+
+#: admin/src/Overview.js:37
+msgid "pass"
+msgstr "通过"
+
+#: admin/src/Overview.js:42
+msgid "Worst open finding:"
+msgstr "最严重的未处理发现项:"
+
+#: admin/src/Overview.js:51
+msgid "Scan"
+msgstr "扫描"
+
+#: admin/src/Overview.js:59
+msgid "Scanning…"
+msgstr "正在扫描…"
+
+#: admin/src/Overview.js:60
+msgid "Scan now"
+msgstr "立即扫描"
+
+#. translators: %s: how long ago
+#: admin/src/Overview.js:71
+msgid "Last scan: %s."
+msgstr "上次扫描:%s。"
+
+#. translators: %s: the name of a scan task
+#: admin/src/Overview.js:81
+msgid "Now: %s"
+msgstr "当前:%s"
+
+#: admin/src/Overview.js:85
+msgid "Waiting for the cron to start it…"
+msgstr "正在等待 WP-Cron 启动…"
+
+#: admin/src/Overview.js:91
+msgid "Part of the scan goes on in the background."
+msgstr "部分扫描将在后台继续进行。"
+
+#: admin/src/Settings.js:10
+msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
+msgstr "这些设置写在一个文件中(HORNET_CONFIG 常量,在 Pollora 上则是 config/hornet.php)。此界面只显示设置,不做任何更改:能通过界面关闭的保护,被盗用的会话同样能关闭。"
+
+#: admin/src/Settings.js:27
+msgid "On"
+msgstr "开启"
+
+#: admin/src/Settings.js:27
+msgid "Off"
+msgstr "关闭"
+
+#: admin/src/util.js:11
+msgid "Critical"
+msgstr "严重"
+
+#: admin/src/util.js:12
+msgid "High"
+msgstr "高"
+
+#: admin/src/util.js:13
+msgid "Medium"
+msgstr "中"
+
+#: admin/src/util.js:14
+msgid "Low"
+msgstr "低"
+
+#: admin/src/util.js:15
+msgid "Info"
+msgstr "信息"
+
+#: admin/src/util.js:20
+msgid "Open"
+msgstr "未处理"
+
+#: admin/src/util.js:21
+msgid "Not verified"
+msgstr "未验证"
+
+#: admin/src/util.js:22
+msgid "Set aside"
+msgstr "已搁置"
+
+#: admin/src/util.js:23
+msgid "Passes"
+msgstr "通过"
+
+#: admin/src/util.js:24
+msgid "Not scanned"
+msgstr "未扫描"
+
+#: admin/src/util.js:30
+msgid "never"
+msgstr "从不"
+
+#: admin/src/util.js:33
+msgid "just now"
+msgstr "刚刚"
+
+#: admin/src/util.js:37
+msgid "%d minute ago"
+msgid_plural "%d minutes ago"
+msgstr[0] "%d 分钟前"
+
+#: admin/src/util.js:41
+msgid "%d hour ago"
+msgid_plural "%d hours ago"
+msgstr[0] "%d 小时前"
+
+#: admin/src/util.js:44
+msgid "%d day ago"
+msgid_plural "%d days ago"
+msgstr[0] "%d 天前"
+
+#: admin/src/util.js:51
+msgid "Nothing needs your attention."
+msgstr "没有需要您关注的项目。"
+
+#. translators: %d: number of checks that could not be verified
+#: admin/src/util.js:55
+msgid "No open finding, but %d could not be verified."
+msgid_plural "No open finding, but %d could not be verified."
+msgstr[0] "没有未处理的发现项,但有 %d 项无法验证。"
+
+#. translators: %d: number of open findings
+#: admin/src/util.js:66
+msgid "%d open finding."
+msgid_plural "%d open findings."
+msgstr[0] "有 %d 个未处理的发现项。"
+
+#: admin/src/util.js:74
+msgid "Website"
+msgstr "网站"
+
+#: admin/src/util.js:75
+msgid "Administration"
+msgstr "管理后台"
+
+#: admin/src/util.js:76
+msgid "REST API"
+msgstr "REST API"
+
+#: admin/src/util.js:77
+msgid "Ajax"
+msgstr "Ajax"
+
+#: admin/src/util.js:78
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+#: admin/src/util.js:79
+msgid "Command line"
+msgstr "命令行"
+
+#: admin/src/util.js:80
+msgid "Scheduled task"
+msgstr "计划任务"

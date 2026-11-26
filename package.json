@@ -8,7 +8,9 @@
         "build": "wp-scripts build admin/src/index.js --output-path=assets/admin",
         "start": "wp-scripts start admin/src/index.js --output-path=assets/admin",
         "test": "jest --config admin/jest.config.js",
-        "check-build": "npm run build && git diff --exit-code -- assets/admin"
+        "check-build": "npm run build && git diff --exit-code -- assets/admin",
+        "i18n": "node admin/i18n.mjs",
+        "i18n:check": "node admin/i18n.mjs --check"
     },
     "devDependencies": {
         "@wordpress/babel-preset-default": "10.2.0",

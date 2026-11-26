@@ -4,6 +4,8 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+- The Tools > Security screen is translated in 12 languages (fr, es, de, pt-BR, it, nl, ja, zh-CN, ko, ru, pl, tr), machine-made, to be reviewed; what the server writes stays in English. Counts use plural forms (`1 open finding.`, not `1 open findings.`). `npm run i18n` / `i18n:check`.
+
 From the security audit of the package (an independent reviewer, three reproductions):
 
 - **The login lock** no longer forgets the failures at a successful login: somebody with an account of their own could slip a login between four guesses at another account and never reach the limit. The failures end with their window. An IPv6 network is counted as its /64.

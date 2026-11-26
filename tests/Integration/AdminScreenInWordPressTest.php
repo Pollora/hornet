@@ -162,6 +162,24 @@ describe('a WordPress that lacks what the screen needs', function (): void {
         wp_dequeue_script('hornet-admin');
     });
 
+    it('speaks the language of the person, for each language that is shipped', function (string $json): void {
+        $translations = json_decode((string) file_get_contents($json), true, 8, JSON_THROW_ON_ERROR);
+        $locale = $translations['locale_data']['pollora-hornet']['']['lang'];
+        $overview = $translations['locale_data']['pollora-hornet']['Overview'][0];
+
+        wp_set_current_user(1);
+        $force = static fn (): string => $locale;
+        add_filter('determine_locale', $force);
+        $module = new AdminPageModule(false, dirname(__DIR__, 2).'/assets/admin', static fn (): never => throw new RuntimeException('exit'));
+        $module->menu();
+        $module->enqueue((string) $module->screen());
+        $printed = (string) wp_scripts()->print_translations('hornet-admin', false);
+        remove_filter('determine_locale', $force);
+        wp_dequeue_script('hornet-admin');
+
+        expect($printed)->toContain('pollora-hornet')->toContain($overview);
+    })->with(fn (): array => array_map(static fn (string $file): array => [$file], glob(dirname(__DIR__, 2).'/languages/*.json') ?: []));
+
     it('does not enqueue anything on another page', function (): void {
         wp_set_current_user(1);
         wp_dequeue_script('hornet-admin');

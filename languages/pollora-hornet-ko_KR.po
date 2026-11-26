@@ -1,0 +1,361 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pollora Hornet\n"
+"PO-Revision-Date: 2026-11-26 00:00+0000\n"
+"Last-Translator: Pollora (machine translation, to be reviewed by a native speaker)\n"
+"Language: ko_KR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: pollora-hornet\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: admin/src/App.js:26
+msgid "The status could not be read."
+msgstr "상태를 읽을 수 없습니다."
+
+#: admin/src/App.js:69
+msgid "The scan could not be started."
+msgstr "검사를 시작할 수 없습니다."
+
+#: admin/src/App.js:85
+msgid "Overview"
+msgstr "개요"
+
+#: admin/src/App.js:88
+msgid "Findings"
+msgstr "발견 항목"
+
+#: admin/src/App.js:90
+msgid "Settings"
+msgstr "설정"
+
+#: admin/src/App.js:91
+msgid "Notifications"
+msgstr "알림"
+
+#: admin/src/App.js:92
+msgid "Journal"
+msgstr "기록"
+
+#: admin/src/Findings.js:58
+msgid "That could not be done."
+msgstr "작업을 완료할 수 없습니다."
+
+#: admin/src/Findings.js:68
+msgid "Search the findings"
+msgstr "발견 항목 검색"
+
+#: admin/src/Findings.js:75
+msgid "Show"
+msgstr "표시"
+
+#: admin/src/Findings.js:79
+msgid "What needs attention"
+msgstr "주의가 필요한 항목"
+
+#: admin/src/Findings.js:80 admin/src/Journal.js:62
+msgid "Everything"
+msgstr "전체"
+
+#: admin/src/Findings.js:87 admin/src/Findings.js:105
+msgid "Severity"
+msgstr "심각도"
+
+#: admin/src/Findings.js:91
+msgid "Any severity"
+msgstr "모든 심각도"
+
+#: admin/src/Findings.js:98
+msgid "No finding matches."
+msgstr "일치하는 발견 항목이 없습니다."
+
+#: admin/src/Findings.js:103
+msgid "Check"
+msgstr "점검"
+
+#: admin/src/Findings.js:104
+msgid "Status"
+msgstr "상태"
+
+#: admin/src/Findings.js:106
+msgid "What was found"
+msgstr "발견된 내용"
+
+#: admin/src/Findings.js:131 admin/src/Journal.js:128
+msgid "Previous"
+msgstr "이전"
+
+#. translators: 1: current page, 2: number of pages
+#: admin/src/Findings.js:135 admin/src/Journal.js:132
+msgid "Page %1$d of %2$d"
+msgstr "%2$d 페이지 중 %1$d 페이지"
+
+#: admin/src/Findings.js:142 admin/src/Journal.js:139
+msgid "Next"
+msgstr "다음"
+
+#: admin/src/Findings.js:163
+msgid "What to do:"
+msgstr "조치 방법:"
+
+#: admin/src/Findings.js:168
+msgid "Set aside, because:"
+msgstr "제외 사유:"
+
+#: admin/src/Findings.js:172
+msgid "Set in the settings file: change it there."
+msgstr "설정 파일에서 지정되었습니다. 그곳에서 변경하세요."
+
+#. translators: 1: an account name, 2: a date
+#: admin/src/Findings.js:174
+msgid "By %1$s, %2$s."
+msgstr "%1$s, %2$s."
+
+#: admin/src/Findings.js:190
+msgid "Why is this acceptable on this site?"
+msgstr "이 사이트에서 왜 허용할 수 있나요?"
+
+#: admin/src/Findings.js:191
+msgid "It is kept with your name and the date, and said in the journal."
+msgstr "이름과 날짜와 함께 저장되며 기록에 남습니다."
+
+#: admin/src/Findings.js:205
+msgid "Set it aside"
+msgstr "제외하기"
+
+#: admin/src/Findings.js:210
+msgid "Set aside…"
+msgstr "제외…"
+
+#: admin/src/Findings.js:221
+msgid "Bring it back"
+msgstr "되돌리기"
+
+#: admin/src/Findings.js:225
+msgid "Close"
+msgstr "닫기"
+
+#: admin/src/Journal.js:25
+msgid "The journal could not be read."
+msgstr "기록을 읽을 수 없습니다."
+
+#: admin/src/Journal.js:38
+msgid "The journal is off. It records who logged in, which accounts and roles changed, what was installed or updated, and which settings were touched. It writes personal data (a shortened network address, an account name), so it is turned on in the settings file: \"journal\" => [ \"enabled\" => true ]."
+msgstr "기록이 꺼져 있습니다. 누가 로그인했는지, 어떤 계정과 역할이 변경되었는지, 무엇이 설치 또는 업데이트되었는지, 어떤 설정이 수정되었는지를 기록합니다. 개인 데이터(축약된 네트워크 주소, 계정 이름)를 저장하므로 설정 파일에서 켜야 합니다: \"journal\" => [ \"enabled\" => true ]."
+
+#: admin/src/Journal.js:58 admin/src/Journal.js:93
+msgid "What"
+msgstr "내용"
+
+#: admin/src/Journal.js:69 admin/src/Journal.js:96
+msgid "From"
+msgstr "출처"
+
+#: admin/src/Journal.js:73
+msgid "Anywhere"
+msgstr "어디서나"
+
+#: admin/src/Journal.js:86
+msgid "Nothing recorded yet."
+msgstr "아직 기록된 내용이 없습니다."
+
+#: admin/src/Journal.js:92
+msgid "When"
+msgstr "시각"
+
+#: admin/src/Journal.js:94
+msgid "Who"
+msgstr "사용자"
+
+#: admin/src/Journal.js:95
+msgid "About"
+msgstr "대상"
+
+#. translators: %d: number of days
+#: admin/src/Journal.js:146
+msgid "Kept %d day."
+msgid_plural "Kept %d days."
+msgstr[0] "%d일간 보관됩니다."
+
+#: admin/src/Notifications.js:14
+msgid "No channel is set up. Add one in the settings file to be told when the audit finds something new (mail, Slack, Teams, Discord, Telegram, ntfy or a signed webhook)."
+msgstr "설정된 채널이 없습니다. 점검에서 새로운 문제가 발견되었을 때 알림을 받으려면 설정 파일에 채널(메일, Slack, Teams, Discord, Telegram, ntfy 또는 서명된 웹훅)을 추가하세요."
+
+#. translators: %s: a severity
+#: admin/src/Notifications.js:47
+msgid "from %s"
+msgstr "%s 이상"
+
+#: admin/src/Notifications.js:58
+msgid "Send a test"
+msgstr "테스트 보내기"
+
+#: admin/src/Overview.js:25
+msgid "open"
+msgstr "미해결"
+
+#: admin/src/Overview.js:29
+msgid "not verified"
+msgstr "미확인"
+
+#: admin/src/Overview.js:33
+msgid "set aside"
+msgstr "제외됨"
+
+#: admin/src/Overview.js:37
+msgid "pass"
+msgstr "통과"
+
+#: admin/src/Overview.js:42
+msgid "Worst open finding:"
+msgstr "가장 심각한 미해결 발견 항목:"
+
+#: admin/src/Overview.js:51
+msgid "Scan"
+msgstr "검사"
+
+#: admin/src/Overview.js:59
+msgid "Scanning…"
+msgstr "검사 중…"
+
+#: admin/src/Overview.js:60
+msgid "Scan now"
+msgstr "지금 검사"
+
+#. translators: %s: how long ago
+#: admin/src/Overview.js:71
+msgid "Last scan: %s."
+msgstr "마지막 검사: %s."
+
+#. translators: %s: the name of a scan task
+#: admin/src/Overview.js:81
+msgid "Now: %s"
+msgstr "진행 중: %s"
+
+#: admin/src/Overview.js:85
+msgid "Waiting for the cron to start it…"
+msgstr "WP-Cron이 시작하기를 기다리는 중…"
+
+#: admin/src/Overview.js:91
+msgid "Part of the scan goes on in the background."
+msgstr "검사의 일부는 백그라운드에서 계속됩니다."
+
+#: admin/src/Settings.js:10
+msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
+msgstr "이 설정은 파일(HORNET_CONFIG 상수, Pollora에서는 config/hornet.php)에 작성되어 있습니다. 이 화면은 설정을 보여줄 뿐 아무것도 변경하지 않습니다. 화면에서 끌 수 있는 보호 기능은 탈취된 세션으로도 끌 수 있기 때문입니다."
+
+#: admin/src/Settings.js:27
+msgid "On"
+msgstr "켜짐"
+
+#: admin/src/Settings.js:27
+msgid "Off"
+msgstr "꺼짐"
+
+#: admin/src/util.js:11
+msgid "Critical"
+msgstr "치명적"
+
+#: admin/src/util.js:12
+msgid "High"
+msgstr "높음"
+
+#: admin/src/util.js:13
+msgid "Medium"
+msgstr "보통"
+
+#: admin/src/util.js:14
+msgid "Low"
+msgstr "낮음"
+
+#: admin/src/util.js:15
+msgid "Info"
+msgstr "정보"
+
+#: admin/src/util.js:20
+msgid "Open"
+msgstr "미해결"
+
+#: admin/src/util.js:21
+msgid "Not verified"
+msgstr "미확인"
+
+#: admin/src/util.js:22
+msgid "Set aside"
+msgstr "제외됨"
+
+#: admin/src/util.js:23
+msgid "Passes"
+msgstr "통과"
+
+#: admin/src/util.js:24
+msgid "Not scanned"
+msgstr "검사 안 됨"
+
+#: admin/src/util.js:30
+msgid "never"
+msgstr "없음"
+
+#: admin/src/util.js:33
+msgid "just now"
+msgstr "방금"
+
+#: admin/src/util.js:37
+msgid "%d minute ago"
+msgid_plural "%d minutes ago"
+msgstr[0] "%d분 전"
+
+#: admin/src/util.js:41
+msgid "%d hour ago"
+msgid_plural "%d hours ago"
+msgstr[0] "%d시간 전"
+
+#: admin/src/util.js:44
+msgid "%d day ago"
+msgid_plural "%d days ago"
+msgstr[0] "%d일 전"
+
+#: admin/src/util.js:51
+msgid "Nothing needs your attention."
+msgstr "주의가 필요한 항목이 없습니다."
+
+#. translators: %d: number of checks that could not be verified
+#: admin/src/util.js:55
+msgid "No open finding, but %d could not be verified."
+msgid_plural "No open finding, but %d could not be verified."
+msgstr[0] "미해결 발견 항목은 없지만 %d개는 확인할 수 없었습니다."
+
+#. translators: %d: number of open findings
+#: admin/src/util.js:66
+msgid "%d open finding."
+msgid_plural "%d open findings."
+msgstr[0] "미해결 발견 항목이 %d개 있습니다."
+
+#: admin/src/util.js:74
+msgid "Website"
+msgstr "웹사이트"
+
+#: admin/src/util.js:75
+msgid "Administration"
+msgstr "관리자"
+
+#: admin/src/util.js:76
+msgid "REST API"
+msgstr "REST API"
+
+#: admin/src/util.js:77
+msgid "Ajax"
+msgstr "Ajax"
+
+#: admin/src/util.js:78
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+#: admin/src/util.js:79
+msgid "Command line"
+msgstr "명령줄"
+
+#: admin/src/util.js:80
+msgid "Scheduled task"
+msgstr "예약된 작업"
