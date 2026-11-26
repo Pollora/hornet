@@ -12,6 +12,7 @@ use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Http\SecurityHeaders;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Config\Settings;
+use Pollora\Hornet\Infrastructure\Config\SettingsLoader;
 use Pollora\Hornet\Infrastructure\Login\ClientAddress;
 use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
@@ -21,7 +22,8 @@ use Throwable;
 /**
  * Loads the package inside a Pollora (Laravel) project: Laravel discovers this provider from composer.json.
  *
- * Settings live under `pollora.hornet` (see config/hornet.php, published with the `hornet-config` tag).
+ * Settings live under `pollora.hornet`: the file is `config/pollora/hornet.php` (published with the `hornet-config` tag). Laravel reads
+ * a folder inside `config/` as a prefix, so that is the only place that is read; a `config/hornet.php` is reported, never ignored in silence.
  */
 final class HornetServiceProvider extends ServiceProvider
 {
@@ -36,9 +38,13 @@ final class HornetServiceProvider extends ServiceProvider
     /** The tag of DoctorServiceProvider::CHECKS_TAG: not read from the class, which may not be installed. */
     private const string DOCTOR_TAG = 'pollora.doctor.checks';
 
+    private bool $started = false;
+
     public function register(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__, 3).'/config/hornet.php', 'pollora.hornet');
+
+        $this->startOnPluginsLoaded();
 
         if (interface_exists(self::DOCTOR_CHECK)) {
             $this->app->singleton(DoctorSecurityCheck::class, fn (): DoctorSecurityCheck => new DoctorSecurityCheck(fn (): Report => $this->audit()));
@@ -46,15 +52,52 @@ final class HornetServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Pollora runs the WordPress request (`wp()`) while its own provider boots, before this package's does: WordPress answers the REST
+     * API there and stops, and `init` is long gone. Hornet therefore starts on `plugins_loaded`, asked for before any provider boots.
+     */
+    public function startOnPluginsLoaded(): void
+    {
+        $this->app->booting(function (): void {
+            if (function_exists('add_action') && function_exists('did_action') && ! did_action('plugins_loaded')) {
+                add_action('plugins_loaded', $this->start(...), 0);
+            }
+        });
+    }
+
     public function boot(): void
     {
-        $this->publishes([dirname(__DIR__, 3).'/config/hornet.php' => $this->app->configPath('hornet.php')], 'hornet-config');
+        $this->publishes([dirname(__DIR__, 3).'/config/hornet.php' => $this->app->configPath('pollora/hornet.php')], 'hornet-config');
+
+        // Already started on `plugins_loaded`; here for a WordPress that was loaded before the providers, or one that never loads
+        if (! function_exists('did_action') || did_action('plugins_loaded')) {
+            $this->start();
+        }
+    }
+
+    /**
+     * Attaches Hornet to WordPress, once.
+     */
+    public function start(): void
+    {
+        if ($this->started) {
+            return;
+        }
 
         if (! $this->app->bound(self::ACTION) || ! $this->app->bound(self::FILTER)) {
             return;
         }
 
+        $this->started = true;
         $hooks = new PolloraHooks($this->app->make(self::ACTION), $this->app->make(self::FILTER));
+
+        $misplaced = self::misplaced($this->app->configPath());
+
+        if ($misplaced !== null) {
+            Bootstrap::boot(null, $hooks, new WordPressEnvironment, $misplaced);
+
+            return;
+        }
 
         try {
             $settings = $this->settings();
@@ -69,6 +112,19 @@ final class HornetServiceProvider extends ServiceProvider
         if ($settings->headers->isActive()) {
             $this->sendHeadersFromLaravel($settings->headers);
         }
+    }
+
+    /**
+     * What to say when the settings are in a file that is not read: `config/hornet.php` is loaded by Laravel as `hornet`, and not as
+     * `pollora.hornet`, so everything written in it would do nothing while looking done. Null when there is nothing to say.
+     */
+    public static function misplaced(string $configPath): ?string
+    {
+        if (! is_file($configPath.'/hornet.php') || is_file($configPath.'/pollora/hornet.php')) {
+            return null;
+        }
+
+        return 'config/hornet.php is not read: move it to config/pollora/hornet.php.';
     }
 
     /**
@@ -109,7 +165,7 @@ final class HornetServiceProvider extends ServiceProvider
         /** @var array<mixed> $config */
         $config = $this->app->make('config')->get('pollora.hornet', []);
 
-        return Settings::fromArray($config);
+        return SettingsLoader::load(function_exists('get_current_blog_id') ? get_current_blog_id() : 1, $config);
     }
 
     private function audit(): Report

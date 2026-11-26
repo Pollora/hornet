@@ -14,7 +14,7 @@ use Pollora\Hornet\Infrastructure\Config\Settings;
  * What Hornet is set to do, in a few lines for a person: which protections are on, and which are not. Never a secret, never a URL:
  * a channel is named by its name and kind, as in `wp hornet notify status`.
  *
- * The screen only shows the settings. They are written in a file (a constant, or `config/hornet.php`), which wins over anything
+ * The screen only shows the settings. They are written in a file (a constant, or `config/pollora/hornet.php`), which wins over anything
  * the screen could do; a screen that changed them would let a stolen session switch the protections off.
  */
 final class SettingsView

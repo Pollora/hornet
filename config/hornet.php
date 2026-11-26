@@ -7,7 +7,7 @@ declare(strict_types=1);
 | Hornet
 |--------------------------------------------------------------------------
 |
-| Security for WordPress. On Pollora these settings live under `pollora.hornet`;
+| Security for WordPress. On Pollora this file is config/pollora/hornet.php and its settings live under `pollora.hornet`;
 | on a classic WordPress or Bedrock site they are read from the HORNET_CONFIG constant.
 | A key that is not listed here is refused: a typo must not leave a protection off.
 |

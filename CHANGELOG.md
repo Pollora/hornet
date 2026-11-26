@@ -4,6 +4,10 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+- **Fixed: on Pollora the settings of the project were never read.** The provider reads `pollora.hornet`, but the published file went to `config/hornet.php`, which Laravel loads as `hornet`: every protection looked turned on and did nothing. The file is now published to `config/pollora/hornet.php`, and a left `config/hornet.php` is reported in Site Health. Found by installing Hornet in a real Pollora project.
+- **Fixed: on Pollora the REST API was not protected, and its routes did not exist.** Pollora runs the WordPress request while its own provider boots, before this package's: `/wp-json` was answered without Hornet (users listed, no screen routes) and `init` had passed. Hornet now starts on `plugins_loaded`.
+- **Fixed: on Pollora, WP-CLI ignored the project's settings** and the provider ignored `HORNET_DISABLED`: both read the settings from one place (`SettingsLoader`).
+
 - What the server writes is translated in the same 12 languages: check names, findings (summary, details, fix), scan tasks, settings rows, menu and page title, Site Health, login and password messages, the findings of notifications (site language). WP-CLI, abilities and `pollora:doctor` stay in English. Findings are stored in English with a translatable form; older stored scans are read as before. New: `Domain\I18n\Message`, `Translator`, `WpTranslator`.
 
 - The Tools > Security screen is translated in 12 languages (fr, es, de, pt-BR, it, nl, ja, zh-CN, ko, ru, pl, tr), machine-made, to be reviewed; what the server writes is translated too (see below). Counts use plural forms (`1 open finding.`, not `1 open findings.`). `npm run i18n` / `i18n:check`.
@@ -133,6 +137,6 @@ First milestone (0.1): the foundation.
 - Tools > Site Health: one test per check.
 - `wp hornet status` (`--format`, `--fail-on`, `--all`).
 - `pollora:doctor`: a "Security (Hornet)" line when `pollora/framework` is installed.
-- Settings in `HORNET_CONFIG` (classic WordPress, Bedrock) or `config/hornet.php` (Pollora): `enabled`, `disabled_checks`, `ignore` (a reason is required), `site_health`; unknown keys and unknown checks are refused without stopping the site.
+- Settings in `HORNET_CONFIG` (classic WordPress, Bedrock) or `config/pollora/hornet.php` (Pollora): `enabled`, `disabled_checks`, `ignore` (a reason is required), `site_health`; unknown keys and unknown checks are refused without stopping the site.
 - Kill switch `HORNET_DISABLED`.
 - Detects `pollora/portcullis` and `pollora/headless` instead of repeating their work.

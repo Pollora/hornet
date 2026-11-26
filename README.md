@@ -76,7 +76,7 @@ define('HORNET_CONFIG', [
 ]);
 ```
 
-A Pollora project uses `config/hornet.php` (`php artisan vendor:publish --tag=hornet-config`), under `pollora.hornet`.
+A Pollora project uses **`config/pollora/hornet.php`** (`php artisan vendor:publish --tag=hornet-config`), read as `pollora.hornet`. A `config/hornet.php` is **not** read (Laravel loads it under `hornet`): Hornet says so in Site Health instead of doing nothing in silence.
 
 - A key Hornet does not know is **refused**, and so is a check id that does not exist: a typo must not leave a protection off. The site keeps running, Hornet stays off, and **Site Health shows one critical test with the message**. `wp hornet status` prints it as an error.
 - A finding set aside stays visible, with its reason, in the output and in Site Health.
@@ -202,7 +202,7 @@ define('HORNET_CONFIG', [
 ]);
 ```
 
-- **Secrets stay out of the repository and the database.** A webhook URL, a token and a signing key are written as `['env' => 'NAME']` or `['constant' => 'NAME']`. A plain string is accepted too (a Pollora `config/hornet.php` calls `env()` itself). A secret prints as `[redacted]` everywhere and an error never repeats an address.
+- **Secrets stay out of the repository and the database.** A webhook URL, a token and a signing key are written as `['env' => 'NAME']` or `['constant' => 'NAME']`. A plain string is accepted too (a Pollora `config/pollora/hornet.php` calls `env()` itself). A secret prints as `[redacted]` everywhere and an error never repeats an address.
 - **Grouped, told once, calm.** A channel gets one message per run with every alert it is due. The same finding is not repeated on a channel before the cooldown ends (a finding that gets worse is new). A channel gets at most `rate_limit` messages an hour; what is over waits for the next run, nothing is lost. Each channel has its own `min_severity` (default `medium`).
 - **Persistent.** A message that fails for a reason that can pass (network, 429, 5xx) is tried again after 1 minute, 5 minutes, 30 minutes and 2 hours, honouring the service's `Retry-After`. One that cannot succeed (a revoked token, a deleted webhook: 4xx) is reported and not repeated.
 - **Text from a site is data.** Control and invisible characters are removed, mentions (`@everyone`, `<!channel>`) are neutralised, and every message is cut below the limits of the service.
