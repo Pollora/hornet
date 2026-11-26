@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress\Admin;
 
-use Pollora\Hornet\Application\Scan\ScanJob;
 use Pollora\Hornet\Domain\Exceptions\SetAsideException;
 use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Journal\EventTypes;
@@ -27,7 +26,6 @@ final readonly class AdminRestModule implements Module
 
     public function __construct(
         private AdminBackend $backend,
-        private ScanJob $job,
     ) {}
 
     public function register(HookRegistrar $hooks): void
@@ -149,7 +147,7 @@ final readonly class AdminRestModule implements Module
 
     public function scanState(): WP_REST_Response
     {
-        return new WP_REST_Response($this->job->state()->toArray());
+        return new WP_REST_Response($this->backend->state()->toArray());
     }
 
     /**
