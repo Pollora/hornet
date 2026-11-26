@@ -15,6 +15,7 @@ function agentStatus(): array
     return [
         'counts' => ['open' => 2, 'unknown' => 1, 'ignored' => 1, 'pass' => 3],
         'worst' => 'high',
+        'score' => ['value' => 62, 'grade' => 'C'],
         'scan' => ['age' => 120, 'running' => true, 'task' => 'Plugin files'],
         'journal' => ['enabled' => true],
         'findings' => [
@@ -35,6 +36,8 @@ it('summarises where the site stands, and nothing else', function (): void {
 
     expect($summary)->toBe([
         'counts' => ['open' => 2, 'unknown' => 1, 'ignored' => 1, 'pass' => 3],
+        'score' => 62,
+        'grade' => 'C',
         'worst_severity' => 'high',
         'last_scan_seconds_ago' => 120,
         'scan_running' => true,

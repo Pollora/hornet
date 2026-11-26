@@ -136,6 +136,11 @@ msgstr "되돌리기"
 msgid "Close"
 msgstr "닫기"
 
+#. translators: 1: tasks done, 2: tasks of the scan
+#: admin/src/Hive.js:37
+msgid "%1$d of %2$d steps done"
+msgstr "%2$d단계 중 %1$d단계 완료"
+
 #: admin/src/Journal.js:25
 msgid "The journal could not be read."
 msgstr "기록을 읽을 수 없습니다."
@@ -191,6 +196,10 @@ msgstr "%s 이상"
 msgid "Send a test"
 msgstr "테스트 보내기"
 
+#: admin/src/Overview.js:18
+msgid "Security score"
+msgstr "보안 점수"
+
 #: admin/src/Overview.js:25
 msgid "open"
 msgstr "미해결"
@@ -207,9 +216,24 @@ msgstr "제외됨"
 msgid "pass"
 msgstr "통과"
 
-#: admin/src/Overview.js:42
-msgid "Worst open finding:"
-msgstr "가장 심각한 미해결 발견 항목:"
+#. translators: 1: checks that could be verified, 2: all the checks
+#: admin/src/Overview.js:41
+msgid "Provisional: %1$d of %2$d checks could be verified."
+msgstr "잠정: 점검 %2$d개 중 %1$d개를 확인할 수 있었습니다."
+
+#: admin/src/Overview.js:51
+msgid "%d accepted risk is not counted."
+msgid_plural "%d accepted risks are not counted."
+msgstr[0] "수용한 위험 %d개는 계산에 포함되지 않습니다."
+
+#: admin/src/Overview.js:66
+msgid "Fix first"
+msgstr "먼저 해결할 항목"
+
+#: admin/src/Overview.js:75
+msgid "%d point"
+msgid_plural "%d points"
+msgstr[0] "%d점"
 
 #: admin/src/Overview.js:51
 msgid "Scan"
@@ -218,6 +242,14 @@ msgstr "검사"
 #: admin/src/Overview.js:59
 msgid "Scanning…"
 msgstr "검사 중…"
+
+#: admin/src/Hive.js:57
+msgid "Waiting"
+msgstr "대기 중"
+
+#: admin/src/Hive.js:58
+msgid "Done"
+msgstr "완료"
 
 #: admin/src/Overview.js:60
 msgid "Scan now"
@@ -240,6 +272,11 @@ msgstr "WP-Cron이 시작하기를 기다리는 중…"
 #: admin/src/Overview.js:91
 msgid "Part of the scan goes on in the background."
 msgstr "검사의 일부는 백그라운드에서 계속됩니다."
+
+#. translators: 1: a grade from A to F, 2: a score out of 100
+#: admin/src/ScoreRing.js:18
+msgid "Security grade %1$s, %2$d out of 100."
+msgstr "보안 등급 %1$s, 100점 만점에 %2$d점."
 
 #: admin/src/Settings.js:10
 msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
@@ -359,6 +396,26 @@ msgstr "명령줄"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "예약된 작업"
+
+#: admin/src/util.js:90
+msgid "Solid"
+msgstr "견고함"
+
+#: admin/src/util.js:91
+msgid "Good"
+msgstr "양호"
+
+#: admin/src/util.js:92
+msgid "Fragile"
+msgstr "허술함"
+
+#: admin/src/util.js:93
+msgid "Weak"
+msgstr "취약"
+
+#: admin/src/util.js:94
+msgid "At risk"
+msgstr "위험"
 
 #: src/Application/Admin/StatusView.php:102
 msgid "Not scanned yet."

@@ -75,7 +75,7 @@ final class AdminPageModule implements Module
             wp_die(esc_html(Message::of('You are not allowed to see this page.')->render(WpTranslator::forPackage())), '', ['response' => 403]);
         }
 
-        echo '<div class="wrap"><h1 class="wp-heading-inline">'.esc_html($this->title()).'</h1><hr class="wp-header-end">';
+        echo '<div class="wrap"><h1 class="screen-reader-text">'.esc_html($this->title()).'</h1><hr class="wp-header-end">';
 
         // A script that WordPress does not know is not printed, and the page would stay empty without a word: say it
         if ($this->missing !== []) {

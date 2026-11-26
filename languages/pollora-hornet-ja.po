@@ -136,6 +136,11 @@ msgstr "元に戻す"
 msgid "Close"
 msgstr "閉じる"
 
+#. translators: 1: tasks done, 2: tasks of the scan
+#: admin/src/Hive.js:37
+msgid "%1$d of %2$d steps done"
+msgstr "%2$d ステップ中 %1$d ステップ完了"
+
 #: admin/src/Journal.js:25
 msgid "The journal could not be read."
 msgstr "ジャーナルを読み込めませんでした。"
@@ -191,6 +196,10 @@ msgstr "%s 以上"
 msgid "Send a test"
 msgstr "テストを送信"
 
+#: admin/src/Overview.js:18
+msgid "Security score"
+msgstr "セキュリティスコア"
+
 #: admin/src/Overview.js:25
 msgid "open"
 msgstr "未対応"
@@ -207,9 +216,24 @@ msgstr "除外済み"
 msgid "pass"
 msgstr "合格"
 
-#: admin/src/Overview.js:42
-msgid "Worst open finding:"
-msgstr "最も深刻な未対応の検出結果:"
+#. translators: 1: checks that could be verified, 2: all the checks
+#: admin/src/Overview.js:41
+msgid "Provisional: %1$d of %2$d checks could be verified."
+msgstr "暫定: %2$d 件のチェックのうち %1$d 件を検証できました。"
+
+#: admin/src/Overview.js:51
+msgid "%d accepted risk is not counted."
+msgid_plural "%d accepted risks are not counted."
+msgstr[0] "受け入れ済みのリスク %d 件はカウントされません。"
+
+#: admin/src/Overview.js:66
+msgid "Fix first"
+msgstr "最初に対処する項目"
+
+#: admin/src/Overview.js:75
+msgid "%d point"
+msgid_plural "%d points"
+msgstr[0] "%d 点"
 
 #: admin/src/Overview.js:51
 msgid "Scan"
@@ -218,6 +242,14 @@ msgstr "スキャン"
 #: admin/src/Overview.js:59
 msgid "Scanning…"
 msgstr "スキャン中…"
+
+#: admin/src/Hive.js:57
+msgid "Waiting"
+msgstr "待機中"
+
+#: admin/src/Hive.js:58
+msgid "Done"
+msgstr "完了"
 
 #: admin/src/Overview.js:60
 msgid "Scan now"
@@ -240,6 +272,11 @@ msgstr "WP-Cron による開始を待っています…"
 #: admin/src/Overview.js:91
 msgid "Part of the scan goes on in the background."
 msgstr "スキャンの一部はバックグラウンドで続行されます。"
+
+#. translators: 1: a grade from A to F, 2: a score out of 100
+#: admin/src/ScoreRing.js:18
+msgid "Security grade %1$s, %2$d out of 100."
+msgstr "セキュリティ評価 %1$s、100 点中 %2$d 点。"
 
 #: admin/src/Settings.js:10
 msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
@@ -359,6 +396,26 @@ msgstr "コマンドライン"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "スケジュールされたタスク"
+
+#: admin/src/util.js:90
+msgid "Solid"
+msgstr "堅固"
+
+#: admin/src/util.js:91
+msgid "Good"
+msgstr "良好"
+
+#: admin/src/util.js:92
+msgid "Fragile"
+msgstr "脆い"
+
+#: admin/src/util.js:93
+msgid "Weak"
+msgstr "弱い"
+
+#: admin/src/util.js:94
+msgid "At risk"
+msgstr "危険"
 
 #: src/Application/Admin/StatusView.php:102
 msgid "Not scanned yet."

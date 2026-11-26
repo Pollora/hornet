@@ -136,6 +136,11 @@ msgstr "恢复"
 msgid "Close"
 msgstr "关闭"
 
+#. translators: 1: tasks done, 2: tasks of the scan
+#: admin/src/Hive.js:37
+msgid "%1$d of %2$d steps done"
+msgstr "已完成 %1$d/%2$d 个步骤"
+
 #: admin/src/Journal.js:25
 msgid "The journal could not be read."
 msgstr "无法读取日志。"
@@ -191,6 +196,10 @@ msgstr "从 %s 起"
 msgid "Send a test"
 msgstr "发送测试"
 
+#: admin/src/Overview.js:18
+msgid "Security score"
+msgstr "安全评分"
+
 #: admin/src/Overview.js:25
 msgid "open"
 msgstr "未处理"
@@ -207,9 +216,24 @@ msgstr "已搁置"
 msgid "pass"
 msgstr "通过"
 
-#: admin/src/Overview.js:42
-msgid "Worst open finding:"
-msgstr "最严重的未处理发现项:"
+#. translators: 1: checks that could be verified, 2: all the checks
+#: admin/src/Overview.js:41
+msgid "Provisional: %1$d of %2$d checks could be verified."
+msgstr "暂定结果:%2$d 项检查中有 %1$d 项得到验证。"
+
+#: admin/src/Overview.js:51
+msgid "%d accepted risk is not counted."
+msgid_plural "%d accepted risks are not counted."
+msgstr[0] "%d 个已接受的风险未计入。"
+
+#: admin/src/Overview.js:66
+msgid "Fix first"
+msgstr "优先修复"
+
+#: admin/src/Overview.js:75
+msgid "%d point"
+msgid_plural "%d points"
+msgstr[0] "%d 分"
 
 #: admin/src/Overview.js:51
 msgid "Scan"
@@ -218,6 +242,14 @@ msgstr "扫描"
 #: admin/src/Overview.js:59
 msgid "Scanning…"
 msgstr "正在扫描…"
+
+#: admin/src/Hive.js:57
+msgid "Waiting"
+msgstr "等待中"
+
+#: admin/src/Hive.js:58
+msgid "Done"
+msgstr "已完成"
 
 #: admin/src/Overview.js:60
 msgid "Scan now"
@@ -240,6 +272,11 @@ msgstr "正在等待 WP-Cron 启动…"
 #: admin/src/Overview.js:91
 msgid "Part of the scan goes on in the background."
 msgstr "部分扫描将在后台继续进行。"
+
+#. translators: 1: a grade from A to F, 2: a score out of 100
+#: admin/src/ScoreRing.js:18
+msgid "Security grade %1$s, %2$d out of 100."
+msgstr "安全等级 %1$s,得分 %2$d(满分 100)。"
 
 #: admin/src/Settings.js:10
 msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
@@ -359,6 +396,26 @@ msgstr "命令行"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "计划任务"
+
+#: admin/src/util.js:90
+msgid "Solid"
+msgstr "稳固"
+
+#: admin/src/util.js:91
+msgid "Good"
+msgstr "良好"
+
+#: admin/src/util.js:92
+msgid "Fragile"
+msgstr "脆弱"
+
+#: admin/src/util.js:93
+msgid "Weak"
+msgstr "薄弱"
+
+#: admin/src/util.js:94
+msgid "At risk"
+msgstr "有风险"
 
 #: src/Application/Admin/StatusView.php:102
 msgid "Not scanned yet."

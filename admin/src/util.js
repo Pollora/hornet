@@ -83,3 +83,31 @@ export const sourceLabel = ( source ) =>
 /** A moment given as a timestamp in seconds, in the language and time zone of the browser. */
 export const whenLabel = ( seconds ) =>
 	seconds ? new Date( seconds * 1000 ).toLocaleString() : '—';
+
+/** What a grade means, in a word. */
+export const gradeLabel = ( grade ) =>
+	( {
+		A: __( 'Solid', 'pollora-hornet' ),
+		B: __( 'Good', 'pollora-hornet' ),
+		C: __( 'Fragile', 'pollora-hornet' ),
+		D: __( 'Weak', 'pollora-hornet' ),
+		E: __( 'At risk', 'pollora-hornet' ),
+		F: __( 'Critical', 'pollora-hornet' ),
+	} )[ grade ] ?? grade;
+
+/** The open findings that cost the most points, with what they cost: what to fix first. */
+export const fixFirst = ( findings, costs, many = 3 ) =>
+	Object.entries( costs ?? {} )
+		.sort( ( a, b ) => b[ 1 ] - a[ 1 ] )
+		.slice( 0, many )
+		.map( ( [ check, points ] ) => ( { ...findings.find( ( finding ) => finding.check === check ), check, points } ) )
+		.filter( ( item ) => item.label );
+
+/** Cuts a sentence at its backticks: what is between two of them is code. A lone backtick is a character like another. */
+export const codeSegments = ( sentence ) => {
+	const parts = String( sentence ?? '' ).split( '`' );
+	if ( parts.length % 2 === 0 ) {
+		return [ { text: String( sentence ), code: false } ];
+	}
+	return parts.map( ( text, index ) => ( { text, code: index % 2 === 1 } ) ).filter( ( part ) => part.text !== '' );
+};

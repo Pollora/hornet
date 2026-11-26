@@ -9,6 +9,7 @@ use Pollora\Hornet\Application\I18n\FindingTranslator;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Report;
+use Pollora\Hornet\Domain\Audit\SecurityScore;
 use Pollora\Hornet\Domain\Audit\SetAside;
 use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\I18n\Translator;
@@ -40,6 +41,7 @@ final class StatusView
 
         return [
             'counts' => $report->counts(),
+            'score' => SecurityScore::of($report)->toArray(),
             'worst' => $report->worst()?->value,
             'findings' => $findings,
             'scan' => [

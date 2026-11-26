@@ -6,130 +6,147 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: pollora-hornet\n"
 
-#: admin/src/App.js:26
+#: admin/src/App.js:27
 msgid "The status could not be read."
 msgstr ""
 
-#: admin/src/App.js:69
+#: admin/src/App.js:70
 msgid "The scan could not be started."
 msgstr ""
 
-#: admin/src/App.js:85
+#: admin/src/App.js:86
 msgid "Overview"
 msgstr ""
 
-#: admin/src/App.js:88
+#: admin/src/App.js:89
 msgid "Findings"
 msgstr ""
 
-#: admin/src/App.js:90
+#: admin/src/App.js:91
 msgid "Settings"
 msgstr ""
 
-#: admin/src/App.js:91 src/Infrastructure/WordPress/Admin/SettingsView.php:57
+#: admin/src/App.js:92 src/Infrastructure/WordPress/Admin/SettingsView.php:57
 msgid "Notifications"
 msgstr ""
 
-#: admin/src/App.js:92 src/Infrastructure/WordPress/Admin/SettingsView.php:54
+#: admin/src/App.js:93 src/Infrastructure/WordPress/Admin/SettingsView.php:54
 msgid "Journal"
 msgstr ""
 
-#: admin/src/Findings.js:58
+#: admin/src/Findings.js:59
 msgid "That could not be done."
 msgstr ""
 
-#: admin/src/Findings.js:68
+#: admin/src/Findings.js:69
 msgid "Search the findings"
 msgstr ""
 
-#: admin/src/Findings.js:75
+#: admin/src/Findings.js:76
 msgid "Show"
 msgstr ""
 
-#: admin/src/Findings.js:79
+#: admin/src/Findings.js:80
 msgid "What needs attention"
 msgstr ""
 
-#: admin/src/Findings.js:80 admin/src/Journal.js:62
+#: admin/src/Findings.js:81 admin/src/Journal.js:62
 msgid "Everything"
 msgstr ""
 
-#: admin/src/Findings.js:87 admin/src/Findings.js:105
+#: admin/src/Findings.js:88 admin/src/Findings.js:106
 msgid "Severity"
 msgstr ""
 
-#: admin/src/Findings.js:91
+#: admin/src/Findings.js:92
 msgid "Any severity"
 msgstr ""
 
-#: admin/src/Findings.js:98
+#: admin/src/Findings.js:99
 msgid "No finding matches."
 msgstr ""
 
-#: admin/src/Findings.js:103
+#: admin/src/Findings.js:104
 msgid "Check"
 msgstr ""
 
-#: admin/src/Findings.js:104
+#: admin/src/Findings.js:105
 msgid "Status"
 msgstr ""
 
-#: admin/src/Findings.js:106
+#: admin/src/Findings.js:107
 msgid "What was found"
 msgstr ""
 
-#: admin/src/Findings.js:131 admin/src/Journal.js:128
+#: admin/src/Findings.js:132 admin/src/Journal.js:128
 msgid "Previous"
 msgstr ""
 
 #. translators: 1: current page, 2: number of pages
-#: admin/src/Findings.js:135 admin/src/Journal.js:132
+#: admin/src/Findings.js:136 admin/src/Journal.js:132
 msgid "Page %1$d of %2$d"
 msgstr ""
 
-#: admin/src/Findings.js:142 admin/src/Journal.js:139
+#: admin/src/Findings.js:143 admin/src/Journal.js:139
 msgid "Next"
 msgstr ""
 
-#: admin/src/Findings.js:163
+#: admin/src/Findings.js:166
 msgid "What to do:"
 msgstr ""
 
-#: admin/src/Findings.js:168
+#: admin/src/Findings.js:171
 msgid "Set aside, because:"
 msgstr ""
 
-#: admin/src/Findings.js:172
+#: admin/src/Findings.js:175
 msgid "Set in the settings file: change it there."
 msgstr ""
 
 #. translators: 1: an account name, 2: a date
-#: admin/src/Findings.js:174
+#: admin/src/Findings.js:177
 msgid "By %1$s, %2$s."
 msgstr ""
 
-#: admin/src/Findings.js:190
+#: admin/src/Findings.js:193
 msgid "Why is this acceptable on this site?"
 msgstr ""
 
-#: admin/src/Findings.js:191
+#: admin/src/Findings.js:194
 msgid "It is kept with your name and the date, and said in the journal."
 msgstr ""
 
-#: admin/src/Findings.js:205
+#: admin/src/Findings.js:208
 msgid "Set it aside"
 msgstr ""
 
-#: admin/src/Findings.js:210
+#: admin/src/Findings.js:213
 msgid "Set aside…"
 msgstr ""
 
-#: admin/src/Findings.js:221
+#: admin/src/Findings.js:224
 msgid "Bring it back"
 msgstr ""
 
-#: admin/src/Findings.js:225
+#: admin/src/Findings.js:228
 msgid "Close"
+msgstr ""
+
+#. translators: 1: tasks done, 2: tasks of the scan
+#: admin/src/Hive.js:37
+msgid "%1$d of %2$d steps done"
+msgstr ""
+
+#: admin/src/Hive.js:56 admin/src/Overview.js:127
+msgid "Scanning…"
+msgstr ""
+
+#: admin/src/Hive.js:57
+msgid "Waiting"
+msgstr ""
+
+#: admin/src/Hive.js:58
+msgid "Done"
 msgstr ""
 
 #: admin/src/Journal.js:25
@@ -188,54 +205,76 @@ msgstr ""
 msgid "Send a test"
 msgstr ""
 
-#: admin/src/Overview.js:25
+#: admin/src/Overview.js:19
+msgid "Security score"
+msgstr ""
+
+#: admin/src/Overview.js:24
 msgid "open"
 msgstr ""
 
-#: admin/src/Overview.js:29
+#: admin/src/Overview.js:28
 msgid "not verified"
 msgstr ""
 
-#: admin/src/Overview.js:33
+#: admin/src/Overview.js:32
 msgid "set aside"
 msgstr ""
 
-#: admin/src/Overview.js:37
+#: admin/src/Overview.js:36
 msgid "pass"
 msgstr ""
 
+#. translators: 1: checks that could be verified, 2: all the checks
 #: admin/src/Overview.js:42
-msgid "Worst open finding:"
+msgid "Provisional: %1$d of %2$d checks could be verified."
 msgstr ""
 
-#: admin/src/Overview.js:51
+#: admin/src/Overview.js:52
+msgid "%d accepted risk is not counted."
+msgid_plural "%d accepted risks are not counted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/src/Overview.js:67
+msgid "Fix first"
+msgstr ""
+
+#: admin/src/Overview.js:76
+msgid "%d point"
+msgid_plural "%d points"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/src/Overview.js:98
 msgid "Scan"
 msgstr ""
 
-#: admin/src/Overview.js:59
-msgid "Scanning…"
-msgstr ""
-
-#: admin/src/Overview.js:60
-msgid "Scan now"
-msgstr ""
-
 #. translators: %s: how long ago
-#: admin/src/Overview.js:71
+#: admin/src/Overview.js:101
 msgid "Last scan: %s."
 msgstr ""
 
 #. translators: %s: the name of a scan task
-#: admin/src/Overview.js:81
+#: admin/src/Overview.js:111
 msgid "Now: %s"
 msgstr ""
 
-#: admin/src/Overview.js:85
+#: admin/src/Overview.js:115
 msgid "Waiting for the cron to start it…"
 msgstr ""
 
-#: admin/src/Overview.js:91
+#: admin/src/Overview.js:128
+msgid "Scan now"
+msgstr ""
+
+#: admin/src/Overview.js:138
 msgid "Part of the scan goes on in the background."
+msgstr ""
+
+#. translators: 1: a grade from A to F, 2: a score out of 100
+#: admin/src/ScoreRing.js:18
+msgid "Security grade %1$s, %2$d out of 100."
 msgstr ""
 
 #: admin/src/Settings.js:10
@@ -250,7 +289,7 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
-#: admin/src/util.js:11
+#: admin/src/util.js:11 admin/src/util.js:95
 msgid "Critical"
 msgstr ""
 
@@ -362,7 +401,27 @@ msgstr ""
 msgid "Scheduled task"
 msgstr ""
 
-#: src/Application/Admin/StatusView.php:102
+#: admin/src/util.js:90
+msgid "Solid"
+msgstr ""
+
+#: admin/src/util.js:91
+msgid "Good"
+msgstr ""
+
+#: admin/src/util.js:92
+msgid "Fragile"
+msgstr ""
+
+#: admin/src/util.js:93
+msgid "Weak"
+msgstr ""
+
+#: admin/src/util.js:94
+msgid "At risk"
+msgstr ""
+
+#: src/Application/Admin/StatusView.php:104
 msgid "Not scanned yet."
 msgstr ""
 

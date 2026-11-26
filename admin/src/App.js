@@ -7,6 +7,7 @@ import Findings from './Findings';
 import Settings from './Settings';
 import Notifications from './Notifications';
 import Journal from './Journal';
+import Mark from './Mark';
 
 /** How often a scan that is running is asked about, in milliseconds. */
 const POLL = 3000;
@@ -93,6 +94,15 @@ export default function App() {
 	];
 
 	return (
+		<div className="hornet-app">
+			<header className="hornet-brand">
+				<Mark />
+				<span className="hornet-brand__name">Hornet</span>
+				<span className="hornet-brand__by">by Pollora</span>
+				<span className={ `hornet-pill hornet-score--${ status.score.grade }` }>
+					{ `${ status.score.grade } · ${ status.score.value }/100` }
+				</span>
+			</header>
 		<TabPanel tabs={ tabs }>
 			{ ( tab ) => {
 				switch ( tab.name ) {
@@ -116,5 +126,6 @@ export default function App() {
 				}
 			} }
 		</TabPanel>
+		</div>
 	);
 }
