@@ -4,6 +4,8 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+- **The screen was redrawn** in the colours of Pollora, with a **security score** (0 to 100, grade A to F) and what to fix first, and a visual scan. `hornet/get-status` also gives `score` and `grade`. New `Domain\Audit\SecurityScore`.
+
 - **Fixed: on Pollora the settings of the project were never read.** The provider reads `pollora.hornet`, but the published file went to `config/hornet.php`, which Laravel loads as `hornet`: every protection looked turned on and did nothing. The file is now published to `config/pollora/hornet.php`, and a left `config/hornet.php` is reported in Site Health. Found by installing Hornet in a real Pollora project.
 - **Fixed: on Pollora the REST API was not protected, and its routes did not exist.** Pollora runs the WordPress request while its own provider boots, before this package's: `/wp-json` was answered without Hornet (users listed, no screen routes) and `init` had passed. Hornet now starts on `plugins_loaded`.
 - **Fixed: on Pollora, WP-CLI ignored the project's settings** and the provider ignored `HORNET_DISABLED`: both read the settings from one place (`SettingsLoader`).

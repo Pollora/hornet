@@ -136,6 +136,11 @@ msgstr "Rétablir"
 msgid "Close"
 msgstr "Fermer"
 
+#. translators: 1: tasks done, 2: tasks of the scan
+#: admin/src/Hive.js:37
+msgid "%1$d of %2$d steps done"
+msgstr "%1$d étapes terminées sur %2$d"
+
 #: admin/src/Journal.js:25
 msgid "The journal could not be read."
 msgstr "Le journal n'a pas pu être lu."
@@ -192,6 +197,10 @@ msgstr "à partir de %s"
 msgid "Send a test"
 msgstr "Envoyer un test"
 
+#: admin/src/Overview.js:18
+msgid "Security score"
+msgstr "Score de sécurité"
+
 #: admin/src/Overview.js:25
 msgid "open"
 msgstr "ouverts"
@@ -208,9 +217,26 @@ msgstr "écartés"
 msgid "pass"
 msgstr "conformes"
 
-#: admin/src/Overview.js:42
-msgid "Worst open finding:"
-msgstr "Constat ouvert le plus grave :"
+#. translators: 1: checks that could be verified, 2: all the checks
+#: admin/src/Overview.js:41
+msgid "Provisional: %1$d of %2$d checks could be verified."
+msgstr "Provisoire : %1$d contrôles sur %2$d ont pu être vérifiés."
+
+#: admin/src/Overview.js:51
+msgid "%d accepted risk is not counted."
+msgid_plural "%d accepted risks are not counted."
+msgstr[0] "%d risque accepté n'est pas compté."
+msgstr[1] "%d risques acceptés ne sont pas comptés."
+
+#: admin/src/Overview.js:66
+msgid "Fix first"
+msgstr "À corriger en premier"
+
+#: admin/src/Overview.js:75
+msgid "%d point"
+msgid_plural "%d points"
+msgstr[0] "%d point"
+msgstr[1] "%d points"
 
 #: admin/src/Overview.js:51
 msgid "Scan"
@@ -219,6 +245,14 @@ msgstr "Analyse"
 #: admin/src/Overview.js:59
 msgid "Scanning…"
 msgstr "Analyse en cours…"
+
+#: admin/src/Hive.js:57
+msgid "Waiting"
+msgstr "En attente"
+
+#: admin/src/Hive.js:58
+msgid "Done"
+msgstr "Terminé"
 
 #: admin/src/Overview.js:60
 msgid "Scan now"
@@ -241,6 +275,11 @@ msgstr "En attente du démarrage par le cron…"
 #: admin/src/Overview.js:91
 msgid "Part of the scan goes on in the background."
 msgstr "Une partie de l'analyse se poursuit en arrière-plan."
+
+#. translators: 1: a grade from A to F, 2: a score out of 100
+#: admin/src/ScoreRing.js:18
+msgid "Security grade %1$s, %2$d out of 100."
+msgstr "Note de sécurité %1$s, %2$d sur 100."
 
 #: admin/src/Settings.js:10
 msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
@@ -365,6 +404,26 @@ msgstr "Ligne de commande"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "Tâche planifiée"
+
+#: admin/src/util.js:90
+msgid "Solid"
+msgstr "Solide"
+
+#: admin/src/util.js:91
+msgid "Good"
+msgstr "Bonne"
+
+#: admin/src/util.js:92
+msgid "Fragile"
+msgstr "Fragile"
+
+#: admin/src/util.js:93
+msgid "Weak"
+msgstr "Faible"
+
+#: admin/src/util.js:94
+msgid "At risk"
+msgstr "À risque"
 
 #: src/Application/Admin/StatusView.php:102
 msgid "Not scanned yet."

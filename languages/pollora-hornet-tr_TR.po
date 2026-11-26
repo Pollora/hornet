@@ -136,6 +136,11 @@ msgstr "Geri getir"
 msgid "Close"
 msgstr "Kapat"
 
+#. translators: 1: tasks done, 2: tasks of the scan
+#: admin/src/Hive.js:37
+msgid "%1$d of %2$d steps done"
+msgstr "%2$d adımdan %1$d tanesi tamamlandı"
+
 #: admin/src/Journal.js:25
 msgid "The journal could not be read."
 msgstr "Günlük okunamadı."
@@ -192,6 +197,10 @@ msgstr "%s düzeyinden itibaren"
 msgid "Send a test"
 msgstr "Test gönder"
 
+#: admin/src/Overview.js:18
+msgid "Security score"
+msgstr "Güvenlik puanı"
+
 #: admin/src/Overview.js:25
 msgid "open"
 msgstr "açık"
@@ -208,9 +217,26 @@ msgstr "kenara bırakıldı"
 msgid "pass"
 msgstr "geçti"
 
-#: admin/src/Overview.js:42
-msgid "Worst open finding:"
-msgstr "En kötü açık bulgu:"
+#. translators: 1: checks that could be verified, 2: all the checks
+#: admin/src/Overview.js:41
+msgid "Provisional: %1$d of %2$d checks could be verified."
+msgstr "Geçici: %2$d kontrolden %1$d tanesi doğrulanabildi."
+
+#: admin/src/Overview.js:51
+msgid "%d accepted risk is not counted."
+msgid_plural "%d accepted risks are not counted."
+msgstr[0] "%d kabul edilen risk sayılmıyor."
+msgstr[1] "%d kabul edilen risk sayılmıyor."
+
+#: admin/src/Overview.js:66
+msgid "Fix first"
+msgstr "Önce bunları düzeltin"
+
+#: admin/src/Overview.js:75
+msgid "%d point"
+msgid_plural "%d points"
+msgstr[0] "%d puan"
+msgstr[1] "%d puan"
 
 #: admin/src/Overview.js:51
 msgid "Scan"
@@ -219,6 +245,14 @@ msgstr "Tarama"
 #: admin/src/Overview.js:59
 msgid "Scanning…"
 msgstr "Taranıyor…"
+
+#: admin/src/Hive.js:57
+msgid "Waiting"
+msgstr "Bekliyor"
+
+#: admin/src/Hive.js:58
+msgid "Done"
+msgstr "Tamamlandı"
 
 #: admin/src/Overview.js:60
 msgid "Scan now"
@@ -241,6 +275,11 @@ msgstr "Cron'un başlatması bekleniyor…"
 #: admin/src/Overview.js:91
 msgid "Part of the scan goes on in the background."
 msgstr "Taramanın bir kısmı arka planda sürüyor."
+
+#. translators: 1: a grade from A to F, 2: a score out of 100
+#: admin/src/ScoreRing.js:18
+msgid "Security grade %1$s, %2$d out of 100."
+msgstr "Güvenlik notu %1$s, 100 üzerinden %2$d."
 
 #: admin/src/Settings.js:10
 msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
@@ -365,6 +404,26 @@ msgstr "Komut satırı"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "Zamanlanmış görev"
+
+#: admin/src/util.js:90
+msgid "Solid"
+msgstr "Sağlam"
+
+#: admin/src/util.js:91
+msgid "Good"
+msgstr "İyi"
+
+#: admin/src/util.js:92
+msgid "Fragile"
+msgstr "Kırılgan"
+
+#: admin/src/util.js:93
+msgid "Weak"
+msgstr "Zayıf"
+
+#: admin/src/util.js:94
+msgid "At risk"
+msgstr "Risk altında"
 
 msgid "Not scanned yet."
 msgstr "Henüz tarama yapılmadı."

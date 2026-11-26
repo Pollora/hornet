@@ -4,6 +4,7 @@ import { Button, Modal, Notice, SearchControl, SelectControl, TextareaControl } 
 import { statusLabel, severityLabel, SEVERITIES } from './util';
 import { filterFindings, pageOf } from './findings-view';
 import { SeverityBadge, StatusBadge } from './Severity';
+import Text from './Text';
 import { restoreFinding, setAside } from './api';
 import { whenLabel } from './util';
 
@@ -150,7 +151,9 @@ export default function Findings( { findings, onChanged } ) {
 						<StatusBadge status={ shown.status } />{ ' ' }
 						{ shown.outcome === 'fail' && <SeverityBadge severity={ shown.severity } /> }
 					</p>
-					<p>{ shown.summary }</p>
+					<p>
+						<Text>{ shown.summary }</Text>
+					</p>
 					{ shown.details.length > 0 && (
 						<ul className="hornet-details">
 							{ shown.details.map( ( line, index ) => (
@@ -160,7 +163,7 @@ export default function Findings( { findings, onChanged } ) {
 					) }
 					{ shown.fix && (
 						<p>
-							<strong>{ __( 'What to do:', 'pollora-hornet' ) }</strong> { shown.fix }
+							<strong>{ __( 'What to do:', 'pollora-hornet' ) }</strong> <Text>{ shown.fix }</Text>
 						</p>
 					) }
 					{ shown.ignored && (

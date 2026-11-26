@@ -37,6 +37,8 @@ final class AgentView
 
         return [
             'counts' => self::counts($status['counts'] ?? []),
+            'score' => is_int($status['score']['value'] ?? null) ? $status['score']['value'] : null,
+            'grade' => is_string($status['score']['grade'] ?? null) ? self::text($status['score']['grade'], 1) : null,
             'worst_severity' => is_string($status['worst'] ?? null) ? self::text($status['worst'], 20) : null,
             'last_scan_seconds_ago' => is_int($scan['age'] ?? null) ? $scan['age'] : null,
             'scan_running' => (bool) ($scan['running'] ?? false),

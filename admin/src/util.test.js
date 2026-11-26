@@ -1,4 +1,4 @@
-import { ago, headline, severityLabel, severityRank, statusLabel, sourceLabel, whenLabel } from './util';
+import { ago, headline, severityLabel, severityRank, statusLabel, sourceLabel, whenLabel, fixFirst, gradeLabel, codeSegments } from './util';
 
 describe( 'severityRank', () => {
 	it( 'puts the worst first when sorted from the highest', () => {
@@ -71,5 +71,45 @@ describe( 'sourceLabel and whenLabel', () => {
 		expect( whenLabel( 0 ) ).toBe( '—' );
 		expect( whenLabel( null ) ).toBe( '—' );
 		expect( whenLabel( 1795600000 ) ).not.toBe( '—' );
+	} );
+} );
+
+describe( 'fixFirst', () => {
+	const findings = [ 'a', 'b', 'c', 'd' ].map( ( check ) => ( { check, label: check.toUpperCase() } ) );
+
+	it( 'gives the most expensive findings first, with their cost, three at most', () => {
+		expect( fixFirst( findings, { a: 3, b: 40, c: 8, d: 20 } ).map( ( i ) => [ i.label, i.points ] ) ).toEqual( [
+			[ 'B', 40 ],
+			[ 'D', 20 ],
+			[ 'C', 8 ],
+		] );
+	} );
+
+	it( 'gives nothing when nothing costs, and leaves out a check it does not know', () => {
+		expect( fixFirst( findings, {} ) ).toEqual( [] );
+		expect( fixFirst( findings, undefined ) ).toEqual( [] );
+		expect( fixFirst( findings, { zz: 5 } ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'gradeLabel', () => {
+	it( 'says what each grade means', () => {
+		expect( [ 'A', 'B', 'C', 'D', 'E', 'F' ].map( gradeLabel ) ).toEqual( [ 'Solid', 'Good', 'Fragile', 'Weak', 'At risk', 'Critical' ] );
+	} );
+} );
+
+describe( 'codeSegments', () => {
+	it( 'takes what is between backticks as code', () => {
+		expect( codeSegments( 'Run `wp hornet scan` now.' ) ).toEqual( [
+			{ text: 'Run ', code: false },
+			{ text: 'wp hornet scan', code: true },
+			{ text: ' now.', code: false },
+		] );
+	} );
+
+	it( 'keeps a lone backtick and plain or missing text as they are', () => {
+		expect( codeSegments( 'a ` b' ) ).toEqual( [ { text: 'a ` b', code: false } ] );
+		expect( codeSegments( 'plain' ) ).toEqual( [ { text: 'plain', code: false } ] );
+		expect( codeSegments( null ) ).toEqual( [] );
 	} );
 } );
