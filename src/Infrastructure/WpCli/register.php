@@ -27,6 +27,9 @@ use Pollora\Hornet\Infrastructure\WpCli\WpCliOutput;
 /*
  * Loaded by Composer's `autoload.files`: it declares `wp hornet` when the
  * process is WP-CLI, and does nothing anywhere else.
+ *
+ * A classic install requires the autoloader at the top of wp-config.php: nothing of
+ * WordPress exists then. Everything that needs it goes inside a closure.
  */
 
 // @codeCoverageIgnoreStart
@@ -64,7 +67,7 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
     WP_CLI::add_command('hornet journal', new JournalCommand(
         static fn (): Journal => new TableJournal,
         JournalSchema::drop(...),
-        SettingsLoader::load(get_current_blog_id())->journal->retentionDays,
+        static fn (): int => SettingsLoader::load(get_current_blog_id())->journal->retentionDays,
         new SystemClock,
         new WpCliOutput,
     ));
