@@ -21,6 +21,8 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `config-permissions` | the permission bits of `wp-config.php` |
 | `php-version` | whether the PHP branch still gets security fixes (dates from php.net, read on 2026-11-24) |
 | `wordpress-version` | the update WordPress already found (no request is made) |
+| `plugin-updates`, `theme-updates` | the updates WordPress already found (no request is made); `unknown` when it has not looked for 7 days. Software WordPress.org does not know is counted, and your own themes (`scanner.own_themes`) are left out |
+| `inactive-plugins`, `inactive-themes` | in production, plugins installed and not active, and themes other than the active one, its parent and one default theme (not judged on a network) |
 | `xml-rpc` | what XML-RPC answers: open, logins refused only (pingbacks still answer), or closed |
 | `user-enumeration` | whether the REST API lists the users to a visitor |
 | `admin-account` | a user named `admin` |
@@ -34,6 +36,8 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `theme-integrity` | what the last scan found about the files of the themes |
 | `suspicious-files` | what the last scan found in the content folder (scripts in the uploads, web shells) |
 | `exposed-files` | what the site gave away when the last scan asked it (a `.env`, a repository, a backup, a log) |
+
+Site Health shows these checks too, except the four on plugins and themes, which it tests itself.
 
 A check reads and never writes, and never asks the network. A scan is another thing: see below. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 

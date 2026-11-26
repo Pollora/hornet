@@ -89,6 +89,35 @@ interface Environment
     public function displaysPhpErrors(): ?bool;
 
     /**
+     * The plugin updates WordPress last found, and when it looked (a timestamp). `unfollowed` counts the installed plugins that
+     * WordPress.org does not know. Null when WordPress never looked.
+     *
+     * @return array{checked: int, waiting: list<array{slug: string, installed: string, available: string}>, unfollowed: int}|null
+     */
+    public function pluginUpdates(): ?array;
+
+    /**
+     * The same for the themes. Those written for the site (`scanner.own_themes`) are left out.
+     *
+     * @return array{checked: int, waiting: list<array{slug: string, installed: string, available: string}>, unfollowed: int}|null
+     */
+    public function themeUpdates(): ?array;
+
+    /**
+     * The plugins that are installed and not active. Null on a network, where another site may use them.
+     *
+     * @return list<string>|null
+     */
+    public function inactivePlugins(): ?array;
+
+    /**
+     * The themes that are neither the active one, nor its parent, nor the default theme to fall back on. Null on a network.
+     *
+     * @return list<string>|null
+     */
+    public function unusedThemes(): ?array;
+
+    /**
      * What the last scan found, null when the site was never scanned. It is read from what the scan stored: nothing is scanned here.
      */
     public function lastScan(): ?ScanSnapshot;

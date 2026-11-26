@@ -44,6 +44,14 @@ class FakeEnvironment implements Environment
         /** @var list<array{user: int, created: int, last_used: int|null}>|null */
         public ?array $applicationPasswords = [],
         public ?bool $phpErrors = false,
+        /** @var array{checked: int, waiting: list<array{slug: string, installed: string, available: string}>, unfollowed: int}|null|false false: up to date, looked today */
+        public array|false|null $pluginUpdates = false,
+        /** @var array{checked: int, waiting: list<array{slug: string, installed: string, available: string}>, unfollowed: int}|null|false */
+        public array|false|null $themeUpdates = false,
+        /** @var list<string>|null */
+        public ?array $inactivePlugins = [],
+        /** @var list<string>|null */
+        public ?array $unusedThemes = [],
     ) {}
 
     /**
@@ -161,6 +169,26 @@ class FakeEnvironment implements Environment
     public function displaysPhpErrors(): ?bool
     {
         return $this->phpErrors;
+    }
+
+    public function pluginUpdates(): ?array
+    {
+        return $this->pluginUpdates === false ? ['checked' => $this->now()->getTimestamp(), 'waiting' => [], 'unfollowed' => 0] : $this->pluginUpdates;
+    }
+
+    public function themeUpdates(): ?array
+    {
+        return $this->themeUpdates === false ? ['checked' => $this->now()->getTimestamp(), 'waiting' => [], 'unfollowed' => 0] : $this->themeUpdates;
+    }
+
+    public function inactivePlugins(): ?array
+    {
+        return $this->inactivePlugins;
+    }
+
+    public function unusedThemes(): ?array
+    {
+        return $this->unusedThemes;
     }
 
     public function lastScan(): ?ScanSnapshot

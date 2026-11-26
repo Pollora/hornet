@@ -1596,3 +1596,103 @@ msgstr "A Debugbar está forçada em produção: as contas autorizadas a vê-la 
 #: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:46
 msgid "Debugbar is forced on in production: it shows the queries, the session and the request to visitors."
 msgstr "A Debugbar está forçada em produção: ela mostra aos visitantes as consultas, a sessão e a requisição."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Plugin updates"
+msgstr "Atualizações de plugins"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Theme updates"
+msgstr "Atualizações de temas"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:53
+msgid "WordPress has not looked for plugin updates in the last 7 days."
+msgstr "O WordPress não procurou atualizações de plugins nos últimos 7 dias."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:52
+msgid "WordPress has not looked for theme updates in the last 7 days."
+msgstr "O WordPress não procurou atualizações de temas nos últimos 7 dias."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:60
+msgid "%d theme is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d themes are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "%d tema não é acompanhado pelo WordPress.org: procure as atualizações dele."
+msgstr[1] "%d temas não são acompanhados pelo WordPress.org: procure as atualizações deles."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:61
+msgid "%d plugin is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d plugins are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "%d plugin não é acompanhado pelo WordPress.org: procure as atualizações dele."
+msgstr[1] "%d plugins não são acompanhados pelo WordPress.org: procure as atualizações deles."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No theme update is waiting."
+msgstr "Não há atualizações de temas pendentes."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No plugin update is waiting."
+msgstr "Não há atualizações de plugins pendentes."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:71
+msgid "%s: %s is installed, %s is available."
+msgstr "%s: a %s está instalada, a %s está disponível."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:83
+msgid "%d theme has an update waiting."
+msgid_plural "%d themes have an update waiting."
+msgstr[0] "%d tema tem uma atualização pendente."
+msgstr[1] "%d temas têm uma atualização pendente."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:84
+msgid "%d plugin has an update waiting."
+msgid_plural "%d plugins have an update waiting."
+msgstr[0] "%d plugin tem uma atualização pendente."
+msgstr[1] "%d plugins têm uma atualização pendente."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:87
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-theme/<slug>), after reading what changed."
+msgstr "Atualize pelo painel ou com o Composer (composer update wpackagist-theme/<slug>), depois de ler o que mudou."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:88
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-plugin/<slug>), after reading what changed."
+msgstr "Atualize pelo painel ou com o Composer (composer update wpackagist-plugin/<slug>), depois de ler o que mudou."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive themes"
+msgstr "Temas não utilizados"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive plugins"
+msgstr "Plugins inativos"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:52
+msgid "On a network another site may use what this one does not: not judged."
+msgstr "Em uma rede, outro site pode usar o que este não usa: não avaliado."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "No theme is installed without a use."
+msgstr "Não há temas instalados sem uso."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "Every installed plugin is active."
+msgstr "Todos os plugins instalados estão ativos."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:71
+msgid "%d theme is installed and not used."
+msgid_plural "%d themes are installed and not used."
+msgstr[0] "%d tema está instalado e sem uso."
+msgstr[1] "%d temas estão instalados e sem uso."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:72
+msgid "%d plugin is installed and not active."
+msgid_plural "%d plugins are installed and not active."
+msgstr[0] "%d plugin está instalado e inativo."
+msgstr[1] "%d plugins estão instalados e inativos."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:75
+msgid "Delete the themes you do not use (or composer remove them). Keep the active one, its parent and one default theme."
+msgstr "Exclua os temas que não usa (ou composer remove). Mantenha o ativo, o tema pai dele e um tema padrão."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
+msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
+msgstr "Exclua o que não usa (ou composer remove): os arquivos continuam acessíveis, e as falhas junto."

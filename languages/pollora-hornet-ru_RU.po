@@ -1616,3 +1616,109 @@ msgstr "Debugbar принудительно включён на рабочем �
 #: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:46
 msgid "Debugbar is forced on in production: it shows the queries, the session and the request to visitors."
 msgstr "Debugbar принудительно включён на рабочем сайте: он показывает посетителям запросы к базе, сессию и запрос."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Plugin updates"
+msgstr "Обновления плагинов"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Theme updates"
+msgstr "Обновления тем"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:53
+msgid "WordPress has not looked for plugin updates in the last 7 days."
+msgstr "WordPress не проверял обновления плагинов последние 7 дней."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:52
+msgid "WordPress has not looked for theme updates in the last 7 days."
+msgstr "WordPress не проверял обновления тем последние 7 дней."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:60
+msgid "%d theme is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d themes are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "%d тема не отслеживается WordPress.org: проверяйте её обновления сами."
+msgstr[1] "%d темы не отслеживаются WordPress.org: проверяйте их обновления сами."
+msgstr[2] "%d тем не отслеживаются WordPress.org: проверяйте их обновления сами."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:61
+msgid "%d plugin is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d plugins are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "%d плагин не отслеживается WordPress.org: проверяйте его обновления сами."
+msgstr[1] "%d плагина не отслеживаются WordPress.org: проверяйте их обновления сами."
+msgstr[2] "%d плагинов не отслеживаются WordPress.org: проверяйте их обновления сами."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No theme update is waiting."
+msgstr "Ожидающих обновлений тем нет."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No plugin update is waiting."
+msgstr "Ожидающих обновлений плагинов нет."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:71
+msgid "%s: %s is installed, %s is available."
+msgstr "%s: установлена %s, доступна %s."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:83
+msgid "%d theme has an update waiting."
+msgid_plural "%d themes have an update waiting."
+msgstr[0] "Для %d темы есть обновление."
+msgstr[1] "Для %d тем есть обновления."
+msgstr[2] "Для %d тем есть обновления."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:84
+msgid "%d plugin has an update waiting."
+msgid_plural "%d plugins have an update waiting."
+msgstr[0] "Для %d плагина есть обновление."
+msgstr[1] "Для %d плагинов есть обновления."
+msgstr[2] "Для %d плагинов есть обновления."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:87
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-theme/<slug>), after reading what changed."
+msgstr "Прочитав список изменений, обновите из консоли или через Composer (composer update wpackagist-theme/<slug>)."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:88
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-plugin/<slug>), after reading what changed."
+msgstr "Прочитав список изменений, обновите из консоли или через Composer (composer update wpackagist-plugin/<slug>)."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive themes"
+msgstr "Неиспользуемые темы"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive plugins"
+msgstr "Неактивные плагины"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:52
+msgid "On a network another site may use what this one does not: not judged."
+msgstr "В сети другой сайт может использовать то, что не использует этот: не оценивается."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "No theme is installed without a use."
+msgstr "Установленных, но неиспользуемых тем нет."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "Every installed plugin is active."
+msgstr "Все установленные плагины активны."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:71
+msgid "%d theme is installed and not used."
+msgid_plural "%d themes are installed and not used."
+msgstr[0] "%d тема установлена и не используется."
+msgstr[1] "%d темы установлены и не используются."
+msgstr[2] "%d тем установлено и не используется."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:72
+msgid "%d plugin is installed and not active."
+msgid_plural "%d plugins are installed and not active."
+msgstr[0] "%d плагин установлен и не активен."
+msgstr[1] "%d плагина установлены и не активны."
+msgstr[2] "%d плагинов установлены и не активны."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:75
+msgid "Delete the themes you do not use (or composer remove them). Keep the active one, its parent and one default theme."
+msgstr "Удалите неиспользуемые темы (или composer remove). Оставьте активную, её родительскую и одну тему по умолчанию."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
+msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
+msgstr "Удалите то, что не используете (или composer remove): файлы остаются доступными, а с ними и уязвимости."

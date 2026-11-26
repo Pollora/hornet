@@ -14,6 +14,7 @@ use Pollora\Hornet\Infrastructure\Config\Settings;
 use Throwable;
 use WP_Application_Passwords;
 use WP_REST_Request;
+use WP_Theme;
 
 /**
  * What the checks may know, read from a running WordPress. It reads; it writes nothing and asks nothing of the network.
@@ -213,9 +214,129 @@ final class WordPressEnvironment implements Environment
         return (new ErrorDisplayNote)->read();
     }
 
+    public function pluginUpdates(): ?array
+    {
+        $installed = [];
+
+        foreach ($this->installedPlugins() as $file => $data) {
+            $installed[$file] = ['slug' => $this->pluginSlug($file), 'version' => $data['Version']];
+        }
+
+        return $this->updates('update_plugins', $installed);
+    }
+
+    public function themeUpdates(): ?array
+    {
+        $own = $this->settings instanceof Settings ? $this->settings->scanner->ownThemes : [];
+        $installed = [];
+
+        foreach (wp_get_themes() as $slug => $theme) {
+            $slug = (string) $slug;
+            $version = $theme->get('Version');
+
+            if (! in_array($slug, $own, true)) {
+                $installed[$slug] = ['slug' => $slug, 'version' => is_string($version) ? $version : ''];
+            }
+        }
+
+        return $this->updates('update_themes', $installed);
+    }
+
+    public function inactivePlugins(): ?array
+    {
+        if (is_multisite()) {
+            return null;
+        }
+
+        $inactive = [];
+
+        foreach (array_keys($this->installedPlugins()) as $file) {
+            if (! is_plugin_active($file)) {
+                $inactive[] = $this->pluginSlug($file);
+            }
+        }
+
+        return $inactive;
+    }
+
+    public function unusedThemes(): ?array
+    {
+        if (is_multisite()) {
+            return null;
+        }
+
+        $kept = [get_stylesheet(), get_template()];
+        // The theme to fall back on, as Site Health chooses it
+        $default = wp_get_theme(defined('WP_DEFAULT_THEME') ? WP_DEFAULT_THEME : '');
+
+        if (! $default->exists()) {
+            $default = WP_Theme::get_core_default_theme();
+        }
+
+        if ($default instanceof WP_Theme) {
+            $kept[] = $default->get_stylesheet();
+        }
+
+        return array_values(array_diff(array_map(strval(...), array_keys(wp_get_themes())), $kept));
+    }
+
     public function lastScan(): ?ScanSnapshot
     {
         return (new OptionScanStore)->last();
+    }
+
+    /**
+     * @return array<string, array<string, string>> by file, as `get_plugins()` gives them
+     */
+    private function installedPlugins(): array
+    {
+        if (! function_exists('get_plugins') || ! function_exists('is_plugin_active')) {
+            require_once ABSPATH.'wp-admin/includes/plugin.php';
+        }
+
+        return get_plugins();
+    }
+
+    private function pluginSlug(string $file): string
+    {
+        $folder = dirname($file);
+
+        return $folder === '.' ? basename($file, '.php') : $folder;
+    }
+
+    /**
+     * Reads what WordPress stored. An update that was applied since (by Composer, say) is still listed there: it counts only when
+     * the version offered is newer than the one installed.
+     *
+     * @param  array<string, array{slug: string, version: string}>  $installed  by the key the stored list uses
+     * @return array{checked: int, waiting: list<array{slug: string, installed: string, available: string}>, unfollowed: int}|null
+     */
+    private function updates(string $transient, array $installed): ?array
+    {
+        $stored = get_site_transient($transient);
+
+        if (! is_object($stored) || ! is_int($stored->last_checked ?? null)) {
+            return null;
+        }
+
+        $response = is_array($stored->response ?? null) ? $stored->response : [];
+        $current = is_array($stored->no_update ?? null) ? $stored->no_update : [];
+        $waiting = [];
+        $unfollowed = 0;
+
+        foreach ($installed as $key => $one) {
+            // An object for a plugin, an array for a theme
+            $offer = isset($response[$key]) ? (array) $response[$key] : null;
+            $available = $offer['new_version'] ?? null;
+
+            if (is_string($available) && version_compare($one['version'], $available, '<')) {
+                $waiting[] = ['slug' => $one['slug'], 'installed' => $one['version'], 'available' => $available];
+            } elseif ($offer === null && ! isset($current[$key])) {
+                $unfollowed++;
+            }
+        }
+
+        return ['checked' => $stored->last_checked, 'waiting' => $waiting, 'unfollowed' => $unfollowed];
     }
 
     public function now(): DateTimeImmutable

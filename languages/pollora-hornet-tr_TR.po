@@ -1349,3 +1349,103 @@ msgstr "Debugbar üretim ortamında zorla açılmış: görmeye yetkili hesaplar
 #: src/Domain/Audit/Checks/LaravelDebugbarCheck.php:46
 msgid "Debugbar is forced on in production: it shows the queries, the session and the request to visitors."
 msgstr "Debugbar üretim ortamında zorla açılmış: sorguları, oturumu ve isteği ziyaretçilere gösterir."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Plugin updates"
+msgstr "Eklenti güncellemeleri"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:43
+msgid "Theme updates"
+msgstr "Tema güncellemeleri"
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:53
+msgid "WordPress has not looked for plugin updates in the last 7 days."
+msgstr "WordPress son 7 günde eklenti güncellemesi aramadı."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:52
+msgid "WordPress has not looked for theme updates in the last 7 days."
+msgstr "WordPress son 7 günde tema güncellemesi aramadı."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:60
+msgid "%d theme is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d themes are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "%d tema WordPress.org tarafından izlenmiyor: güncellemelerini kendiniz kontrol edin."
+msgstr[1] "%d tema WordPress.org tarafından izlenmiyor: güncellemelerini kendiniz kontrol edin."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:61
+msgid "%d plugin is not followed by WordPress.org: look for its updates yourself."
+msgid_plural "%d plugins are not followed by WordPress.org: look for their updates yourself."
+msgstr[0] "%d eklenti WordPress.org tarafından izlenmiyor: güncellemelerini kendiniz kontrol edin."
+msgstr[1] "%d eklenti WordPress.org tarafından izlenmiyor: güncellemelerini kendiniz kontrol edin."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No theme update is waiting."
+msgstr "Bekleyen tema güncellemesi yok."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:67
+msgid "No plugin update is waiting."
+msgstr "Bekleyen eklenti güncellemesi yok."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:71
+msgid "%s: %s is installed, %s is available."
+msgstr "%s: %s kurulu, %s mevcut."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:83
+msgid "%d theme has an update waiting."
+msgid_plural "%d themes have an update waiting."
+msgstr[0] "%d temanın güncellemesi bekliyor."
+msgstr[1] "%d temanın güncellemesi bekliyor."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:84
+msgid "%d plugin has an update waiting."
+msgid_plural "%d plugins have an update waiting."
+msgstr[0] "%d eklentinin güncellemesi bekliyor."
+msgstr[1] "%d eklentinin güncellemesi bekliyor."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:87
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-theme/<slug>), after reading what changed."
+msgstr "Değişiklikleri okuduktan sonra başlangıç ekranından veya Composer ile güncelleyin (composer update wpackagist-theme/<slug>)."
+
+#: src/Domain/Audit/Checks/UpdatesCheck.php:88
+msgid "Update from the dashboard, or with Composer (composer update wpackagist-plugin/<slug>), after reading what changed."
+msgstr "Değişiklikleri okuduktan sonra başlangıç ekranından veya Composer ile güncelleyin (composer update wpackagist-plugin/<slug>)."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive themes"
+msgstr "Kullanılmayan temalar"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:40
+msgid "Inactive plugins"
+msgstr "Etkin olmayan eklentiler"
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:52
+msgid "On a network another site may use what this one does not: not judged."
+msgstr "Ağda, bu sitenin kullanmadığını başka bir site kullanabilir: değerlendirilmedi."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "No theme is installed without a use."
+msgstr "Kullanılmadan kurulu duran tema yok."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:58
+msgid "Every installed plugin is active."
+msgstr "Kurulu tüm eklentiler etkin."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:71
+msgid "%d theme is installed and not used."
+msgid_plural "%d themes are installed and not used."
+msgstr[0] "%d tema kurulu ve kullanılmıyor."
+msgstr[1] "%d tema kurulu ve kullanılmıyor."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:72
+msgid "%d plugin is installed and not active."
+msgid_plural "%d plugins are installed and not active."
+msgstr[0] "%d eklenti kurulu ve etkin değil."
+msgstr[1] "%d eklenti kurulu ve etkin değil."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:75
+msgid "Delete the themes you do not use (or composer remove them). Keep the active one, its parent and one default theme."
+msgstr "Kullanmadığınız temaları silin (veya composer remove). Etkin temayı, üst temasını ve bir varsayılan temayı bırakın."
+
+#: src/Domain/Audit/Checks/InactiveExtensionsCheck.php:76
+msgid "Delete what you do not use (or composer remove it): its files can still be reached, and its flaws with them."
+msgstr "Kullanmadıklarınızı silin (veya composer remove): dosyaları hâlâ erişilebilir, açıkları da onlarla birlikte."
