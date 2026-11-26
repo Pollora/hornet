@@ -22,14 +22,14 @@ final readonly class ServerConfigCommand
     ) {}
 
     /**
-     * Print rules for nginx or Apache: no PHP from the uploads folder, no dotfile, no file that should never be public.
+     * Print rules for nginx, Apache or an .htaccess file: no PHP from the uploads folder, no dotfile, no file that should never be public.
      *
      * Nothing is written to the server: read the rules, put them where they belong, test the configuration, reload.
      *
      * ## OPTIONS
      *
      * <server>
-     * : nginx or apache.
+     * : nginx, apache (virtual host) or htaccess.
      *
      * [--uploads=<path>]
      * : The URL path of the uploads folder, such as /wp-content/uploads or /app/uploads. By default the one of this site.
@@ -41,6 +41,7 @@ final readonly class ServerConfigCommand
      *
      *     wp hornet server-config nginx > hornet.conf
      *     wp hornet server-config apache --headers
+     *     wp hornet server-config htaccess
      *
      * @param  list<string>  $args
      * @param  array<string, mixed>  $assoc

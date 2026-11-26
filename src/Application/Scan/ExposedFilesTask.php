@@ -166,7 +166,7 @@ final readonly class ExposedFilesTask implements ScanTask
             $exposed[0][0],
             Message::plural('%d thing is given away by the site itself.', '%d things are given away by the site itself.', count($exposed), count($exposed)),
             [...$lines, ...$notes],
-            Message::of('Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read.'),
+            Message::of('Remove the file from the web root, or deny it in the web server: `wp hornet server-config nginx`, `apache` or `htaccess` prints the rules (Hornet writes nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read.'),
         );
     }
 }
