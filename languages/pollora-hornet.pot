@@ -205,7 +205,7 @@ msgstr ""
 msgid "Send a test"
 msgstr ""
 
-#: admin/src/Overview.js:20
+#: admin/src/Overview.js:20 src/Infrastructure/WordPress/SiteHealthInfo.php:52
 msgid "Security score"
 msgstr ""
 
@@ -329,7 +329,7 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: admin/src/util.js:22 src/Infrastructure/WordPress/SiteHealthModule.php:108
+#: admin/src/util.js:22 src/Infrastructure/WordPress/SiteHealthModule.php:113
 msgid "Not verified"
 msgstr ""
 
@@ -505,7 +505,7 @@ msgstr ""
 msgid "Not part of WordPress"
 msgstr ""
 
-#: src/Application/Scan/CoreIntegrityTask.php:89
+#: src/Application/Scan/CoreIntegrityTask.php:89 src/Infrastructure/WordPress/SiteHealthInfo.php:94 src/Infrastructure/WordPress/SiteHealthInfo.php:108
 msgid "Could not be read"
 msgstr ""
 
@@ -1731,7 +1731,7 @@ msgstr ""
 msgid "This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`."
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:93 src/Infrastructure/WordPress/SiteHealthModule.php:109 src/Infrastructure/WordPress/SiteHealthModule.php:110 src/Infrastructure/WordPress/SiteHealthModule.php:111
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:93 src/Infrastructure/WordPress/SiteHealthModule.php:114 src/Infrastructure/WordPress/SiteHealthModule.php:115 src/Infrastructure/WordPress/SiteHealthModule.php:116
 msgid "Security"
 msgstr ""
 
@@ -1885,11 +1885,39 @@ msgstr ""
 msgid "The REST API of this site is closed to visitors who are not logged in."
 msgstr ""
 
-#: src/Infrastructure/WordPress/SiteHealthModule.php:85
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:49
+msgid "Version"
+msgstr ""
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:50
+msgid "Turned on"
+msgstr ""
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:51
+msgid "Last scan"
+msgstr ""
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:86
+msgid "Nothing"
+msgstr ""
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:97
+msgid "Never"
+msgstr ""
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:111
+msgid "%1$d out of 100, grade %2$s"
+msgstr ""
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:114
+msgid "part of the audit could not be verified"
+msgstr ""
+
+#: src/Infrastructure/WordPress/SiteHealthModule.php:90
 msgid "The check did not run."
 msgstr ""
 
-#: src/Infrastructure/WordPress/SiteHealthModule.php:104
+#: src/Infrastructure/WordPress/SiteHealthModule.php:109
 msgid "Set aside on purpose: %s"
 msgstr ""
 

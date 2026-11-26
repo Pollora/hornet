@@ -106,7 +106,9 @@ final class Bootstrap
             if ($settings->siteHealth) {
                 // The settings are checked now, without touching the database; the auditor itself is built when Site Health asks for it
                 new Auditor(AuditorFactory::checks($settings), $settings->disabledChecks, $settings->ignored);
-                $modules[] = new SiteHealthModule(static fn (): Auditor => AuditorFactory::forWordPress($settings), $environment, WpTranslator::forPackage());
+                $auditor = static fn (): Auditor => AuditorFactory::forWordPress($settings);
+                $translator = WpTranslator::forPackage();
+                $modules[] = new SiteHealthModule($auditor, $environment, $translator, new SiteHealthInfo($settings, $auditor, $environment, $translator));
             }
 
             // On every request: a login happens on a page of the site, not of the dashboard

@@ -7,6 +7,7 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 ### Added
 
 - `hardening.restrict_rest_api` (off by default): the REST API answers 401 to a visitor who is not logged in, with an allow list (`hardening.rest_api_allow`) on top of the defaults. The `user-enumeration` check follows it.
+- A Hornet section in **Tools > Site Health > Info** (version, what is turned on, last scan, score). What is turned on and the score are private: they are left out of the copy.
 
 ## 0.9.0 - 2026-11-26
 

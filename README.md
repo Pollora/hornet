@@ -43,6 +43,8 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 
 Site Health shows these checks too, except the four on plugins and themes, which it tests itself.
 
+**Tools > Site Health > Info** has a Hornet section: the version, the date of the last scan, what is turned on and the score. The last two are **private**: WordPress shows them on the screen and leaves them out of "Copy site info to clipboard". No secret, address or URL is in it. Asking for that page runs the audit, never a scan. `site_health => false` removes it with the tests.
+
 A check reads and never writes, and never asks the network. A scan is another thing: see below. What Hornet does not know it says so (`unknown`): a file hidden by `open_basedir` is not a pass.
 
 Hornet does not redo what Pollora already does. If `pollora/portcullis` protects the login, the check says so instead of warning.

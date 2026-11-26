@@ -1938,3 +1938,31 @@ msgstr "REST API этого сайта закрыт для посетителе�
 #: src/Infrastructure/WordPress/Admin/SettingsView.php:38
 msgid "Close the REST API to visitors"
 msgstr "Закрыть REST API для посетителей"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:49
+msgid "Version"
+msgstr "Версия"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:50
+msgid "Turned on"
+msgstr "Включено"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:51
+msgid "Last scan"
+msgstr "Последняя проверка"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:86
+msgid "Nothing"
+msgstr "Ничего"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:97
+msgid "Never"
+msgstr "Никогда"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:111
+msgid "%1$d out of 100, grade %2$s"
+msgstr "%1$d из 100, оценка %2$s"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:114
+msgid "part of the audit could not be verified"
+msgstr "часть аудита проверить не удалось"

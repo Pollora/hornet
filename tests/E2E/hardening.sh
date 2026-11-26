@@ -120,6 +120,28 @@ check "a listed prefix is open"                                 status_is 200 "$
 check "and only that one"                                       status_is 401 "$BASE/wp-json/wp/v2/pages"
 reset
 
+# --- 2c. Site Health > Info ----------------------------------------------------------------------------------
+echo "2c. Site Health, the Info tab"
+configure "array('hardening' => array('xmlrpc' => true), 'login' => array('throttle' => true, 'allow_ips' => array('203.0.113.50')), 'notifications' => array('channels' => array('ops' => array('type' => 'slack', 'url' => 'https://hooks.example.com/T0/e2esecret'))))"
+login
+curl -s --max-time 40 -b "$JAR" "$BASE/wp-admin/site-health.php?tab=debug" >/tmp/hornet-info.html
+check "the Info tab has a Hornet section"                       grep -q 'health-check-accordion-block-pollora-hornet' /tmp/hornet-info.html
+check "with the score"                                          grep -qE '[0-9]+ out of 100, grade [A-F]' /tmp/hornet-info.html
+check "and what is turned on"                                    grep -q 'Close XML-RPC' /tmp/hornet-info.html
+check "no channel URL and no allowed address in it"             sh -c "! grep -qE 'e2esecret|hooks\.example\.com|203\.0\.113\.50' /tmp/hornet-info.html"
+cat > /tmp/hornet-copy.php <<'PHP'
+<?php
+require_once ABSPATH.'wp-admin/includes/class-wp-debug-data.php';
+require_once ABSPATH.'wp-admin/includes/update.php';
+require_once ABSPATH.'wp-admin/includes/misc.php';
+$info = WP_Debug_Data::debug_data();
+echo WP_Debug_Data::format(['pollora-hornet' => $info['pollora-hornet']], 'debug');
+PHP
+wp --user=admin eval-file /tmp/hornet-copy.php >/tmp/hornet-copy.txt 2>&1
+check "the copy for support has the version"                    grep -q 'version:' /tmp/hornet-copy.txt
+check "but neither the score nor what is turned on"             sh -c "! grep -qE 'out of 100|XML-RPC|score:|protections:' /tmp/hornet-copy.txt"
+reset
+
 # --- 3. headers --------------------------------------------------------------------------------------------
 echo "3. headers on"
 configure "array('headers' => array('content_type_options' => true, 'referrer_policy' => 'same-origin', 'permissions_policy' => 'camera=()', 'hsts' => array('max_age' => 31536000), 'csp' => array('policy' => \"default-src 'self'\", 'report_uri' => 'https://r.example.com/csp')))"

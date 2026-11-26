@@ -1908,3 +1908,31 @@ msgstr "Die REST-API dieser Website ist für nicht angemeldete Besucher geschlos
 #: src/Infrastructure/WordPress/Admin/SettingsView.php:38
 msgid "Close the REST API to visitors"
 msgstr "REST-API für Besucher schließen"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:49
+msgid "Version"
+msgstr "Version"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:50
+msgid "Turned on"
+msgstr "Eingeschaltet"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:51
+msgid "Last scan"
+msgstr "Letzter Scan"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:86
+msgid "Nothing"
+msgstr "Nichts"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:97
+msgid "Never"
+msgstr "Nie"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:111
+msgid "%1$d out of 100, grade %2$s"
+msgstr "%1$d von 100, Note %2$s"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:114
+msgid "part of the audit could not be verified"
+msgstr "ein Teil der Prüfung konnte nicht verifiziert werden"

@@ -1692,3 +1692,31 @@ msgstr "REST API tej witryny jest zamknięte dla niezalogowanych odwiedzających
 #: src/Infrastructure/WordPress/Admin/SettingsView.php:38
 msgid "Close the REST API to visitors"
 msgstr "Zamknij REST API dla odwiedzających"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:49
+msgid "Version"
+msgstr "Wersja"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:50
+msgid "Turned on"
+msgstr "Włączone"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:51
+msgid "Last scan"
+msgstr "Ostatnie skanowanie"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:86
+msgid "Nothing"
+msgstr "Nic"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:97
+msgid "Never"
+msgstr "Nigdy"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:111
+msgid "%1$d out of 100, grade %2$s"
+msgstr "%1$d na 100, ocena %2$s"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:114
+msgid "part of the audit could not be verified"
+msgstr "części audytu nie udało się zweryfikować"
