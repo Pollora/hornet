@@ -562,6 +562,46 @@ reset
 check "after the drop, the option is gone"                            sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' option get hornet_journal_schema >/dev/null 2>&1"
 check "and so is the table"                                          sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'require \"$PKG/tests/E2E/journal-table.php\";' | grep -q '^none\$'"
 
+# --- 9b. the journal and the second factor, with the real Two-Factor plugin over real logins ----------------
+echo "9b. journal, two-factor"
+journal drop --yes >/dev/null 2>&1
+configure "array('journal' => array('enabled' => true))"
+journal list >/dev/null 2>&1
+cli user create e2e-2fa e2e-2fa@example.test --role=editor --user_pass=pass2fa >/dev/null 2>&1
+cat > /tmp/hornet-2fa.php <<'PHP'
+<?php
+$user = get_user_by('login', 'e2e-2fa');
+$codes = Two_Factor_Backup_Codes::get_instance()->generate_codes($user);
+Two_Factor_Core::enable_provider_for_user($user->ID, 'Two_Factor_Backup_Codes');
+echo $codes[0];
+PHP
+CODE=$(cli eval-file /tmp/hornet-2fa.php)
+check "a method turned on is told, by its kind"                       sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=user.second_factor_enabled --format=csv | grep -q 'cli.*backup_codes'"
+# The password step: the plugin answers with its form, and its nonce
+password_step() {
+  curl -s -b 'wordpress_test_cookie=WP%20Cookie%20check' --max-time 20 --data 'log=e2e-2fa&pwd=pass2fa&wp-submit=Log+In&testcookie=1' "$BASE/wp-login.php" >/tmp/hornet-2fa.html
+  AUTH_ID=$(grep -o 'name="wp-auth-id"[^>]*value="[0-9]*"' /tmp/hornet-2fa.html | grep -o '[0-9]*"$' | tr -d '"')
+  AUTH_NONCE=$(grep -o 'name="wp-auth-nonce"[^>]*value="[^"]*"' /tmp/hornet-2fa.html | sed 's/.*value="//; s/"$//')
+}
+second_step() { curl -s -o /dev/null -D /tmp/hornet-2fa.h --max-time 20 --data "wp-auth-id=$AUTH_ID&wp-auth-nonce=$AUTH_NONCE&provider=Two_Factor_Backup_Codes&two-factor-backup-code=$1" "$BASE/wp-login.php?action=validate_2fa"; }
+password_step
+check "the password alone does not log in"                             grep -q 'wp-auth-nonce' /tmp/hornet-2fa.html
+check "and its login.success says a second factor is pending"          sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.success --format=csv | grep 'e2e-2fa' | grep -q 'pending'"
+second_step 00000000
+check "a wrong code is told as a refused second factor"                sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.second_factor_failed --format=csv | grep -q 'web.*two_factor_invalid'"
+check "and not as a failed password"                                   sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.failed --format=csv | grep -q 'two_factor'"
+sleep 3
+password_step
+second_step "$CODE"
+check "the right code logs in"                                         grep -qi '^set-cookie: wordpress_logged_in' /tmp/hornet-2fa.h
+check "and is told as a second factor passed, with the method"         sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=login.second_factor_passed --format=csv | grep -q 'web.*e2e-2fa.*backup_codes'"
+check "no code is anywhere in the journal"                             sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --limit=200 --format=csv | grep -qE '$CODE|00000000'"
+cli eval 'Two_Factor_Core::disable_provider_for_user(get_user_by("login", "e2e-2fa")->ID, "Two_Factor_Backup_Codes");' >/dev/null
+check "a method turned off is told"                                    sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet journal list --type=user.second_factor_disabled --format=csv | grep -q 'backup_codes'"
+cli user delete e2e-2fa --yes >/dev/null 2>&1
+journal drop --yes >/dev/null 2>&1
+reset
+
 # --- 10. abilities for AI agents: real requests to the Abilities API, with an application password -----------
 echo "10. abilities"
 wp config set WP_ENVIRONMENT_TYPE local >/dev/null 2>&1

@@ -33,6 +33,7 @@ use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\TwoFactorJournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\WpRequestContext;
 
 /**
@@ -170,7 +171,8 @@ final class Bootstrap
                 $journal = new TableJournal;
                 $context = new WpRequestContext($client);
                 $recorder = new JournalRecorder($journal, $context, new SystemClock);
-                $modules[] = new JournalModule($recorder, $journal, new SystemClock, $settings->journal->retentionDays, new FloodGuard(new CacheWindowCounter), $context->ip(...));
+                $modules[] = new JournalModule($recorder, $journal, new SystemClock, $settings->journal->retentionDays, new FloodGuard(new CacheWindowCounter), $context->ip(...), TwoFactorJournalModule::isPending(...));
+                $modules[] = new TwoFactorJournalModule($recorder, new FloodGuard(new CacheWindowCounter, scope: 'journal:second-factor'), $context->ip(...));
                 $modules[] = new JournalPrivacy($journal, $settings->journal->retentionDays);
             }
 
