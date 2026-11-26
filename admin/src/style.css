@@ -57,13 +57,14 @@
 	font-weight: 600;
 }
 
-/* Tabs as pills */
+/* Tabs, with the corners of the tables below them */
 #hornet-admin .components-tab-panel__tabs {
 	gap: 4px;
+	margin-bottom: 20px;
 	padding: 4px;
 	background: #fff;
 	border: 1px solid var(--hn-rule);
-	border-radius: 999px;
+	border-radius: 14px;
 	width: fit-content;
 	max-width: 100%;
 	flex-wrap: wrap;
@@ -71,7 +72,7 @@
 
 #hornet-admin .components-tab-panel__tabs-item {
 	height: 34px;
-	border-radius: 999px;
+	border-radius: 10px;
 	padding: 0 16px;
 	box-shadow: none;
 	color: var(--hn-ink-2);
@@ -85,6 +86,12 @@
 #hornet-admin .components-tab-panel__tabs-item.is-active {
 	background: var(--hn-night);
 	color: #fff;
+}
+
+/* The messages of the screen sit like its tables */
+#hornet-admin .components-notice {
+	margin: 0 0 20px;
+	border-radius: 14px;
 }
 
 /* Buttons */
@@ -126,7 +133,6 @@
 .hornet-overview {
 	display: grid;
 	gap: 18px;
-	margin-top: 18px;
 }
 
 .hornet-hero {
@@ -536,7 +542,7 @@
 	grid-template-columns: minmax(200px, 2fr) 1fr 1fr;
 	gap: 16px;
 	align-items: end;
-	margin: 18px 0;
+	margin: 0 0 18px;
 }
 
 .hornet-table td,
@@ -567,10 +573,6 @@
 }
 
 @media (max-width: 782px) {
-	#hornet-admin .components-tab-panel__tabs {
-		border-radius: 18px;
-	}
-
 	.hornet-hero {
 		justify-content: center;
 		padding: 24px;

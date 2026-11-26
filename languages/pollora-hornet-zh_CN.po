@@ -279,8 +279,8 @@ msgid "Security grade %1$s, %2$d out of 100."
 msgstr "安全等级 %1$s,得分 %2$d(满分 100)。"
 
 #: admin/src/Settings.js:10
-msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
-msgstr "这些设置写在一个文件中(HORNET_CONFIG 常量,在 Pollora 上则是 config/hornet.php)。此界面只显示设置,不做任何更改:能通过界面关闭的保护,被盗用的会话同样能关闭。"
+msgid "These settings are written in a file (the HORNET_CONFIG constant, or config/pollora/hornet.php on Pollora). This screen shows them and changes none: a protection that a screen could switch off is one that a stolen session could switch off."
+msgstr "这些设置写在一个文件中(HORNET_CONFIG 常量,在 Pollora 上则是 config/pollora/hornet.php)。此界面只显示设置,不做任何更改:能通过界面关闭的保护,被盗用的会话同样能关闭。"
 
 #: admin/src/Settings.js:27
 msgid "On"
