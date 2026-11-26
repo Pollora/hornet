@@ -90,7 +90,7 @@ final class ScannerFactory
         // A scan that is disabled does not run, and asks nothing of the network
         $tasks = array_values(array_filter($tasks, static fn (ScanTask $task): bool => ! in_array($task->id(), $settings->disabledChecks, true)));
 
-        return $tasks === [] ? null : new Scanner($tasks, new OptionScanStore, new SystemClock, $settings->ignored, $progress);
+        return $tasks === [] ? null : new Scanner($tasks, new OptionScanStore, new SystemClock, $settings->ignored, $progress, $cron ? intdiv(self::cronSeconds(), 2) : null);
     }
 
     /**

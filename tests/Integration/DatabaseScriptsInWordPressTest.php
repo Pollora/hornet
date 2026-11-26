@@ -94,3 +94,19 @@ it('goes on from where a budget stopped it, and ends with the same answer', func
 
     expect($result->unfinished)->toBeFalse()->and($result->finding->details)->toBe($whole->details);
 });
+
+it('does not call a table it cannot read an empty one', function (): void {
+    global $wpdb;
+    $comments = $wpdb->comments;
+    $suppressed = $wpdb->suppress_errors(true);
+    $wpdb->comments = $wpdb->prefix.'hornet_no_such_table';
+
+    try {
+        $finding = realDatabaseScan(['post:'.$this->posts['bad'], 'post:'.$this->posts['shout'], 'post:'.$this->posts['long'], 'option:widget_injected'])->run(null, false)->finding;
+
+        expect($finding->outcome)->toBe(Outcome::Unknown)->and($finding->summary)->toContain('could not be read');
+    } finally {
+        $wpdb->comments = $comments;
+        $wpdb->suppress_errors($suppressed);
+    }
+});

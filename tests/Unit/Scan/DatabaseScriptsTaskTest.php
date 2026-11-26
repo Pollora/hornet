@@ -107,3 +107,24 @@ it('widens a quick range and narrows a slow one', function (): void {
 
     expect(array_map($width, array_slice($store->ranges, 0, 4)))->toBe([500, 1000, 2000, 1000]);
 });
+
+it('never calls a database it could not read a clean one, and keeps its place', function (): void {
+    $store = new ArrayContentStore(['posts' => [1 => 'x'], 'comments' => [1 => BAD]]);
+    $store->broken = 'comments';
+    $result = databaseScan($store)->run(null, false);
+
+    expect($result->finding->outcome)->toBe(Outcome::Unknown)
+        ->and($result->finding->summary)->toContain('could not be read')
+        ->and($result->unfinished)->toBeFalse()
+        ->and($result->pins?->scope)->toBe('cursor:comments:0');
+
+    $store->broken = null;
+
+    expect(databaseScan($store)->run($result->pins, false)->finding->outcome)->toBe(Outcome::Fail);
+
+    $found = new ArrayContentStore(['posts' => [1 => BAD], 'comments' => [1 => 'x']]);
+    $found->broken = 'comments';
+    $finding = databaseScan($found)->run(null, false)->finding;
+
+    expect($finding->outcome)->toBe(Outcome::Fail)->and(implode(' ', $finding->details))->toContain('could not be read');
+});

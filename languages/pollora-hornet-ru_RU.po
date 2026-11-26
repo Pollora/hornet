@@ -1926,3 +1926,7 @@ msgstr "скрипт в комментарии"
 #: src/Domain/Scan/ContentRules.php:108
 msgid "has a javascript: address in a profile"
 msgstr "адрес javascript: в профиле"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "Базу данных прочитать не удалось: о непрочитанной части ничего сказать нельзя."

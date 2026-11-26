@@ -1679,3 +1679,7 @@ msgstr "ma skrypt w komentarzu"
 #: src/Domain/Scan/ContentRules.php:108
 msgid "has a javascript: address in a profile"
 msgstr "ma adres javascript: w profilu"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "Nie udało się odczytać bazy danych: o nieodczytanej części nic nie można powiedzieć."

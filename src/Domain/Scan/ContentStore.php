@@ -10,6 +10,7 @@ namespace Pollora\Hornet\Domain\Scan;
  */
 interface ContentStore
 {
+    // Every method but sources() throws a ContentReadException when the database refuses: never an empty answer for an error
     /**
      * The tables that are read, by a short name, in the order they are read.
      *

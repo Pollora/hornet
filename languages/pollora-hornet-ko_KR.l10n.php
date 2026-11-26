@@ -34,6 +34,7 @@ return [
 		"Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file." => "각 파일을 확인하세요. 직접 변경하지 않았다면 백업 후 코어를 복원하고(`wp core download --force --skip-content`) 어떻게 변경되었는지 알아내세요. 직접 변경한 것이라면 scanner.allow_modified에 추가하세요. Hornet은 어떤 파일도 변경하지 않습니다.",
 		"%s: %s" => "%s: %s",
 		"%s: and %d more" => "%s: 외 %d개",
+		"The database could not be read: nothing can be said of the part that was not." => "데이터베이스를 읽을 수 없었습니다. 읽지 못한 부분에 대해서는 판단할 수 없습니다.",
 		"The database is not read through yet: it goes on next time." => "데이터베이스를 아직 다 읽지 않았습니다. 다음에 이어서 읽습니다.",
 		"No disguised script in the database (%d entries holding code were looked at)." => "데이터베이스에 위장된 스크립트가 없습니다(코드가 있는 항목 %d개 확인).",
 		"Scripts are loaded from: %s (not judged)." => "스크립트를 불러오는 곳: %s(판단하지 않음).",

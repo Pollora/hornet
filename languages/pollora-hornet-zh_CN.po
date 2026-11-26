@@ -1866,3 +1866,7 @@ msgstr "评论中含有脚本"
 #: src/Domain/Scan/ContentRules.php:108
 msgid "has a javascript: address in a profile"
 msgstr "个人资料中含有 javascript: 地址"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "无法读取数据库：对未读取的部分无法作出任何判断。"

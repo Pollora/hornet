@@ -1896,3 +1896,7 @@ msgstr "ha uno script in un commento"
 #: src/Domain/Scan/ContentRules.php:108
 msgid "has a javascript: address in a profile"
 msgstr "ha un indirizzo javascript: in un profilo"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "Non è stato possibile leggere il database: della parte non letta non si può dire nulla."

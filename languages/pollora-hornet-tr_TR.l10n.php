@@ -34,6 +34,7 @@ return [
 		"Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file." => "Her dosyayı inceleyin. Siz değiştirmediyseniz, yedek aldıktan sonra çekirdeği geri yükleyin (`wp core download --force --skip-content`) ve nasıl değiştirildiğini bulun. Değişiklik size aitse dosyayı scanner.allow_modified listesine ekleyin. Hornet hiçbir dosyayı değiştirmez.",
 		"%s: %s" => "%s: %s",
 		"%s: and %d more" => "%s: ve %d tane daha",
+		"The database could not be read: nothing can be said of the part that was not." => "Veritabanı okunamadı: okunmayan kısım hakkında bir şey söylenemez.",
 		"The database is not read through yet: it goes on next time." => "Veritabanı henüz tamamen okunmadı: bir dahaki sefere devam edecek.",
 		"No disguised script in the database (%d entries holding code were looked at)." => "Veritabanında gizlenmiş betik yok (kod içeren %d kayıt incelendi).",
 		"Scripts are loaded from: %s (not judged)." => "Betiklerin yüklendiği yerler: %s (değerlendirilmedi).",

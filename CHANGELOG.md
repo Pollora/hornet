@@ -5,6 +5,7 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 ## Unreleased
 
 - **The scan looks for disguised JavaScript in the database** (`database-scripts`): posts, options, comments, profiles. A plain `<script>` is never reported. Built for large databases (ranges of primary keys, resumable on a time budget; 2.6 GB of posts read in 20 s). `scanner.ignore_content` leaves known entries alone.
+- A scan run by the cron starts no further task past half of the request's time: the rest goes on at the next run, instead of the request being killed.
 
 - The screen says **why a scan that was asked for does not start** (the scheduled tasks have not run: `DISABLE_WP_CRON` with no system cron, as on a new Pollora site, or a site that cannot call itself) and how to unblock it.
 

@@ -34,6 +34,7 @@ return [
 		"Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file." => "各ファイルを確認してください。ご自身で変更していない場合は、バックアップを取ってからコアを復元し (`wp core download --force --skip-content`)、どのように変更されたかを調べてください。ご自身による変更であれば、scanner.allow_modified に追加してください。Hornet がファイルを変更することはありません。",
 		"%s: %s" => "%s: %s",
 		"%s: and %d more" => "%s: 他 %d 件",
+		"The database could not be read: nothing can be said of the part that was not." => "データベースを読み取れませんでした。読めなかった部分については何も判断できません。",
 		"The database is not read through yet: it goes on next time." => "データベースはまだ読み終えていません。次回に続きを読みます。",
 		"No disguised script in the database (%d entries holding code were looked at)." => "データベースに偽装されたスクリプトはありません（コードを含む %d 件を確認）。",
 		"Scripts are loaded from: %s (not judged)." => "スクリプトの読み込み元: %s（判定対象外）。",

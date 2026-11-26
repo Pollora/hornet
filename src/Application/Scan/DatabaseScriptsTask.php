@@ -9,6 +9,7 @@ use DateInterval;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Clock;
+use Pollora\Hornet\Domain\Exceptions\ContentReadException;
 use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Scan\ContentEntry;
 use Pollora\Hornet\Domain\Scan\ContentKind;
@@ -77,50 +78,55 @@ final readonly class DatabaseScriptsTask implements ScanTask
         $width = self::RANGE;
         $ranges = 0;
 
-        for ($index = (int) array_search($source, $sources, true); $index < count($sources); $index++, $after = 0) {
-            $source = $sources[$index];
+        try {
+            for ($index = (int) array_search($source, $sources, true); $index < count($sources); $index++, $after = 0) {
+                $source = $sources[$index];
 
-            while (($from = $this->store->next($source, $after)) !== null) {
-                // At least one range in a run, or a slow database would never move
-                if ($deadline instanceof \DateTimeImmutable && $ranges > 0 && $this->clock->now() > $deadline) {
-                    return $this->partial($source, $after, $found, $hosts, $looked, $dropped);
-                }
+                while (($from = $this->store->next($source, $after)) !== null) {
+                    // At least one range in a run, or a slow database would never move
+                    if ($deadline instanceof \DateTimeImmutable && $ranges > 0 && $this->clock->now() > $deadline) {
+                        return $this->partial($source, $after, $found, $hosts, $looked, $dropped);
+                    }
 
-                $started = $time();
-                $to = $from + $width - 1;
-                $ids = $this->store->matches($source, $from, $to);
-                $took = $time() - $started;
+                    $started = $time();
+                    $to = $from + $width - 1;
+                    $ids = $this->store->matches($source, $from, $to);
+                    $took = $time() - $started;
 
-                foreach (array_chunk($ids, self::BATCH) as $batch) {
-                    foreach ($this->store->entries($source, $batch) as $entry) {
-                        if ($this->ignored($entry)) {
-                            continue;
-                        }
+                    foreach (array_chunk($ids, self::BATCH) as $batch) {
+                        foreach ($this->store->entries($source, $batch) as $entry) {
+                            if ($this->ignored($entry)) {
+                                continue;
+                            }
 
-                        $looked++;
-                        $verdict = ContentRules::look($entry->text, $entry->kind);
-                        $hosts = array_slice(array_values(array_unique([...$hosts, ...$verdict['hosts']])), 0, self::HOSTS);
+                            $looked++;
+                            $verdict = ContentRules::look($entry->text, $entry->kind);
+                            $hosts = array_slice(array_values(array_unique([...$hosts, ...$verdict['hosts']])), 0, self::HOSTS);
 
-                        if (! $verdict['severity'] instanceof Severity) {
-                            continue;
-                        }
+                            if (! $verdict['severity'] instanceof Severity) {
+                                continue;
+                            }
 
-                        if (count($found) < self::KEPT) {
-                            $found[$entry->kind->value.':'.$entry->id] = ['severity' => $verdict['severity']->value, 'name' => self::safeName($entry->name), 'reasons' => $verdict['reasons']];
-                        } else {
-                            $dropped++;
+                            if (count($found) < self::KEPT) {
+                                $found[$entry->kind->value.':'.$entry->id] = ['severity' => $verdict['severity']->value, 'name' => self::safeName($entry->name), 'reasons' => $verdict['reasons']];
+                            } else {
+                                $dropped++;
+                            }
                         }
                     }
-                }
 
-                $after = $to;
-                $ranges++;
-                $width = match (true) {
-                    $took < 0.05 => min(self::WIDEST, $width * 2),
-                    $took > 0.25 => max(self::NARROWEST, intdiv($width, 2)),
-                    default => $width,
-                };
+                    $after = $to;
+                    $ranges++;
+                    $width = match (true) {
+                        $took < 0.05 => min(self::WIDEST, $width * 2),
+                        $took > 0.25 => max(self::NARROWEST, intdiv($width, 2)),
+                        default => $width,
+                    };
+                }
             }
+        } catch (ContentReadException) {
+            // What was found and the place reached are kept: the next scan tries again from there
+            return new TaskResult($this->unreadable($found), $this->pins($source, $after, $found, $hosts, $looked, $dropped));
         }
 
         return new TaskResult($this->finding($found, $hosts, $looked, $dropped, false));
@@ -169,6 +175,25 @@ final readonly class DatabaseScriptsTask implements ScanTask
      */
     private function partial(string $source, int $after, array $found, array $hosts, int $looked, int $dropped): TaskResult
     {
+        return new TaskResult($this->finding($found, $hosts, $looked, $dropped, true), $this->pins($source, $after, $found, $hosts, $looked, $dropped), unfinished: true);
+    }
+
+    /**
+     * @param  array<string, array{severity: string, name: string, reasons: list<string>}>  $found
+     */
+    private function unreadable(array $found): Finding
+    {
+        $note = Message::of('The database could not be read: nothing can be said of the part that was not.');
+
+        return $found === [] ? Finding::unknown(self::ID, $note) : $this->finding($found, [], 0, 0, false, $note);
+    }
+
+    /**
+     * @param  array<string, array{severity: string, name: string, reasons: list<string>}>  $found
+     * @param  list<string>  $hosts
+     */
+    private function pins(string $source, int $after, array $found, array $hosts, int $looked, int $dropped): Pins
+    {
         $kept = [];
 
         foreach ($found as $key => $one) {
@@ -178,7 +203,7 @@ final readonly class DatabaseScriptsTask implements ScanTask
         $kept[self::KEPT_HOSTS] = (string) json_encode($hosts);
         $kept[self::KEPT_COUNTS] = (string) json_encode([$looked, $dropped]);
 
-        return new TaskResult($this->finding($found, $hosts, $looked, $dropped, true), new Pins(self::CURSOR.$source.':'.$after, $kept), unfinished: true);
+        return new Pins(self::CURSOR.$source.':'.$after, $kept);
     }
 
     /**
@@ -187,9 +212,10 @@ final readonly class DatabaseScriptsTask implements ScanTask
      * @param  array<string, array{severity: string, name: string, reasons: list<string>}>  $found
      * @param  list<string>  $hosts
      */
-    private function finding(array $found, array $hosts, int $looked, int $dropped, bool $unfinished): Finding
+    private function finding(array $found, array $hosts, int $looked, int $dropped, bool $unfinished, ?Message $note = null): Finding
     {
         $more = $unfinished ? [Message::of('The database is not read through yet: it goes on next time.')] : [];
+        $more = $note instanceof Message ? [$note] : $more;
 
         if ($found === []) {
             if ($unfinished) {

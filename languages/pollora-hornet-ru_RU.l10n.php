@@ -34,6 +34,7 @@ return [
 		"Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file." => "Проверьте каждый файл. Если вы его не меняли, восстановите ядро после резервного копирования (`wp core download --force --skip-content`) и выясните, как он был изменён. Если это ваше изменение, укажите файл в scanner.allow_modified. Hornet никогда не изменяет файлы.",
 		"%s: %s" => "%s: %s",
 		"%s: and %d more" => "%s: и ещё %d",
+		"The database could not be read: nothing can be said of the part that was not." => "Базу данных прочитать не удалось: о непрочитанной части ничего сказать нельзя.",
 		"The database is not read through yet: it goes on next time." => "База данных ещё не прочитана полностью: продолжение в следующий раз.",
 		"No disguised script in the database (%d entries holding code were looked at)." => "Замаскированных скриптов в базе нет (проверено записей с кодом: %d).",
 		"Scripts are loaded from: %s (not judged)." => "Скрипты загружаются с: %s (не оценивается).",

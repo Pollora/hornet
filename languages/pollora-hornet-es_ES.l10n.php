@@ -34,6 +34,7 @@ return [
 		"Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file." => "Revise cada archivo. Si no lo ha modificado usted, restaure el núcleo después de hacer una copia de seguridad (`wp core download --force --skip-content`) y averigüe cómo se modificó. Si el cambio es suyo, indíquelo en scanner.allow_modified. Hornet nunca modifica un archivo.",
 		"%s: %s" => "%s: %s",
 		"%s: and %d more" => "%s: y %d más",
+		"The database could not be read: nothing can be said of the part that was not." => "No se pudo leer la base de datos: no se puede decir nada de la parte no leída.",
 		"The database is not read through yet: it goes on next time." => "La base de datos aún no se ha leído entera: continuará la próxima vez.",
 		"No disguised script in the database (%d entries holding code were looked at)." => "No hay scripts disimulados en la base de datos (se examinaron %d entradas con código).",
 		"Scripts are loaded from: %s (not judged)." => "Se cargan scripts desde: %s (sin evaluar).",

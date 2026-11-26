@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Tests\Fixtures;
 
+use Pollora\Hornet\Domain\Exceptions\ContentReadException;
 use Pollora\Hornet\Domain\Scan\ContentEntry;
 use Pollora\Hornet\Domain\Scan\ContentKind;
 use Pollora\Hornet\Domain\Scan\ContentRules;
@@ -17,6 +18,9 @@ final class ArrayContentStore implements ContentStore
 
     /** @var list<int> */
     public array $batches = [];
+
+    /** A source whose ranges the database refuses. */
+    public ?string $broken = null;
 
     /**
      * @param  array<string, array<int, string|array{ContentKind, string, string}>>  $tables  by source, then by identifier: a text, or a kind, a name and a text
@@ -40,6 +44,10 @@ final class ArrayContentStore implements ContentStore
     {
         $this->ranges[] = [$source, $from, $to];
         $this->onRange?->__invoke();
+
+        if ($source === $this->broken) {
+            throw ContentReadException::table($source);
+        }
         $ids = [];
 
         foreach ($this->tables[$source] as $id => $row) {

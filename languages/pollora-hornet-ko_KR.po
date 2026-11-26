@@ -1866,3 +1866,7 @@ msgstr "댓글에 스크립트가 있음"
 #: src/Domain/Scan/ContentRules.php:108
 msgid "has a javascript: address in a profile"
 msgstr "프로필에 javascript: 주소가 있음"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "데이터베이스를 읽을 수 없었습니다. 읽지 못한 부분에 대해서는 판단할 수 없습니다."

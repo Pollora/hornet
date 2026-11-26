@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
+use Pollora\Hornet\Domain\Exceptions\ContentReadException;
 use Pollora\Hornet\Domain\Scan\ContentEntry;
 use Pollora\Hornet\Domain\Scan\ContentKind;
 use Pollora\Hornet\Domain\Scan\ContentRules;
@@ -36,6 +37,7 @@ final readonly class WpContentStore implements ContentStore
     {
         [$table, $key] = $this->table($source);
         $next = $this->database->get_var($this->database->prepare('SELECT MIN(%i) FROM %i WHERE %i > %d', $key, $table, $key, $after));
+        $this->refuseSilence($source);
 
         return is_numeric($next) ? (int) $next : null;
     }
@@ -56,6 +58,7 @@ final readonly class WpContentStore implements ContentStore
         // $where and $like are made of fixed words and placeholders: every value goes through prepare()
         $query = "SELECT %i FROM %i WHERE %i BETWEEN %d AND %d{$where} AND ({$like})";
         $ids = $this->database->get_col($this->database->prepare($query, $values));
+        $this->refuseSilence($source);
 
         return array_map(intval(...), $ids);
     }
@@ -71,6 +74,7 @@ final readonly class WpContentStore implements ContentStore
         $list = implode(',', array_fill(0, count($ids), '%d'));
         $query = "SELECT %i AS id, %i AS name, IF(CHAR_LENGTH(%i) <= %d, %i, CONCAT(LEFT(%i, %d), RIGHT(%i, %d))) AS body FROM %i WHERE %i IN ({$list})";
         $rows = $this->database->get_results($this->database->prepare($query, [$key, $name, $text, 2 * self::HALF, $text, $text, self::HALF, $text, self::HALF, $table, $key, ...$ids]));
+        $this->refuseSilence($source);
         $entries = [];
 
         foreach (is_array($rows) ? $rows : [] as $row) {
@@ -85,6 +89,18 @@ final readonly class WpContentStore implements ContentStore
         }
 
         return $entries;
+    }
+
+    /**
+     * `$wpdb` answers a failed query as it answers an empty one: its last error tells them apart.
+     *
+     * @throws ContentReadException
+     */
+    private function refuseSilence(string $source): void
+    {
+        if ($this->database->last_error !== '') {
+            throw ContentReadException::table($source);
+        }
     }
 
     /**

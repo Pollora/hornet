@@ -1649,3 +1649,7 @@ msgstr "bir yorumda betik var"
 #: src/Domain/Scan/ContentRules.php:108
 msgid "has a javascript: address in a profile"
 msgstr "bir profilde javascript: adresi var"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "Veritabanı okunamadı: okunmayan kısım hakkında bir şey söylenemez."

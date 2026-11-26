@@ -1866,3 +1866,7 @@ msgstr "コメントにスクリプトがある"
 #: src/Domain/Scan/ContentRules.php:108
 msgid "has a javascript: address in a profile"
 msgstr "プロフィールに javascript: アドレスがある"
+
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr "データベースを読み取れませんでした。読めなかった部分については何も判断できません。"

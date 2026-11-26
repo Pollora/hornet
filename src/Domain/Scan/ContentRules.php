@@ -16,7 +16,7 @@ use Pollora\Hornet\Domain\I18n\Message;
 final class ContentRules
 {
     /** What an entry must hold to be read at all: the store asks its database for these, so that it hands over little. */
-    public const array MARKS = ['<script', '<iframe', 'javascript:', 'fromCharCode', 'atob(', 'eval(', 'unescape(', 'onerror=', 'onload='];
+    public const array MARKS = ['<script', '<iframe', 'javascript:', 'fromCharCode', 'atob(', 'eval(', 'unescape(', 'onerror', 'onload'];
 
     private const int HOSTS = 10;
 

@@ -535,53 +535,57 @@ msgstr ""
 msgid "%s: and %d more"
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:192 src/Application/Scan/DatabaseScriptsTask.php:196
+#: src/Application/Scan/DatabaseScriptsTask.php:186
+msgid "The database could not be read: nothing can be said of the part that was not."
+msgstr ""
+
+#: src/Application/Scan/DatabaseScriptsTask.php:217 src/Application/Scan/DatabaseScriptsTask.php:222
 msgid "The database is not read through yet: it goes on next time."
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:199
+#: src/Application/Scan/DatabaseScriptsTask.php:225
 msgid "No disguised script in the database (%d entries holding code were looked at)."
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:199
+#: src/Application/Scan/DatabaseScriptsTask.php:225
 msgid "Scripts are loaded from: %s (not judged)."
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:207 src/Application/Scan/SuspiciousFilesTask.php:164
+#: src/Application/Scan/DatabaseScriptsTask.php:233 src/Application/Scan/SuspiciousFilesTask.php:164
 msgid "[%s] %s: "
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:223 src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:63 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:64 src/Domain/Audit/Checks/NewAdministratorsCheck.php:56 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47 src/Domain/Audit/Checks/UpdatesCheck.php:76
+#: src/Application/Scan/DatabaseScriptsTask.php:249 src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:66 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:63 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:64 src/Domain/Audit/Checks/NewAdministratorsCheck.php:56 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47 src/Domain/Audit/Checks/UpdatesCheck.php:76
 msgid "and %d more"
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:229
+#: src/Application/Scan/DatabaseScriptsTask.php:255
 msgid "%d entry of the database holds a script that looks disguised."
 msgid_plural "%d entries of the database hold a script that looks disguised."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:231
+#: src/Application/Scan/DatabaseScriptsTask.php:257
 msgid "Read each entry in the database or with WP-CLI, not on the page that shows it. If you did not put that code there: remove it, change every password and the salts, and find how it got in. A script you know can be left alone with scanner.ignore_content. Hornet changes nothing."
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:238
+#: src/Application/Scan/DatabaseScriptsTask.php:264
 msgid "post #%d"
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:239
+#: src/Application/Scan/DatabaseScriptsTask.php:265
 msgid "comment #%d"
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:240 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:60 src/Domain/Audit/Checks/NewAdministratorsCheck.php:53 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
+#: src/Application/Scan/DatabaseScriptsTask.php:266 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:60 src/Domain/Audit/Checks/NewAdministratorsCheck.php:53 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
 msgid "user #%d"
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:241
+#: src/Application/Scan/DatabaseScriptsTask.php:267
 msgid "option %s"
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:241
+#: src/Application/Scan/DatabaseScriptsTask.php:267
 msgid "option #%d"
 msgstr ""
 
@@ -769,11 +773,11 @@ msgstr ""
 msgid "%s: %s/%s"
 msgstr ""
 
-#: src/Application/Scan/Scanner.php:138
+#: src/Application/Scan/Scanner.php:155
 msgid "Not verified again on %s UTC: %s"
 msgstr ""
 
-#: src/Application/Scan/Scanner.php:151
+#: src/Application/Scan/Scanner.php:168
 msgid "The scan could not run: %s"
 msgstr ""
 

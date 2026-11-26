@@ -34,6 +34,7 @@ return [
 		"Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file." => "请检查每个文件。如果不是您修改的,请先备份,再还原核心文件(`wp core download --force --skip-content`),并查明它是如何被修改的。如果是您自己的修改,请将其列入 scanner.allow_modified。Hornet 从不更改任何文件。",
 		"%s: %s" => "%s:%s",
 		"%s: and %d more" => "%s:另有 %d 项",
+		"The database could not be read: nothing can be said of the part that was not." => "无法读取数据库：对未读取的部分无法作出任何判断。",
 		"The database is not read through yet: it goes on next time." => "数据库尚未读完：下次继续。",
 		"No disguised script in the database (%d entries holding code were looked at)." => "数据库中未发现伪装脚本（已检查 %d 条含代码的记录）。",
 		"Scripts are loaded from: %s (not judged)." => "脚本加载来源：%s（不作评判）。",
