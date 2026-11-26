@@ -9,6 +9,7 @@ use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
+use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * XML-RPC lets a script try hundreds of passwords in one request, and its pingbacks can be turned against other sites.
@@ -26,15 +27,15 @@ final readonly class XmlRpcCheck implements Check
 
     public function label(): string
     {
-        return 'XML-RPC';
+        return Message::mark('XML-RPC');
     }
 
     public function run(Environment $environment): Finding
     {
         return match ($environment->xmlRpcState()) {
-            XmlRpcState::Closed => Finding::pass($this->id(), 'XML-RPC is closed: no method answers.'),
-            XmlRpcState::LoginDisabled => Finding::fail($this->id(), Severity::Low, 'XML-RPC refuses logins, but pingbacks and other methods that need none still answer.', [], "Close it altogether with Hornet's `hardening.xmlrpc`, or return an empty list from the `xmlrpc_methods` filter."),
-            XmlRpcState::Open => Finding::fail($this->id(), Severity::Medium, 'XML-RPC is open.', [], "Close it unless Jetpack or the mobile app needs it: Hornet's `hardening.xmlrpc` does it, or use pollora/headless."),
+            XmlRpcState::Closed => Finding::pass($this->id(), Message::of('XML-RPC is closed: no method answers.')),
+            XmlRpcState::LoginDisabled => Finding::fail($this->id(), Severity::Low, Message::of('XML-RPC refuses logins, but pingbacks and other methods that need none still answer.'), [], Message::of("Close it altogether with Hornet's `hardening.xmlrpc`, or return an empty list from the `xmlrpc_methods` filter.")),
+            XmlRpcState::Open => Finding::fail($this->id(), Severity::Medium, Message::of('XML-RPC is open.'), [], Message::of("Close it unless Jetpack or the mobile app needs it: Hornet's `hardening.xmlrpc` does it, or use pollora/headless.")),
         };
     }
 }

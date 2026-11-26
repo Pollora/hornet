@@ -9,7 +9,7 @@ use DateInterval;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Clock;
 use Pollora\Hornet\Domain\Exceptions\TransportException;
-use Pollora\Hornet\Domain\Scan\InstalledPlugin;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Scan\Pins;
 use Pollora\Hornet\Domain\Scan\PluginInventory;
 use Pollora\Hornet\Domain\Scan\Software;
@@ -51,14 +51,14 @@ final readonly class KnownVulnerabilitiesTask implements ScanTask
     public function run(?Pins $pinned, bool $repin): TaskResult
     {
         $deadline = $this->budget === null ? null : $this->clock->now()->add(new DateInterval('PT'.$this->budget.'S'));
-        $asked = [[Software::Core, '', $this->coreVersion, 'WordPress '.$this->coreVersion]];
+        $asked = [[Software::Core, '', $this->coreVersion, Message::raw('WordPress '.$this->coreVersion)]];
 
         foreach ($this->plugins->plugins() as $plugin) {
-            $asked[] = [Software::Plugin, $plugin->slug, $plugin->version, $this->label($plugin, 'plugin')];
+            $asked[] = [Software::Plugin, $plugin->slug, $plugin->version, Message::of('%s %s (plugin)', $plugin->slug, $plugin->version)];
         }
 
         foreach ($this->themes->plugins() as $theme) {
-            $asked[] = [Software::Theme, $theme->slug, $theme->version, $this->label($theme, 'theme')];
+            $asked[] = [Software::Theme, $theme->slug, $theme->version, Message::of('%s %s (theme)', $theme->slug, $theme->version)];
         }
 
         $found = [];
@@ -67,7 +67,7 @@ final readonly class KnownVulnerabilitiesTask implements ScanTask
 
         foreach ($asked as $index => [$software, $slug, $version, $label]) {
             if ($deadline instanceof \DateTimeImmutable && $this->clock->now() > $deadline) {
-                $unanswered[] = sprintf('%d more (out of time)', count($asked) - $index);
+                $unanswered[] = Message::of('%d more (out of time)', count($asked) - $index);
 
                 break;
             }
@@ -88,51 +88,46 @@ final readonly class KnownVulnerabilitiesTask implements ScanTask
         }
 
         if ($answered === 0) {
-            return new TaskResult(Finding::unknown(self::ID, 'The vulnerability feed did not answer: nothing was checked.'));
+            return new TaskResult(Finding::unknown(self::ID, Message::of('The vulnerability feed did not answer: nothing was checked.')));
         }
 
         $notes = [
-            ...($unanswered === [] ? [] : [sprintf('Not checked: %s', implode(', ', $unanswered))]),
-            ...(($stale = ($this->stale)()) === [] ? [] : [sprintf('From a copy of a few days ago, the feed being down: %s', implode(', ', $stale))]),
+            ...($unanswered === [] ? [] : [Message::of('Not checked: %s', Message::join(', ', $unanswered))]),
+            ...(($stale = ($this->stale)()) === [] ? [] : [Message::of('From a copy of a few days ago, the feed being down: %s', implode(', ', $stale))]),
         ];
 
         return new TaskResult($this->finding($found, $answered, $notes));
     }
 
-    private function label(InstalledPlugin $software, string $kind): string
-    {
-        return sprintf('%s %s (%s)', $software->slug, $software->version, $kind);
-    }
-
     /**
-     * @param  list<array{string, Vulnerability}>  $found
-     * @param  list<string>  $notes
+     * @param  list<array{Message, Vulnerability}>  $found
+     * @param  list<Message>  $notes
      */
     private function finding(array $found, int $answered, array $notes): Finding
     {
         if ($found === []) {
-            return Finding::pass(self::ID, sprintf('No known vulnerability in the %d versions that were asked about.', $answered), $notes);
+            return Finding::pass(self::ID, Message::of('No known vulnerability in the %d versions that were asked about.', $answered), $notes);
         }
 
-        usort($found, static fn (array $a, array $b): int => $b[1]->severity->rank() <=> $a[1]->severity->rank() ?: strcmp($a[0], $b[0]));
-        $lines = array_map(static fn (array $one): string => sprintf('[%s] %s: %s (%s)%s', $one[1]->severity->value, $one[0], $one[1]->title, $one[1]->id, self::advice($one[1])), array_slice($found, 0, self::LISTED));
-        $more = count($found) > self::LISTED ? [sprintf('and %d more', count($found) - self::LISTED)] : [];
+        usort($found, static fn (array $a, array $b): int => $b[1]->severity->rank() <=> $a[1]->severity->rank() ?: strcmp($a[0]->english(), $b[0]->english()));
+        $lines = array_map(static fn (array $one): Message => Message::of('[%s] %s: %s (%s)%s', $one[1]->severity->value, $one[0], $one[1]->title, $one[1]->id, self::advice($one[1])), array_slice($found, 0, self::LISTED));
+        $more = count($found) > self::LISTED ? [Message::of('and %d more', count($found) - self::LISTED)] : [];
 
         return Finding::fail(
             self::ID,
             $found[0][1]->severity,
-            sprintf('%d known %s in what the site runs.', count($found), count($found) === 1 ? 'vulnerability' : 'vulnerabilities'),
+            Message::plural('%d known vulnerability in what the site runs.', '%d known vulnerabilities in what the site runs.', count($found), count($found)),
             [...$lines, ...$more, ...$notes],
-            'Update what is listed to the version that fixes it. Where nothing fixes it yet, turn the plugin off or replace it: a vulnerability that is public is being tried on sites like yours. Hornet changes nothing.',
+            Message::of('Update what is listed to the version that fixes it. Where nothing fixes it yet, turn the plugin off or replace it: a vulnerability that is public is being tried on sites like yours. Hornet changes nothing.'),
         );
     }
 
-    private static function advice(Vulnerability $vulnerability): string
+    private static function advice(Vulnerability $vulnerability): Message
     {
         return match (true) {
-            $vulnerability->fixedIn !== null => ', fixed in '.$vulnerability->fixedIn,
-            $vulnerability->unfixed => ', not fixed',
-            default => '',
+            $vulnerability->fixedIn !== null => Message::of(', fixed in %s', $vulnerability->fixedIn),
+            $vulnerability->unfixed => Message::of(', not fixed'),
+            default => Message::raw(''),
         };
     }
 }

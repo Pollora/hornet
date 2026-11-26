@@ -8,6 +8,7 @@ use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * Where code is deployed (Bedrock, Composer), the dashboard has no reason to install or update it.
@@ -23,19 +24,19 @@ final readonly class FileModsCheck implements Check
 
     public function label(): string
     {
-        return 'Installing code from the dashboard';
+        return Message::mark('Installing code from the dashboard');
     }
 
     public function run(Environment $environment): Finding
     {
         if ($environment->constant('DISALLOW_FILE_MODS') === true) {
-            return Finding::pass($this->id(), 'Plugins, themes and updates cannot be installed from the dashboard.');
+            return Finding::pass($this->id(), Message::of('Plugins, themes and updates cannot be installed from the dashboard.'));
         }
 
         if ($environment->environmentType() !== 'production') {
-            return Finding::pass($this->id(), 'Not a production site: not judged.');
+            return Finding::pass($this->id(), Message::of('Not a production site: not judged.'));
         }
 
-        return Finding::fail($this->id(), Severity::Info, 'Plugins and themes can be installed from the dashboard.', [], "If the code is deployed by Composer or a pipeline, define('DISALLOW_FILE_MODS', true). It also stops WordPress's own updates.");
+        return Finding::fail($this->id(), Severity::Info, Message::of('Plugins and themes can be installed from the dashboard.'), [], Message::of("If the code is deployed by Composer or a pipeline, define('DISALLOW_FILE_MODS', true). It also stops WordPress's own updates."));
     }
 }

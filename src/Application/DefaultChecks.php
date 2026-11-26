@@ -25,6 +25,7 @@ use Pollora\Hornet\Domain\Audit\Checks\TwoFactorCoverageCheck;
 use Pollora\Hornet\Domain\Audit\Checks\UserEnumerationCheck;
 use Pollora\Hornet\Domain\Audit\Checks\WordPressUpdateCheck;
 use Pollora\Hornet\Domain\Audit\Checks\XmlRpcCheck;
+use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * The checks that ship with the package, in the order a person should read them: the configuration first, then the accounts.
@@ -52,13 +53,13 @@ final class DefaultChecks
             new TwoFactorCheck,
             new TwoFactorCoverageCheck,
             // What the last scan found: the audit reads it and never scans
-            new ScanResultCheck(CoreIntegrityTask::ID, 'WordPress core files'),
-            new ScanResultCheck(PluginIntegrityTask::ID, 'Plugin files'),
-            new ScanResultCheck(PluginIntegrityTask::THEMES_ID, 'Theme files'),
-            new ScanResultCheck(SuspiciousFilesTask::ID, 'Suspicious files'),
-            new ScanResultCheck(ExposedFilesTask::ID, 'Files given away by the site'),
+            new ScanResultCheck(CoreIntegrityTask::ID, Message::mark('WordPress core files')),
+            new ScanResultCheck(PluginIntegrityTask::ID, Message::mark('Plugin files')),
+            new ScanResultCheck(PluginIntegrityTask::THEMES_ID, Message::mark('Theme files')),
+            new ScanResultCheck(SuspiciousFilesTask::ID, Message::mark('Suspicious files')),
+            new ScanResultCheck(ExposedFilesTask::ID, Message::mark('Files given away by the site')),
             // Only when the owner opted in: without it the scan never asks, and the check would be "not scanned" for ever
-            ...($vulnerabilities ? [new ScanResultCheck(KnownVulnerabilitiesTask::ID, 'Known vulnerabilities')] : []),
+            ...($vulnerabilities ? [new ScanResultCheck(KnownVulnerabilitiesTask::ID, Message::mark('Known vulnerabilities'))] : []),
         ];
     }
 }

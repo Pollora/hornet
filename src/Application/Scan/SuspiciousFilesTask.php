@@ -8,6 +8,7 @@ use DateInterval;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
 use Pollora\Hornet\Domain\Clock;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Scan\FileInspector;
 use Pollora\Hornet\Domain\Scan\FileSystem;
 use Pollora\Hornet\Domain\Scan\Pins;
@@ -63,7 +64,7 @@ final readonly class SuspiciousFilesTask implements ScanTask
         $files = $this->content->files('', true);
 
         if ($files === null) {
-            return new TaskResult(Finding::unknown(self::ID, 'The content folder cannot be listed from here (open_basedir or permissions).'), $pinned);
+            return new TaskResult(Finding::unknown(self::ID, Message::of('The content folder cannot be listed from here (open_basedir or permissions).')), $pinned);
         }
 
         $after = $pinned instanceof Pins && str_starts_with($pinned->scope, self::CURSOR) && ! $repin ? substr($pinned->scope, strlen(self::CURSOR)) : null;
@@ -117,7 +118,7 @@ final readonly class SuspiciousFilesTask implements ScanTask
         }
 
         return new TaskResult(
-            Finding::unknown(self::ID, sprintf('The walk of the content folder is not finished: %d files looked at in this run, it goes on from %s next time.', $looked, $last)),
+            Finding::unknown(self::ID, Message::of('The walk of the content folder is not finished: %d files looked at in this run, it goes on from %s next time.', $looked, $last)),
             new Pins(self::CURSOR.$last, $hashes),
             unfinished: true,
         );
@@ -154,27 +155,28 @@ final readonly class SuspiciousFilesTask implements ScanTask
     private function finding(array $found, int $looked, int $dropped = 0): Finding
     {
         if ($found === [] && $dropped === 0) {
-            return Finding::pass(self::ID, sprintf('Nothing suspicious in the %d files of the content folder that were looked at.', $looked));
+            return Finding::pass(self::ID, Message::of('Nothing suspicious in the %d files of the content folder that were looked at.', $looked));
         }
 
         $list = array_values($found);
         usort($list, static fn (Suspicion $a, Suspicion $b): int => $b->severity->rank() <=> $a->severity->rank() ?: strcmp($a->path, $b->path));
-        $details = array_map(static fn (Suspicion $suspicion): string => sprintf('[%s] %s', $suspicion->severity->value, $suspicion->line()), array_slice($list, 0, self::LISTED));
+        // Flat on purpose: a stored message keeps only a few levels
+        $details = array_map(static fn (Suspicion $suspicion): Message => Message::join('', [Message::of('[%s] %s: ', $suspicion->severity->value, $suspicion->path), ...$suspicion->reasonMessages()]), array_slice($list, 0, self::LISTED));
 
         if (count($list) > self::LISTED) {
-            $details[] = sprintf('and %d more', count($list) - self::LISTED);
+            $details[] = Message::of('and %d more', count($list) - self::LISTED);
         }
 
         if ($dropped > 0) {
-            $details[] = sprintf('and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all', $dropped);
+            $details[] = Message::of('and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all', $dropped);
         }
 
         return Finding::fail(
             self::ID,
             $list === [] ? Severity::Medium : $list[0]->severity,
-            sprintf('%d %s in the content folder would not be left unsaid.', count($list) + $dropped, count($list) + $dropped === 1 ? 'file' : 'files'),
+            Message::plural('%d file in the content folder would not be left unsaid.', '%d files in the content folder would not be left unsaid.', count($list) + $dropped, count($list) + $dropped),
             $details,
-            'Look at each file before anything else, and do not open it in a browser. A file you know and trust can be left alone with scanner.ignore_paths. If you do not know it, find how it came there (an old plugin, a form that accepts uploads) before you remove it. Hornet never changes a file.',
+            Message::of('Look at each file before anything else, and do not open it in a browser. A file you know and trust can be left alone with scanner.ignore_paths. If you do not know it, find how it came there (an old plugin, a form that accepts uploads) before you remove it. Hornet never changes a file.'),
         );
     }
 

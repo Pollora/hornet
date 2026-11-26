@@ -6,6 +6,8 @@ namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Closure;
 use Pollora\Hornet\Domain\Clock;
+use Pollora\Hornet\Domain\I18n\Message;
+use Pollora\Hornet\Domain\I18n\Translator;
 use Pollora\Hornet\Domain\Login\AttemptStore;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Config\LoginSettings;
@@ -41,6 +43,7 @@ final readonly class LoginThrottleModule implements Module
         private Closure $client,
         private Closure $problem,
         private string $salt,
+        private ?Translator $translator = null,
     ) {}
 
     public function register(HookRegistrar $hooks): void
@@ -70,8 +73,9 @@ final readonly class LoginThrottleModule implements Module
         }
 
         return new WP_Error('hornet_locked', sprintf(
-            '<strong>Error:</strong> Too many failed login attempts. Try again in %d minute(s).',
-            (int) ceil($this->settings->policy->secondsLeft($attempts, $now) / 60),
+            '<strong>%s</strong> %s',
+            Message::of('Error:')->render($this->translator),
+            Message::of('Too many failed login attempts. Try again in %d minute(s).', (int) ceil($this->settings->policy->secondsLeft($attempts, $now) / 60))->render($this->translator),
         ));
     }
 

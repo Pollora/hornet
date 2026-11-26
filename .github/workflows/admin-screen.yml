@@ -6,9 +6,9 @@ name: Admin screen
 on:
   push:
     branches: [main]
-    paths: ['admin/**', 'assets/**', 'languages/**', 'package.json', 'package-lock.json', '.github/workflows/admin-screen.yml']
+    paths: ['admin/**', 'assets/**', 'languages/**', 'src/**', 'package.json', 'package-lock.json', '.github/workflows/admin-screen.yml']
   pull_request:
-    paths: ['admin/**', 'assets/**', 'languages/**', 'package.json', 'package-lock.json', '.github/workflows/admin-screen.yml']
+    paths: ['admin/**', 'assets/**', 'languages/**', 'src/**', 'package.json', 'package-lock.json', '.github/workflows/admin-screen.yml']
   workflow_dispatch:
 
 permissions: {}

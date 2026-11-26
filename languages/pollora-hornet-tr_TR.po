@@ -365,3 +365,767 @@ msgstr "Komut satırı"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "Zamanlanmış görev"
+
+msgid "Not scanned yet."
+msgstr "Henüz tarama yapılmadı."
+
+msgid "The check could not run: %s"
+msgstr "Kontrol çalıştırılamadı: %s"
+
+msgid "WordPress core files"
+msgstr "WordPress çekirdek dosyaları"
+
+msgid "Plugin files"
+msgstr "Eklenti dosyaları"
+
+msgid "Theme files"
+msgstr "Tema dosyaları"
+
+msgid "Suspicious files"
+msgstr "Şüpheli dosyalar"
+
+msgid "Files given away by the site"
+msgstr "Sitenin dışarıya verdiği dosyalar"
+
+msgid "Known vulnerabilities"
+msgstr "Bilinen güvenlik açıkları"
+
+msgid "WordPress.org did not answer, so the core files were not compared: %s"
+msgstr "WordPress.org yanıt vermedi, bu yüzden çekirdek dosyaları karşılaştırılmadı: %s"
+
+msgid "WordPress.org publishes no checksums for WordPress %s: a beta, a development build or an unreleased version cannot be verified."
+msgstr "WordPress.org, WordPress %s için sağlama toplamı yayımlamıyor: beta, geliştirme veya henüz yayımlanmamış bir sürüm doğrulanamaz."
+
+msgid "The core files cannot be listed from here (open_basedir or permissions)."
+msgstr "Çekirdek dosyaları buradan listelenemiyor (open_basedir veya izinler)."
+
+msgid "Changed"
+msgstr "Değiştirilmiş"
+
+msgid "Changed since first seen"
+msgstr "İlk görülmesinden bu yana değiştirilmiş"
+
+msgid "Missing"
+msgstr "Eksik"
+
+msgid "Not part of WordPress"
+msgstr "WordPress'in parçası değil"
+
+msgid "Could not be read"
+msgstr "Okunamadı"
+
+msgid "The %d core files match WordPress %s on WordPress.org."
+msgstr "%d çekirdek dosyasının tümü WordPress.org'daki WordPress %s ile eşleşiyor."
+
+msgid "Allowed to differ, and unchanged since first seen: %s"
+msgstr "Farklı olmasına izin verilen ve ilk görülmesinden bu yana değişmeyenler: %s"
+
+msgid "%d core file differs from WordPress %s on WordPress.org."
+msgid_plural "%d core files differ from WordPress %s on WordPress.org."
+msgstr[0] "%d çekirdek dosyası WordPress.org'daki WordPress %s sürümünden farklı."
+msgstr[1] "%d çekirdek dosyası WordPress.org'daki WordPress %s sürümünden farklı."
+
+msgid "Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file."
+msgstr "Her dosyayı inceleyin. Siz değiştirmediyseniz, yedek aldıktan sonra çekirdeği geri yükleyin (`wp core download --force --skip-content`) ve nasıl değiştirildiğini bulun. Değişiklik size aitse dosyayı scanner.allow_modified listesine ekleyin. Hornet hiçbir dosyayı değiştirmez."
+
+msgid "%s: %s"
+msgstr "%s: %s"
+
+msgid "%s: and %d more"
+msgstr "%s: ve %d tane daha"
+
+msgid "Not asked (out of time): %d addresses."
+msgstr "Sorulmadı (süre doldu): %d adres."
+
+msgid "/%s%s answers, and it is %s"
+msgstr "/%s%s yanıt veriyor; içeriği: %s"
+
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): nothing was asked of it."
+msgstr "Site, sunucudan kendi adresine yapılan isteğe yanıt vermedi (DNS, güvenlik duvarı, güvenilmeyen bir sertifika): siteden hiçbir şey istenemedi."
+
+msgid "%d of the %d addresses did not answer."
+msgstr "%2$d adresten %1$d tanesi yanıt vermedi."
+
+msgid "Not asked: the uploads folder cannot be written to, so whether it runs PHP could not be tried."
+msgstr "Sorulmadı: yüklemeler klasörüne yazılamıyor, bu yüzden orada PHP çalışıp çalışmadığı denenemedi."
+
+msgid "Not asked: the server did not answer for the file put in the uploads."
+msgstr "Sorulmadı: sunucu, yüklemelere konan dosya için yanıt vermedi."
+
+msgid "The server runs PHP that sits in the uploads folder: a file that is uploaded there is run"
+msgstr "Sunucu, yüklemeler klasöründeki PHP kodunu çalıştırıyor: oraya yüklenen bir dosya çalıştırılır"
+
+msgid "None of the %d addresses asked gives away a file it should not."
+msgstr "Sorulan %d adresin hiçbiri vermemesi gereken bir dosyayı vermiyor."
+
+msgid "[%s] %s"
+msgstr "[%s] %s"
+
+msgid "%d thing is given away by the site itself."
+msgid_plural "%d things are given away by the site itself."
+msgstr[0] "Sitenin kendisi %d şeyi dışarıya veriyor."
+msgstr[1] "Sitenin kendisi %d şeyi dışarıya veriyor."
+
+msgid "Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
+msgstr "Dosyayı web kök dizininden kaldırın veya web sunucusunda erişimi engelleyin (Hornet oraya hiçbir şey yazamaz). Erişilebilir olan parola, anahtar veya salt değiştirilmelidir: okunduğunu varsayın."
+
+msgid "%s %s (plugin)"
+msgstr "%s %s (eklenti)"
+
+msgid "%s %s (theme)"
+msgstr "%s %s (tema)"
+
+msgid "%d more (out of time)"
+msgstr "%d tane daha (süre doldu)"
+
+msgid "The vulnerability feed did not answer: nothing was checked."
+msgstr "Güvenlik açığı akışı yanıt vermedi: hiçbir şey kontrol edilmedi."
+
+msgid "Not checked: %s"
+msgstr "Kontrol edilmedi: %s"
+
+msgid "From a copy of a few days ago, the feed being down: %s"
+msgstr "Akış kapalı olduğu için birkaç gün önceki bir kopyadan: %s"
+
+msgid "No known vulnerability in the %d versions that were asked about."
+msgstr "Sorulan %d sürümde bilinen bir güvenlik açığı yok."
+
+msgid "[%s] %s: %s (%s)%s"
+msgstr "[%s] %s: %s (%s)%s"
+
+msgid "and %d more"
+msgstr "ve %d tane daha"
+
+msgid "%d known vulnerability in what the site runs."
+msgid_plural "%d known vulnerabilities in what the site runs."
+msgstr[0] "Sitede çalışanlarda %d bilinen güvenlik açığı var."
+msgstr[1] "Sitede çalışanlarda %d bilinen güvenlik açığı var."
+
+msgid "Update what is listed to the version that fixes it. Where nothing fixes it yet, turn the plugin off or replace it: a vulnerability that is public is being tried on sites like yours. Hornet changes nothing."
+msgstr "Listelenenleri açığı gideren sürüme güncelleyin. Henüz bir düzeltme yoksa eklentiyi kapatın veya değiştirin: herkesçe bilinen bir açık, sizinki gibi sitelerde deneniyor. Hornet hiçbir şeyi değiştirmez."
+
+msgid ", fixed in %s"
+msgstr ", düzeltildiği sürüm: %s"
+
+msgid ", not fixed"
+msgstr ", düzeltilmedi"
+
+msgid "No plugin has a folder of its own."
+msgstr "Hiçbir eklentinin kendi klasörü yok."
+
+msgid "No theme has a folder of its own."
+msgstr "Hiçbir temanın kendi klasörü yok."
+
+msgid "%s (out of time)"
+msgstr "%s (süre doldu)"
+
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+msgid "WordPress.org did not answer"
+msgstr "WordPress.org yanıt vermedi"
+
+msgid "folder cannot be read"
+msgstr "klasör okunamıyor"
+
+msgid "too many files to keep a first look"
+msgstr "ilk görünümü saklamak için çok fazla dosya var"
+
+msgid "Script that does not belong"
+msgstr "Oraya ait olmayan betik"
+
+msgid "%d plugin has changed since it was published or first seen: %s."
+msgid_plural "%d plugins have changed since it was published or first seen: %s."
+msgstr[0] "%d eklenti, yayımlanmasından veya ilk görülmesinden bu yana değişmiş: %s."
+msgstr[1] "%d eklenti, yayımlanmasından veya ilk görülmesinden bu yana değişmiş: %s."
+
+msgid "%d theme has changed since it was published or first seen: %s."
+msgid_plural "%d themes have changed since it was published or first seen: %s."
+msgstr[0] "%d tema, yayımlanmasından veya ilk görülmesinden bu yana değişmiş: %s."
+msgstr[1] "%d tema, yayımlanmasından veya ilk görülmesinden bu yana değişmiş: %s."
+
+msgid "Look at each file. If you did not change it, reinstall the plugin from its source after a backup, and find how it was changed. Hornet never changes a file."
+msgstr "Her dosyayı inceleyin. Siz değiştirmediyseniz, yedek aldıktan sonra eklentiyi kaynağından yeniden yükleyin ve nasıl değiştirildiğini bulun. Hornet hiçbir dosyayı değiştirmez."
+
+msgid "Look at each file. If you did not change it, reinstall the theme from its source after a backup, and find how it was changed. Hornet never changes a file."
+msgstr "Her dosyayı inceleyin. Siz değiştirmediyseniz, yedek aldıktan sonra temayı kaynağından yeniden yükleyin ve nasıl değiştirildiğini bulun. Hornet hiçbir dosyayı değiştirmez."
+
+msgid "No plugin could be compared."
+msgstr "Hiçbir eklenti karşılaştırılamadı."
+
+msgid "No theme could be compared."
+msgstr "Hiçbir tema karşılaştırılamadı."
+
+msgid "%d plugin(s) match WordPress.org, %d match what was first seen"
+msgstr "WordPress.org ile eşleşen eklenti: %d, ilk görülen hâliyle eşleşen: %d"
+
+msgid "%d theme(s) match what was first seen"
+msgstr "İlk görülen hâliyle eşleşen tema: %d"
+
+msgid ", %d first seen now"
+msgstr ", şimdi ilk kez görülen: %d"
+
+msgid "First look kept for %d plugin(s) WordPress.org does not know, nothing to compare with yet: %s"
+msgstr "WordPress.org'un tanımadığı %d eklentinin ilk görünümü saklandı, henüz karşılaştırılacak bir şey yok: %s"
+
+msgid "First look kept for %d theme(s) WordPress.org does not know, nothing to compare with yet: %s"
+msgstr "WordPress.org'un tanımadığı %d temanın ilk görünümü saklandı, henüz karşılaştırılacak bir şey yok: %s"
+
+msgid "Not checked:"
+msgstr "Kontrol edilmeyenler:"
+
+msgid "%s: %s/%s"
+msgstr "%s: %s/%s"
+
+msgid "Not verified again on %s UTC: %s"
+msgstr "%s UTC tarihinde yeniden doğrulanamadı: %s"
+
+msgid "The scan could not run: %s"
+msgstr "Tarama çalıştırılamadı: %s"
+
+msgid "The content folder cannot be listed from here (open_basedir or permissions)."
+msgstr "İçerik klasörü buradan listelenemiyor (open_basedir veya izinler)."
+
+msgid "The walk of the content folder is not finished: %d files looked at in this run, it goes on from %s next time."
+msgstr "İçerik klasörünün taranması bitmedi: bu çalıştırmada %d dosyaya bakıldı, bir dahaki sefere %s konumundan devam edecek."
+
+msgid "Nothing suspicious in the %d files of the content folder that were looked at."
+msgstr "İçerik klasöründe bakılan %d dosyada şüpheli bir şey yok."
+
+msgid "[%s] %s: "
+msgstr "[%s] %s: "
+
+msgid "and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all"
+msgstr "ve önceki bir çalıştırmada bulunup saklanmayan %d tane daha var: tümünü listelemek için komut satırından `wp hornet scan` çalıştırın"
+
+msgid "%d file in the content folder would not be left unsaid."
+msgid_plural "%d files in the content folder would not be left unsaid."
+msgstr[0] "İçerik klasöründeki %d dosya göz ardı edilemez."
+msgstr[1] "İçerik klasöründeki %d dosya göz ardı edilemez."
+
+msgid "Look at each file before anything else, and do not open it in a browser. A file you know and trust can be left alone with scanner.ignore_paths. If you do not know it, find how it came there (an old plugin, a form that accepts uploads) before you remove it. Hornet never changes a file."
+msgstr "Her şeyden önce her dosyayı inceleyin ve tarayıcıda açmayın. Tanıdığınız ve güvendiğiniz bir dosya scanner.ignore_paths ile kendi hâline bırakılabilir. Tanımıyorsanız, kaldırmadan önce oraya nasıl geldiğini bulun (eski bir eklenti, dosya yüklemeyi kabul eden bir form). Hornet hiçbir dosyayı değiştirmez."
+
+msgid "Default administrator name"
+msgstr "Varsayılan yönetici adı"
+
+msgid "A user is named \"admin\"."
+msgstr "\"admin\" adlı bir kullanıcı var."
+
+msgid "Create an administrator with another login, hand the content over to it, and delete \"admin\"."
+msgstr "Başka bir kullanıcı adıyla bir yönetici oluşturun, içeriği ona devredin ve \"admin\" kullanıcısını silin."
+
+msgid "No user is named \"admin\"."
+msgstr "\"admin\" adlı bir kullanıcı yok."
+
+msgid "wp-config.php permissions"
+msgstr "wp-config.php izinleri"
+
+msgid "wp-config.php was not found or cannot be read from here (open_basedir, or the secrets are in the environment)."
+msgstr "wp-config.php bulunamadı veya buradan okunamıyor (open_basedir veya gizli bilgiler ortam değişkenlerinde)."
+
+msgid "The server does not tell the permissions of wp-config.php."
+msgstr "Sunucu wp-config.php izinlerini bildirmiyor."
+
+msgid "wp-config.php can be written by any account on the server."
+msgstr "wp-config.php, sunucudaki herhangi bir hesap tarafından yazılabiliyor."
+
+msgid "mode %s"
+msgstr "mod %s"
+
+msgid "chmod 640 wp-config.php (or 400)."
+msgstr "chmod 640 wp-config.php (veya 400)."
+
+msgid "wp-config.php can be read by any account on the server."
+msgstr "wp-config.php, sunucudaki herhangi bir hesap tarafından okunabiliyor."
+
+msgid "chmod 640 wp-config.php (the WordPress hardening guide advises 400 or 440)."
+msgstr "chmod 640 wp-config.php (WordPress güvenlik sıkılaştırma kılavuzu 400 veya 440 önerir)."
+
+msgid "wp-config.php is not readable by other accounts."
+msgstr "wp-config.php diğer hesaplar tarafından okunamıyor."
+
+msgid "Debug mode"
+msgstr "Hata ayıklama modu"
+
+msgid "Not a production site: debug mode is not judged."
+msgstr "Canlı (production) site değil: hata ayıklama modu değerlendirilmedi."
+
+msgid "PHP errors are shown to visitors."
+msgstr "PHP hataları ziyaretçilere gösteriliyor."
+
+msgid "WP_DEBUG is on and WP_DEBUG_DISPLAY is not false"
+msgstr "WP_DEBUG açık ve WP_DEBUG_DISPLAY değeri false değil"
+
+msgid "Set WP_DEBUG to false, or define('WP_DEBUG_DISPLAY', false)."
+msgstr "WP_DEBUG değerini false yapın veya define('WP_DEBUG_DISPLAY', false) ekleyin."
+
+msgid "WP_DEBUG is on in production."
+msgstr "Canlı ortamda WP_DEBUG açık."
+
+msgid "Define('WP_DEBUG', false) in production."
+msgstr "Define('WP_DEBUG', false) canlı ortamda kullanılmalı."
+
+msgid "WP_DEBUG_LOG writes wp-content/debug.log, a public URL unless the server blocks it."
+msgstr "WP_DEBUG_LOG, wp-content/debug.log dosyasına yazar; sunucu engellemedikçe bu herkese açık bir URL'dir."
+
+msgid "Set WP_DEBUG_LOG to a path outside the web root, or to false."
+msgstr "WP_DEBUG_LOG değerini web kök dizini dışında bir yola veya false olarak ayarlayın."
+
+msgid "Debug mode is off."
+msgstr "Hata ayıklama modu kapalı."
+
+msgid "Theme and plugin editor"
+msgstr "Tema ve eklenti düzenleyicisi"
+
+msgid "The file editor is disabled."
+msgstr "Dosya düzenleyicisi devre dışı."
+
+msgid "pollora/headless is installed: it defines DISALLOW_FILE_EDIT only when its REST security module runs."
+msgstr "pollora/headless yüklü: DISALLOW_FILE_EDIT sabitini yalnızca REST güvenlik modülü çalıştığında tanımlar."
+
+msgid "An administrator can edit PHP files from the dashboard."
+msgstr "Bir yönetici PHP dosyalarını yönetim panelinden düzenleyebiliyor."
+
+msgid "Turn on Hornet's `hardening.file_editor`, or define('DISALLOW_FILE_EDIT', true) in wp-config.php."
+msgstr "Hornet'in `hardening.file_editor` ayarını açın veya wp-config.php dosyasına define('DISALLOW_FILE_EDIT', true) ekleyin."
+
+msgid "Installing code from the dashboard"
+msgstr "Yönetim panelinden kod yükleme"
+
+msgid "Plugins, themes and updates cannot be installed from the dashboard."
+msgstr "Eklentiler, temalar ve güncellemeler yönetim panelinden yüklenemez."
+
+msgid "Not a production site: not judged."
+msgstr "Canlı (production) site değil: değerlendirilmedi."
+
+msgid "Plugins and themes can be installed from the dashboard."
+msgstr "Eklentiler ve temalar yönetim panelinden yüklenebiliyor."
+
+msgid "If the code is deployed by Composer or a pipeline, define('DISALLOW_FILE_MODS', true). It also stops WordPress's own updates."
+msgstr "Kod Composer veya bir pipeline ile dağıtılıyorsa define('DISALLOW_FILE_MODS', true) ekleyin. Bu, WordPress'in kendi güncellemelerini de durdurur."
+
+msgid "HTTPS"
+msgstr "HTTPS"
+
+msgid "The site address does not use HTTPS."
+msgstr "Site adresi HTTPS kullanmıyor."
+
+msgid "Serve the site over HTTPS and set the WordPress and site addresses to https://."
+msgstr "Siteyi HTTPS üzerinden sunun ve WordPress ile site adreslerini https:// olarak ayarlayın."
+
+msgid "The login and the dashboard are not forced onto HTTPS."
+msgstr "Giriş ve yönetim paneli HTTPS'e zorlanmıyor."
+
+msgid "Define('FORCE_SSL_ADMIN', true) in wp-config.php."
+msgstr "Define('FORCE_SSL_ADMIN', true) satırı wp-config.php dosyasında bulunmalı."
+
+msgid "The site uses HTTPS, and the dashboard is forced onto it."
+msgstr "Site HTTPS kullanıyor ve yönetim paneli buna zorlanıyor."
+
+msgid "Login protection"
+msgstr "Giriş koruması"
+
+msgid "pollora/portcullis is installed: it guards the login, locks out brute force and stops account enumeration."
+msgstr "pollora/portcullis yüklü: girişi korur, kaba kuvvet saldırılarını kilitler ve hesap numaralandırmayı durdurur."
+
+msgid "The login throttle is on but cannot tell visitors apart: every request seems to come from one private address, the proxy or load balancer in front of the site, so it refuses to lock anybody."
+msgstr "Giriş sınırlayıcı açık ama ziyaretçileri ayırt edemiyor: her istek tek bir özel adresten, yani sitenin önündeki proxy veya yük dengeleyiciden geliyor gibi görünüyor; bu yüzden kimseyi kilitlemiyor."
+
+msgid "Locking that address would lock every visitor out at once."
+msgstr "Bu adresi kilitlemek tüm ziyaretçileri aynı anda dışarıda bırakırdı."
+
+msgid "List the proxy in `network.trusted_proxies` (and set `network.forwarded_header` if it is not X-Forwarded-For)."
+msgstr "Proxy'yi `network.trusted_proxies` listesine ekleyin (X-Forwarded-For değilse `network.forwarded_header` ayarını da yapın)."
+
+msgid "The login throttle sees a forwarding header from an address that is not a trusted proxy. If the site is behind a CDN or a proxy, visitors share its address and can lock each other out."
+msgstr "Giriş sınırlayıcı, güvenilir proxy olmayan bir adresten gelen bir yönlendirme başlığı görüyor. Site bir CDN veya proxy arkasındaysa ziyaretçiler aynı adresi paylaşır ve birbirlerini kilitleyebilir."
+
+msgid "Requests are counted under the address that opened the connection, which a header cannot change."
+msgstr "İstekler, bağlantıyı açan adrese göre sayılır; bir başlık bunu değiştiremez."
+
+msgid "List the CDN or proxy in `network.trusted_proxies`."
+msgstr "CDN veya proxy'yi `network.trusted_proxies` listesine ekleyin."
+
+msgid "Hornet's login throttle is on: an address that fails too often is locked out for a while."
+msgstr "Hornet'in giriş sınırlayıcısı açık: çok sık başarısız olan bir adres bir süreliğine kilitlenir."
+
+msgid "No login protection from Pollora was found."
+msgstr "Pollora'dan bir giriş koruması bulunamadı."
+
+msgid "Another plugin or the server may protect the login: Hornet only knows pollora/portcullis and its own throttle."
+msgstr "Girişi başka bir eklenti veya sunucu koruyor olabilir: Hornet yalnızca pollora/portcullis ile kendi sınırlayıcısını tanır."
+
+msgid "composer require pollora/portcullis, or turn on Hornet's `login.throttle`."
+msgstr "composer require pollora/portcullis komutunu çalıştırın veya Hornet'in `login.throttle` ayarını açın."
+
+msgid "PHP version"
+msgstr "PHP sürümü"
+
+msgid "PHP %s no longer gets security fixes."
+msgstr "PHP %s artık güvenlik düzeltmesi almıyor."
+
+msgid "Move the site to PHP 8.3 or later."
+msgstr "Siteyi PHP 8.3 veya üstüne taşıyın."
+
+msgid "PHP %s is newer than the support table of this version of Hornet."
+msgstr "PHP %s, Hornet'in bu sürümündeki destek tablosundan daha yeni."
+
+msgid "PHP %s no longer gets security fixes (since %s)."
+msgstr "PHP %s artık güvenlik düzeltmesi almıyor (başlangıç: %s)."
+
+msgid "Move the site to a supported PHP branch."
+msgstr "Siteyi desteklenen bir PHP dalına taşıyın."
+
+msgid "PHP %s gets security fixes until %s."
+msgstr "PHP %s için güvenlik düzeltmelerinin son tarihi: %s."
+
+msgid "Plan the move to a newer PHP branch."
+msgstr "Daha yeni bir PHP dalına geçişi planlayın."
+
+msgid "Authentication keys and salts"
+msgstr "Kimlik doğrulama anahtarları ve salt değerleri"
+
+msgid "The eight keys and salts are set."
+msgstr "Sekiz anahtar ve salt tanımlı."
+
+msgid "%d of the 8 keys and salts is missing, shorter than 32 characters, or the sample value."
+msgid_plural "%d of the 8 keys and salts are missing, shorter than 32 characters, or the sample value."
+msgstr[0] "8 anahtar ve salt değerinden %d tanesi eksik, 32 karakterden kısa veya örnek değerde."
+msgstr[1] "8 anahtar ve salt değerinden %d tanesi eksik, 32 karakterden kısa veya örnek değerde."
+
+msgid "Generate new ones at https://api.wordpress.org/secret-key/1.1/salt/ and replace them in wp-config.php (or the Bedrock .env). This logs everyone out."
+msgstr "https://api.wordpress.org/secret-key/1.1/salt/ adresinden yenilerini üretin ve wp-config.php (veya Bedrock .env) içinde değiştirin. Bu, herkesin oturumunu kapatır."
+
+msgid "The site was never scanned: run `wp hornet scan`."
+msgstr "Site hiç taranmadı: `wp hornet scan` çalıştırın."
+
+msgid "The last scan did not cover this: run `wp hornet scan`."
+msgstr "Son tarama bunu kapsamadı: `wp hornet scan` çalıştırın."
+
+msgid "The last scan is more than %d day old, so it says little about the files today."
+msgid_plural "The last scan is more than %d days old, so it says little about the files today."
+msgstr[0] "Son tarama %d günden eski, bu yüzden dosyaların bugünkü durumu hakkında pek bir şey söylemiyor."
+msgstr[1] "Son tarama %d günden eski, bu yüzden dosyaların bugünkü durumu hakkında pek bir şey söylemiyor."
+
+msgid "Last scan: %s UTC"
+msgstr "Son tarama: %s UTC"
+
+msgid "Run `wp hornet scan`."
+msgstr "`wp hornet scan` çalıştırın."
+
+msgid "Two-factor authentication"
+msgstr "İki faktörlü kimlik doğrulama"
+
+msgid "The Two-Factor plugin is active."
+msgstr "Two-Factor eklentisi etkin."
+
+msgid "The Two-Factor plugin is not active."
+msgstr "Two-Factor eklentisi etkin değil."
+
+msgid "Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles."
+msgstr "Two-Factor eklentisini yükleyin. Hornet'in sonraki bir sürümü, seçilen roller için bunu zorunlu kılacak."
+
+msgid "Two-factor authentication of administrators"
+msgstr "Yöneticilerin iki faktörlü kimlik doğrulaması"
+
+msgid "The Two-Factor plugin is not active: whether administrators use a second factor cannot be told."
+msgstr "Two-Factor eklentisi etkin değil: yöneticilerin ikinci bir faktör kullanıp kullanmadığı söylenemiyor."
+
+msgid "Every administrator has set up two-factor authentication."
+msgstr "Tüm yöneticiler iki faktörlü kimlik doğrulamayı kurmuş."
+
+msgid "user #%d"
+msgstr "kullanıcı #%d"
+
+msgid "%d administrator has not set up two-factor authentication."
+msgid_plural "%d administrators have not set up two-factor authentication."
+msgstr[0] "%d yönetici iki faktörlü kimlik doğrulamayı kurmamış."
+msgstr[1] "%d yönetici iki faktörlü kimlik doğrulamayı kurmamış."
+
+msgid "Ask them to set it up in their profile, or turn on Hornet's `two_factor.require_roles` to send them there."
+msgstr "Profillerinden kurmalarını isteyin veya onları oraya yönlendirmek için Hornet'in `two_factor.require_roles` ayarını açın."
+
+msgid "User list in the REST API"
+msgstr "REST API'deki kullanıcı listesi"
+
+msgid "Whether the REST API lists users to visitors could not be found out from here."
+msgstr "REST API'nin kullanıcıları ziyaretçilere listeleyip listelemediği buradan anlaşılamadı."
+
+msgid "The REST API lists the users of the site to visitors."
+msgstr "REST API sitenin kullanıcılarını ziyaretçilere listeliyor."
+
+msgid "/wp/v2/users answers an anonymous request"
+msgstr "/wp/v2/users anonim bir isteğe yanıt veriyor"
+
+msgid "Turn on Hornet's `hardening.user_enumeration`, or use pollora/headless."
+msgstr "Hornet'in `hardening.user_enumeration` ayarını açın veya pollora/headless kullanın."
+
+msgid "The REST API does not list users to visitors."
+msgstr "REST API kullanıcıları ziyaretçilere listelemiyor."
+
+msgid "WordPress version"
+msgstr "WordPress sürümü"
+
+msgid "WordPress %s: no update was found at the last check."
+msgstr "WordPress %s: son kontrolde güncelleme bulunmadı."
+
+msgid "WordPress %s is installed, %s is available."
+msgstr "WordPress %s yüklü, %s sürümü kullanılabilir."
+
+msgid "Update WordPress core (a Composer project: composer update johnpbloch/wordpress-core)."
+msgstr "WordPress çekirdeğini güncelleyin (Composer projesinde: composer update johnpbloch/wordpress-core)."
+
+msgid "XML-RPC is closed: no method answers."
+msgstr "XML-RPC kapalı: hiçbir yöntem yanıt vermiyor."
+
+msgid "XML-RPC refuses logins, but pingbacks and other methods that need none still answer."
+msgstr "XML-RPC girişleri reddediyor, ancak pingback'ler ve giriş gerektirmeyen diğer yöntemler hâlâ yanıt veriyor."
+
+msgid "Close it altogether with Hornet's `hardening.xmlrpc`, or return an empty list from the `xmlrpc_methods` filter."
+msgstr "Hornet'in `hardening.xmlrpc` ayarıyla tamamen kapatın veya `xmlrpc_methods` filtresinden boş bir liste döndürün."
+
+msgid "XML-RPC is open."
+msgstr "XML-RPC açık."
+
+msgid "Close it unless Jetpack or the mobile app needs it: Hornet's `hardening.xmlrpc` does it, or use pollora/headless."
+msgstr "Jetpack veya mobil uygulama gerektirmiyorsa kapatın: Hornet'in `hardening.xmlrpc` ayarı bunu yapar, ya da pollora/headless kullanın."
+
+msgid "There is no check \"%s\"."
+msgstr "\"%s\" adlı bir kontrol yok."
+
+msgid "Say why, in at least %d characters: a finding that is set aside without a reason is a finding that is forgotten."
+msgstr "Nedenini en az %d karakterle belirtin: gerekçesiz kenara bırakılan bulgu, unutulan bulgudur."
+
+msgid "\"%s\" is set aside in the settings file, which wins over the screen: change it there."
+msgstr "\"%s\" ayar dosyasında kenara bırakılmış; dosya ekrana göre önceliklidir: değişikliği orada yapın."
+
+msgid "\"%s\" has nothing open to set aside."
+msgstr "\"%s\" için kenara bırakılacak açık bir şey yok."
+
+msgid "environment variables (passwords, keys)"
+msgstr "ortam değişkenleri (parolalar, anahtarlar)"
+
+msgid "the Git repository (the source of the site)"
+msgstr "Git deposu (sitenin kaynak kodu)"
+
+msgid "a copy of wp-config.php (database password, keys)"
+msgstr "wp-config.php dosyasının bir kopyası (veritabanı parolası, anahtarlar)"
+
+msgid "a copy of the database"
+msgstr "veritabanının bir kopyası"
+
+msgid "an archive of the site"
+msgstr "sitenin bir arşivi"
+
+msgid "the password file of the web server"
+msgstr "web sunucusunun parola dosyası"
+
+msgid "phpinfo() (the PHP and server configuration)"
+msgstr "phpinfo() (PHP ve sunucu yapılandırması)"
+
+msgid "a PHP error log (paths, queries)"
+msgstr "PHP hata günlüğü (yollar, sorgular)"
+
+msgid "composer.json (the list of what the site runs)"
+msgstr "composer.json (sitede çalışanların listesi)"
+
+msgid "the WordPress debug log (paths, queries, sometimes data)"
+msgstr "WordPress hata ayıklama günlüğü (yollar, sorgular, bazen veriler)"
+
+msgid "a listing of the uploads folder"
+msgstr "yüklemeler klasörünün dosya listesi"
+
+msgid "a listing of the plugins folder"
+msgstr "eklentiler klasörünün dosya listesi"
+
+msgid "a server setting that runs PHP code or makes a file run as PHP"
+msgstr "PHP kodu çalıştıran veya bir dosyayı PHP olarak çalıştıran bir sunucu ayarı"
+
+msgid "a setting that runs a PHP file before or after every script"
+msgstr "her betikten önce veya sonra bir PHP dosyası çalıştıran bir ayar"
+
+msgid "a name with a PHP extension in the middle (shell.php.jpg): some servers run it"
+msgstr "ortasında PHP uzantısı olan bir ad (shell.php.jpg): bazı sunucular bunu çalıştırır"
+
+msgid "a PHP file in the uploads folder, where nothing should run"
+msgstr "hiçbir şeyin çalışmaması gereken yüklemeler klasöründe bir PHP dosyası"
+
+msgid "a hidden PHP file"
+msgstr "gizli bir PHP dosyası"
+
+msgid "calls a function whose name is request input"
+msgstr "adı istek girdisi olan bir işlevi çağırıyor"
+
+msgid "hands request input to a callback that runs it"
+msgstr "istek girdisini, onu çalıştıran bir geri çağırmaya veriyor"
+
+msgid "includes a file named by request input"
+msgstr "adı istek girdisiyle belirlenen bir dosyayı dahil ediyor"
+
+msgid "eval()"
+msgstr "eval()"
+
+msgid "runs a command (%s)"
+msgstr "bir komut çalıştırıyor (%s)"
+
+msgid "runs a command (backticks)"
+msgstr "bir komut çalıştırıyor (ters tırnaklar)"
+
+msgid "preg_replace with the /e modifier"
+msgstr "/e değiştiricili preg_replace"
+
+msgid "decodes hidden data (%s)"
+msgstr "gizli verinin kodunu çözüyor (%s)"
+
+msgid "a very long string with no space in it"
+msgstr "içinde boşluk olmayan çok uzun bir dize"
+
+msgid "variable variables"
+msgstr "değişken değişkenler"
+
+msgid "calls a function named by a variable"
+msgstr "adı bir değişkende tutulan bir işlevi çağırıyor"
+
+msgid "passes request input to it"
+msgstr "istek girdisini ona aktarıyor"
+
+msgid "reads like a web shell (score %d):"
+msgstr "web shell gibi görünüyor (puan %d):"
+
+msgid "A scan is already in progress."
+msgstr "Bir tarama zaten sürüyor."
+
+msgid "You are not allowed to see this page."
+msgstr "Bu sayfayı görüntüleme izniniz yok."
+
+msgid "This screen needs scripts that this version of WordPress does not have (%s). Use `wp hornet status` and `wp hornet scan`: they give the same information."
+msgstr "Bu ekran, WordPress'in bu sürümünde bulunmayan betiklere ihtiyaç duyuyor (%s). `wp hornet status` ve `wp hornet scan` kullanın: aynı bilgiyi verirler."
+
+msgid "This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`."
+msgstr "Bu ekran JavaScript gerektiriyor. Aynı bilgiyi `wp hornet status` ve `wp hornet scan` verir."
+
+msgid "Security"
+msgstr "Güvenlik"
+
+msgid "There is no such channel."
+msgstr "Böyle bir kanal yok."
+
+msgid "Hardening"
+msgstr "Sıkılaştırma"
+
+msgid "Close XML-RPC"
+msgstr "XML-RPC'yi kapat"
+
+msgid "Hide the list of users from visitors"
+msgstr "Kullanıcı listesini ziyaretçilerden gizle"
+
+msgid "Hide the WordPress version"
+msgstr "WordPress sürümünü gizle"
+
+msgid "Refuse the file editor"
+msgstr "Dosya düzenleyicisini reddet"
+
+msgid "Headers"
+msgstr "Başlıklar"
+
+msgid "enforced"
+msgstr "zorunlu"
+
+msgid "report only"
+msgstr "yalnızca raporlama"
+
+msgid "Accounts"
+msgstr "Hesaplar"
+
+msgid "Login throttle"
+msgstr "Giriş sınırlayıcı"
+
+msgid "%1$d failures in %2$d seconds"
+msgstr "%2$d saniyede %1$d başarısız deneme"
+
+msgid "Refuse a password found in a breach"
+msgstr "Veri ihlalinde bulunan parolayı reddet"
+
+msgid "Shorter login sessions"
+msgstr "Daha kısa oturum süreleri"
+
+msgid "Two-factor required"
+msgstr "İki faktörlü doğrulama zorunlu"
+
+msgid "Scanner"
+msgstr "Tarayıcı"
+
+msgid "Scheduled scan"
+msgstr "Zamanlanmış tarama"
+
+msgid "Ask the site what it gives away"
+msgstr "Siteye neleri dışarıya verdiğini sor"
+
+msgid "Try to run PHP in the uploads"
+msgstr "Yüklemelerde PHP çalıştırmayı dene"
+
+msgid "Look up known vulnerabilities"
+msgstr "Bilinen güvenlik açıklarını ara"
+
+msgid "name and version of each plugin and theme go to www.wpvulnerability.net"
+msgstr "her eklenti ve temanın adı ile sürümü www.wpvulnerability.net adresine gönderilir"
+
+msgid "Security journal"
+msgstr "Güvenlik günlüğü"
+
+msgid "kept %d day"
+msgid_plural "kept %d days"
+msgstr[0] "%d gün saklanır"
+msgstr[1] "%d gün saklanır"
+
+msgid "Agents"
+msgstr "Ajanlar"
+
+msgid "Abilities for AI agents (read)"
+msgstr "Yapay zekâ ajanları için yetenekler (okuma)"
+
+msgid "Abilities for AI agents (start a scan, set aside)"
+msgstr "Yapay zekâ ajanları için yetenekler (tarama başlatma, kenara bırakma)"
+
+msgid "at most 20 changes an hour per person"
+msgstr "kişi başına saatte en fazla 20 değişiklik"
+
+msgid "Notification channels"
+msgstr "Bildirim kanalları"
+
+msgid "Audit"
+msgstr "Denetim"
+
+msgid "Site Health tests"
+msgstr "Site Sağlığı testleri"
+
+msgid "Checks turned off"
+msgstr "Kapatılan kontroller"
+
+msgid "Findings set aside"
+msgstr "Kenara bırakılan bulgular"
+
+msgid "Error:"
+msgstr "Hata:"
+
+msgid "Too many failed login attempts. Try again in %d minute(s)."
+msgstr "Çok fazla başarısız giriş denemesi. %d dakika sonra yeniden deneyin."
+
+msgid "That password appears in known data breaches. Choose another one."
+msgstr "Bu parola bilinen veri ihlallerinde yer alıyor. Başka bir parola seçin."
+
+msgid "The check did not run."
+msgstr "Kontrol çalışmadı."
+
+msgid "Set aside on purpose: %s"
+msgstr "Bilerek kenara bırakıldı: %s"
+
+msgid "Your role must set up two-factor authentication before %s."
+msgstr "Rolünüz, şu tarihten önce iki faktörlü kimlik doğrulamayı kurmanızı gerektiriyor: %s."
+
+msgid "Your role must set up two-factor authentication. Choose a method below to continue."
+msgstr "Rolünüz iki faktörlü kimlik doğrulamayı kurmanızı gerektiriyor. Devam etmek için aşağıdan bir yöntem seçin."
+
+msgid "Set it up"
+msgstr "Kur"

@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Application\Admin;
 
 use DateTimeImmutable;
+use Pollora\Hornet\Application\I18n\FindingTranslator;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Audit\SetAside;
+use Pollora\Hornet\Domain\I18n\Message;
+use Pollora\Hornet\Domain\I18n\Translator;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Domain\Scan\ScanState;
 
@@ -26,9 +29,9 @@ final class StatusView
      * @param  list<string>  $inFile  the checks that the settings file sets aside: they win, and the screen cannot change them
      * @return array<string, mixed>
      */
-    public static function build(Report $report, array $labels, ?ScanSnapshot $scan, ScanState $state, DateTimeImmutable $now, array $scanTasks, array $setAside = [], array $inFile = []): array
+    public static function build(Report $report, array $labels, ?ScanSnapshot $scan, ScanState $state, DateTimeImmutable $now, array $scanTasks, array $setAside = [], array $inFile = [], ?Translator $translator = null): array
     {
-        $findings = array_map(static fn (Finding $finding): array => self::finding($finding, $labels, $setAside, $inFile), $report->findings);
+        $findings = array_map(static fn (Finding $finding): array => self::finding($finding, $labels, $setAside, $inFile, $translator), $report->findings);
 
         // What asks for attention first: the open ones, the worst first; then what could not be verified; then the rest
         usort($findings, static fn (array $a, array $b): int => [self::order($a['status']), -self::rank($a['severity'])] <=> [self::order($b['status']), -self::rank($b['severity'])]);
@@ -46,7 +49,7 @@ final class StatusView
                 'running' => $state->isActive($now),
                 'status' => $state->isActive($now) ? $state->status : ScanState::IDLE,
                 'task' => $state->isActive($now) ? $state->task : null,
-                'tasks' => array_map(static fn (string $id): array => self::task($id, $labels, $scan), $scanTasks),
+                'tasks' => array_map(static fn (string $id): array => self::task($id, $labels, $scan, $translator), $scanTasks),
             ],
         ];
     }
@@ -57,7 +60,7 @@ final class StatusView
      * @param  list<string>  $inFile
      * @return array<string, mixed>
      */
-    private static function finding(Finding $finding, array $labels, array $setAside, array $inFile): array
+    private static function finding(Finding $finding, array $labels, array $setAside, array $inFile, ?Translator $translator): array
     {
         $status = self::status($finding);
         $locked = in_array($finding->checkId, $inFile, true);
@@ -65,13 +68,13 @@ final class StatusView
 
         return [
             'check' => $finding->checkId,
-            'label' => $labels[$finding->checkId] ?? $finding->checkId,
+            'label' => self::label($labels, $finding->checkId, $translator),
             'status' => $status,
             'outcome' => $finding->outcome->value,
             'severity' => $finding->severity->value,
-            'summary' => $finding->summary,
-            'details' => $finding->details,
-            'fix' => $finding->fix,
+            'summary' => FindingTranslator::summary($finding, $translator),
+            'details' => FindingTranslator::details($finding, $translator),
+            'fix' => FindingTranslator::fix($finding, $translator),
             'ignored' => $finding->ignoredReason,
             // Who set it aside, and where: the file wins over the screen
             'ignored_by' => $finding->isIgnored() ? ($locked ? 'file' : 'screen') : null,
@@ -88,16 +91,26 @@ final class StatusView
      * @param  array<string, string>  $labels
      * @return array{id: string, label: string, status: string, summary: string}
      */
-    private static function task(string $id, array $labels, ?ScanSnapshot $scan): array
+    private static function task(string $id, array $labels, ?ScanSnapshot $scan, ?Translator $translator): array
     {
         $finding = $scan?->finding($id);
 
         return [
             'id' => $id,
-            'label' => $labels[$id] ?? $id,
+            'label' => self::label($labels, $id, $translator),
             'status' => $finding instanceof Finding ? self::status($finding) : 'none',
-            'summary' => $finding instanceof Finding ? $finding->summary : 'Not scanned yet.',
+            'summary' => $finding instanceof Finding ? FindingTranslator::summary($finding, $translator) : Message::of('Not scanned yet.')->render($translator),
         ];
+    }
+
+    /**
+     * @param  array<string, string>  $labels
+     */
+    private static function label(array $labels, string $id, ?Translator $translator): string
+    {
+        $label = $labels[$id] ?? null;
+
+        return $label === null ? $id : Message::known($label)->render($translator);
     }
 
     private static function status(Finding $finding): string

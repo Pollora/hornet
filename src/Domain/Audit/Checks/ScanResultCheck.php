@@ -10,6 +10,7 @@ use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 
 /**
@@ -43,19 +44,19 @@ final readonly class ScanResultCheck implements Check
         $snapshot = $environment->lastScan();
 
         if (! $snapshot instanceof ScanSnapshot) {
-            return Finding::unknown($this->id, 'The site was never scanned: run `wp hornet scan`.');
+            return Finding::unknown($this->id, Message::of('The site was never scanned: run `wp hornet scan`.'));
         }
 
         $finding = $snapshot->finding($this->id);
 
         if (! $finding instanceof Finding) {
-            return Finding::unknown($this->id, 'The last scan did not cover this: run `wp hornet scan`.');
+            return Finding::unknown($this->id, Message::of('The last scan did not cover this: run `wp hornet scan`.'));
         }
 
         $limit = $environment->now()->sub(new DateInterval('P'.self::STALE_AFTER_DAYS.'D'));
 
         if ($finding->outcome === Outcome::Pass && $snapshot->at < $limit) {
-            return Finding::fail($this->id, Severity::Low, sprintf('The last scan is more than %d days old, so it says little about the files today.', self::STALE_AFTER_DAYS), ['Last scan: '.$snapshot->at->format('Y-m-d H:i').' UTC'], 'Run `wp hornet scan`.');
+            return Finding::fail($this->id, Severity::Low, Message::plural('The last scan is more than %d day old, so it says little about the files today.', 'The last scan is more than %d days old, so it says little about the files today.', self::STALE_AFTER_DAYS, self::STALE_AFTER_DAYS), [Message::of('Last scan: %s UTC', $snapshot->at->format('Y-m-d H:i'))], Message::of('Run `wp hornet scan`.'));
         }
 
         return $finding;

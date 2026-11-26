@@ -365,3 +365,1015 @@ msgstr "Befehlszeile"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "Geplante Aufgabe"
+
+#: src/Application/Admin/StatusView.php:102
+msgid "Not scanned yet."
+msgstr "Noch nicht gescannt."
+
+#: src/Application/Auditor.php:77
+msgid "The check could not run: %s"
+msgstr "Die Prüfung konnte nicht ausgeführt werden: %s"
+
+#: src/Application/DefaultChecks.php:56
+msgid "WordPress core files"
+msgstr "WordPress-Core-Dateien"
+
+#: src/Application/DefaultChecks.php:57
+msgid "Plugin files"
+msgstr "Plugin-Dateien"
+
+#: src/Application/DefaultChecks.php:58
+msgid "Theme files"
+msgstr "Theme-Dateien"
+
+#: src/Application/DefaultChecks.php:59
+msgid "Suspicious files"
+msgstr "Verdächtige Dateien"
+
+#: src/Application/DefaultChecks.php:60
+msgid "Files given away by the site"
+msgstr "Von der Website preisgegebene Dateien"
+
+#: src/Application/DefaultChecks.php:62
+msgid "Known vulnerabilities"
+msgstr "Bekannte Sicherheitslücken"
+
+#: src/Application/Scan/CoreIntegrityTask.php:53
+msgid "WordPress.org did not answer, so the core files were not compared: %s"
+msgstr "WordPress.org hat nicht geantwortet, daher wurden die Core-Dateien nicht verglichen: %s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:57
+msgid "WordPress.org publishes no checksums for WordPress %s: a beta, a development build or an unreleased version cannot be verified."
+msgstr "WordPress.org veröffentlicht keine Prüfsummen für WordPress %s: Eine Beta, eine Entwicklungsversion oder eine unveröffentlichte Version kann nicht geprüft werden."
+
+#: src/Application/Scan/CoreIntegrityTask.php:65
+msgid "The core files cannot be listed from here (open_basedir or permissions)."
+msgstr "Die Core-Dateien können von hier aus nicht aufgelistet werden (open_basedir oder Berechtigungen)."
+
+#: src/Application/Scan/CoreIntegrityTask.php:83 src/Application/Scan/PluginIntegrityTask.php:155
+msgid "Changed"
+msgstr "Geändert"
+
+#: src/Application/Scan/CoreIntegrityTask.php:84
+msgid "Changed since first seen"
+msgstr "Seit der ersten Erfassung geändert"
+
+#: src/Application/Scan/CoreIntegrityTask.php:85 src/Application/Scan/PluginIntegrityTask.php:157
+msgid "Missing"
+msgstr "Fehlt"
+
+#: src/Application/Scan/CoreIntegrityTask.php:86
+msgid "Not part of WordPress"
+msgstr "Gehört nicht zu WordPress"
+
+#: src/Application/Scan/CoreIntegrityTask.php:87
+msgid "Could not be read"
+msgstr "Konnte nicht gelesen werden"
+
+#: src/Application/Scan/CoreIntegrityTask.php:93
+msgid "The %d core files match WordPress %s on WordPress.org."
+msgstr "Die %d Core-Dateien stimmen mit WordPress %s auf WordPress.org überein."
+
+#: src/Application/Scan/CoreIntegrityTask.php:93
+msgid "Allowed to differ, and unchanged since first seen: %s"
+msgstr "Dürfen abweichen und sind seit der ersten Erfassung unverändert: %s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:107
+msgid "%d core file differs from WordPress %s on WordPress.org."
+msgid_plural "%d core files differ from WordPress %s on WordPress.org."
+msgstr[0] "%d Core-Datei weicht von WordPress %s auf WordPress.org ab."
+msgstr[1] "%d Core-Dateien weichen von WordPress %s auf WordPress.org ab."
+
+#: src/Application/Scan/CoreIntegrityTask.php:109
+msgid "Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file."
+msgstr "Sehen Sie sich jede Datei an. Falls Sie sie nicht geändert haben, stellen Sie den Core nach einer Sicherung wieder her (`wp core download --force --skip-content`) und finden Sie heraus, wie sie geändert wurde. Wenn die Änderung von Ihnen stammt, tragen Sie sie in scanner.allow_modified ein. Hornet ändert niemals eine Datei."
+
+#: src/Application/Scan/CoreIntegrityTask.php:123
+msgid "%s: %s"
+msgstr "%s: %s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:126 src/Application/Scan/PluginIntegrityTask.php:254
+msgid "%s: and %d more"
+msgstr "%s: und %d weitere"
+
+#: src/Application/Scan/ExposedFilesTask.php:76
+msgid "Not asked (out of time): %d addresses."
+msgstr "Nicht abgefragt (Zeit abgelaufen): %d Adressen."
+
+#: src/Application/Scan/ExposedFilesTask.php:92
+msgid "/%s%s answers, and it is %s"
+msgstr "/%s%s antwortet, und es ist %s"
+
+#: src/Application/Scan/ExposedFilesTask.php:97
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): nothing was asked of it."
+msgstr "Die Website hat vom Server aus nicht auf ihre eigene Adresse geantwortet (DNS, eine Firewall, ein nicht vertrauenswürdiges Zertifikat): Es wurde nichts bei ihr abgefragt."
+
+#: src/Application/Scan/ExposedFilesTask.php:101
+msgid "%d of the %d addresses did not answer."
+msgstr "%d der %d Adressen haben nicht geantwortet."
+
+#: src/Application/Scan/ExposedFilesTask.php:130
+msgid "Not asked: the uploads folder cannot be written to, so whether it runs PHP could not be tried."
+msgstr "Nicht abgefragt: In den Upload-Ordner kann nicht geschrieben werden, daher konnte nicht ausprobiert werden, ob er PHP ausführt."
+
+#: src/Application/Scan/ExposedFilesTask.php:136
+msgid "Not asked: the server did not answer for the file put in the uploads."
+msgstr "Nicht abgefragt: Der Server hat für die in den Uploads abgelegte Datei nicht geantwortet."
+
+#: src/Application/Scan/ExposedFilesTask.php:142
+msgid "The server runs PHP that sits in the uploads folder: a file that is uploaded there is run"
+msgstr "Der Server führt PHP aus, das im Upload-Ordner liegt: Eine dort hochgeladene Datei wird ausgeführt"
+
+#: src/Application/Scan/ExposedFilesTask.php:158
+msgid "None of the %d addresses asked gives away a file it should not."
+msgstr "Keine der %d abgefragten Adressen gibt eine Datei preis, die sie nicht preisgeben sollte."
+
+#: src/Application/Scan/ExposedFilesTask.php:162
+msgid "[%s] %s"
+msgstr "[%s] %s"
+
+#: src/Application/Scan/ExposedFilesTask.php:167
+msgid "%d thing is given away by the site itself."
+msgid_plural "%d things are given away by the site itself."
+msgstr[0] "%d Element wird von der Website selbst preisgegeben."
+msgstr[1] "%d Elemente werden von der Website selbst preisgegeben."
+
+#: src/Application/Scan/ExposedFilesTask.php:169
+msgid "Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
+msgstr "Entfernen Sie die Datei aus dem Web-Stammverzeichnis oder sperren Sie sie im Webserver (Hornet kann dort nichts schreiben). Ein Passwort, ein Schlüssel oder ein Salt, das erreichbar war, muss geändert werden: Gehen Sie davon aus, dass es gelesen wurde."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:57
+msgid "%s %s (plugin)"
+msgstr "%s %s (Plugin)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:61
+msgid "%s %s (theme)"
+msgstr "%s %s (Theme)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:70
+msgid "%d more (out of time)"
+msgstr "%d weitere (Zeit abgelaufen)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:91
+msgid "The vulnerability feed did not answer: nothing was checked."
+msgstr "Der Sicherheitslücken-Feed hat nicht geantwortet: Es wurde nichts geprüft."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:95
+msgid "Not checked: %s"
+msgstr "Nicht geprüft: %s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:96
+msgid "From a copy of a few days ago, the feed being down: %s"
+msgstr "Aus einer einige Tage alten Kopie, da der Feed nicht erreichbar ist: %s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:109
+msgid "No known vulnerability in the %d versions that were asked about."
+msgstr "Keine bekannte Sicherheitslücke in den %d abgefragten Versionen."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:113
+msgid "[%s] %s: %s (%s)%s"
+msgstr "[%s] %s: %s (%s)%s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47
+msgid "and %d more"
+msgstr "und %d weitere"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:119
+msgid "%d known vulnerability in what the site runs."
+msgid_plural "%d known vulnerabilities in what the site runs."
+msgstr[0] "%d bekannte Sicherheitslücke in dem, was die Website ausführt."
+msgstr[1] "%d bekannte Sicherheitslücken in dem, was die Website ausführt."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:121
+msgid "Update what is listed to the version that fixes it. Where nothing fixes it yet, turn the plugin off or replace it: a vulnerability that is public is being tried on sites like yours. Hornet changes nothing."
+msgstr "Aktualisieren Sie das Aufgelistete auf die Version, die die Lücke behebt. Wo noch nichts sie behebt, deaktivieren Sie das Plugin oder ersetzen Sie es: Eine öffentliche Sicherheitslücke wird an Websites wie Ihrer ausprobiert. Hornet ändert nichts."
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:128
+msgid ", fixed in %s"
+msgstr ", behoben in %s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:129
+msgid ", not fixed"
+msgstr ", nicht behoben"
+
+#: src/Application/Scan/PluginIntegrityTask.php:65
+msgid "No plugin has a folder of its own."
+msgstr "Kein Plugin hat einen eigenen Ordner."
+
+#: src/Application/Scan/PluginIntegrityTask.php:65
+msgid "No theme has a folder of its own."
+msgstr "Kein Theme hat einen eigenen Ordner."
+
+#: src/Application/Scan/PluginIntegrityTask.php:80
+msgid "%s (out of time)"
+msgstr "%s (Zeit abgelaufen)"
+
+#: src/Application/Scan/PluginIntegrityTask.php:94
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+#: src/Application/Scan/PluginIntegrityTask.php:116
+msgid "WordPress.org did not answer"
+msgstr "WordPress.org hat nicht geantwortet"
+
+#: src/Application/Scan/PluginIntegrityTask.php:122 src/Application/Scan/PluginIntegrityTask.php:130 src/Application/Scan/PluginIntegrityTask.php:136
+msgid "folder cannot be read"
+msgstr "Ordner kann nicht gelesen werden"
+
+#: src/Application/Scan/PluginIntegrityTask.php:137
+msgid "too many files to keep a first look"
+msgstr "zu viele Dateien, um eine erste Erfassung zu speichern"
+
+#: src/Application/Scan/PluginIntegrityTask.php:156
+msgid "Script that does not belong"
+msgstr "Skript, das nicht dazugehört"
+
+#: src/Application/Scan/PluginIntegrityTask.php:168
+msgid "%d plugin has changed since it was published or first seen: %s."
+msgid_plural "%d plugins have changed since it was published or first seen: %s."
+msgstr[0] "%d Plugin hat sich seit der Veröffentlichung oder der ersten Erfassung geändert: %s."
+msgstr[1] "%d Plugins haben sich seit der Veröffentlichung oder der ersten Erfassung geändert: %s."
+
+#: src/Application/Scan/PluginIntegrityTask.php:169
+msgid "%d theme has changed since it was published or first seen: %s."
+msgid_plural "%d themes have changed since it was published or first seen: %s."
+msgstr[0] "%d Theme hat sich seit der Veröffentlichung oder der ersten Erfassung geändert: %s."
+msgstr[1] "%d Themes haben sich seit der Veröffentlichung oder der ersten Erfassung geändert: %s."
+
+#: src/Application/Scan/PluginIntegrityTask.php:172
+msgid "Look at each file. If you did not change it, reinstall the plugin from its source after a backup, and find how it was changed. Hornet never changes a file."
+msgstr "Sehen Sie sich jede Datei an. Falls Sie sie nicht geändert haben, installieren Sie das Plugin nach einer Sicherung neu aus seiner Quelle und finden Sie heraus, wie sie geändert wurde. Hornet ändert niemals eine Datei."
+
+#: src/Application/Scan/PluginIntegrityTask.php:173
+msgid "Look at each file. If you did not change it, reinstall the theme from its source after a backup, and find how it was changed. Hornet never changes a file."
+msgstr "Sehen Sie sich jede Datei an. Falls Sie sie nicht geändert haben, installieren Sie das Theme nach einer Sicherung neu aus seiner Quelle und finden Sie heraus, wie sie geändert wurde. Hornet ändert niemals eine Datei."
+
+#: src/Application/Scan/PluginIntegrityTask.php:179
+msgid "No plugin could be compared."
+msgstr "Es konnte kein Plugin verglichen werden."
+
+#: src/Application/Scan/PluginIntegrityTask.php:179
+msgid "No theme could be compared."
+msgstr "Es konnte kein Theme verglichen werden."
+
+#: src/Application/Scan/PluginIntegrityTask.php:194
+msgid "%d plugin(s) match WordPress.org, %d match what was first seen"
+msgstr "%d Plugin(s) stimmen mit WordPress.org überein, %d stimmen mit der ersten Erfassung überein"
+
+#: src/Application/Scan/PluginIntegrityTask.php:195
+msgid "%d theme(s) match what was first seen"
+msgstr "%d Theme(s) stimmen mit der ersten Erfassung überein"
+
+#: src/Application/Scan/PluginIntegrityTask.php:196
+msgid ", %d first seen now"
+msgstr ", %d jetzt erstmals erfasst"
+
+#: src/Application/Scan/PluginIntegrityTask.php:214
+msgid "First look kept for %d plugin(s) WordPress.org does not know, nothing to compare with yet: %s"
+msgstr "Erste Erfassung für %d Plugin(s) gespeichert, die WordPress.org nicht kennt, noch nichts zum Vergleichen: %s"
+
+#: src/Application/Scan/PluginIntegrityTask.php:215
+msgid "First look kept for %d theme(s) WordPress.org does not know, nothing to compare with yet: %s"
+msgstr "Erste Erfassung für %d Theme(s) gespeichert, die WordPress.org nicht kennt, noch nichts zum Vergleichen: %s"
+
+#: src/Application/Scan/PluginIntegrityTask.php:219
+msgid "Not checked:"
+msgstr "Nicht geprüft:"
+
+#: src/Application/Scan/PluginIntegrityTask.php:248
+msgid "%s: %s/%s"
+msgstr "%s: %s/%s"
+
+#: src/Application/Scan/Scanner.php:138
+msgid "Not verified again on %s UTC: %s"
+msgstr "Am %s UTC nicht erneut geprüft: %s"
+
+#: src/Application/Scan/Scanner.php:151
+msgid "The scan could not run: %s"
+msgstr "Der Scan konnte nicht ausgeführt werden: %s"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:67
+msgid "The content folder cannot be listed from here (open_basedir or permissions)."
+msgstr "Der Inhaltsordner kann von hier aus nicht aufgelistet werden (open_basedir oder Berechtigungen)."
+
+#: src/Application/Scan/SuspiciousFilesTask.php:121
+msgid "The walk of the content folder is not finished: %d files looked at in this run, it goes on from %s next time."
+msgstr "Der Durchlauf durch den Inhaltsordner ist nicht abgeschlossen: %d Dateien in diesem Lauf angesehen, beim nächsten Mal geht es ab %s weiter."
+
+#: src/Application/Scan/SuspiciousFilesTask.php:158
+msgid "Nothing suspicious in the %d files of the content folder that were looked at."
+msgstr "Nichts Verdächtiges in den %d angesehenen Dateien des Inhaltsordners."
+
+#: src/Application/Scan/SuspiciousFilesTask.php:164
+msgid "[%s] %s: "
+msgstr "[%s] %s: "
+
+#: src/Application/Scan/SuspiciousFilesTask.php:171
+msgid "and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all"
+msgstr "und %d weitere wurden in einem früheren Lauf gefunden und nicht gespeichert: Führen Sie `wp hornet scan` in der Befehlszeile aus, um alle aufzulisten"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:177
+msgid "%d file in the content folder would not be left unsaid."
+msgid_plural "%d files in the content folder would not be left unsaid."
+msgstr[0] "%d Datei im Inhaltsordner darf nicht unerwähnt bleiben."
+msgstr[1] "%d Dateien im Inhaltsordner dürfen nicht unerwähnt bleiben."
+
+#: src/Application/Scan/SuspiciousFilesTask.php:179
+msgid "Look at each file before anything else, and do not open it in a browser. A file you know and trust can be left alone with scanner.ignore_paths. If you do not know it, find how it came there (an old plugin, a form that accepts uploads) before you remove it. Hornet never changes a file."
+msgstr "Sehen Sie sich zuerst jede Datei an und öffnen Sie sie nicht in einem Browser. Eine Datei, die Sie kennen und der Sie vertrauen, kann mit scanner.ignore_paths in Ruhe gelassen werden. Wenn Sie sie nicht kennen, finden Sie heraus, wie sie dorthin gelangt ist (ein altes Plugin, ein Formular, das Uploads annimmt), bevor Sie sie entfernen. Hornet ändert niemals eine Datei."
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:25
+msgid "Default administrator name"
+msgstr "Standard-Administratorname"
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:31
+msgid "A user is named \"admin\"."
+msgstr "Ein Benutzer heißt „admin“."
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:31
+msgid "Create an administrator with another login, hand the content over to it, and delete \"admin\"."
+msgstr "Erstellen Sie einen Administrator mit einem anderen Benutzernamen, übertragen Sie ihm die Inhalte und löschen Sie „admin“."
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:34
+msgid "No user is named \"admin\"."
+msgstr "Kein Benutzer heißt „admin“."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:25
+msgid "wp-config.php permissions"
+msgstr "Berechtigungen von wp-config.php"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:33
+msgid "wp-config.php was not found or cannot be read from here (open_basedir, or the secrets are in the environment)."
+msgstr "wp-config.php wurde nicht gefunden oder kann von hier aus nicht gelesen werden (open_basedir, oder die Geheimnisse stehen in der Umgebung)."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:39
+msgid "The server does not tell the permissions of wp-config.php."
+msgstr "Der Server gibt die Berechtigungen von wp-config.php nicht an."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46
+msgid "wp-config.php can be written by any account on the server."
+msgstr "wp-config.php kann von jedem Konto auf dem Server beschrieben werden."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46 src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51 src/Domain/Audit/Checks/ConfigPermissionsCheck.php:54
+msgid "mode %s"
+msgstr "Modus %s"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46
+msgid "chmod 640 wp-config.php (or 400)."
+msgstr "chmod 640 wp-config.php (oder 400)."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51
+msgid "wp-config.php can be read by any account on the server."
+msgstr "wp-config.php kann von jedem Konto auf dem Server gelesen werden."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51
+msgid "chmod 640 wp-config.php (the WordPress hardening guide advises 400 or 440)."
+msgstr "chmod 640 wp-config.php (die WordPress-Anleitung zur Absicherung empfiehlt 400 oder 440)."
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:54
+msgid "wp-config.php is not readable by other accounts."
+msgstr "wp-config.php ist für andere Konten nicht lesbar."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:25
+msgid "Debug mode"
+msgstr "Debug-Modus"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:31
+msgid "Not a production site: debug mode is not judged."
+msgstr "Keine Produktiv-Website: Der Debug-Modus wird nicht bewertet."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "PHP errors are shown to visitors."
+msgstr "PHP-Fehler werden Besuchern angezeigt."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "WP_DEBUG is on and WP_DEBUG_DISPLAY is not false"
+msgstr "WP_DEBUG ist an und WP_DEBUG_DISPLAY ist nicht false"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "Set WP_DEBUG to false, or define('WP_DEBUG_DISPLAY', false)."
+msgstr "Setzen Sie WP_DEBUG auf false oder fügen Sie define('WP_DEBUG_DISPLAY', false) hinzu."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:44
+msgid "WP_DEBUG is on in production."
+msgstr "WP_DEBUG ist in der Produktivumgebung an."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:44
+msgid "Define('WP_DEBUG', false) in production."
+msgstr "Define('WP_DEBUG', false) in der Produktivumgebung."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:48
+msgid "WP_DEBUG_LOG writes wp-content/debug.log, a public URL unless the server blocks it."
+msgstr "WP_DEBUG_LOG schreibt wp-content/debug.log, eine öffentliche URL, sofern der Server sie nicht sperrt."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:48
+msgid "Set WP_DEBUG_LOG to a path outside the web root, or to false."
+msgstr "Setzen Sie WP_DEBUG_LOG auf einen Pfad außerhalb des Web-Stammverzeichnisses oder auf false."
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:51
+msgid "Debug mode is off."
+msgstr "Der Debug-Modus ist aus."
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:26
+msgid "Theme and plugin editor"
+msgstr "Theme- und Plugin-Editor"
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:32
+msgid "The file editor is disabled."
+msgstr "Der Datei-Editor ist deaktiviert."
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:35
+msgid "pollora/headless is installed: it defines DISALLOW_FILE_EDIT only when its REST security module runs."
+msgstr "pollora/headless ist installiert: Es definiert DISALLOW_FILE_EDIT nur, wenn sein REST-Sicherheitsmodul läuft."
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:37
+msgid "An administrator can edit PHP files from the dashboard."
+msgstr "Ein Administrator kann PHP-Dateien vom Dashboard aus bearbeiten."
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:37
+msgid "Turn on Hornet's `hardening.file_editor`, or define('DISALLOW_FILE_EDIT', true) in wp-config.php."
+msgstr "Aktivieren Sie `hardening.file_editor` von Hornet oder fügen Sie define('DISALLOW_FILE_EDIT', true) in wp-config.php hinzu."
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:27
+msgid "Installing code from the dashboard"
+msgstr "Installation von Code vom Dashboard aus"
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:33
+msgid "Plugins, themes and updates cannot be installed from the dashboard."
+msgstr "Plugins, Themes und Aktualisierungen können nicht vom Dashboard aus installiert werden."
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31
+msgid "Not a production site: not judged."
+msgstr "Keine Produktiv-Website: nicht bewertet."
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:40
+msgid "Plugins and themes can be installed from the dashboard."
+msgstr "Plugins und Themes können vom Dashboard aus installiert werden."
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:40
+msgid "If the code is deployed by Composer or a pipeline, define('DISALLOW_FILE_MODS', true). It also stops WordPress's own updates."
+msgstr "Wenn der Code per Composer oder Pipeline bereitgestellt wird, fügen Sie define('DISALLOW_FILE_MODS', true) hinzu. Das stoppt auch die eigenen Aktualisierungen von WordPress."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:25
+msgid "HTTPS"
+msgstr "HTTPS"
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:35
+msgid "The site address does not use HTTPS."
+msgstr "Die Website-Adresse verwendet kein HTTPS."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:35
+msgid "Serve the site over HTTPS and set the WordPress and site addresses to https://."
+msgstr "Liefern Sie die Website über HTTPS aus und stellen Sie die WordPress- und Website-Adresse auf https:// um."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:40
+msgid "The login and the dashboard are not forced onto HTTPS."
+msgstr "Anmeldung und Dashboard werden nicht über HTTPS erzwungen."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:40
+msgid "Define('FORCE_SSL_ADMIN', true) in wp-config.php."
+msgstr "Define('FORCE_SSL_ADMIN', true) in wp-config.php."
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:43
+msgid "The site uses HTTPS, and the dashboard is forced onto it."
+msgstr "Die Website verwendet HTTPS, und das Dashboard wird darüber erzwungen."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:27
+msgid "Login protection"
+msgstr "Anmeldeschutz"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:33
+msgid "pollora/portcullis is installed: it guards the login, locks out brute force and stops account enumeration."
+msgstr "pollora/portcullis ist installiert: Es schützt die Anmeldung, sperrt Brute-Force-Angriffe aus und verhindert das Auslesen von Konten."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "The login throttle is on but cannot tell visitors apart: every request seems to come from one private address, the proxy or load balancer in front of the site, so it refuses to lock anybody."
+msgstr "Die Anmeldedrosselung ist an, kann aber Besucher nicht unterscheiden: Jede Anfrage scheint von derselben privaten Adresse zu kommen, dem Proxy oder Load Balancer vor der Website, daher sperrt sie niemanden."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "Locking that address would lock every visitor out at once."
+msgstr "Diese Adresse zu sperren, würde alle Besucher auf einmal aussperren."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "List the proxy in `network.trusted_proxies` (and set `network.forwarded_header` if it is not X-Forwarded-For)."
+msgstr "Tragen Sie den Proxy in `network.trusted_proxies` ein (und setzen Sie `network.forwarded_header`, falls es nicht X-Forwarded-For ist)."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "The login throttle sees a forwarding header from an address that is not a trusted proxy. If the site is behind a CDN or a proxy, visitors share its address and can lock each other out."
+msgstr "Die Anmeldedrosselung sieht einen Weiterleitungs-Header von einer Adresse, die kein vertrauenswürdiger Proxy ist. Wenn die Website hinter einem CDN oder Proxy liegt, teilen sich die Besucher dessen Adresse und können sich gegenseitig aussperren."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "Requests are counted under the address that opened the connection, which a header cannot change."
+msgstr "Anfragen werden unter der Adresse gezählt, die die Verbindung aufgebaut hat und die ein Header nicht ändern kann."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "List the CDN or proxy in `network.trusted_proxies`."
+msgstr "Tragen Sie das CDN oder den Proxy in `network.trusted_proxies` ein."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:40
+msgid "Hornet's login throttle is on: an address that fails too often is locked out for a while."
+msgstr "Die Anmeldedrosselung von Hornet ist an: Eine Adresse, die zu oft scheitert, wird eine Zeit lang ausgesperrt."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "No login protection from Pollora was found."
+msgstr "Es wurde kein Anmeldeschutz von Pollora gefunden."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "Another plugin or the server may protect the login: Hornet only knows pollora/portcullis and its own throttle."
+msgstr "Ein anderes Plugin oder der Server schützt möglicherweise die Anmeldung: Hornet kennt nur pollora/portcullis und seine eigene Drosselung."
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "composer require pollora/portcullis, or turn on Hornet's `login.throttle`."
+msgstr "composer require pollora/portcullis oder aktivieren Sie `login.throttle` von Hornet."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:39
+msgid "PHP version"
+msgstr "PHP-Version"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:48
+msgid "PHP %s no longer gets security fixes."
+msgstr "PHP %s erhält keine Sicherheitskorrekturen mehr."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:48
+msgid "Move the site to PHP 8.3 or later."
+msgstr "Stellen Sie die Website auf PHP 8.3 oder neuer um."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:54
+msgid "PHP %s is newer than the support table of this version of Hornet."
+msgstr "PHP %s ist neuer als die Support-Tabelle dieser Hornet-Version."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:61
+msgid "PHP %s no longer gets security fixes (since %s)."
+msgstr "PHP %s erhält keine Sicherheitskorrekturen mehr (seit %s)."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:61
+msgid "Move the site to a supported PHP branch."
+msgstr "Stellen Sie die Website auf einen unterstützten PHP-Zweig um."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:65 src/Domain/Audit/Checks/PhpVersionCheck.php:68
+msgid "PHP %s gets security fixes until %s."
+msgstr "PHP %s erhält bis %s Sicherheitskorrekturen."
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:65
+msgid "Plan the move to a newer PHP branch."
+msgstr "Planen Sie den Umstieg auf einen neueren PHP-Zweig."
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:34
+msgid "Authentication keys and salts"
+msgstr "Authentifizierungsschlüssel und Salts"
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:50
+msgid "The eight keys and salts are set."
+msgstr "Die acht Schlüssel und Salts sind gesetzt."
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:56
+msgid "%d of the 8 keys and salts is missing, shorter than 32 characters, or the sample value."
+msgid_plural "%d of the 8 keys and salts are missing, shorter than 32 characters, or the sample value."
+msgstr[0] "%d der 8 Schlüssel und Salts fehlt, ist kürzer als 32 Zeichen oder ist der Beispielwert."
+msgstr[1] "%d der 8 Schlüssel und Salts fehlen, sind kürzer als 32 Zeichen oder sind der Beispielwert."
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:58
+msgid "Generate new ones at https://api.wordpress.org/secret-key/1.1/salt/ and replace them in wp-config.php (or the Bedrock .env). This logs everyone out."
+msgstr "Erzeugen Sie neue unter https://api.wordpress.org/secret-key/1.1/salt/ und ersetzen Sie sie in wp-config.php (oder der Bedrock-.env). Dadurch werden alle abgemeldet."
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:47
+msgid "The site was never scanned: run `wp hornet scan`."
+msgstr "Die Website wurde noch nie gescannt: Führen Sie `wp hornet scan` aus."
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:53
+msgid "The last scan did not cover this: run `wp hornet scan`."
+msgstr "Der letzte Scan hat dies nicht abgedeckt: Führen Sie `wp hornet scan` aus."
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "The last scan is more than %d day old, so it says little about the files today."
+msgid_plural "The last scan is more than %d days old, so it says little about the files today."
+msgstr[0] "Der letzte Scan ist mehr als %d Tag alt und sagt daher wenig über die heutigen Dateien aus."
+msgstr[1] "Der letzte Scan ist mehr als %d Tage alt und sagt daher wenig über die heutigen Dateien aus."
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "Last scan: %s UTC"
+msgstr "Letzter Scan: %s UTC"
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "Run `wp hornet scan`."
+msgstr "Führen Sie `wp hornet scan` aus."
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:26
+msgid "Two-factor authentication"
+msgstr "Zwei-Faktor-Authentifizierung"
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:32
+msgid "The Two-Factor plugin is active."
+msgstr "Das Plugin Two-Factor ist aktiv."
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:35
+msgid "The Two-Factor plugin is not active."
+msgstr "Das Plugin Two-Factor ist nicht aktiv."
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:35
+msgid "Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles."
+msgstr "Installieren Sie das Plugin Two-Factor. Eine spätere Version von Hornet wird es für ausgewählte Rollen verlangen."
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:29
+msgid "Two-factor authentication of administrators"
+msgstr "Zwei-Faktor-Authentifizierung der Administratoren"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:37
+msgid "The Two-Factor plugin is not active: whether administrators use a second factor cannot be told."
+msgstr "Das Plugin Two-Factor ist nicht aktiv: Ob Administratoren einen zweiten Faktor verwenden, lässt sich nicht feststellen."
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:41
+msgid "Every administrator has set up two-factor authentication."
+msgstr "Alle Administratoren haben die Zwei-Faktor-Authentifizierung eingerichtet."
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
+msgid "user #%d"
+msgstr "Benutzer Nr. %d"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:53
+msgid "%d administrator has not set up two-factor authentication."
+msgid_plural "%d administrators have not set up two-factor authentication."
+msgstr[0] "%d Administrator hat die Zwei-Faktor-Authentifizierung nicht eingerichtet."
+msgstr[1] "%d Administratoren haben die Zwei-Faktor-Authentifizierung nicht eingerichtet."
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:55
+msgid "Ask them to set it up in their profile, or turn on Hornet's `two_factor.require_roles` to send them there."
+msgstr "Bitten Sie sie, sie in ihrem Profil einzurichten, oder aktivieren Sie `two_factor.require_roles` von Hornet, um sie dorthin zu schicken."
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:25
+msgid "User list in the REST API"
+msgstr "Benutzerliste in der REST-API"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:31
+msgid "Whether the REST API lists users to visitors could not be found out from here."
+msgstr "Ob die REST-API Besuchern die Benutzer auflistet, konnte von hier aus nicht festgestellt werden."
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "The REST API lists the users of the site to visitors."
+msgstr "Die REST-API listet Besuchern die Benutzer der Website auf."
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "/wp/v2/users answers an anonymous request"
+msgstr "/wp/v2/users beantwortet eine anonyme Anfrage"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "Turn on Hornet's `hardening.user_enumeration`, or use pollora/headless."
+msgstr "Aktivieren Sie `hardening.user_enumeration` von Hornet oder verwenden Sie pollora/headless."
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:33
+msgid "The REST API does not list users to visitors."
+msgstr "Die REST-API listet Besuchern keine Benutzer auf."
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:25
+msgid "WordPress version"
+msgstr "WordPress-Version"
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:33
+msgid "WordPress %s: no update was found at the last check."
+msgstr "WordPress %s: Bei der letzten Prüfung wurde keine Aktualisierung gefunden."
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:36
+msgid "WordPress %s is installed, %s is available."
+msgstr "WordPress %s ist installiert, %s ist verfügbar."
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:36
+msgid "Update WordPress core (a Composer project: composer update johnpbloch/wordpress-core)."
+msgstr "Aktualisieren Sie den WordPress-Core (bei einem Composer-Projekt: composer update johnpbloch/wordpress-core)."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:36
+msgid "XML-RPC is closed: no method answers."
+msgstr "XML-RPC ist geschlossen: Keine Methode antwortet."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:37
+msgid "XML-RPC refuses logins, but pingbacks and other methods that need none still answer."
+msgstr "XML-RPC verweigert Anmeldungen, aber Pingbacks und andere Methoden, die keine benötigen, antworten weiterhin."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:37
+msgid "Close it altogether with Hornet's `hardening.xmlrpc`, or return an empty list from the `xmlrpc_methods` filter."
+msgstr "Schließen Sie es ganz mit `hardening.xmlrpc` von Hornet oder geben Sie über den Filter `xmlrpc_methods` eine leere Liste zurück."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:38
+msgid "XML-RPC is open."
+msgstr "XML-RPC ist offen."
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:38
+msgid "Close it unless Jetpack or the mobile app needs it: Hornet's `hardening.xmlrpc` does it, or use pollora/headless."
+msgstr "Schließen Sie es, sofern Jetpack oder die mobile App es nicht benötigen: `hardening.xmlrpc` von Hornet erledigt das, oder verwenden Sie pollora/headless."
+
+#: src/Domain/Exceptions/SetAsideException.php:30
+msgid "There is no check \"%s\"."
+msgstr "Es gibt keine Prüfung „%s“."
+
+#: src/Domain/Exceptions/SetAsideException.php:35
+msgid "Say why, in at least %d characters: a finding that is set aside without a reason is a finding that is forgotten."
+msgstr "Geben Sie einen Grund mit mindestens %d Zeichen an: Ein Befund, der ohne Grund zurückgestellt wird, ist ein vergessener Befund."
+
+#: src/Domain/Exceptions/SetAsideException.php:40
+msgid "\"%s\" is set aside in the settings file, which wins over the screen: change it there."
+msgstr "„%s“ ist in der Einstellungsdatei zurückgestellt, die Vorrang vor dem Bildschirm hat: Ändern Sie es dort."
+
+#: src/Domain/Exceptions/SetAsideException.php:45
+msgid "\"%s\" has nothing open to set aside."
+msgstr "Bei „%s“ ist nichts offen, das zurückgestellt werden könnte."
+
+#: src/Domain/Scan/ExposureCatalog.php:30
+msgid "environment variables (passwords, keys)"
+msgstr "Umgebungsvariablen (Passwörter, Schlüssel)"
+
+#: src/Domain/Scan/ExposureCatalog.php:33 src/Domain/Scan/ExposureCatalog.php:34
+msgid "the Git repository (the source of the site)"
+msgstr "das Git-Repository (der Quellcode der Website)"
+
+#: src/Domain/Scan/ExposureCatalog.php:37
+msgid "a copy of wp-config.php (database password, keys)"
+msgstr "eine Kopie von wp-config.php (Datenbankpasswort, Schlüssel)"
+
+#: src/Domain/Scan/ExposureCatalog.php:41
+msgid "a copy of the database"
+msgstr "eine Kopie der Datenbank"
+
+#: src/Domain/Scan/ExposureCatalog.php:45
+msgid "an archive of the site"
+msgstr "ein Archiv der Website"
+
+#: src/Domain/Scan/ExposureCatalog.php:48
+msgid "the password file of the web server"
+msgstr "die Passwortdatei des Webservers"
+
+#: src/Domain/Scan/ExposureCatalog.php:49 src/Domain/Scan/ExposureCatalog.php:50
+msgid "phpinfo() (the PHP and server configuration)"
+msgstr "phpinfo() (die PHP- und Serverkonfiguration)"
+
+#: src/Domain/Scan/ExposureCatalog.php:51
+msgid "a PHP error log (paths, queries)"
+msgstr "ein PHP-Fehlerprotokoll (Pfade, Abfragen)"
+
+#: src/Domain/Scan/ExposureCatalog.php:52
+msgid "composer.json (the list of what the site runs)"
+msgstr "composer.json (die Liste dessen, was die Website ausführt)"
+
+#: src/Domain/Scan/ExposureCatalog.php:54
+msgid "the WordPress debug log (paths, queries, sometimes data)"
+msgstr "das WordPress-Debug-Protokoll (Pfade, Abfragen, manchmal Daten)"
+
+#: src/Domain/Scan/ExposureCatalog.php:55
+msgid "a listing of the uploads folder"
+msgstr "eine Auflistung des Upload-Ordners"
+
+#: src/Domain/Scan/ExposureCatalog.php:56
+msgid "a listing of the plugins folder"
+msgstr "eine Auflistung des Plugin-Ordners"
+
+#: src/Domain/Scan/FileInspector.php:49
+msgid "a server setting that runs PHP code or makes a file run as PHP"
+msgstr "eine Servereinstellung, die PHP-Code ausführt oder eine Datei als PHP ausführen lässt"
+
+#: src/Domain/Scan/FileInspector.php:49
+msgid "a setting that runs a PHP file before or after every script"
+msgstr "eine Einstellung, die vor oder nach jedem Skript eine PHP-Datei ausführt"
+
+#: src/Domain/Scan/FileInspector.php:55
+msgid "a name with a PHP extension in the middle (shell.php.jpg): some servers run it"
+msgstr "ein Name mit einer PHP-Endung in der Mitte (shell.php.jpg): Manche Server führen ihn aus"
+
+#: src/Domain/Scan/FileInspector.php:62
+msgid "a PHP file in the uploads folder, where nothing should run"
+msgstr "eine PHP-Datei im Upload-Ordner, wo nichts ausgeführt werden sollte"
+
+#: src/Domain/Scan/FileInspector.php:66
+msgid "a hidden PHP file"
+msgstr "eine versteckte PHP-Datei"
+
+#: src/Domain/Scan/ScriptRules.php:102
+msgid "calls a function whose name is request input"
+msgstr "ruft eine Funktion auf, deren Name aus der Anfrage stammt"
+
+#: src/Domain/Scan/ScriptRules.php:106
+msgid "hands request input to a callback that runs it"
+msgstr "übergibt Eingaben aus der Anfrage an einen Callback, der sie ausführt"
+
+#: src/Domain/Scan/ScriptRules.php:110
+msgid "includes a file named by request input"
+msgstr "bindet eine Datei ein, die durch die Anfrage benannt wird"
+
+#: src/Domain/Scan/ScriptRules.php:114
+msgid "eval()"
+msgstr "eval()"
+
+#: src/Domain/Scan/ScriptRules.php:118 src/Domain/Scan/Suspicion.php:81
+msgid "runs a command (%s)"
+msgstr "führt einen Befehl aus (%s)"
+
+#: src/Domain/Scan/ScriptRules.php:122
+msgid "runs a command (backticks)"
+msgstr "führt einen Befehl aus (Backticks)"
+
+#: src/Domain/Scan/ScriptRules.php:126
+msgid "preg_replace with the /e modifier"
+msgstr "preg_replace mit dem Modifikator /e"
+
+#: src/Domain/Scan/ScriptRules.php:130 src/Domain/Scan/Suspicion.php:85
+msgid "decodes hidden data (%s)"
+msgstr "dekodiert versteckte Daten (%s)"
+
+#: src/Domain/Scan/ScriptRules.php:134
+msgid "a very long string with no space in it"
+msgstr "eine sehr lange Zeichenkette ohne Leerzeichen"
+
+#: src/Domain/Scan/ScriptRules.php:138
+msgid "variable variables"
+msgstr "variable Variablen"
+
+#: src/Domain/Scan/ScriptRules.php:142
+msgid "calls a function named by a variable"
+msgstr "ruft eine durch eine Variable benannte Funktion auf"
+
+#: src/Domain/Scan/ScriptRules.php:147
+msgid "passes request input to it"
+msgstr "übergibt Eingaben aus der Anfrage daran"
+
+#: src/Domain/Scan/Suspicion.php:56
+msgid "reads like a web shell (score %d):"
+msgstr "liest sich wie eine Webshell (Punktzahl %d):"
+
+#: src/Infrastructure/WordPress/Admin/AdminBackend.php:114
+msgid "A scan is already in progress."
+msgstr "Es läuft bereits ein Scan."
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:75
+msgid "You are not allowed to see this page."
+msgstr "Sie sind nicht berechtigt, diese Seite anzuzeigen."
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:82
+msgid "This screen needs scripts that this version of WordPress does not have (%s). Use `wp hornet status` and `wp hornet scan`: they give the same information."
+msgstr "Dieser Bildschirm benötigt Skripte, die diese WordPress-Version nicht hat (%s). Verwenden Sie `wp hornet status` und `wp hornet scan`: Sie liefern dieselben Informationen."
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:86
+msgid "This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`."
+msgstr "Dieser Bildschirm benötigt JavaScript. Dieselben Informationen liefern `wp hornet status` und `wp hornet scan`."
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:91 src/Infrastructure/WordPress/SiteHealthModule.php:99 src/Infrastructure/WordPress/SiteHealthModule.php:100 src/Infrastructure/WordPress/SiteHealthModule.php:101
+msgid "Security"
+msgstr "Sicherheit"
+
+#: src/Infrastructure/WordPress/Admin/AdminRestModule.php:171
+msgid "There is no such channel."
+msgstr "Diesen Kanal gibt es nicht."
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:32 src/Infrastructure/WordPress/Admin/SettingsView.php:33 src/Infrastructure/WordPress/Admin/SettingsView.php:34 src/Infrastructure/WordPress/Admin/SettingsView.php:35
+msgid "Hardening"
+msgstr "Absicherung"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:32
+msgid "Close XML-RPC"
+msgstr "XML-RPC schließen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:33
+msgid "Hide the list of users from visitors"
+msgstr "Benutzerliste vor Besuchern verbergen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:34
+msgid "Hide the WordPress version"
+msgstr "WordPress-Version verbergen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:35
+msgid "Refuse the file editor"
+msgstr "Datei-Editor verweigern"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:38 src/Infrastructure/WordPress/Admin/SettingsView.php:39 src/Infrastructure/WordPress/Admin/SettingsView.php:40 src/Infrastructure/WordPress/Admin/SettingsView.php:41 src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "Headers"
+msgstr "Header"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "enforced"
+msgstr "erzwungen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "report only"
+msgstr "nur Berichte"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44 src/Infrastructure/WordPress/Admin/SettingsView.php:45 src/Infrastructure/WordPress/Admin/SettingsView.php:46 src/Infrastructure/WordPress/Admin/SettingsView.php:47
+msgid "Accounts"
+msgstr "Konten"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44
+msgid "Login throttle"
+msgstr "Anmeldedrosselung"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44
+msgid "%1$d failures in %2$d seconds"
+msgstr "%1$d Fehlversuche in %2$d Sekunden"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:45
+msgid "Refuse a password found in a breach"
+msgstr "Passwort aus einem Datenleck ablehnen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:46
+msgid "Shorter login sessions"
+msgstr "Kürzere Anmeldesitzungen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:47
+msgid "Two-factor required"
+msgstr "Zwei-Faktor-Authentifizierung erforderlich"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:49 src/Infrastructure/WordPress/Admin/SettingsView.php:50 src/Infrastructure/WordPress/Admin/SettingsView.php:51 src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "Scanner"
+msgstr "Scanner"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:49
+msgid "Scheduled scan"
+msgstr "Geplanter Scan"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:50
+msgid "Ask the site what it gives away"
+msgstr "Die Website fragen, was sie preisgibt"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:51
+msgid "Try to run PHP in the uploads"
+msgstr "Versuchen, PHP in den Uploads auszuführen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "Look up known vulnerabilities"
+msgstr "Bekannte Sicherheitslücken nachschlagen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "name and version of each plugin and theme go to www.wpvulnerability.net"
+msgstr "Name und Version jedes Plugins und Themes werden an www.wpvulnerability.net gesendet"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
+msgid "Security journal"
+msgstr "Sicherheitsprotokoll"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
+msgid "kept %d day"
+msgid_plural "kept %d days"
+msgstr[0] "%d Tag aufbewahrt"
+msgstr[1] "%d Tage aufbewahrt"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:55 src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Agents"
+msgstr "Agenten"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:55
+msgid "Abilities for AI agents (read)"
+msgstr "Fähigkeiten für KI-Agenten (lesen)"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Abilities for AI agents (start a scan, set aside)"
+msgstr "Fähigkeiten für KI-Agenten (Scan starten, zurückstellen)"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "at most 20 changes an hour per person"
+msgstr "höchstens 20 Änderungen pro Stunde und Person"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:57
+msgid "Notification channels"
+msgstr "Benachrichtigungskanäle"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58 src/Infrastructure/WordPress/Admin/SettingsView.php:59 src/Infrastructure/WordPress/Admin/SettingsView.php:60
+msgid "Audit"
+msgstr "Prüfung"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
+msgid "Site Health tests"
+msgstr "Website-Zustandstests"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
+msgid "Checks turned off"
+msgstr "Deaktivierte Prüfungen"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:60
+msgid "Findings set aside"
+msgstr "Zurückgestellte Befunde"
+
+#: src/Infrastructure/WordPress/LoginThrottleModule.php:77 src/Infrastructure/WordPress/PasswordModule.php:53
+msgid "Error:"
+msgstr "Fehler:"
+
+#: src/Infrastructure/WordPress/LoginThrottleModule.php:78
+msgid "Too many failed login attempts. Try again in %d minute(s)."
+msgstr "Zu viele fehlgeschlagene Anmeldeversuche. Versuchen Sie es in %d Minute(n) erneut."
+
+#: src/Infrastructure/WordPress/PasswordModule.php:53
+msgid "That password appears in known data breaches. Choose another one."
+msgstr "Dieses Passwort taucht in bekannten Datenlecks auf. Wählen Sie ein anderes."
+
+#: src/Infrastructure/WordPress/SiteHealthModule.php:75
+msgid "The check did not run."
+msgstr "Die Prüfung wurde nicht ausgeführt."
+
+#: src/Infrastructure/WordPress/SiteHealthModule.php:94
+msgid "Set aside on purpose: %s"
+msgstr "Absichtlich zurückgestellt: %s"
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:63
+msgid "Your role must set up two-factor authentication before %s."
+msgstr "Ihre Rolle muss die Zwei-Faktor-Authentifizierung vor dem %s einrichten."
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:64
+msgid "Your role must set up two-factor authentication. Choose a method below to continue."
+msgstr "Ihre Rolle muss die Zwei-Faktor-Authentifizierung einrichten. Wählen Sie unten eine Methode, um fortzufahren."
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:70
+msgid "Set it up"
+msgstr "Einrichten"

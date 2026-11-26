@@ -359,3 +359,1005 @@ msgstr "命令行"
 #: admin/src/util.js:80
 msgid "Scheduled task"
 msgstr "计划任务"
+
+#: src/Application/Admin/StatusView.php:102
+msgid "Not scanned yet."
+msgstr "尚未扫描。"
+
+#: src/Application/Auditor.php:77
+msgid "The check could not run: %s"
+msgstr "无法运行检查项:%s"
+
+#: src/Application/DefaultChecks.php:56
+msgid "WordPress core files"
+msgstr "WordPress 核心文件"
+
+#: src/Application/DefaultChecks.php:57
+msgid "Plugin files"
+msgstr "插件文件"
+
+#: src/Application/DefaultChecks.php:58
+msgid "Theme files"
+msgstr "主题文件"
+
+#: src/Application/DefaultChecks.php:59
+msgid "Suspicious files"
+msgstr "可疑文件"
+
+#: src/Application/DefaultChecks.php:60
+msgid "Files given away by the site"
+msgstr "站点对外暴露的文件"
+
+#: src/Application/DefaultChecks.php:62
+msgid "Known vulnerabilities"
+msgstr "已知漏洞"
+
+#: src/Application/Scan/CoreIntegrityTask.php:53
+msgid "WordPress.org did not answer, so the core files were not compared: %s"
+msgstr "WordPress.org 未响应,因此未比对核心文件:%s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:57
+msgid "WordPress.org publishes no checksums for WordPress %s: a beta, a development build or an unreleased version cannot be verified."
+msgstr "WordPress.org 未发布 WordPress %s 的校验和:测试版、开发版或未发布的版本无法验证。"
+
+#: src/Application/Scan/CoreIntegrityTask.php:65
+msgid "The core files cannot be listed from here (open_basedir or permissions)."
+msgstr "无法从此处列出核心文件(open_basedir 或权限问题)。"
+
+#: src/Application/Scan/CoreIntegrityTask.php:83 src/Application/Scan/PluginIntegrityTask.php:155
+msgid "Changed"
+msgstr "已更改"
+
+#: src/Application/Scan/CoreIntegrityTask.php:84
+msgid "Changed since first seen"
+msgstr "自首次记录后已更改"
+
+#: src/Application/Scan/CoreIntegrityTask.php:85 src/Application/Scan/PluginIntegrityTask.php:157
+msgid "Missing"
+msgstr "缺失"
+
+#: src/Application/Scan/CoreIntegrityTask.php:86
+msgid "Not part of WordPress"
+msgstr "不属于 WordPress"
+
+#: src/Application/Scan/CoreIntegrityTask.php:87
+msgid "Could not be read"
+msgstr "无法读取"
+
+#: src/Application/Scan/CoreIntegrityTask.php:93
+msgid "The %d core files match WordPress %s on WordPress.org."
+msgstr "%1$d 个核心文件与 WordPress.org 上的 WordPress %2$s 一致。"
+
+#: src/Application/Scan/CoreIntegrityTask.php:93
+msgid "Allowed to differ, and unchanged since first seen: %s"
+msgstr "允许存在差异,且自首次记录后未更改:%s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:107
+msgid "%d core file differs from WordPress %s on WordPress.org."
+msgid_plural "%d core files differ from WordPress %s on WordPress.org."
+msgstr[0] "%1$d 个核心文件与 WordPress.org 上的 WordPress %2$s 不一致。"
+
+#: src/Application/Scan/CoreIntegrityTask.php:109
+msgid "Look at each file. If you did not change it, restore the core after a backup (`wp core download --force --skip-content`) and find how it was changed. If the change is yours, list it in scanner.allow_modified. Hornet never changes a file."
+msgstr "请检查每个文件。如果不是您修改的,请先备份,再还原核心文件(`wp core download --force --skip-content`),并查明它是如何被修改的。如果是您自己的修改,请将其列入 scanner.allow_modified。Hornet 从不更改任何文件。"
+
+#: src/Application/Scan/CoreIntegrityTask.php:123
+msgid "%s: %s"
+msgstr "%s:%s"
+
+#: src/Application/Scan/CoreIntegrityTask.php:126 src/Application/Scan/PluginIntegrityTask.php:254
+msgid "%s: and %d more"
+msgstr "%s:另有 %d 项"
+
+#: src/Application/Scan/ExposedFilesTask.php:76
+msgid "Not asked (out of time): %d addresses."
+msgstr "未请求(超时):%d 个地址。"
+
+#: src/Application/Scan/ExposedFilesTask.php:92
+msgid "/%s%s answers, and it is %s"
+msgstr "/%s%s 可以访问,其内容是%s"
+
+#: src/Application/Scan/ExposedFilesTask.php:97
+msgid "The site did not answer its own address from the server (DNS, a firewall, a certificate that is not trusted): nothing was asked of it."
+msgstr "服务器访问本站自身地址时没有得到响应(DNS、防火墙、不受信任的证书):未能请求任何内容。"
+
+#: src/Application/Scan/ExposedFilesTask.php:101
+msgid "%d of the %d addresses did not answer."
+msgstr "%2$d 个地址中有 %1$d 个没有响应。"
+
+#: src/Application/Scan/ExposedFilesTask.php:130
+msgid "Not asked: the uploads folder cannot be written to, so whether it runs PHP could not be tried."
+msgstr "未请求:上传文件夹不可写,因此无法测试其中是否会执行 PHP。"
+
+#: src/Application/Scan/ExposedFilesTask.php:136
+msgid "Not asked: the server did not answer for the file put in the uploads."
+msgstr "未请求:服务器未对放入上传文件夹的文件作出响应。"
+
+#: src/Application/Scan/ExposedFilesTask.php:142
+msgid "The server runs PHP that sits in the uploads folder: a file that is uploaded there is run"
+msgstr "服务器会执行上传文件夹中的 PHP:上传到那里的文件会被运行"
+
+#: src/Application/Scan/ExposedFilesTask.php:158
+msgid "None of the %d addresses asked gives away a file it should not."
+msgstr "所请求的 %d 个地址均未泄露不应公开的文件。"
+
+#: src/Application/Scan/ExposedFilesTask.php:162
+msgid "[%s] %s"
+msgstr "[%s] %s"
+
+#: src/Application/Scan/ExposedFilesTask.php:167
+msgid "%d thing is given away by the site itself."
+msgid_plural "%d things are given away by the site itself."
+msgstr[0] "站点自身对外暴露了 %d 项内容。"
+
+#: src/Application/Scan/ExposedFilesTask.php:169
+msgid "Remove the file from the web root, or deny it in the web server (Hornet can write nothing there). A password, a key or a salt that was reachable must be changed: assume that it was read."
+msgstr "请从 Web 根目录中删除该文件,或在 Web 服务器中拒绝访问(Hornet 无法在那里写入任何内容)。曾可被访问的密码、密钥或盐值必须更换:请假定它已被读取。"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:57
+msgid "%s %s (plugin)"
+msgstr "%s %s(插件)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:61
+msgid "%s %s (theme)"
+msgstr "%s %s(主题)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:70
+msgid "%d more (out of time)"
+msgstr "另有 %d 项(超时)"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:91
+msgid "The vulnerability feed did not answer: nothing was checked."
+msgstr "漏洞数据源未响应:未检查任何内容。"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:95
+msgid "Not checked: %s"
+msgstr "未检查:%s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:96
+msgid "From a copy of a few days ago, the feed being down: %s"
+msgstr "由于数据源不可用,使用了几天前的副本:%s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:109
+msgid "No known vulnerability in the %d versions that were asked about."
+msgstr "所查询的 %d 个版本中没有已知漏洞。"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:113
+msgid "[%s] %s: %s (%s)%s"
+msgstr "[%s] %s:%s(%s)%s"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:114 src/Application/Scan/SuspiciousFilesTask.php:167 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:47
+msgid "and %d more"
+msgstr "另有 %d 项"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:119
+msgid "%d known vulnerability in what the site runs."
+msgid_plural "%d known vulnerabilities in what the site runs."
+msgstr[0] "站点运行的软件中存在 %d 个已知漏洞。"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:121
+msgid "Update what is listed to the version that fixes it. Where nothing fixes it yet, turn the plugin off or replace it: a vulnerability that is public is being tried on sites like yours. Hornet changes nothing."
+msgstr "请将列出的项目更新到已修复的版本。尚无修复版本时,请停用或替换该插件:已公开的漏洞正在像您这样的站点上被尝试利用。Hornet 不做任何更改。"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:128
+msgid ", fixed in %s"
+msgstr ", 已在 %s 中修复"
+
+#: src/Application/Scan/KnownVulnerabilitiesTask.php:129
+msgid ", not fixed"
+msgstr ", 尚未修复"
+
+#: src/Application/Scan/PluginIntegrityTask.php:65
+msgid "No plugin has a folder of its own."
+msgstr "没有任何插件拥有独立的文件夹。"
+
+#: src/Application/Scan/PluginIntegrityTask.php:65
+msgid "No theme has a folder of its own."
+msgstr "没有任何主题拥有独立的文件夹。"
+
+#: src/Application/Scan/PluginIntegrityTask.php:80
+msgid "%s (out of time)"
+msgstr "%s(超时)"
+
+#: src/Application/Scan/PluginIntegrityTask.php:94
+msgid "%s (%s)"
+msgstr "%s(%s)"
+
+#: src/Application/Scan/PluginIntegrityTask.php:116
+msgid "WordPress.org did not answer"
+msgstr "WordPress.org 未响应"
+
+#: src/Application/Scan/PluginIntegrityTask.php:122 src/Application/Scan/PluginIntegrityTask.php:130 src/Application/Scan/PluginIntegrityTask.php:136
+msgid "folder cannot be read"
+msgstr "无法读取文件夹"
+
+#: src/Application/Scan/PluginIntegrityTask.php:137
+msgid "too many files to keep a first look"
+msgstr "文件过多,无法保存首次记录"
+
+#: src/Application/Scan/PluginIntegrityTask.php:156
+msgid "Script that does not belong"
+msgstr "不应存在的脚本"
+
+#: src/Application/Scan/PluginIntegrityTask.php:168
+msgid "%d plugin has changed since it was published or first seen: %s."
+msgid_plural "%d plugins have changed since it was published or first seen: %s."
+msgstr[0] "有 %d 个插件自发布或首次记录后发生了更改:%s。"
+
+#: src/Application/Scan/PluginIntegrityTask.php:169
+msgid "%d theme has changed since it was published or first seen: %s."
+msgid_plural "%d themes have changed since it was published or first seen: %s."
+msgstr[0] "有 %d 个主题自发布或首次记录后发生了更改:%s。"
+
+#: src/Application/Scan/PluginIntegrityTask.php:172
+msgid "Look at each file. If you did not change it, reinstall the plugin from its source after a backup, and find how it was changed. Hornet never changes a file."
+msgstr "请检查每个文件。如果不是您修改的,请先备份,再从来源重新安装该插件,并查明它是如何被修改的。Hornet 从不更改任何文件。"
+
+#: src/Application/Scan/PluginIntegrityTask.php:173
+msgid "Look at each file. If you did not change it, reinstall the theme from its source after a backup, and find how it was changed. Hornet never changes a file."
+msgstr "请检查每个文件。如果不是您修改的,请先备份,再从来源重新安装该主题,并查明它是如何被修改的。Hornet 从不更改任何文件。"
+
+#: src/Application/Scan/PluginIntegrityTask.php:179
+msgid "No plugin could be compared."
+msgstr "没有可比对的插件。"
+
+#: src/Application/Scan/PluginIntegrityTask.php:179
+msgid "No theme could be compared."
+msgstr "没有可比对的主题。"
+
+#: src/Application/Scan/PluginIntegrityTask.php:194
+msgid "%d plugin(s) match WordPress.org, %d match what was first seen"
+msgstr "%d 个插件与 WordPress.org 一致,%d 个与首次记录一致"
+
+#: src/Application/Scan/PluginIntegrityTask.php:195
+msgid "%d theme(s) match what was first seen"
+msgstr "%d 个主题与首次记录一致"
+
+#: src/Application/Scan/PluginIntegrityTask.php:196
+msgid ", %d first seen now"
+msgstr ",%d 个为本次首次记录"
+
+#: src/Application/Scan/PluginIntegrityTask.php:214
+msgid "First look kept for %d plugin(s) WordPress.org does not know, nothing to compare with yet: %s"
+msgstr "已为 %d 个 WordPress.org 未收录的插件保存首次记录,暂无可比对内容:%s"
+
+#: src/Application/Scan/PluginIntegrityTask.php:215
+msgid "First look kept for %d theme(s) WordPress.org does not know, nothing to compare with yet: %s"
+msgstr "已为 %d 个 WordPress.org 未收录的主题保存首次记录,暂无可比对内容:%s"
+
+#: src/Application/Scan/PluginIntegrityTask.php:219
+msgid "Not checked:"
+msgstr "未检查:"
+
+#: src/Application/Scan/PluginIntegrityTask.php:248
+msgid "%s: %s/%s"
+msgstr "%s:%s/%s"
+
+#: src/Application/Scan/Scanner.php:138
+msgid "Not verified again on %s UTC: %s"
+msgstr "未能在 %s UTC 重新验证:%s"
+
+#: src/Application/Scan/Scanner.php:151
+msgid "The scan could not run: %s"
+msgstr "无法运行扫描:%s"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:67
+msgid "The content folder cannot be listed from here (open_basedir or permissions)."
+msgstr "无法从此处列出内容文件夹(open_basedir 或权限问题)。"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:121
+msgid "The walk of the content folder is not finished: %d files looked at in this run, it goes on from %s next time."
+msgstr "内容文件夹尚未遍历完毕:本次已查看 %d 个文件,下次将从 %s 继续。"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:158
+msgid "Nothing suspicious in the %d files of the content folder that were looked at."
+msgstr "已查看内容文件夹中的 %d 个文件,未发现可疑内容。"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:164
+msgid "[%s] %s: "
+msgstr "[%s] %s: "
+
+#: src/Application/Scan/SuspiciousFilesTask.php:171
+msgid "and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all"
+msgstr "此前的运行中还发现了另外 %d 项但未保留:请在命令行运行 `wp hornet scan` 列出全部"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:177
+msgid "%d file in the content folder would not be left unsaid."
+msgid_plural "%d files in the content folder would not be left unsaid."
+msgstr[0] "内容文件夹中有 %d 个文件不容忽视。"
+
+#: src/Application/Scan/SuspiciousFilesTask.php:179
+msgid "Look at each file before anything else, and do not open it in a browser. A file you know and trust can be left alone with scanner.ignore_paths. If you do not know it, find how it came there (an old plugin, a form that accepts uploads) before you remove it. Hornet never changes a file."
+msgstr "请首先检查每个文件,且不要在浏览器中打开。您了解并信任的文件可以通过 scanner.ignore_paths 忽略。如果您不认识它,请在删除前查明它是如何出现的(旧插件、接受上传的表单)。Hornet 从不更改任何文件。"
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:25
+msgid "Default administrator name"
+msgstr "默认管理员用户名"
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:31
+msgid "A user is named \"admin\"."
+msgstr "存在名为“admin”的用户。"
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:31
+msgid "Create an administrator with another login, hand the content over to it, and delete \"admin\"."
+msgstr "请使用其他登录名创建管理员,将内容移交给该账户,然后删除“admin”。"
+
+#: src/Domain/Audit/Checks/AdminAccountCheck.php:34
+msgid "No user is named \"admin\"."
+msgstr "没有名为“admin”的用户。"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:25
+msgid "wp-config.php permissions"
+msgstr "wp-config.php 权限"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:33
+msgid "wp-config.php was not found or cannot be read from here (open_basedir, or the secrets are in the environment)."
+msgstr "未找到 wp-config.php,或无法从此处读取(open_basedir,或密钥保存在环境变量中)。"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:39
+msgid "The server does not tell the permissions of wp-config.php."
+msgstr "服务器未提供 wp-config.php 的权限信息。"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46
+msgid "wp-config.php can be written by any account on the server."
+msgstr "服务器上的任何账户都可以写入 wp-config.php。"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46 src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51 src/Domain/Audit/Checks/ConfigPermissionsCheck.php:54
+msgid "mode %s"
+msgstr "权限模式 %s"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:46
+msgid "chmod 640 wp-config.php (or 400)."
+msgstr "chmod 640 wp-config.php(或 400)。"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51
+msgid "wp-config.php can be read by any account on the server."
+msgstr "服务器上的任何账户都可以读取 wp-config.php。"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:51
+msgid "chmod 640 wp-config.php (the WordPress hardening guide advises 400 or 440)."
+msgstr "chmod 640 wp-config.php(WordPress 加固指南建议使用 400 或 440)。"
+
+#: src/Domain/Audit/Checks/ConfigPermissionsCheck.php:54
+msgid "wp-config.php is not readable by other accounts."
+msgstr "其他账户无法读取 wp-config.php。"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:25
+msgid "Debug mode"
+msgstr "调试模式"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:31
+msgid "Not a production site: debug mode is not judged."
+msgstr "非生产站点:不评判调试模式。"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "PHP errors are shown to visitors."
+msgstr "PHP 错误会显示给访问者。"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "WP_DEBUG is on and WP_DEBUG_DISPLAY is not false"
+msgstr "WP_DEBUG 已开启,且 WP_DEBUG_DISPLAY 不为 false"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:40
+msgid "Set WP_DEBUG to false, or define('WP_DEBUG_DISPLAY', false)."
+msgstr "将 WP_DEBUG 设为 false,或添加 define('WP_DEBUG_DISPLAY', false)。"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:44
+msgid "WP_DEBUG is on in production."
+msgstr "生产环境中开启了 WP_DEBUG。"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:44
+msgid "Define('WP_DEBUG', false) in production."
+msgstr "在生产环境中设置 define('WP_DEBUG', false)。"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:48
+msgid "WP_DEBUG_LOG writes wp-content/debug.log, a public URL unless the server blocks it."
+msgstr "WP_DEBUG_LOG 会写入 wp-content/debug.log,除非服务器阻止访问,否则它是一个公开 URL。"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:48
+msgid "Set WP_DEBUG_LOG to a path outside the web root, or to false."
+msgstr "将 WP_DEBUG_LOG 设为 Web 根目录之外的路径,或设为 false。"
+
+#: src/Domain/Audit/Checks/DebugModeCheck.php:51
+msgid "Debug mode is off."
+msgstr "调试模式已关闭。"
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:26
+msgid "Theme and plugin editor"
+msgstr "主题和插件编辑器"
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:32
+msgid "The file editor is disabled."
+msgstr "文件编辑器已禁用。"
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:35
+msgid "pollora/headless is installed: it defines DISALLOW_FILE_EDIT only when its REST security module runs."
+msgstr "已安装 pollora/headless:仅当其 REST 安全模块运行时,它才会定义 DISALLOW_FILE_EDIT。"
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:37
+msgid "An administrator can edit PHP files from the dashboard."
+msgstr "管理员可以在仪表盘中编辑 PHP 文件。"
+
+#: src/Domain/Audit/Checks/FileEditorCheck.php:37
+msgid "Turn on Hornet's `hardening.file_editor`, or define('DISALLOW_FILE_EDIT', true) in wp-config.php."
+msgstr "请开启 Hornet 的 `hardening.file_editor`,或在 wp-config.php 中添加 define('DISALLOW_FILE_EDIT', true)。"
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:27
+msgid "Installing code from the dashboard"
+msgstr "从仪表盘安装代码"
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:33
+msgid "Plugins, themes and updates cannot be installed from the dashboard."
+msgstr "无法从仪表盘安装插件、主题和更新。"
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:37 src/Domain/Audit/Checks/HttpsCheck.php:31
+msgid "Not a production site: not judged."
+msgstr "非生产站点:不作评判。"
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:40
+msgid "Plugins and themes can be installed from the dashboard."
+msgstr "可以从仪表盘安装插件和主题。"
+
+#: src/Domain/Audit/Checks/FileModsCheck.php:40
+msgid "If the code is deployed by Composer or a pipeline, define('DISALLOW_FILE_MODS', true). It also stops WordPress's own updates."
+msgstr "如果代码通过 Composer 或流水线部署,请添加 define('DISALLOW_FILE_MODS', true)。这也会停止 WordPress 自身的更新。"
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:25
+msgid "HTTPS"
+msgstr "HTTPS"
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:35
+msgid "The site address does not use HTTPS."
+msgstr "站点地址未使用 HTTPS。"
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:35
+msgid "Serve the site over HTTPS and set the WordPress and site addresses to https://."
+msgstr "请通过 HTTPS 提供站点,并将 WordPress 地址和站点地址设置为 https://。"
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:40
+msgid "The login and the dashboard are not forced onto HTTPS."
+msgstr "登录页和仪表盘未强制使用 HTTPS。"
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:40
+msgid "Define('FORCE_SSL_ADMIN', true) in wp-config.php."
+msgstr "在 wp-config.php 中添加 define('FORCE_SSL_ADMIN', true)。"
+
+#: src/Domain/Audit/Checks/HttpsCheck.php:43
+msgid "The site uses HTTPS, and the dashboard is forced onto it."
+msgstr "站点使用 HTTPS,且仪表盘已强制启用。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:27
+msgid "Login protection"
+msgstr "登录保护"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:33
+msgid "pollora/portcullis is installed: it guards the login, locks out brute force and stops account enumeration."
+msgstr "已安装 pollora/portcullis:它保护登录、锁定暴力破解并阻止账户枚举。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "The login throttle is on but cannot tell visitors apart: every request seems to come from one private address, the proxy or load balancer in front of the site, so it refuses to lock anybody."
+msgstr "登录限速已开启,但无法区分访问者:所有请求似乎都来自同一个私有地址(站点前端的代理或负载均衡器),因此它不会锁定任何人。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "Locking that address would lock every visitor out at once."
+msgstr "锁定该地址会使所有访问者同时被拒之门外。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:38
+msgid "List the proxy in `network.trusted_proxies` (and set `network.forwarded_header` if it is not X-Forwarded-For)."
+msgstr "请将代理列入 `network.trusted_proxies`(如果使用的不是 X-Forwarded-For,还需设置 `network.forwarded_header`)。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "The login throttle sees a forwarding header from an address that is not a trusted proxy. If the site is behind a CDN or a proxy, visitors share its address and can lock each other out."
+msgstr "登录限速发现来自非受信任代理地址的转发标头。如果站点位于 CDN 或代理之后,访问者会共用其地址,可能相互导致锁定。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "Requests are counted under the address that opened the connection, which a header cannot change."
+msgstr "请求按建立连接的地址计数,该地址无法通过标头更改。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:39
+msgid "List the CDN or proxy in `network.trusted_proxies`."
+msgstr "请将 CDN 或代理列入 `network.trusted_proxies`。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:40
+msgid "Hornet's login throttle is on: an address that fails too often is locked out for a while."
+msgstr "Hornet 的登录限速已开启:失败次数过多的地址会被暂时锁定。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "No login protection from Pollora was found."
+msgstr "未发现 Pollora 提供的登录保护。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "Another plugin or the server may protect the login: Hornet only knows pollora/portcullis and its own throttle."
+msgstr "其他插件或服务器可能在保护登录:Hornet 只识别 pollora/portcullis 和自身的限速功能。"
+
+#: src/Domain/Audit/Checks/LoginProtectionCheck.php:44
+msgid "composer require pollora/portcullis, or turn on Hornet's `login.throttle`."
+msgstr "执行 composer require pollora/portcullis,或开启 Hornet 的 `login.throttle`。"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:39
+msgid "PHP version"
+msgstr "PHP 版本"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:48
+msgid "PHP %s no longer gets security fixes."
+msgstr "PHP %s 已不再获得安全修复。"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:48
+msgid "Move the site to PHP 8.3 or later."
+msgstr "请将站点迁移到 PHP 8.3 或更高版本。"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:54
+msgid "PHP %s is newer than the support table of this version of Hornet."
+msgstr "PHP %s 比此版本 Hornet 的支持列表更新。"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:61
+msgid "PHP %s no longer gets security fixes (since %s)."
+msgstr "PHP %s 已不再获得安全修复(自 %s 起)。"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:61
+msgid "Move the site to a supported PHP branch."
+msgstr "请将站点迁移到受支持的 PHP 分支。"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:65 src/Domain/Audit/Checks/PhpVersionCheck.php:68
+msgid "PHP %s gets security fixes until %s."
+msgstr "PHP %s 的安全修复提供至 %s。"
+
+#: src/Domain/Audit/Checks/PhpVersionCheck.php:65
+msgid "Plan the move to a newer PHP branch."
+msgstr "请计划迁移到更新的 PHP 分支。"
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:34
+msgid "Authentication keys and salts"
+msgstr "身份验证密钥和盐值"
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:50
+msgid "The eight keys and salts are set."
+msgstr "八个密钥和盐值均已设置。"
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:56
+msgid "%d of the 8 keys and salts is missing, shorter than 32 characters, or the sample value."
+msgid_plural "%d of the 8 keys and salts are missing, shorter than 32 characters, or the sample value."
+msgstr[0] "8 个密钥和盐值中有 %d 个缺失、少于 32 个字符或仍为示例值。"
+
+#: src/Domain/Audit/Checks/SaltsCheck.php:58
+msgid "Generate new ones at https://api.wordpress.org/secret-key/1.1/salt/ and replace them in wp-config.php (or the Bedrock .env). This logs everyone out."
+msgstr "请在 https://api.wordpress.org/secret-key/1.1/salt/ 生成新值,并替换 wp-config.php(或 Bedrock 的 .env)中的值。所有人都会被登出。"
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:47
+msgid "The site was never scanned: run `wp hornet scan`."
+msgstr "站点从未扫描过:请运行 `wp hornet scan`。"
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:53
+msgid "The last scan did not cover this: run `wp hornet scan`."
+msgstr "上次扫描未涵盖此项:请运行 `wp hornet scan`。"
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "The last scan is more than %d day old, so it says little about the files today."
+msgid_plural "The last scan is more than %d days old, so it says little about the files today."
+msgstr[0] "上次扫描已超过 %d 天,无法反映当前文件的状况。"
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "Last scan: %s UTC"
+msgstr "上次扫描:%s UTC"
+
+#: src/Domain/Audit/Checks/ScanResultCheck.php:59
+msgid "Run `wp hornet scan`."
+msgstr "请运行 `wp hornet scan`。"
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:26
+msgid "Two-factor authentication"
+msgstr "双重身份验证"
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:32
+msgid "The Two-Factor plugin is active."
+msgstr "Two-Factor 插件已启用。"
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:35
+msgid "The Two-Factor plugin is not active."
+msgstr "Two-Factor 插件未启用。"
+
+#: src/Domain/Audit/Checks/TwoFactorCheck.php:35
+msgid "Install the Two-Factor plugin. A later version of Hornet will require it for chosen roles."
+msgstr "请安装 Two-Factor 插件。后续版本的 Hornet 将要求指定的角色使用它。"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:29
+msgid "Two-factor authentication of administrators"
+msgstr "管理员的双重身份验证"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:37
+msgid "The Two-Factor plugin is not active: whether administrators use a second factor cannot be told."
+msgstr "Two-Factor 插件未启用:无法判断管理员是否使用第二重验证。"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:41
+msgid "Every administrator has set up two-factor authentication."
+msgstr "所有管理员都已设置双重身份验证。"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:44
+msgid "user #%d"
+msgstr "用户 #%d"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:53
+msgid "%d administrator has not set up two-factor authentication."
+msgid_plural "%d administrators have not set up two-factor authentication."
+msgstr[0] "有 %d 位管理员尚未设置双重身份验证。"
+
+#: src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:55
+msgid "Ask them to set it up in their profile, or turn on Hornet's `two_factor.require_roles` to send them there."
+msgstr "请让他们在个人资料中进行设置,或开启 Hornet 的 `two_factor.require_roles` 将他们引导至设置页面。"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:25
+msgid "User list in the REST API"
+msgstr "REST API 中的用户列表"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:31
+msgid "Whether the REST API lists users to visitors could not be found out from here."
+msgstr "无法从此处查明 REST API 是否向访问者列出用户。"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "The REST API lists the users of the site to visitors."
+msgstr "REST API 向访问者列出了站点用户。"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "/wp/v2/users answers an anonymous request"
+msgstr "/wp/v2/users 会响应匿名请求"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:32
+msgid "Turn on Hornet's `hardening.user_enumeration`, or use pollora/headless."
+msgstr "请开启 Hornet 的 `hardening.user_enumeration`,或使用 pollora/headless。"
+
+#: src/Domain/Audit/Checks/UserEnumerationCheck.php:33
+msgid "The REST API does not list users to visitors."
+msgstr "REST API 未向访问者列出用户。"
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:25
+msgid "WordPress version"
+msgstr "WordPress 版本"
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:33
+msgid "WordPress %s: no update was found at the last check."
+msgstr "WordPress %s:上次检查未发现更新。"
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:36
+msgid "WordPress %s is installed, %s is available."
+msgstr "当前安装的是 WordPress %s,%s 已可用。"
+
+#: src/Domain/Audit/Checks/WordPressUpdateCheck.php:36
+msgid "Update WordPress core (a Composer project: composer update johnpbloch/wordpress-core)."
+msgstr "请更新 WordPress 核心(Composer 项目:composer update johnpbloch/wordpress-core)。"
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:36
+msgid "XML-RPC is closed: no method answers."
+msgstr "XML-RPC 已关闭:没有任何方法响应。"
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:37
+msgid "XML-RPC refuses logins, but pingbacks and other methods that need none still answer."
+msgstr "XML-RPC 拒绝登录,但 pingback 等无需登录的方法仍会响应。"
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:37
+msgid "Close it altogether with Hornet's `hardening.xmlrpc`, or return an empty list from the `xmlrpc_methods` filter."
+msgstr "使用 Hornet 的 `hardening.xmlrpc` 将其彻底关闭,或让 `xmlrpc_methods` 过滤器返回空列表。"
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:38
+msgid "XML-RPC is open."
+msgstr "XML-RPC 处于开放状态。"
+
+#: src/Domain/Audit/Checks/XmlRpcCheck.php:38
+msgid "Close it unless Jetpack or the mobile app needs it: Hornet's `hardening.xmlrpc` does it, or use pollora/headless."
+msgstr "除非 Jetpack 或移动应用需要,否则请关闭它:可用 Hornet 的 `hardening.xmlrpc`,或使用 pollora/headless。"
+
+#: src/Domain/Exceptions/SetAsideException.php:30
+msgid "There is no check \"%s\"."
+msgstr "不存在检查项“%s”。"
+
+#: src/Domain/Exceptions/SetAsideException.php:35
+msgid "Say why, in at least %d characters: a finding that is set aside without a reason is a finding that is forgotten."
+msgstr "请说明原因,至少 %d 个字符:没有理由就搁置的发现项,就是被遗忘的发现项。"
+
+#: src/Domain/Exceptions/SetAsideException.php:40
+msgid "\"%s\" is set aside in the settings file, which wins over the screen: change it there."
+msgstr "“%s”已在设置文件中搁置,其优先级高于此界面:请在那里修改。"
+
+#: src/Domain/Exceptions/SetAsideException.php:45
+msgid "\"%s\" has nothing open to set aside."
+msgstr "“%s”没有可搁置的未处理项。"
+
+#: src/Domain/Scan/ExposureCatalog.php:30
+msgid "environment variables (passwords, keys)"
+msgstr "环境变量(密码、密钥)"
+
+#: src/Domain/Scan/ExposureCatalog.php:33 src/Domain/Scan/ExposureCatalog.php:34
+msgid "the Git repository (the source of the site)"
+msgstr "Git 仓库(站点源代码)"
+
+#: src/Domain/Scan/ExposureCatalog.php:37
+msgid "a copy of wp-config.php (database password, keys)"
+msgstr "wp-config.php 的副本(数据库密码、密钥)"
+
+#: src/Domain/Scan/ExposureCatalog.php:41
+msgid "a copy of the database"
+msgstr "数据库副本"
+
+#: src/Domain/Scan/ExposureCatalog.php:45
+msgid "an archive of the site"
+msgstr "站点归档文件"
+
+#: src/Domain/Scan/ExposureCatalog.php:48
+msgid "the password file of the web server"
+msgstr "Web 服务器的密码文件"
+
+#: src/Domain/Scan/ExposureCatalog.php:49 src/Domain/Scan/ExposureCatalog.php:50
+msgid "phpinfo() (the PHP and server configuration)"
+msgstr "phpinfo()(PHP 与服务器配置)"
+
+#: src/Domain/Scan/ExposureCatalog.php:51
+msgid "a PHP error log (paths, queries)"
+msgstr "PHP 错误日志(路径、查询)"
+
+#: src/Domain/Scan/ExposureCatalog.php:52
+msgid "composer.json (the list of what the site runs)"
+msgstr "composer.json(站点所运行组件的清单)"
+
+#: src/Domain/Scan/ExposureCatalog.php:54
+msgid "the WordPress debug log (paths, queries, sometimes data)"
+msgstr "WordPress 调试日志(路径、查询,有时包含数据)"
+
+#: src/Domain/Scan/ExposureCatalog.php:55
+msgid "a listing of the uploads folder"
+msgstr "上传文件夹的目录列表"
+
+#: src/Domain/Scan/ExposureCatalog.php:56
+msgid "a listing of the plugins folder"
+msgstr "插件文件夹的目录列表"
+
+#: src/Domain/Scan/FileInspector.php:49
+msgid "a server setting that runs PHP code or makes a file run as PHP"
+msgstr "执行 PHP 代码或使文件按 PHP 运行的服务器设置"
+
+#: src/Domain/Scan/FileInspector.php:49
+msgid "a setting that runs a PHP file before or after every script"
+msgstr "在每个脚本之前或之后运行某个 PHP 文件的设置"
+
+#: src/Domain/Scan/FileInspector.php:55
+msgid "a name with a PHP extension in the middle (shell.php.jpg): some servers run it"
+msgstr "文件名中间带有 PHP 扩展名(shell.php.jpg):某些服务器会执行它"
+
+#: src/Domain/Scan/FileInspector.php:62
+msgid "a PHP file in the uploads folder, where nothing should run"
+msgstr "上传文件夹中的 PHP 文件,而那里不应运行任何内容"
+
+#: src/Domain/Scan/FileInspector.php:66
+msgid "a hidden PHP file"
+msgstr "隐藏的 PHP 文件"
+
+#: src/Domain/Scan/ScriptRules.php:102
+msgid "calls a function whose name is request input"
+msgstr "调用名称来自请求输入的函数"
+
+#: src/Domain/Scan/ScriptRules.php:106
+msgid "hands request input to a callback that runs it"
+msgstr "将请求输入交给会执行它的回调"
+
+#: src/Domain/Scan/ScriptRules.php:110
+msgid "includes a file named by request input"
+msgstr "包含由请求输入指定名称的文件"
+
+#: src/Domain/Scan/ScriptRules.php:114
+msgid "eval()"
+msgstr "eval()"
+
+#: src/Domain/Scan/ScriptRules.php:118 src/Domain/Scan/Suspicion.php:81
+msgid "runs a command (%s)"
+msgstr "执行命令(%s)"
+
+#: src/Domain/Scan/ScriptRules.php:122
+msgid "runs a command (backticks)"
+msgstr "执行命令(反引号)"
+
+#: src/Domain/Scan/ScriptRules.php:126
+msgid "preg_replace with the /e modifier"
+msgstr "带 /e 修饰符的 preg_replace"
+
+#: src/Domain/Scan/ScriptRules.php:130 src/Domain/Scan/Suspicion.php:85
+msgid "decodes hidden data (%s)"
+msgstr "解码隐藏数据(%s)"
+
+#: src/Domain/Scan/ScriptRules.php:134
+msgid "a very long string with no space in it"
+msgstr "不含空格的超长字符串"
+
+#: src/Domain/Scan/ScriptRules.php:138
+msgid "variable variables"
+msgstr "可变变量"
+
+#: src/Domain/Scan/ScriptRules.php:142
+msgid "calls a function named by a variable"
+msgstr "调用由变量指定名称的函数"
+
+#: src/Domain/Scan/ScriptRules.php:147
+msgid "passes request input to it"
+msgstr "将请求输入传给它"
+
+#: src/Domain/Scan/Suspicion.php:56
+msgid "reads like a web shell (score %d):"
+msgstr "看起来像 Web shell(评分 %d):"
+
+#: src/Infrastructure/WordPress/Admin/AdminBackend.php:114
+msgid "A scan is already in progress."
+msgstr "已有扫描正在进行中。"
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:75
+msgid "You are not allowed to see this page."
+msgstr "您无权查看此页面。"
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:82
+msgid "This screen needs scripts that this version of WordPress does not have (%s). Use `wp hornet status` and `wp hornet scan`: they give the same information."
+msgstr "此界面需要当前版本 WordPress 所没有的脚本(%s)。请使用 `wp hornet status` 和 `wp hornet scan`:它们提供相同的信息。"
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:86
+msgid "This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`."
+msgstr "此界面需要 JavaScript。`wp hornet status` 和 `wp hornet scan` 提供相同的信息。"
+
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:91 src/Infrastructure/WordPress/SiteHealthModule.php:99 src/Infrastructure/WordPress/SiteHealthModule.php:100 src/Infrastructure/WordPress/SiteHealthModule.php:101
+msgid "Security"
+msgstr "安全"
+
+#: src/Infrastructure/WordPress/Admin/AdminRestModule.php:171
+msgid "There is no such channel."
+msgstr "不存在该渠道。"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:32 src/Infrastructure/WordPress/Admin/SettingsView.php:33 src/Infrastructure/WordPress/Admin/SettingsView.php:34 src/Infrastructure/WordPress/Admin/SettingsView.php:35
+msgid "Hardening"
+msgstr "加固"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:32
+msgid "Close XML-RPC"
+msgstr "关闭 XML-RPC"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:33
+msgid "Hide the list of users from visitors"
+msgstr "对访问者隐藏用户列表"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:34
+msgid "Hide the WordPress version"
+msgstr "隐藏 WordPress 版本"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:35
+msgid "Refuse the file editor"
+msgstr "禁用文件编辑器"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:38 src/Infrastructure/WordPress/Admin/SettingsView.php:39 src/Infrastructure/WordPress/Admin/SettingsView.php:40 src/Infrastructure/WordPress/Admin/SettingsView.php:41 src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "Headers"
+msgstr "标头"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "enforced"
+msgstr "强制执行"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:42
+msgid "report only"
+msgstr "仅报告"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44 src/Infrastructure/WordPress/Admin/SettingsView.php:45 src/Infrastructure/WordPress/Admin/SettingsView.php:46 src/Infrastructure/WordPress/Admin/SettingsView.php:47
+msgid "Accounts"
+msgstr "账户"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44
+msgid "Login throttle"
+msgstr "登录限速"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:44
+msgid "%1$d failures in %2$d seconds"
+msgstr "%2$d 秒内失败 %1$d 次"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:45
+msgid "Refuse a password found in a breach"
+msgstr "拒绝已在数据泄露中出现的密码"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:46
+msgid "Shorter login sessions"
+msgstr "缩短登录会话"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:47
+msgid "Two-factor required"
+msgstr "强制双重身份验证"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:49 src/Infrastructure/WordPress/Admin/SettingsView.php:50 src/Infrastructure/WordPress/Admin/SettingsView.php:51 src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "Scanner"
+msgstr "扫描器"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:49
+msgid "Scheduled scan"
+msgstr "定时扫描"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:50
+msgid "Ask the site what it gives away"
+msgstr "探测站点对外暴露的内容"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:51
+msgid "Try to run PHP in the uploads"
+msgstr "尝试在上传文件夹中执行 PHP"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "Look up known vulnerabilities"
+msgstr "查询已知漏洞"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:52
+msgid "name and version of each plugin and theme go to www.wpvulnerability.net"
+msgstr "每个插件和主题的名称与版本会发送到 www.wpvulnerability.net"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
+msgid "Security journal"
+msgstr "安全日志"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:54
+msgid "kept %d day"
+msgid_plural "kept %d days"
+msgstr[0] "保留 %d 天"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:55 src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Agents"
+msgstr "智能体"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:55
+msgid "Abilities for AI agents (read)"
+msgstr "面向 AI 智能体的 Abilities(读取)"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Abilities for AI agents (start a scan, set aside)"
+msgstr "面向 AI 智能体的 Abilities(启动扫描、搁置)"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "at most 20 changes an hour per person"
+msgstr "每人每小时最多 20 次更改"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:57
+msgid "Notification channels"
+msgstr "通知渠道"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58 src/Infrastructure/WordPress/Admin/SettingsView.php:59 src/Infrastructure/WordPress/Admin/SettingsView.php:60
+msgid "Audit"
+msgstr "审计"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:58
+msgid "Site Health tests"
+msgstr "站点健康测试"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:59
+msgid "Checks turned off"
+msgstr "已关闭的检查项"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:60
+msgid "Findings set aside"
+msgstr "已搁置的发现项"
+
+#: src/Infrastructure/WordPress/LoginThrottleModule.php:77 src/Infrastructure/WordPress/PasswordModule.php:53
+msgid "Error:"
+msgstr "错误:"
+
+#: src/Infrastructure/WordPress/LoginThrottleModule.php:78
+msgid "Too many failed login attempts. Try again in %d minute(s)."
+msgstr "登录失败次数过多。请在 %d 分钟后重试。"
+
+#: src/Infrastructure/WordPress/PasswordModule.php:53
+msgid "That password appears in known data breaches. Choose another one."
+msgstr "该密码出现在已知的数据泄露中。请选择其他密码。"
+
+#: src/Infrastructure/WordPress/SiteHealthModule.php:75
+msgid "The check did not run."
+msgstr "检查项未运行。"
+
+#: src/Infrastructure/WordPress/SiteHealthModule.php:94
+msgid "Set aside on purpose: %s"
+msgstr "有意搁置:%s"
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:63
+msgid "Your role must set up two-factor authentication before %s."
+msgstr "您的角色必须在 %s 之前设置双重身份验证。"
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:64
+msgid "Your role must set up two-factor authentication. Choose a method below to continue."
+msgstr "您的角色必须设置双重身份验证。请在下方选择一种方式以继续。"
+
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:70
+msgid "Set it up"
+msgstr "立即设置"

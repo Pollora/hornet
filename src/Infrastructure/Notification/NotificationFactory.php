@@ -20,6 +20,7 @@ use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
+use Pollora\Hornet\Infrastructure\WordPress\I18n\WpTranslator;
 use Pollora\Hornet\Infrastructure\WordPress\OptionNotificationState;
 use Pollora\Hornet\Infrastructure\WordPress\OptionRetryQueue;
 use Pollora\Hornet\Infrastructure\WordPress\OptionRunLock;
@@ -78,6 +79,7 @@ final readonly class NotificationFactory
             Text::truncate(Text::clean($siteName), 100) ?: 'WordPress',
             Text::clean($siteUrl),
             array_map(static fn (ChannelSpec $spec): ChannelInfo => new ChannelInfo($spec->name, $spec->type->value, $spec->minSeverity), $settings->notifications->channels),
+            WpTranslator::forPackage(),
         );
     }
 }

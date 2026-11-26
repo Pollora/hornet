@@ -10,6 +10,7 @@ use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Clock;
+use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Scan\Pins;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Domain\Scan\ScanStore;
@@ -131,9 +132,12 @@ final readonly class Scanner
         }
 
         // A failure that was already kept once is not stacked: only the latest reason is told
-        $details = array_values(array_filter($before->details, static fn (string $line): bool => ! str_starts_with($line, self::KEPT)));
+        $details = array_values(array_filter($before->detailMessages(), static fn (Message $line): bool => ! str_starts_with($line->english(), self::KEPT)));
 
-        return Finding::fail($before->checkId, $before->severity, $before->summary, [...$details, sprintf('%s %s UTC: %s', self::KEPT, $now->format('Y-m-d H:i'), $found->summary)], $before->fix);
+        // The template starts with the words of KEPT: it is written out in full, as the translations are read from it
+        $line = Message::of('Not verified again on %s UTC: %s', $now->format('Y-m-d H:i'), $found->summaryMessage());
+
+        return Finding::fail($before->checkId, $before->severity, $before->summaryMessage(), [...$details, $line], $before->fixMessage());
     }
 
     /**
@@ -144,7 +148,7 @@ final readonly class Scanner
         try {
             return $task->run($pinned, $repin);
         } catch (Throwable $throwable) {
-            return new TaskResult(Finding::unknown($task->id(), sprintf('The scan could not run: %s', $throwable::class)), $pinned);
+            return new TaskResult(Finding::unknown($task->id(), Message::of('The scan could not run: %s', $throwable::class)), $pinned);
         }
     }
 }

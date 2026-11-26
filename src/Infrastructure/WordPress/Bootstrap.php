@@ -26,6 +26,7 @@ use Pollora\Hornet\Infrastructure\WordPress\Abilities\AbilitiesModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminBackend;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
+use Pollora\Hornet\Infrastructure\WordPress\I18n\WpTranslator;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
@@ -96,7 +97,7 @@ final class Bootstrap
             if ($settings->siteHealth) {
                 // The settings are checked now, without touching the database; the auditor itself is built when Site Health asks for it
                 new Auditor(DefaultChecks::all($settings->vulnerabilities->enabled), $settings->disabledChecks, $settings->ignored);
-                $modules[] = new SiteHealthModule(static fn (): Auditor => AuditorFactory::forWordPress($settings), $environment);
+                $modules[] = new SiteHealthModule(static fn (): Auditor => AuditorFactory::forWordPress($settings), $environment, WpTranslator::forPackage());
             }
 
             if ($settings->hardening->isActive()) {
@@ -116,11 +117,12 @@ final class Bootstrap
                     $client ?? static fn (): ?ClientIp => ClientAddress::fromServer($_SERVER, $settings->network),
                     $note->record(...),
                     wp_salt('auth').'hornet-login',
+                    WpTranslator::forPackage(),
                 );
             }
 
             if ($settings->accounts->checkBreached) {
-                $modules[] = new PasswordModule(new BreachCheck(new WpHttpClient), $settings->accounts->breachedThreshold);
+                $modules[] = new PasswordModule(new BreachCheck(new WpHttpClient), $settings->accounts->breachedThreshold, WpTranslator::forPackage());
             }
 
             if ($settings->accounts->sessionLifetime !== null || $settings->accounts->rememberLifetime !== null) {
@@ -137,6 +139,7 @@ final class Bootstrap
                         exit;
                     },
                     static fn (): ?object => is_user_logged_in() ? wp_get_current_user() : null,
+                    WpTranslator::forPackage(),
                 );
             }
 

@@ -8,6 +8,7 @@ use Pollora\Hornet\Domain\Audit\Check;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\I18n\Message;
 
 /**
  * A user named "admin" is the first login every password guesser tries.
@@ -21,15 +22,15 @@ final readonly class AdminAccountCheck implements Check
 
     public function label(): string
     {
-        return 'Default administrator name';
+        return Message::mark('Default administrator name');
     }
 
     public function run(Environment $environment): Finding
     {
         if ($environment->userExists('admin')) {
-            return Finding::fail($this->id(), Severity::Medium, 'A user is named "admin".', [], 'Create an administrator with another login, hand the content over to it, and delete "admin".');
+            return Finding::fail($this->id(), Severity::Medium, Message::of('A user is named "admin".'), [], Message::of('Create an administrator with another login, hand the content over to it, and delete "admin".'));
         }
 
-        return Finding::pass($this->id(), 'No user is named "admin".');
+        return Finding::pass($this->id(), Message::of('No user is named "admin".'));
     }
 }
