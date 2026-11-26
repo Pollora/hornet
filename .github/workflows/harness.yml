@@ -14,7 +14,7 @@ permissions: {}
 
 jobs:
   harness:
-    uses: Pollora/harness/.github/workflows/php-package.yml@v0.1.35
+    uses: Pollora/harness/.github/workflows/php-package.yml@e3b0f63f04dddfae7eea54d30d7afc3df5a8a931
     with:
       wordpress-integration: tests/Integration
       wordpress-plugins: two-factor
