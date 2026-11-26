@@ -1617,7 +1617,7 @@ msgstr ""
 msgid "reads like a web shell (score %d):"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/AdminBackend.php:130
+#: src/Infrastructure/WordPress/Admin/AdminBackend.php:149
 msgid "A scan is already in progress."
 msgstr ""
 
@@ -1637,7 +1637,7 @@ msgstr ""
 msgid "Security"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/AdminRestModule.php:171
+#: src/Infrastructure/WordPress/Admin/AdminRestModule.php:169
 msgid "There is no such channel."
 msgstr ""
 
