@@ -11,6 +11,11 @@ use Pollora\Hornet\Infrastructure\WordPress\RestAccessModule;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Pollora\Hornet\Tests\Fixtures\RecordingHooks;
 
+function restAllowed(array $extra = [], bool $headless = false): RestAllowList
+{
+    return HardeningSettings::fromArray(['rest_api_allow' => $extra])->restAllowList($headless);
+}
+
 /**
  * The module as WordPress would meet it, serving `$route` to a visitor or to a logged-in user.
  */
@@ -21,7 +26,7 @@ function restAccess(?string $route, bool $loggedIn = false, array $extra = [], s
     $_SERVER['REQUEST_METHOD'] = $method;
 
     $hooks = new RecordingHooks;
-    (new RestAccessModule(RestAllowList::with($extra, false)))->register($hooks);
+    (new RestAccessModule(restAllowed($extra)))->register($hooks);
 
     return $hooks;
 }
@@ -31,7 +36,7 @@ afterEach(function (): void {
 });
 
 it('opens the index and the default routes, by whole segments and whatever the case', function (string $route, bool $open): void {
-    expect(RestAllowList::with([], false)->allows($route))->toBe($open);
+    expect(restAllowed()->allows($route))->toBe($open);
 })->with([
     ['/', true],
     ['/oembed/1.0/embed', true],
@@ -49,7 +54,7 @@ it('opens the index and the default routes, by whole segments and whatever the c
 ]);
 
 it('opens the public routes of pollora/headless only when it is there', function (): void {
-    expect(RestAllowList::with([], true)->allows('/headless/v1/preview/exchange'))->toBeTrue();
+    expect(restAllowed(headless: true)->allows('/headless/v1/preview/exchange'))->toBeTrue();
 });
 
 it('refuses a visitor on a closed route, although WordPress said true to the request without a nonce', function (): void {

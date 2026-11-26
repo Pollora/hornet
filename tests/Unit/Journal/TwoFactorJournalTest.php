@@ -13,10 +13,6 @@ use Pollora\Hornet\Tests\Fixtures\InMemoryJournal;
 use Pollora\Hornet\Tests\Fixtures\InMemoryWindowCounter;
 use Pollora\Hornet\Tests\Fixtures\RecordingHooks;
 
-if (! class_exists('WP_User', false)) {
-    class_alias(stdClass::class, 'WP_User');
-}
-
 /**
  * @return array{TwoFactorJournalModule, InMemoryJournal, object}
  */

@@ -16,7 +16,6 @@ use Pollora\Hornet\Application\Scan\Scanner;
 use Pollora\Hornet\Domain\Audit\Component;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\LaravelApplication;
-use Pollora\Hornet\Domain\Http\RestAllowList;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\Config\Settings;
@@ -122,7 +121,7 @@ final class Bootstrap
             }
 
             if ($settings->hardening->restrictRestApi) {
-                $modules[] = new RestAccessModule(RestAllowList::with($settings->hardening->restApiAllow, $environment->isActive(Component::Headless)), WpTranslator::forPackage());
+                $modules[] = new RestAccessModule($settings->hardening->restAllowList($environment->isActive(Component::Headless)), WpTranslator::forPackage());
             }
 
             if ($settings->headers->isActive()) {

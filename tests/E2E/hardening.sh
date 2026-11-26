@@ -97,6 +97,8 @@ check "a visitor is refused the posts"                          status_is 401 "$
 check "and the same with ?rest_route= and other capitals"       status_is 401 "$BASE/?rest_route=/WP/v2/Users"
 check "a route that does not exist is not told apart"           status_is 401 "$BASE/wp-json/nothing/v1/here"
 check "the batch route is closed"                               status_is 401 -X POST -H 'Content-Type: application/json' --data '{"requests":[{"path":"/wp/v2/posts"}]}' "$BASE/wp-json/batch/v1"
+# Over plain http, WordPress only offers application passwords on a local site
+wp config set WP_ENVIRONMENT_TYPE local >/dev/null 2>&1
 check "the index stays open and says where to authorise"        body_has 'application-passwords' "$BASE/wp-json/"
 check "the index names no closed route"                         body_lacks 'wp\/v2' "$BASE/wp-json/"
 check "the embeds of the site are still given"                  status_is 200 "$BASE/wp-json/oembed/1.0/embed?url=$BASE/hello-world/"
@@ -107,7 +109,6 @@ check "OPTIONS with the override header is not one either"      status_is 401 -X
 login
 check "a cookie without its nonce is a visitor"                 status_is 401 -b "$JAR" "$BASE/wp-json/wp/v2/posts"
 check "a logged-in user has the API"                            sh -c "N=\$(curl -s -b '$JAR' '$BASE/wp-admin/admin-ajax.php?action=rest-nonce'); curl -s -b '$JAR' -H \"X-WP-Nonce: \$N\" '$BASE/wp-json/wp/v2/users' | grep -q '\"slug\"'"
-wp config set WP_ENVIRONMENT_TYPE local >/dev/null 2>&1
 RESTPW=$(wp user application-password create admin e2e-rest-closed --porcelain 2>/dev/null)
 check "an application password has the API"                     status_is 200 -u "admin:$RESTPW" "$BASE/wp-json/wp/v2/users/me"
 check "a wrong application password does not"                   status_is 401 -u "admin:wrong wrong wrong" "$BASE/wp-json/wp/v2/users/me"
@@ -122,7 +123,7 @@ reset
 
 # --- 2c. Site Health > Info ----------------------------------------------------------------------------------
 echo "2c. Site Health, the Info tab"
-configure "array('hardening' => array('xmlrpc' => true), 'login' => array('throttle' => true, 'allow_ips' => array('203.0.113.50')), 'notifications' => array('channels' => array('ops' => array('type' => 'slack', 'url' => 'https://hooks.example.com/T0/e2esecret'))))"
+configure "array('hardening' => array('xmlrpc' => true), 'login' => array('throttle' => true, 'allow_ips' => array('203.0.113.50')), 'notifications' => array('schedule' => 'off', 'channels' => array('ops' => array('type' => 'slack', 'url' => 'https://hooks.example.com/T0/e2esecret'))))"
 login
 curl -s --max-time 40 -b "$JAR" "$BASE/wp-admin/site-health.php?tab=debug" >/tmp/hornet-info.html
 check "the Info tab has a Hornet section"                       grep -q 'health-check-accordion-block-pollora-hornet' /tmp/hornet-info.html
@@ -131,9 +132,9 @@ check "and what is turned on"                                    grep -q 'Close 
 check "no channel URL and no allowed address in it"             sh -c "! grep -qE 'e2esecret|hooks\.example\.com|203\.0\.113\.50' /tmp/hornet-info.html"
 cat > /tmp/hornet-copy.php <<'PHP'
 <?php
+require_once ABSPATH.'wp-admin/includes/admin.php';
 require_once ABSPATH.'wp-admin/includes/class-wp-debug-data.php';
-require_once ABSPATH.'wp-admin/includes/update.php';
-require_once ABSPATH.'wp-admin/includes/misc.php';
+require_once ABSPATH.'wp-admin/includes/class-wp-site-health.php';
 $info = WP_Debug_Data::debug_data();
 echo WP_Debug_Data::format(['pollora-hornet' => $info['pollora-hornet']], 'debug');
 PHP

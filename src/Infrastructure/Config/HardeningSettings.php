@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Infrastructure\Config;
 
 use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
+use Pollora\Hornet\Domain\Http\RestAllowList;
 
 /**
  * The `hardening` settings: what Hornet closes on the site. Everything is off until it is asked for.
@@ -15,6 +16,15 @@ use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
  */
 final readonly class HardeningSettings
 {
+    /**
+     * What visitors need on an ordinary site, kept open when the REST API is closed: the embeds of this site by others, the forms of
+     * Contact Form 7, and the shop of the WooCommerce cart and checkout blocks. A prefix of a plugin that is not installed opens nothing.
+     */
+    public const array REST_DEFAULTS = ['oembed/1.0/embed', 'contact-form-7/v1/contact-forms', 'wc/store'];
+
+    /** The public routes of pollora/headless: its front end has no WordPress login, even to trade a preview token. */
+    public const string REST_HEADLESS = 'headless/v1';
+
     private const array KEYS = ['xmlrpc', 'user_enumeration', 'hide_version', 'file_editor', 'restrict_rest_api', 'rest_api_allow'];
 
     /**
@@ -32,6 +42,14 @@ final readonly class HardeningSettings
     public static function none(): self
     {
         return new self(false, false, false, false);
+    }
+
+    /**
+     * The routes visitors keep: the defaults, those of pollora/headless when it is there, and what the owner added.
+     */
+    public function restAllowList(bool $headless): RestAllowList
+    {
+        return new RestAllowList([...self::REST_DEFAULTS, ...($headless ? [self::REST_HEADLESS] : []), ...$this->restApiAllow]);
     }
 
     public function isActive(): bool
