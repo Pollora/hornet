@@ -1817,51 +1817,51 @@ msgstr ""
 msgid "a hidden PHP file"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:110
+#: src/Domain/Scan/ScriptRules.php:112
 msgid "calls a function whose name is request input"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:114
+#: src/Domain/Scan/ScriptRules.php:116
 msgid "hands request input to a callback that runs it"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:118
+#: src/Domain/Scan/ScriptRules.php:120
 msgid "includes a file named by request input"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:122
+#: src/Domain/Scan/ScriptRules.php:124
 msgid "eval()"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:126 src/Domain/Scan/Suspicion.php:83
+#: src/Domain/Scan/ScriptRules.php:128 src/Domain/Scan/Suspicion.php:83
 msgid "runs a command (%s)"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:130
+#: src/Domain/Scan/ScriptRules.php:132
 msgid "runs a command (backticks)"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:134
+#: src/Domain/Scan/ScriptRules.php:136
 msgid "preg_replace with the /e modifier"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:138 src/Domain/Scan/Suspicion.php:87
+#: src/Domain/Scan/ScriptRules.php:140 src/Domain/Scan/Suspicion.php:87
 msgid "decodes hidden data (%s)"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:142
+#: src/Domain/Scan/ScriptRules.php:144
 msgid "a very long string with no space in it"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:146
+#: src/Domain/Scan/ScriptRules.php:148
 msgid "variable variables"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:150
+#: src/Domain/Scan/ScriptRules.php:152
 msgid "calls a function named by a variable"
 msgstr ""
 
-#: src/Domain/Scan/ScriptRules.php:155
+#: src/Domain/Scan/ScriptRules.php:157
 msgid "passes request input to it"
 msgstr ""
 

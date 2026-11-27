@@ -47,12 +47,14 @@ final class ScriptRules
             $tokens[] = is_array($token) ? [$token[0], $token[1]] : [null, $token];
         }
 
+        [$tokens, $braced] = self::plainNames($tokens);
+
         $eval = false;
         $backtick = false;
         $blob = false;
         $regex = false;
         $varCall = false;
-        $varVar = false;
+        $varVar = $braced;
         $input = false;
         $inputCall = false;
         $inputCallback = false;
@@ -156,6 +158,34 @@ final class ScriptRules
         }
 
         return new ScriptScore($score, $reasons);
+    }
+
+    /**
+     * `${"_POST"}` is `$_POST`: request input written that way is read as the input it is.
+     *
+     * @param  list<array{int|null, string}>  $tokens
+     * @return array{list<array{int|null, string}>, bool} the tokens, and whether a name was written between braces
+     */
+    private static function plainNames(array $tokens): array
+    {
+        $plain = [];
+        $braced = false;
+
+        for ($i = 0; $i < count($tokens); $i++) {
+            $name = $tokens[$i + 2] ?? [null, ''];
+
+            if ($tokens[$i][1] === '$' && ($tokens[$i + 1][1] ?? '') === '{' && $name[0] === T_CONSTANT_ENCAPSED_STRING && ($tokens[$i + 3][1] ?? '') === '}' && in_array('$'.trim($name[1], '\'"'), self::INPUT, true)) {
+                $plain[] = [T_VARIABLE, '$'.trim($name[1], '\'"')];
+                $braced = true;
+                $i += 3;
+
+                continue;
+            }
+
+            $plain[] = $tokens[$i];
+        }
+
+        return [$plain, $braced];
     }
 
     /**
