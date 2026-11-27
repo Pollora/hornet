@@ -45,7 +45,7 @@ it('says what is on, with the number that matters', function (): void {
         ->and($rows['headers.csp']['detail'])->toBe('report only')
         ->and($rows['login.throttle']['detail'])->toBe('3 failures in 600 seconds')
         ->and($rows['two_factor.require_roles']['detail'])->toBe('administrator, editor')
-        ->and($rows['scanner.schedule']['detail'])->toBe('daily')->and($rows['scanner.probe_uploads']['on'])->toBeTrue()
+        ->and($rows['scanner.schedule']['detail'])->toBe('once a day')->and($rows['scanner.probe_uploads']['on'])->toBeTrue()
         ->and($rows['vulnerabilities.enabled']['detail'])->toContain('wpvulnerability.net')
         ->and($rows['disabled_checks']['detail'])->toBe('file-mods')->and($rows['ignore']['detail'])->toBe('xml-rpc');
 });
@@ -74,3 +74,12 @@ it('says in words how often the channels are fed, so that no schedule does not r
 it('says nothing more about notifications when no channel is set', function (): void {
     expect(settingsRows()['notifications.channels'])->toMatchArray(['on' => false, 'detail' => '']);
 });
+
+it('says in words how often the scan runs, and nothing more when it is not scheduled', function (string $schedule, bool $on, string $detail): void {
+    expect(settingsRows(['scanner' => ['schedule' => $schedule]])['scanner.schedule'])->toMatchArray(['on' => $on, 'detail' => $detail]);
+})->with([
+    ['off', false, ''],
+    ['hourly', true, 'every hour'],
+    ['twicedaily', true, 'twice a day'],
+    ['daily', true, 'once a day'],
+]);

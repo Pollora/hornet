@@ -2031,25 +2031,37 @@ msgstr ""
 msgid "Findings set aside"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:80
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:75
+msgid "every hour"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:76
+msgid "twice a day"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:77
+msgid "once a day"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:93
 msgid "%d channel"
 msgid_plural "%d channels"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:82
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:95
 msgid "audit every hour"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:83
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:96
 msgid "audit twice a day"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:84
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:97
 msgid "audit once a day"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/SettingsView.php:85
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:98
 msgid "no scheduled audit"
 msgstr ""
 

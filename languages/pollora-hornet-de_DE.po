@@ -2120,3 +2120,15 @@ msgstr "Prüfung einmal täglich"
 #: src/Infrastructure/WordPress/Admin/SettingsView.php
 msgid "no scheduled audit"
 msgstr "keine geplante Prüfung"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "every hour"
+msgstr "stündlich"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "twice a day"
+msgstr "zweimal täglich"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "once a day"
+msgstr "einmal täglich"

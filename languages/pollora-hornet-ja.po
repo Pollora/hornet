@@ -2080,3 +2080,15 @@ msgstr "監査は 1 日 1 回"
 #: src/Infrastructure/WordPress/Admin/SettingsView.php
 msgid "no scheduled audit"
 msgstr "予定された監査はありません"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "every hour"
+msgstr "1 時間ごと"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "twice a day"
+msgstr "1 日 2 回"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "once a day"
+msgstr "1 日 1 回"

@@ -2120,3 +2120,15 @@ msgstr "audit une fois par jour"
 #: src/Infrastructure/WordPress/Admin/SettingsView.php
 msgid "no scheduled audit"
 msgstr "aucun audit planifié"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "every hour"
+msgstr "toutes les heures"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "twice a day"
+msgstr "deux fois par jour"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "once a day"
+msgstr "une fois par jour"

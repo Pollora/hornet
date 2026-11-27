@@ -49,7 +49,7 @@ final class SettingsView
         $add(Message::mark('Accounts'), 'session', Message::mark('Shorter login sessions'), $settings->accounts->sessionLifetime !== null || $settings->accounts->rememberLifetime !== null);
         $add(Message::mark('Accounts'), 'two_factor.require_roles', Message::mark('Two-factor required'), $settings->accounts->requireRoles !== [], implode(', ', $settings->accounts->requireRoles));
 
-        $add(Message::mark('Scanner'), 'scanner.schedule', Message::mark('Scheduled scan'), $settings->scanner->schedule !== 'off', $settings->scanner->schedule);
+        $add(Message::mark('Scanner'), 'scanner.schedule', Message::mark('Scheduled scan'), $settings->scanner->schedule !== 'off', self::frequency($settings->scanner->schedule));
         $add(Message::mark('Scanner'), 'scanner.probes', Message::mark('Ask the site what it gives away'), $settings->scanner->probes);
         $add(Message::mark('Scanner'), 'scanner.probe_uploads', Message::mark('Try to run PHP in the uploads'), $settings->scanner->probeUploads);
         $add(Message::mark('Scanner'), 'vulnerabilities.enabled', Message::mark('Look up known vulnerabilities'), $settings->vulnerabilities->enabled, $settings->vulnerabilities->enabled ? Message::of('name and version of each plugin and theme go to www.wpvulnerability.net') : '');
@@ -64,6 +64,19 @@ final class SettingsView
         $add(Message::mark('Audit'), 'ignore', Message::mark('Findings set aside'), $settings->ignored !== [], implode(', ', array_keys($settings->ignored)));
 
         return $rows;
+    }
+
+    /**
+     * How often the scan runs by itself. Not scheduled says nothing more: the row already reads "Off".
+     */
+    private static function frequency(string $schedule): string|Message
+    {
+        return match ($schedule) {
+            'hourly' => Message::of('every hour'),
+            'twicedaily' => Message::of('twice a day'),
+            'daily' => Message::of('once a day'),
+            default => '',
+        };
     }
 
     /**
