@@ -86,9 +86,9 @@ final class OptionRetryQueue implements RetryQueue
      */
     private function rows(): array
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
-        $rows = $wpdb->get_results($wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT %d", $wpdb->esc_like(self::PREFIX).'%', self::CAP + 50), ARRAY_A);
+        $rows = $wpdb->get_results($wpdb->prepare('SELECT option_name, option_value FROM %i WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT %d', $wpdb->options, $wpdb->esc_like(self::PREFIX).'%', self::CAP + 50), ARRAY_A);
         $found = [];
 
         foreach (is_array($rows) ? $rows : [] as $row) {

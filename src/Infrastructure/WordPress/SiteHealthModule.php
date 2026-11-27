@@ -29,6 +29,9 @@ final class SiteHealthModule implements Module
 
     private ?Auditor $built = null;
 
+    /**
+     * @param  Auditor|Closure(): Auditor  $auditor
+     */
     public function __construct(
         private readonly Auditor|Closure $auditor,
         private readonly Environment $environment,

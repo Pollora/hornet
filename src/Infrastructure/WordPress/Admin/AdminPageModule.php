@@ -106,7 +106,7 @@ final class AdminPageModule implements Module
         }
 
         $version = is_string($asset['version'] ?? null) ? $asset['version'] : 'dev';
-        $dependencies = is_array($asset['dependencies'] ?? null) ? array_values(array_filter($asset['dependencies'], is_string(...))) : [];
+        $dependencies = is_array($asset['dependencies'] ?? null) ? array_values(array_filter($asset['dependencies'], static fn (mixed $handle): bool => is_string($handle) && $handle !== '')) : [];
         $this->missing = array_values(array_filter($dependencies, static fn (string $handle): bool => ! wp_script_is($handle, 'registered')));
 
         if ($this->missing !== []) {

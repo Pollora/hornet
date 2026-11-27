@@ -8,6 +8,7 @@ use Pollora\Hornet\Domain\Exceptions\TransportException;
 use Pollora\Hornet\Domain\Notification\HttpClient;
 use Pollora\Hornet\Domain\Notification\HttpResponse;
 use Pollora\Hornet\Domain\Notification\Secret;
+use Pollora\Hornet\Domain\Scalar;
 
 /**
  * The WordPress HTTP API.
@@ -30,7 +31,7 @@ final class WpHttpClient implements HttpClient
         $headers = [];
 
         foreach (wp_remote_retrieve_headers($response) as $name => $value) {
-            $headers[strtolower((string) $name)] = implode(', ', array_map(strval(...), (array) $value));
+            $headers[strtolower((string) $name)] = implode(', ', array_map(static fn (mixed $one): string => Scalar::string($one), (array) $value));
         }
 
         return $headers;

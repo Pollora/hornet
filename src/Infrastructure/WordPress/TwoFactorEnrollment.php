@@ -24,11 +24,13 @@ final class TwoFactorEnrollment
 
     public function enrolled(int $userId): bool
     {
-        if (! $this->available()) {
+        $enabled = ['Two_Factor_Core', 'get_enabled_providers_for_user'];
+
+        if (! class_exists('Two_Factor_Core') || ! is_callable($enabled)) {
             return false;
         }
 
-        $providers = call_user_func(['Two_Factor_Core', 'get_enabled_providers_for_user'], $userId);
+        $providers = call_user_func($enabled, $userId);
 
         return is_array($providers) && $providers !== [];
     }

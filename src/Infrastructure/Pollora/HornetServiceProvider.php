@@ -9,6 +9,8 @@ use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use Pollora\Hornet\Domain\Audit\Report;
+use Pollora\Hornet\Domain\Exceptions\HookServiceException;
+use Pollora\Hornet\Domain\Exceptions\InvalidSettingsException;
 use Pollora\Hornet\Domain\Http\SecurityHeaders;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Config\Settings;
@@ -48,7 +50,7 @@ final class HornetServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(dirname(__DIR__, 3).'/config/hornet.php', 'pollora.hornet');
 
         // Said as soon as the provider is registered: the console (pollora:doctor, WP-CLI) builds an audit without ever starting
-        HostApplication::set(new ConfiguredApplication(fn (string $key): mixed => $this->app->make('config')->get($key)));
+        HostApplication::set(new ConfiguredApplication(fn (string $key): mixed => $this->configuration($key)));
 
         $this->startOnPluginsLoaded();
 
@@ -94,8 +96,15 @@ final class HornetServiceProvider extends ServiceProvider
             return;
         }
 
+        $action = $this->app->make(self::ACTION);
+        $filter = $this->app->make(self::FILTER);
+
+        if (! is_object($action) || ! is_object($filter)) {
+            throw HookServiceException::notAnObject();
+        }
+
         $this->started = true;
-        $hooks = new PolloraHooks($this->app->make(self::ACTION), $this->app->make(self::FILTER));
+        $hooks = new PolloraHooks($action, $filter);
 
         $misplaced = self::misplaced($this->app->configPath());
 
@@ -157,7 +166,13 @@ final class HornetServiceProvider extends ServiceProvider
             $remote = $_SERVER['REMOTE_ADDR'] ?? null;
 
             try {
-                $address = $this->app->make('request')->ip();
+                $request = $this->app->make('request');
+
+                if (! is_object($request) || ! method_exists($request, 'ip')) {
+                    return ClientAddress::fromServer($_SERVER, $settings->network);
+                }
+
+                $address = $request->ip();
             } catch (Throwable) {
                 return ClientAddress::fromServer($_SERVER, $settings->network);
             }
@@ -168,10 +183,27 @@ final class HornetServiceProvider extends ServiceProvider
 
     private function settings(): Settings
     {
-        /** @var array<mixed> $config */
-        $config = $this->app->make('config')->get('pollora.hornet', []);
+        $config = $this->configuration('pollora.hornet') ?? [];
+
+        if (! is_array($config)) {
+            throw InvalidSettingsException::invalid('pollora.hornet', 'an array');
+        }
 
         return SettingsLoader::load(function_exists('get_current_blog_id') ? get_current_blog_id() : 1, $config);
+    }
+
+    /**
+     * @throws InvalidSettingsException when there is no configuration to read: it is not taken for an empty one
+     */
+    private function configuration(string $key): mixed
+    {
+        $repository = $this->app->make('config');
+
+        if (! is_object($repository) || ! method_exists($repository, 'get')) {
+            throw InvalidSettingsException::invalid('config', 'the configuration repository of the application');
+        }
+
+        return $repository->get($key);
     }
 
     private function audit(): Report

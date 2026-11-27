@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress\Abilities;
 
+use Closure;
 use Pollora\Abilities\Adapter\Out\WordPress\WordPressAbilityCategoryRegistrar;
 use Pollora\Abilities\Adapter\Out\WordPress\WordPressAbilityRegistrar;
 use Pollora\Abilities\Application\Service\RegisterAbilityService;
@@ -178,7 +179,7 @@ final class AbilitiesModule implements Module
     /**
      * @param  array<string, mixed>  $expose
      */
-    private function declareWrites(AbilityFactory $abilities, callable $allowed, array $expose): void
+    private function declareWrites(AbilityFactory $abilities, Closure $allowed, array $expose): void
     {
         $abilities->define('hornet/run-scan')
             ->label('Start a security scan')
@@ -230,8 +231,8 @@ final class AbilitiesModule implements Module
                 }
 
                 // Hiding the worst is for a person, with the screen in front of them
-                foreach ($this->backend->status()['findings'] ?? [] as $finding) {
-                    if (is_array($finding) && ($finding['check'] ?? null) === $check && in_array($finding['severity'] ?? null, self::HUMAN_ONLY, true)) {
+                foreach ($this->backend->status()['findings'] as $finding) {
+                    if ($finding['check'] === $check && in_array($finding['severity'], self::HUMAN_ONLY, true)) {
                         return new WP_Error('hornet_needs_a_person', 'A finding of this severity is set aside from the screen, by a person.', ['status' => 403]);
                     }
                 }

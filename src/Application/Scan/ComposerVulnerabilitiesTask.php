@@ -218,7 +218,7 @@ final readonly class ComposerVulnerabilitiesTask implements ScanTask
 
         // The CVE number when there is just one: a record that lists several does not say which one is its own
         $numbers = array_values(array_unique(array_filter([$group[0]->id, ...$group[0]->aliases], static fn (string $name): bool => preg_match('/^CVE-\d{4}-\d{4,}$/D', $name) === 1)));
-        usort($fixes, version_compare(...));
+        usort($fixes, static fn (string $a, string $b): int => version_compare($a, $b) <=> 0);
         $severity = $group[0]->severity;
         $label = $package->dev ? Message::of('%s %s (development package)', $package->name, $package->version) : Message::raw($package->name.' '.$package->version);
         $title = $group[0]->summary === '' ? Message::of('a vulnerability the database does not describe') : Message::raw($group[0]->summary);

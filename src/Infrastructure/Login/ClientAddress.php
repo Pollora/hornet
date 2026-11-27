@@ -16,7 +16,7 @@ use Pollora\Hornet\Domain\Network\TrustedProxies;
 final class ClientAddress
 {
     /**
-     * @param  array<string, mixed>  $server  `$_SERVER`
+     * @param  array<mixed>  $server  `$_SERVER`
      */
     public static function fromServer(array $server, TrustedProxies $proxies): ?ClientIp
     {

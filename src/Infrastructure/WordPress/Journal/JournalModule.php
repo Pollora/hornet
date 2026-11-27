@@ -15,6 +15,8 @@ use Pollora\Hornet\Domain\Clock;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\IpAnonymizer;
 use Pollora\Hornet\Domain\Journal\Journal;
+use Pollora\Hornet\Domain\Scalar;
+use Pollora\Hornet\Infrastructure\WordPress\Database;
 use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
 use Pollora\Hornet\Infrastructure\WordPress\Module;
 use Pollora\Hornet\Infrastructure\WordPress\OptionScanStore;
@@ -108,9 +110,7 @@ final class JournalModule implements Module
      */
     public function tablesOfDeletedSite(mixed $tables, mixed $siteId = 0): array
     {
-        global $wpdb;
-
-        return [...(is_array($tables) ? $tables : []), $wpdb->get_blog_prefix(is_scalar($siteId) ? (int) $siteId : 0).'hornet_journal'];
+        return [...(is_array($tables) ? $tables : []), Database::connection()->get_blog_prefix(Scalar::int($siteId)).'hornet_journal'];
     }
 
     /**
@@ -308,7 +308,7 @@ final class JournalModule implements Module
         }
 
         if ($type === 'core') {
-            $this->recorder->record(EventTypes::CORE_UPDATED, 'core', ['version' => (string) ($GLOBALS['wp_version'] ?? '')]);
+            $this->recorder->record(EventTypes::CORE_UPDATED, 'core', ['version' => Scalar::string($GLOBALS['wp_version'] ?? null)]);
 
             return;
         }

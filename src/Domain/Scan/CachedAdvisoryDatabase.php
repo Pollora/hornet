@@ -27,12 +27,12 @@ final class CachedAdvisoryDatabase implements AdvisoryDatabase
         $ask = [];
 
         foreach ($packages as $index => $package) {
-            $kept = $this->cache->get(self::matchKey($package));
+            $kept = self::matches($this->cache->get(self::matchKey($package)));
 
             if ($kept === null) {
                 $ask[$index] = $package;
             } else {
-                $answers[$index] = array_filter($kept, is_string(...));
+                $answers[$index] = $kept;
             }
         }
 
@@ -73,6 +73,33 @@ final class CachedAdvisoryDatabase implements AdvisoryDatabase
     public function fetched(): int
     {
         return $this->fetched;
+    }
+
+    /**
+     * What was kept of one release. A damaged entry is not read in part: with the bad lines left out, a release that has flaws would
+     * look as if it had fewer, or none. The database is asked again.
+     *
+     * @param  array<mixed>|null  $kept
+     * @return array<string, string>|null
+     */
+    private static function matches(?array $kept): ?array
+    {
+        if ($kept === null) {
+            return null;
+        }
+
+        $matches = [];
+
+        foreach ($kept as $id => $modified) {
+            // A number for a key is a list: what stood for the identifiers is lost
+            if (! is_string($id) || ! is_string($modified)) {
+                return null;
+            }
+
+            $matches[$id] = $modified;
+        }
+
+        return $matches;
     }
 
     private static function matchKey(ComposerPackage $package): string

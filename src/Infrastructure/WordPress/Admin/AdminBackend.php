@@ -38,6 +38,8 @@ use Pollora\Hornet\Infrastructure\WordPress\ScannerFactory;
  * The routes check who is asking; this does the work. It reads and writes nothing of the site's settings.
  *
  * @internal
+ *
+ * @phpstan-import-type FindingRow from StatusView
  */
 final readonly class AdminBackend
 {
@@ -51,7 +53,7 @@ final readonly class AdminBackend
     /**
      * The audit, the last scan, the settings, the channels. It runs the audit, which is not instant.
      *
-     * @return array<string, mixed>
+     * @return array{counts: array<string, int>, score: array<string, mixed>, worst: ?string, findings: list<FindingRow>, scan: array<string, mixed>, settings: mixed, channels: list<array{name: string, type: string, min_severity: string}>, network: bool, journal: array{enabled: bool, retention_days: int}}
      */
     public function status(): array
     {

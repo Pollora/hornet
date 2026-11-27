@@ -79,6 +79,12 @@ final readonly class HardeningModule implements Module
         }
 
         global $wp_query;
+
+        // Nothing to turn into a 404: the request stops here, rather than showing whose archive it is
+        if (! is_object($wp_query) || ! method_exists($wp_query, 'set_404')) {
+            wp_die('', '', ['response' => 404]);
+        }
+
         $wp_query->set_404();
         status_header(404);
         nocache_headers();

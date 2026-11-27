@@ -77,11 +77,11 @@ final readonly class HardeningSettings
         }
 
         return new self(
-            $value['xmlrpc'] ?? false,
-            $value['user_enumeration'] ?? false,
-            $value['hide_version'] ?? false,
-            $value['file_editor'] ?? false,
-            $value['restrict_rest_api'] ?? false,
+            ($value['xmlrpc'] ?? false) === true,
+            ($value['user_enumeration'] ?? false) === true,
+            ($value['hide_version'] ?? false) === true,
+            ($value['file_editor'] ?? false) === true,
+            ($value['restrict_rest_api'] ?? false) === true,
             self::prefixes($value['rest_api_allow'] ?? []),
         );
     }
