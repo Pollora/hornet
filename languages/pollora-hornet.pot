@@ -2031,6 +2031,28 @@ msgstr ""
 msgid "Findings set aside"
 msgstr ""
 
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:80
+msgid "%d channel"
+msgid_plural "%d channels"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:82
+msgid "audit every hour"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:83
+msgid "audit twice a day"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:84
+msgid "audit once a day"
+msgstr ""
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:85
+msgid "no scheduled audit"
+msgstr ""
+
 #: src/Infrastructure/WordPress/LoginThrottleModule.php:116 src/Infrastructure/WordPress/PasswordModule.php:55
 msgid "Error:"
 msgstr ""

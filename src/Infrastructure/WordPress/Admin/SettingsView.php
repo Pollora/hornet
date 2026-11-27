@@ -58,11 +58,32 @@ final class SettingsView
         $add(Message::mark('Journal'), 'journal.enabled', Message::mark('Security journal'), $settings->journal->enabled, $settings->journal->enabled ? Message::plural('kept %d day', 'kept %d days', $settings->journal->retentionDays, $settings->journal->retentionDays) : '');
         $add(Message::mark('Agents'), 'abilities.enabled', Message::mark('Abilities for AI agents (read)'), $settings->abilities->enabled);
         $add(Message::mark('Agents'), 'abilities.writes', Message::mark('Abilities for AI agents (start a scan, set aside)'), $settings->abilities->writes, $settings->abilities->writes ? Message::of('at most 20 changes an hour per person') : '');
-        $add(Message::mark('Notifications'), 'notifications.channels', Message::mark('Notification channels'), $settings->notifications->channels !== [], sprintf('%d, %s', count($settings->notifications->channels), $settings->notifications->schedule));
+        $add(Message::mark('Notifications'), 'notifications.channels', Message::mark('Notification channels'), $settings->notifications->channels !== [], self::channels(count($settings->notifications->channels), $settings->notifications->schedule));
         $add(Message::mark('Audit'), 'site_health', Message::mark('Site Health tests'), $settings->siteHealth);
         $add(Message::mark('Audit'), 'disabled_checks', Message::mark('Checks turned off'), $settings->disabledChecks !== [], implode(', ', $settings->disabledChecks));
         $add(Message::mark('Audit'), 'ignore', Message::mark('Findings set aside'), $settings->ignored !== [], implode(', ', array_keys($settings->ignored)));
 
         return $rows;
+    }
+
+    /**
+     * How many channels, and how often the audit that feeds them runs by itself. "off" is the schedule, not the channels: it is said
+     * in words, so that it is not read as a channel turned off.
+     */
+    private static function channels(int $count, string $schedule): string|Message
+    {
+        if ($count === 0) {
+            return '';
+        }
+
+        return Message::join(', ', [
+            Message::plural('%d channel', '%d channels', $count, $count),
+            match ($schedule) {
+                'hourly' => Message::of('audit every hour'),
+                'twicedaily' => Message::of('audit twice a day'),
+                'daily' => Message::of('audit once a day'),
+                default => Message::of('no scheduled audit'),
+            },
+        ]);
     }
 }

@@ -14,6 +14,7 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ### Changed
 
+- The settings row of the notification channels (screen and Site Health) says how often the audit runs in words (`1 channel, no scheduled audit`), translated, instead of `1, off`, which read as a channel turned off.
 - With the journal on, a refused second factor is `login.second_factor_failed`, no longer `login.failed`; a `login.success` that still has a second factor to pass says `second_factor: pending`.
 
 ## 0.9.0 - 2026-11-26
