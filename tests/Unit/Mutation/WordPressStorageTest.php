@@ -53,6 +53,7 @@ use Pollora\Hornet\Tests\Fixtures\InMemoryNotificationState;
 use Pollora\Hornet\Tests\Fixtures\InMemoryRetryQueue;
 use Pollora\Hornet\Tests\Fixtures\InMemoryScanStateStore;
 use Pollora\Hornet\Tests\Fixtures\InMemoryScanStore;
+use Pollora\Hornet\Tests\Fixtures\Samples;
 
 beforeEach(function (): void {
     $this->site = FakeSite::install();
@@ -108,7 +109,7 @@ it('keeps what was sent for exactly an hour, as a list', function (): void {
 });
 
 it('goes on past a damaged waiting message to the next one', function (): void {
-    $good = ['channel' => 'c', 'attempts' => 1, 'due' => 10, 'notification' => ['title' => 'T', 'body' => 'B', 'severity' => 'high', 'site' => 'S', 'url' => 'u', 'findings' => []]];
+    $good = ['channel' => 'c', 'attempts' => 1, 'due' => 10, 'notification' => Samples::notification()->toArray()];
     $this->db->answers = [[
         ['option_name' => 'hornet_nq_bad', 'option_value' => '{}'],
         'not a row',
@@ -121,33 +122,35 @@ it('goes on past a damaged waiting message to the next one', function (): void {
         return true;
     });
 
-    expect((new OptionRetryQueue)->due(new DateTimeImmutable('@100')))->toHaveCount(count($deleted) === 1 ? 1 : 0)
-        ->and($deleted)->toContain('hornet_nq_bad');
+    expect((new OptionRetryQueue)->due(new DateTimeImmutable('@100')))->toHaveCount(1)
+        ->and($deleted)->toBe(['hornet_nq_bad']);
 });
 
-it('writes the same problem of the throttle again after an hour, and reads it for a week', function (): void {
+it('writes the same problem of the throttle again after an hour, and reads it for a week', function (int $age, bool $rewritten): void {
     $note = new ThrottleProblemNote;
-    $at = fn (): int => $this->site->options[LoginThrottleModule::PROBLEM_OPTION]['at'];
 
-    mutWpSameSecond(function (int $now) use ($note, $at): void {
-        $this->site->options[LoginThrottleModule::PROBLEM_OPTION] = ['reason' => 'shared', 'at' => $now - 3600];
+    $written = mutWpSameSecond(function (int $now) use ($note, $age): bool {
+        $this->site->options[LoginThrottleModule::PROBLEM_OPTION] = ['reason' => 'shared', 'at' => $now - $age];
         $note->record('shared');
 
-        expect($at())->toBe($now);
+        return $this->site->options[LoginThrottleModule::PROBLEM_OPTION]['at'] === $now;
+    });
 
-        $this->site->options[LoginThrottleModule::PROBLEM_OPTION] = ['reason' => 'shared', 'at' => $now - 3599];
-        $note->record('shared');
+    expect($written)->toBe($rewritten);
+})->with([[3599, false], [3600, true]]);
 
-        expect($at())->toBe($now - 3599);
+it('still reads a note that is exactly a week old, and none without a date', function (): void {
+    $note = new ThrottleProblemNote;
 
+    $read = mutWpSameSecond(function (int $now) use ($note): ?string {
         $this->site->options[LoginThrottleModule::PROBLEM_OPTION] = ['reason' => 'shared', 'at' => $now - 604800];
 
-        expect($note->read())->toBe('shared');
+        return $note->read();
     });
 
     $this->site->options[LoginThrottleModule::PROBLEM_OPTION] = ['reason' => 'shared'];
 
-    expect($note->read())->toBeNull();
+    expect($read)->toBe('shared')->and($note->read())->toBeNull();
 });
 
 it('reads every way PHP says it shows its errors', function (string $setting, string $seen): void {

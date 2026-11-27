@@ -71,18 +71,18 @@ it('says that the journal is off, with the kinds it would hold', function (): vo
     expect($this->admin->backend()->journal([]))->toBe(['enabled' => false, 'events' => [], 'total' => 0, 'page' => 1, 'pages' => 1, 'types' => EventTypes::groups()]);
 });
 
-it('asks the journal for what the screen filters, whatever the type of the values', function (array $params, string $where, string $page): void {
+it('asks the journal for what the screen filters, whatever the type of the values', function (array $params, string $where, string $page, int $number): void {
     $this->admin->db->answers = ['3', []];
 
     $result = $this->admin->backend(['journal' => ['enabled' => true]])->journal($params);
 
     expect($this->admin->db->ran[1])->toBe('SELECT * FROM `wp_hornet_journal` '.$where.'ORDER BY occurred_at DESC, id DESC '.$page)
-        ->and($result['page'])->toBe((int) substr($page, strrpos($page, ' ') + 1) === 0 ? 1 : 2);
+        ->and($result['page'])->toBe($number);
 })->with([
-    'nothing' => [[], ' ', 'LIMIT 25 OFFSET 0'],
-    'empty filters' => [['type' => '', 'source' => '', 'user' => 0], ' ', 'LIMIT 25 OFFSET 0'],
-    'numbers as text' => [['per_page' => '10', 'page' => '2', 'user' => '1'], 'WHERE user_id = 1 ', 'LIMIT 10 OFFSET 10'],
-    'a type' => [['type' => 'login.failed', 'user' => -1], "WHERE type = 'login.failed' ", 'LIMIT 25 OFFSET 0'],
+    'nothing' => [[], ' ', 'LIMIT 25 OFFSET 0', 1],
+    'empty filters' => [['type' => '', 'source' => '', 'user' => 0], ' ', 'LIMIT 25 OFFSET 0', 1],
+    'numbers as text' => [['per_page' => '10', 'page' => '2', 'user' => '1'], 'WHERE user_id = 1 ', 'LIMIT 10 OFFSET 10', 2],
+    'a type' => [['type' => 'login.failed', 'user' => -1], "WHERE type = 'login.failed' ", 'LIMIT 25 OFFSET 0', 1],
 ]);
 
 it('calls a scan overdue once it is more than 75 seconds late and nothing answered it', function (int $late, ?int $answered, bool $overdue): void {

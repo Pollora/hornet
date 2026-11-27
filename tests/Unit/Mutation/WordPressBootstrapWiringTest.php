@@ -71,10 +71,28 @@ it('asks the second factor of the user who is logged in, and of nobody else', fu
     expect($calls)->toBe($asked);
 })->with([[true, 1], [false, 0]]);
 
-it('serves the files of the screen from the assets of the package', function (): void {
+it('serves the screen from the compiled files and the languages of the package', function (): void {
+    $enqueued = [];
+    Functions\when('add_management_page')->justReturn('the-screen');
+    Functions\when('wp_script_is')->justReturn(true);
+    Functions\when('admin_url')->justReturn('https://example.com/wp-admin/admin.php');
+    Functions\when('add_query_arg')->alias(static fn (array $arguments, string $url): string => $url.'?'.http_build_query($arguments));
+    Functions\when('wp_enqueue_script')->alias(function (string $handle, string $url, array $dependencies, string $version) use (&$enqueued): void {
+        $enqueued['version'] = $version;
+    });
+    Functions\when('wp_set_script_translations')->alias(function (string $handle, string $domain, string $path) use (&$enqueued): void {
+        $enqueued['languages'] = $path;
+    });
+    Functions\when('wp_enqueue_style')->justReturn(null);
+    Functions\when('is_rtl')->justReturn(false);
     $module = mutWpModule(AdminPageModule::class, []);
 
-    expect((new ReflectionProperty($module, 'assets'))->getValue($module))->toBe(dirname(__DIR__, 3).'/assets/admin');
+    $module->menu();
+    $module->enqueue('the-screen');
+
+    $package = dirname(__DIR__, 3);
+
+    expect($enqueued)->toBe(['version' => (include $package.'/assets/admin/index.asset.php')['version'], 'languages' => $package.'/languages']);
 });
 
 it('journals the address that the host says, when it knows better than the server variables', function (): void {

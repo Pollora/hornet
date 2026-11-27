@@ -10,11 +10,14 @@ use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Domain\Notification\HttpResponse;
 use Pollora\Hornet\Infrastructure\Config\HardeningSettings;
 use Pollora\Hornet\Infrastructure\Config\LoginSettings;
+use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\HardeningModule;
 use Pollora\Hornet\Infrastructure\WordPress\HeadersModule;
 use Pollora\Hornet\Infrastructure\WordPress\LoginThrottleModule;
 use Pollora\Hornet\Infrastructure\WordPress\PasswordModule;
 use Pollora\Hornet\Infrastructure\WordPress\RestAccessModule;
+use Pollora\Hornet\Infrastructure\WordPress\TwoFactorEnrollment;
+use Pollora\Hornet\Infrastructure\WordPress\TwoFactorGateModule;
 use Pollora\Hornet\Tests\Fixtures\FakeClock;
 use Pollora\Hornet\Tests\Fixtures\FakeHttpClient;
 use Pollora\Hornet\Tests\Fixtures\InMemoryAttemptStore;
@@ -203,4 +206,24 @@ it('adds the policy of the headers to the one of WordPress instead of taking its
 
     expect($replace['X-Content-Type-Options'])->toBeTrue()
         ->and($replace['Content-Security-Policy-Report-Only'])->toBeFalse();
+});
+
+it('judges nobody when nobody is logged in, even on a network', function (): void {
+    Functions\when('is_multisite')->justReturn(true);
+    // WordPress reads an account number of 0 as the current user: it must not be asked
+    Functions\expect('is_super_admin')->never();
+    $redirects = [];
+    $module = new TwoFactorGateModule(
+        Settings::fromArray(['two_factor' => ['require_roles' => ['administrator']]])->accounts,
+        new TwoFactorEnrollment,
+        new FakeClock,
+        function (string $url) use (&$redirects): void {
+            $redirects[] = $url;
+        },
+        static fn (): ?object => null,
+    );
+
+    $module->gate();
+
+    expect($redirects)->toBe([]);
 });
