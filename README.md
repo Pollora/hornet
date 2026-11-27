@@ -1,3 +1,16 @@
+<p align="center">
+  <a href="https://pollora.dev">
+    <img src="https://raw.githubusercontent.com/Pollora/.github/main/brand/banners/hornet.png" width="100%" alt="Pollora Hornet: Security audit and hardening for WordPress">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://packagist.org/packages/pollora/hornet"><img src="https://img.shields.io/packagist/v/pollora/hornet" alt="Latest version"></a>
+  <a href="https://packagist.org/packages/pollora/hornet"><img src="https://img.shields.io/packagist/dt/pollora/hornet" alt="Total downloads"></a>
+  <a href="https://github.com/Pollora/hornet/actions/workflows/harness.yml"><img src="https://github.com/Pollora/hornet/actions/workflows/harness.yml/badge.svg" alt="Quality"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Pollora/hornet" alt="License"></a>
+</p>
+
 # Hornet
 
 Security for WordPress, from Pollora. Hornet audits the configuration of a site, tells what to fix and how, and shows the same findings in **Tools > Site Health**, in **WP-CLI** and, on a Pollora project, in **`pollora:doctor`**.
