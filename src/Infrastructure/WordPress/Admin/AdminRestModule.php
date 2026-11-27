@@ -52,6 +52,12 @@ final readonly class AdminRestModule implements Module
 
         if (is_array($data) && is_array($data['namespaces'] ?? null)) {
             $data['namespaces'] = array_values(array_filter($data['namespaces'], static fn (mixed $namespace): bool => $namespace !== self::NAMESPACE));
+
+            // WordPress makes a route for the namespace itself, which `show_in_index` does not hide
+            if (is_array($data['routes'] ?? null)) {
+                unset($data['routes']['/'.self::NAMESPACE]);
+            }
+
             $response->set_data($data);
         }
 

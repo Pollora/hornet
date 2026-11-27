@@ -87,7 +87,14 @@ final class TwoFactorGateModule implements Module
 
         $roles = is_array($user->roles ?? null) ? array_filter($user->roles, is_string(...)) : [];
 
-        return array_intersect($this->settings->requireRoles, $roles) !== [] && ! $this->enrollment->enrolled(Scalar::int($user->ID ?? null));
+        $id = Scalar::int($user->ID ?? null);
+
+        // A super administrator of a network administers every site, often without a role on the one being looked at
+        if (is_multisite() && is_super_admin($id)) {
+            $roles[] = 'administrator';
+        }
+
+        return array_intersect($this->settings->requireRoles, $roles) !== [] && ! $this->enrollment->enrolled($id);
     }
 
     private function inGrace(): bool

@@ -38,6 +38,9 @@ final class FakeSite
     /** @var array<string, bool> the autoload flag an option was created or written with */
     public array $autoload = [];
 
+    /** @var list<string> the cache groups that every site of a network reads */
+    public array $globalGroups = [];
+
     public bool $multisite = false;
 
     public bool $objectCache = false;
@@ -101,6 +104,20 @@ final class FakeSite
             $this->networkOptions[$name] = $value;
 
             return true;
+        });
+
+        Functions\when('delete_site_option')->alias(function (string $name): bool {
+            unset($this->networkOptions[$name]);
+
+            return true;
+        });
+        Functions\when('delete_site_transient')->alias(function (string $name): bool {
+            unset($this->siteTransients[$name]);
+
+            return true;
+        });
+        Functions\when('wp_cache_add_global_groups')->alias(function (array $groups): void {
+            $this->globalGroups = [...$this->globalGroups, ...$groups];
         });
 
         Functions\when('get_transient')->alias(fn (string $name): mixed => $this->transients[$name] ?? false);

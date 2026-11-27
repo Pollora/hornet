@@ -13,6 +13,7 @@ use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Infrastructure\Clock\SystemClock;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\DroppedSiteModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalSchema;
@@ -386,7 +387,7 @@ describe('the table is ready for what it is asked', function (): void {
     it('goes with a site that is deleted from a network', function (): void {
         global $wpdb;
 
-        $this->module->register(new WordPressHooks);
+        (new DroppedSiteModule)->register(new WordPressHooks);
 
         expect(apply_filters('wpmu_drop_tables', ['wp_5_options'], 5))->toBe(['wp_5_options', $wpdb->get_blog_prefix(5).'hornet_journal']);
     });

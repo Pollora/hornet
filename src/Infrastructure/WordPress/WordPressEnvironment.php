@@ -119,7 +119,10 @@ final class WordPressEnvironment implements Environment
 
     public function fileEditingBlocked(): bool
     {
-        return in_array('do_not_allow', map_meta_cap('edit_plugins', 0), true) && in_array('do_not_allow', map_meta_cap('edit_themes', 0), true);
+        // On a network only a super administrator may edit files: asked of nobody, the answer would always be "blocked"
+        $user = is_multisite() ? ($this->superAdministrators()[0] ?? 0) : 0;
+
+        return in_array('do_not_allow', map_meta_cap('edit_plugins', $user), true) && in_array('do_not_allow', map_meta_cap('edit_themes', $user), true);
     }
 
     /**
@@ -170,9 +173,14 @@ final class WordPressEnvironment implements Environment
         }
 
         $roles = $this->settings instanceof Settings && $this->settings->accounts->requireRoles !== [] ? $this->settings->accounts->requireRoles : ['administrator'];
-        $ids = get_users(['role__in' => $roles, 'fields' => 'ID', 'number' => 500]);
+        $ids = self::numbers(get_users(['role__in' => $roles, 'fields' => 'ID', 'number' => 500]));
 
-        return array_values(array_filter(self::numbers($ids), static fn (int $id): bool => ! $enrollment->enrolled($id)));
+        // A super administrator administers every site, with or without a role on it
+        if (is_multisite() && in_array('administrator', $roles, true)) {
+            $ids = array_values(array_unique([...$ids, ...$this->superAdministrators()]));
+        }
+
+        return array_values(array_filter($ids, static fn (int $id): bool => ! $enrollment->enrolled($id)));
     }
 
     public function loginThrottleProblem(): ?string
@@ -207,10 +215,15 @@ final class WordPressEnvironment implements Environment
             return null;
         }
 
-        $ids = get_users(['capability' => 'manage_options', 'meta_key' => '_application_passwords', 'fields' => 'ID', 'number' => 500]);
+        $ids = self::numbers(get_users(['capability' => 'manage_options', 'meta_key' => '_application_passwords', 'fields' => 'ID', 'number' => 500]));
+
+        if (is_multisite()) {
+            $ids = array_values(array_unique([...$ids, ...$this->superAdministrators()]));
+        }
+
         $passwords = [];
 
-        foreach (self::numbers($ids) as $id) {
+        foreach ($ids as $id) {
             foreach (WP_Application_Passwords::get_user_application_passwords($id) as $password) {
                 $passwords[] = [
                     'user' => $id,
@@ -357,6 +370,26 @@ final class WordPressEnvironment implements Environment
     public function loginsNotedSince(): ?int
     {
         return (new LoginDates)->since();
+    }
+
+    /**
+     * The accounts that administer the whole network, whatever their role on this site. Only asked on a network.
+     *
+     * @return list<int>
+     */
+    private function superAdministrators(): array
+    {
+        $ids = [];
+
+        foreach (get_super_admins() as $login) {
+            $user = get_user_by('login', $login);
+
+            if ($user !== false) {
+                $ids[] = (int) $user->ID;
+            }
+        }
+
+        return $ids;
     }
 
     /**

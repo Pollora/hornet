@@ -16,6 +16,9 @@ use Pollora\Hornet\Domain\Login\AttemptStore;
  *
  * The lockouts are also listed in one option, so that `wp hornet unlock --all` can find them: a cache cannot be listed.
  *
+ * On a multisite network the accounts are shared by every site, so the failures, the locks and their list are the network's:
+ * a site transient, a global cache group and a network option.
+ *
  * @internal
  */
 final class TransientAttemptStore implements AttemptStore
@@ -27,9 +30,20 @@ final class TransientAttemptStore implements AttemptStore
     /** The most lockouts the index remembers: the others still lock, they just cannot be unlocked all at once. */
     private const int INDEX_CAP = 500;
 
+    public function __construct()
+    {
+        if (function_exists('is_multisite') && is_multisite()) {
+            wp_cache_add_global_groups([self::GROUP]);
+        }
+    }
+
     public function get(string $key): Attempts
     {
-        $stored = wp_using_ext_object_cache() ? wp_cache_get($key, self::GROUP) : get_transient('hornet_lg_'.$key);
+        $stored = match (true) {
+            wp_using_ext_object_cache() => wp_cache_get($key, self::GROUP),
+            is_multisite() => get_site_transient('hornet_lg_'.$key),
+            default => get_transient('hornet_lg_'.$key),
+        };
 
         return Attempts::fromArray($stored);
     }
@@ -38,6 +52,8 @@ final class TransientAttemptStore implements AttemptStore
     {
         if (wp_using_ext_object_cache()) {
             wp_cache_set($key, $attempts->toArray(), self::GROUP, $keepFor);
+        } elseif (is_multisite()) {
+            set_site_transient('hornet_lg_'.$key, $attempts->toArray(), $keepFor);
         } else {
             set_transient('hornet_lg_'.$key, $attempts->toArray(), $keepFor);
         }
@@ -49,7 +65,7 @@ final class TransientAttemptStore implements AttemptStore
 
     public function forget(string $key): void
     {
-        wp_using_ext_object_cache() ? wp_cache_delete($key, self::GROUP) : delete_transient('hornet_lg_'.$key);
+        $this->delete($key);
 
         $index = $this->read();
         unset($index[$key]);
@@ -63,12 +79,21 @@ final class TransientAttemptStore implements AttemptStore
 
         foreach ($this->read() as $key => $until) {
             $locked += $until > $now ? 1 : 0;
-            wp_using_ext_object_cache() ? wp_cache_delete($key, self::GROUP) : delete_transient('hornet_lg_'.$key);
+            $this->delete($key);
         }
 
-        delete_option(self::INDEX);
+        $this->write([]);
 
         return $locked;
+    }
+
+    private function delete(string $key): void
+    {
+        match (true) {
+            wp_using_ext_object_cache() => wp_cache_delete($key, self::GROUP),
+            is_multisite() => delete_site_transient('hornet_lg_'.$key),
+            default => delete_transient('hornet_lg_'.$key),
+        };
     }
 
     private function index(string $key, int $until): void
@@ -90,7 +115,7 @@ final class TransientAttemptStore implements AttemptStore
      */
     private function read(): array
     {
-        $stored = get_option(self::INDEX, []);
+        $stored = is_multisite() ? get_site_option(self::INDEX, []) : get_option(self::INDEX, []);
 
         return is_array($stored) ? array_filter($stored, static fn (mixed $until, mixed $key): bool => is_int($until) && is_string($key) && preg_match('/\A[a-f0-9]{64}\z/', $key) === 1, ARRAY_FILTER_USE_BOTH) : [];
     }
@@ -100,6 +125,12 @@ final class TransientAttemptStore implements AttemptStore
      */
     private function write(array $index): void
     {
+        if (is_multisite()) {
+            $index === [] ? delete_site_option(self::INDEX) : update_site_option(self::INDEX, $index);
+
+            return;
+        }
+
         $index === [] ? delete_option(self::INDEX) : update_option(self::INDEX, $index, false);
     }
 }

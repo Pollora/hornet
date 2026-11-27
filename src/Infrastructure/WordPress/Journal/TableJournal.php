@@ -26,6 +26,11 @@ final readonly class TableJournal implements Journal
 {
     public function record(Event $event): void
     {
+        // Something done to another site of a network (from its administration): that site may never have made its table
+        if (is_multisite() && ms_is_switched()) {
+            JournalSchema::ensure();
+        }
+
         $wpdb = Database::connection();
 
         $done = $wpdb->insert(JournalSchema::table(), [

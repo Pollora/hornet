@@ -9,6 +9,7 @@ use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
 use Pollora\Hornet\Infrastructure\WordPress\ErrorDisplayModule;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\DroppedSiteModule;
 use Pollora\Hornet\Infrastructure\WordPress\LoginDatesModule;
 use Pollora\Hornet\Infrastructure\WordPress\LoginThrottleModule;
 use Pollora\Hornet\Infrastructure\WordPress\NotificationModule;
@@ -150,11 +151,11 @@ it('leaves the scheduled scan to the main site of a network: the files are share
     Functions\when('is_main_site')->justReturn(false);
     $schedule = ['scanner' => ['schedule' => 'daily']];
 
-    expect(array_map(static fn ($module): string => $module::class, bootModules(bootSettings($schedule), new FakeEnvironment)))->toBe([SiteHealthModule::class]);
+    expect(array_map(static fn ($module): string => $module::class, bootModules(bootSettings($schedule), new FakeEnvironment)))->toBe([DroppedSiteModule::class, SiteHealthModule::class]);
 
     Functions\when('is_main_site')->justReturn(true);
 
-    expect(array_map(static fn ($module): string => $module::class, bootModules(bootSettings($schedule), new FakeEnvironment)))->toBe([SiteHealthModule::class, ScanModule::class]);
+    expect(array_map(static fn ($module): string => $module::class, bootModules(bootSettings($schedule), new FakeEnvironment)))->toBe([DroppedSiteModule::class, SiteHealthModule::class, ScanModule::class]);
 });
 
 it('attaches the routes of the administration screen by default, and nothing of its page on a visitor\'s request', function (): void {
@@ -197,7 +198,7 @@ it('leaves the screen to the main site of a network', function (): void {
 
     $classes = array_map(static fn ($module): string => $module::class, bootModules(Settings::fromArray([]), new FakeEnvironment));
 
-    expect($classes)->toBe([ErrorDisplayModule::class, SiteHealthModule::class]);
+    expect($classes)->toBe([ErrorDisplayModule::class, DroppedSiteModule::class, SiteHealthModule::class]);
 });
 
 it('notes the logins of the administrators unless their check is turned off', function (): void {

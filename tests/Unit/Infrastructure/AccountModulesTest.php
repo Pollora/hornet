@@ -154,6 +154,7 @@ describe('two-factor gate', function (): void {
     }
 
     beforeEach(function (): void {
+        Functions\when('is_multisite')->justReturn(false);
         Two_Factor_Core::$enabled = [];
         $GLOBALS['hornet_user'] = (object) ['ID' => 7, 'roles' => ['administrator']];
         $GLOBALS['pagenow'] = 'index.php';
