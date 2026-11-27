@@ -6,6 +6,7 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ### Fixed
 
+- The PHP rules of the file scan read the different ways of writing a function name consistently.
 - Development only: `antecedent/patchwork` is required at commit `d588654` of its `master` branch (antecedent/patchwork#235), aliased as 2.2.6, so that a mutation run no longer counts crashing tests as caught mutants. Temporary, until the next Patchwork release.
 
 ## 0.10.2 - 2026-11-27

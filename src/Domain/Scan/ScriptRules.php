@@ -66,6 +66,12 @@ final class ScriptRules
             $called = $next[1] === '(' && $before !== T_OBJECT_OPERATOR && $before !== T_DOUBLE_COLON && $before !== T_FUNCTION;
             $name = strtolower($text);
 
+            // `\system` is `system`: a name written from the root is the same function
+            if ($id === T_NAME_FULLY_QUALIFIED && strrpos($text, '\\') === 0) {
+                $id = T_STRING;
+                $name = substr($name, 1);
+            }
+
             if ($id === T_EVAL) {
                 $eval = true;
             } elseif ($id === T_STRING && $called && in_array($name, self::EXECUTORS, true)) {
@@ -234,7 +240,7 @@ final class ScriptRules
             return true;
         }
 
-        return $first[0] === T_CONSTANT_ENCAPSED_STRING && in_array(strtolower(trim($first[1], '\'"')), self::DANGEROUS_CALLBACKS, true);
+        return $first[0] === T_CONSTANT_ENCAPSED_STRING && in_array(strtolower(trim($first[1], '\'"\\')), self::DANGEROUS_CALLBACKS, true);
     }
 
     /**
