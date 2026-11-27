@@ -480,6 +480,22 @@ On Bedrock and Pollora much of the code of a site is Composer packages. A **seco
 - The severity is the word the record gives (GitHub advisories have one); without it, medium. "Fixed in" comes from the range of the record the installed version is in.
 - Which records concern a release is kept six hours, a record a week. If OSV does not answer, the result is "not verified", never a pass. When the time runs out, the next run goes on where it stopped.
 
+## What it costs
+
+Measured on 0.10.0, server side, on a fresh classic WordPress (PHP 8.4 under Apache with OPcache, MariaDB 11, Docker on an Apple Silicon Mac): the same site without Hornet, with its default settings, and with every protection of this page turned on (journal, hardening with the REST API closed, headers and CSP, login throttle, breached passwords, session length, two-factor gate). The variant was chosen request by request in a random order; medians of 150 requests each, in two runs that agree.
+
+| Request | Time added, default | Time added, everything on | SQL queries added (default / everything) |
+| --- | --- | --- | --- |
+| Front page, a post | under 0.4 ms (noise) | under 0.6 ms | 0 / 0 |
+| REST `wp/v2/posts` | under 0.2 ms | under 0.5 ms | 0 / 0 |
+| Refused login | under 0.3 ms | 7 to 9 ms (a 180 ms request) | 0 / 9 to 14 |
+| Successful login | under 2 ms | about 5 ms | 3 / 8 |
+| Dashboard home | under 0.5 ms | under 0.6 ms | 2 / 2 |
+
+Peak memory grows by about 40 KB with the defaults and 100 to 200 KB with everything on. Hornet loads about 77 more PHP files with the defaults and 111 with everything on: keep OPcache on, since the figures above say nothing about a server without it.
+
+Not measured here: the scan (it runs from the cron or the command line, never in a visitor's request), the audit behind the screen and `wp hornet status`, a large journal, Pollora and multisite.
+
 ## Design
 
 - **One engine.** A check returns one finding. The same report feeds Site Health, WP-CLI and `pollora:doctor`, and will feed the administration screen and the MCP abilities.
