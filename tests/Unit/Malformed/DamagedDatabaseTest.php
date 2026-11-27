@@ -7,17 +7,10 @@ use Pollora\Hornet\Domain\Exceptions\DatabaseUnavailableException;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
 use Pollora\Hornet\Infrastructure\WordPress\WpContentStore;
-use Pollora\Hornet\Tests\Unit\Malformed\WpdbStandIn;
 
 /*
  * What `$wpdb` hands back is not always a row of the shape that was asked for.
  */
-
-defined('ARRAY_A') || define('ARRAY_A', 'ARRAY_A');
-
-if (! class_exists('wpdb', false)) {
-    class_alias(WpdbStandIn::class, 'wpdb');
-}
 
 /**
  * A `$wpdb` that answers the same lines to every question.

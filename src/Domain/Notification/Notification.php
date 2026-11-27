@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Domain\Notification;
 
+use DateMalformedStringException;
 use DateTimeImmutable;
 use Pollora\Hornet\Domain\Audit\Severity;
 
@@ -77,6 +78,12 @@ final readonly class Notification
             return null;
         }
 
-        return new self($data['id'], is_string($data['site_name'] ?? null) ? $data['site_name'] : '', is_string($data['site_url'] ?? null) ? $data['site_url'] : '', $alerts, new DateTimeImmutable($data['created_at']));
+        try {
+            $createdAt = new DateTimeImmutable($data['created_at']);
+        } catch (DateMalformedStringException) {
+            return null;
+        }
+
+        return new self($data['id'], is_string($data['site_name'] ?? null) ? $data['site_name'] : '', is_string($data['site_url'] ?? null) ? $data['site_url'] : '', $alerts, $createdAt);
     }
 }

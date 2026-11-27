@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\DefaultChecks;
+use Pollora\Hornet\Domain\Audit\Checks\HttpsCheck;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\SiteHealthInfo;
@@ -64,4 +65,25 @@ it('gives no number when the audit cannot be made', function (): void {
     $fields = hornetInfo([], new FakeEnvironment, static fn (): Auditor => throw new RuntimeException('no database'))['pollora-hornet']['fields'];
 
     expect($fields['score']['value'])->toBe('Could not be read');
+});
+
+it('says a score or a scan could not be read, never a clean one, and keeps the score out of the copy', function (): void {
+    $environment = new class extends FakeEnvironment
+    {
+        public function lastScan(): ?ScanSnapshot
+        {
+            throw new RuntimeException('database gone');
+        }
+    };
+    $fields = hornetInfo([], $environment, static fn (): Auditor => throw new RuntimeException('no audit'))['pollora-hornet']['fields'];
+
+    expect($fields['last_scan']['value'])->toBe('Could not be read')
+        ->and($fields['score']['value'])->toBe('Could not be read')
+        ->and($fields['score']['private'])->toBeTrue();
+});
+
+it('gives the score alone when everything could be verified', function (): void {
+    $fields = hornetInfo([], new FakeEnvironment(constants: ['FORCE_SSL_ADMIN' => true]), static fn (): Auditor => new Auditor([new HttpsCheck]))['pollora-hornet']['fields'];
+
+    expect($fields['score']['value'])->toBe('100 out of 100, grade A');
 });

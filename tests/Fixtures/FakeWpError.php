@@ -12,6 +12,7 @@ final class FakeWpError
     public function __construct(
         private readonly string $code = '',
         private readonly string $message = '',
+        private readonly mixed $data = null,
     ) {}
 
     /** @var list<array{string, string}> */
@@ -30,5 +31,10 @@ final class FakeWpError
     public function get_error_message(): string
     {
         return $this->message;
+    }
+
+    public function get_error_data(): mixed
+    {
+        return $this->data;
     }
 }
