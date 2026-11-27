@@ -4,6 +4,10 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+## 0.10.2 - 2026-11-27
+
+**Upgrade if Hornet runs on a multisite network.** Two things change there: the login locks made before the upgrade are forgotten, and super administrators are now covered by `two_factor.require_roles` when it names `administrator`, so one without a second factor is sent to set it up.
+
 Fixes for multisite networks, tried on one for the first time. **Upgrade if you run Hornet on a network.**
 
 ### Changed
