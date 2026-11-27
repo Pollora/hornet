@@ -18,23 +18,6 @@ use Pollora\Hornet\Tests\Fixtures\FakeHttpClient;
 use Pollora\Hornet\Tests\Fixtures\FakeWpError;
 use Pollora\Hornet\Tests\Fixtures\RecordingHooks;
 
-// A stand-in for the part of the Two-Factor plugin that Hornet asks: who has a method enabled
-if (! class_exists('Two_Factor_Core', false)) {
-    class Two_Factor_Core
-    {
-        /** @var array<int, list<string>> */
-        public static array $enabled = [];
-
-        /**
-         * @return list<string>
-         */
-        public static function get_enabled_providers_for_user(int $user): array
-        {
-            return self::$enabled[$user] ?? [];
-        }
-    }
-}
-
 describe('account settings', function (): void {
     it('is off until it is asked for', function (): void {
         $accounts = Settings::fromArray([], new ArraySecrets)->accounts;
