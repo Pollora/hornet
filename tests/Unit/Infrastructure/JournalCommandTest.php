@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Pollora\Hornet\Application\Journal\JournalRecorder;
+use Pollora\Hornet\Domain\Exceptions\JournalException;
 use Pollora\Hornet\Domain\Journal\Journal;
 use Pollora\Hornet\Domain\Journal\Source;
 use Pollora\Hornet\Infrastructure\WpCli\JournalCommand;
@@ -110,4 +111,14 @@ it('declares its flags the way WP-CLI reads them: a flag it does not declare is 
             expect($doc)->toContain($flag);
         }
     }
+});
+
+it('says that the journal could not be read, not that it holds nothing', function (): void {
+    $journal = Mockery::mock(Journal::class);
+    $journal->shouldReceive('find')->andThrow(JournalException::notRead());
+    $output = new RecordingOutput;
+    $command = new JournalCommand(static fn (): Journal => $journal, static fn () => null, static fn (): int => 30, new FakeClock('2026-11-25 10:00:00'), $output);
+
+    expect(fn () => $command->list())->toThrow(RuntimeException::class, 'could not be read')
+        ->and($output->warnings)->toBe([]);
 });

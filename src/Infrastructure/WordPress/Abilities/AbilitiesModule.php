@@ -13,6 +13,7 @@ use Pollora\Abilities\Domain\Schema\SchemaBuilder;
 use Pollora\Abilities\Factory\AbilityFactory;
 use Pollora\Hornet\Application\Abilities\AgentView;
 use Pollora\Hornet\Application\Journal\JournalRecorder;
+use Pollora\Hornet\Domain\Exceptions\JournalException;
 use Pollora\Hornet\Domain\Exceptions\SetAsideException;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\WindowCounter;
@@ -163,12 +164,16 @@ final class AbilitiesModule implements Module
 
                 $limit = $input->integer('limit', 20, 1, AgentView::MAX_LIMIT);
 
-                return AgentView::journal($this->backend->journal([
-                    'type' => $type,
-                    'source' => $input->string('source'),
-                    'page' => $input->integer('page', 1, 1, 10000),
-                    'per_page' => $limit,
-                ]), $limit);
+                try {
+                    return AgentView::journal($this->backend->journal([
+                        'type' => $type,
+                        'source' => $input->string('source'),
+                        'page' => $input->integer('page', 1, 1, 10000),
+                        'per_page' => $limit,
+                    ]), $limit);
+                } catch (JournalException $journalException) {
+                    return new WP_Error('hornet_journal_unreadable', $journalException->getMessage(), ['status' => 500]);
+                }
             });
 
         if ($this->writes) {

@@ -15,6 +15,7 @@ use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Domain\Journal\Source;
 use Pollora\Hornet\Domain\Scalar;
 use Pollora\Hornet\Infrastructure\WordPress\Database;
+use wpdb;
 
 /**
  * The journal, in its table. Every value goes through `$wpdb->prepare()` or `$wpdb->insert()`: nothing is built by hand.
@@ -50,6 +51,7 @@ final readonly class TableJournal implements Journal
         [$where, $values] = $this->where($query);
 
         $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM %i '.$where.' ORDER BY occurred_at DESC, id DESC LIMIT %d OFFSET %d', [JournalSchema::table(), ...$values, $query->limit, $query->offset]), ARRAY_A);
+        self::assertRead($wpdb);
 
         return array_values(array_filter(array_map(self::event(...), is_array($rows) ? $rows : [])));
     }
@@ -60,7 +62,10 @@ final readonly class TableJournal implements Journal
 
         [$where, $values] = $this->where($query);
 
-        return Scalar::int($wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM %i '.$where, [JournalSchema::table(), ...$values])));
+        $count = $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM %i '.$where, [JournalSchema::table(), ...$values]));
+        self::assertRead($wpdb);
+
+        return Scalar::int($count);
     }
 
     public function purgeBefore(DateTimeImmutable $cutoff): int
@@ -75,6 +80,7 @@ final readonly class TableJournal implements Journal
         $wpdb = Database::connection();
 
         $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM %i WHERE user_id = %d OR subject = %s ORDER BY occurred_at DESC, id DESC LIMIT %d OFFSET %d', JournalSchema::table(), $userId, 'user:'.$userId, max(1, $limit), max(0, $offset)), ARRAY_A);
+        self::assertRead($wpdb);
 
         return array_values(array_filter(array_map(self::event(...), is_array($rows) ? $rows : [])));
     }
@@ -88,6 +94,18 @@ final readonly class TableJournal implements Journal
         $to = $this->change($wpdb->prepare('UPDATE %i SET subject = %s WHERE subject = %s', JournalSchema::table(), 'user:erased', 'user:'.$userId));
 
         return $by + $to;
+    }
+
+    /**
+     * WordPress answers a refused query with nothing, as it does for an empty table: only `last_error` tells them apart.
+     *
+     * @throws JournalException
+     */
+    private static function assertRead(wpdb $wpdb): void
+    {
+        if ($wpdb->last_error !== '') {
+            throw JournalException::notRead();
+        }
     }
 
     /**
