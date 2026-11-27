@@ -34,7 +34,7 @@
         "pestphp/pest": "^3.8.2",
         "php-stubs/wp-cli-stubs": "^2.12",
         "phpstan/phpstan": "^2.1.16",
-        "pollora/harness": "^0.1.39",
+        "pollora/harness": "^0.1.40",
         "symfony/http-foundation": "^7.0 || ^8.0",
         "szepeviktor/phpstan-wordpress": "^2.0"
     },
