@@ -4,6 +4,10 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+## 0.10.3 - 2026-11-27
+
+**Upgrade, then run a scan (`wp hornet scan`):** the file scan could report as clean some files it should report. Fixes in what it reads and in what it keeps between two runs.
+
 ### Fixed
 
 - The PHP rules of the file scan read the different ways of writing a function or a variable name consistently, request input included.
