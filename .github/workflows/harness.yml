@@ -18,5 +18,7 @@ jobs:
     with:
       wordpress-integration: tests/Integration
       wordpress-plugins: two-factor
+      # A whole mutation run (on main, once ratchet.msi is recorded) takes longer than the default half hour allows for
+      quality-timeout-minutes: 60
     permissions:
       contents: read
