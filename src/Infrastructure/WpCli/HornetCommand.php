@@ -10,6 +10,7 @@ use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Outcome;
 use Pollora\Hornet\Domain\Audit\Report;
 use Pollora\Hornet\Domain\Audit\Severity;
+use Pollora\Hornet\Domain\Scalar;
 
 /**
  * Audit the security of the site from the command line.
@@ -60,8 +61,8 @@ final readonly class HornetCommand
      */
     public function status(array $args = [], array $assoc = []): void
     {
-        $format = (string) ($assoc['format'] ?? 'table');
-        $failOn = (string) ($assoc['fail-on'] ?? 'high');
+        $format = Scalar::string($assoc['format'] ?? 'table');
+        $failOn = Scalar::string($assoc['fail-on'] ?? 'high');
 
         if (! in_array($format, self::FORMATS, true)) {
             $this->output->error(sprintf('Unknown format "%s": use %s.', $format, implode(', ', self::FORMATS)));

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
 use Pollora\Hornet\Domain\Exceptions\ContentReadException;
+use Pollora\Hornet\Domain\Scalar;
 use Pollora\Hornet\Domain\Scan\ContentEntry;
 use Pollora\Hornet\Domain\Scan\ContentKind;
 use Pollora\Hornet\Domain\Scan\ContentRules;
@@ -80,14 +81,19 @@ final readonly class WpContentStore implements ContentStore
         $entries = [];
 
         foreach (is_array($rows) ? $rows : [] as $row) {
-            $option = $source === 'options' ? (string) $row->name : '';
+            // A row that cannot be read is not left out: the source would look clean without having been looked at
+            if (! is_object($row) || ! is_numeric($row->id ?? null)) {
+                throw ContentReadException::table($source);
+            }
+
+            $option = $source === 'options' ? Scalar::string($row->name ?? null) : '';
             $kind = match ($source) {
                 'posts' => ContentKind::Post,
                 'comments' => ContentKind::Comment,
                 'users' => ContentKind::Profile,
                 default => in_array($option, self::IDENTITY, true) ? ContentKind::SiteIdentity : ContentKind::Option,
             };
-            $entries[] = new ContentEntry($kind, (int) $row->id, $option, (string) $row->body);
+            $entries[] = new ContentEntry($kind, (int) $row->id, $option, Scalar::string($row->body ?? null));
         }
 
         return $entries;

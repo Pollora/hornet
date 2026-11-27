@@ -12,6 +12,7 @@ use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\XmlRpcState;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
+use Pollora\Hornet\Domain\Scalar;
 use Pollora\Hornet\Domain\Scan\ScanSnapshot;
 use Pollora\Hornet\Infrastructure\Config\Settings;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
@@ -171,7 +172,7 @@ final class WordPressEnvironment implements Environment
         $roles = $this->settings instanceof Settings && $this->settings->accounts->requireRoles !== [] ? $this->settings->accounts->requireRoles : ['administrator'];
         $ids = get_users(['role__in' => $roles, 'fields' => 'ID', 'number' => 500]);
 
-        return array_values(array_filter(array_map(intval(...), $ids), static fn (int $id): bool => ! $enrollment->enrolled($id)));
+        return array_values(array_filter(self::numbers($ids), static fn (int $id): bool => ! $enrollment->enrolled($id)));
     }
 
     public function loginThrottleProblem(): ?string
@@ -209,12 +210,12 @@ final class WordPressEnvironment implements Environment
         $ids = get_users(['capability' => 'manage_options', 'meta_key' => '_application_passwords', 'fields' => 'ID', 'number' => 500]);
         $passwords = [];
 
-        foreach ($ids as $id) {
-            foreach (WP_Application_Passwords::get_user_application_passwords((int) $id) as $password) {
+        foreach (self::numbers($ids) as $id) {
+            foreach (WP_Application_Passwords::get_user_application_passwords($id) as $password) {
                 $passwords[] = [
-                    'user' => (int) $id,
-                    'created' => (int) ($password['created'] ?? 0),
-                    'last_used' => isset($password['last_used']) ? (int) $password['last_used'] : null,
+                    'user' => $id,
+                    'created' => Scalar::int($password['created'] ?? null),
+                    'last_used' => isset($password['last_used']) ? Scalar::int($password['last_used']) : null,
                 ];
             }
         }
@@ -232,7 +233,8 @@ final class WordPressEnvironment implements Environment
         $installed = [];
 
         foreach ($this->installedPlugins() as $file => $data) {
-            $installed[$file] = ['slug' => $this->pluginSlug($file), 'version' => $data['Version']];
+            $file = (string) $file;
+            $installed[$file] = ['slug' => $this->pluginSlug($file), 'version' => Scalar::string($data['Version'] ?? null)];
         }
 
         return $this->updates('update_plugins', $installed);
@@ -264,6 +266,8 @@ final class WordPressEnvironment implements Environment
         $inactive = [];
 
         foreach (array_keys($this->installedPlugins()) as $file) {
+            $file = (string) $file;
+
             if (! is_plugin_active($file)) {
                 $inactive[] = $this->pluginSlug($file);
             }
@@ -302,7 +306,9 @@ final class WordPressEnvironment implements Environment
         $users = [];
 
         foreach (get_users(['capability' => 'manage_options', 'fields' => ['ID', 'user_registered'], 'number' => 500]) as $user) {
-            $users[(int) $user->ID] = (string) $user->user_registered;
+            if (is_object($user) && is_numeric($user->ID ?? null)) {
+                $users[(int) $user->ID] = Scalar::string($user->user_registered ?? null);
+            }
         }
 
         if (is_multisite()) {
@@ -325,7 +331,7 @@ final class WordPressEnvironment implements Environment
             $seen = [$dates->last($id)];
 
             foreach (WP_Session_Tokens::get_instance($id)->get_all() as $session) {
-                $seen[] = isset($session['login']) ? (int) $session['login'] : null;
+                $seen[] = is_array($session) && isset($session['login']) ? Scalar::int($session['login']) : null;
             }
 
             foreach (WP_Application_Passwords::get_user_application_passwords($id) as $password) {
@@ -383,7 +389,7 @@ final class WordPressEnvironment implements Environment
     }
 
     /**
-     * @return array<string, array<string, string>> by file, as `get_plugins()` gives them
+     * @return array<array<mixed>> by file (a file name ends in `.php`: the key is text), as `get_plugins()` gives them
      */
     private function installedPlugins(): array
     {
@@ -392,6 +398,17 @@ final class WordPressEnvironment implements Environment
         }
 
         return get_plugins();
+    }
+
+    /**
+     * The accounts of a list of ids. What is not a number names no account: it is not read as the account 0.
+     *
+     * @param  array<mixed>  $ids
+     * @return list<int>
+     */
+    private static function numbers(array $ids): array
+    {
+        return array_values(array_map(intval(...), array_filter($ids, is_numeric(...))));
     }
 
     private function pluginSlug(string $file): string

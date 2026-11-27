@@ -12,6 +12,7 @@ use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\Journal;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Domain\Journal\Source;
+use Pollora\Hornet\Domain\Scalar;
 
 /**
  * Read the security journal, empty it of what is old, or remove it.
@@ -74,9 +75,9 @@ final readonly class JournalCommand
      */
     public function list(array $args = [], array $assoc = []): void
     {
-        $format = (string) ($assoc['format'] ?? 'table');
-        $source = isset($assoc['source']) ? Source::tryFrom((string) $assoc['source']) : null;
-        $type = isset($assoc['type']) ? (string) $assoc['type'] : null;
+        $format = Scalar::string($assoc['format'] ?? 'table');
+        $source = isset($assoc['source']) ? Source::tryFrom(Scalar::string($assoc['source'])) : null;
+        $type = isset($assoc['type']) ? Scalar::string($assoc['type']) : null;
 
         if (! in_array($format, self::FORMATS, true)) {
             $this->output->error(sprintf('Unknown format "%s": use %s.', $format, implode(', ', self::FORMATS)));
@@ -96,8 +97,8 @@ final readonly class JournalCommand
             return;
         }
 
-        $since = isset($assoc['days']) && ctype_digit((string) $assoc['days']) ? $this->clock->now()->sub(new DateInterval('P'.(int) $assoc['days'].'D')) : null;
-        $events = ($this->journal)()->find(new JournalQuery($type, $source, isset($assoc['user']) && ctype_digit((string) $assoc['user']) ? (int) $assoc['user'] : null, $since, (int) ($assoc['limit'] ?? 50)));
+        $since = isset($assoc['days']) && ctype_digit(Scalar::string($assoc['days'])) ? $this->clock->now()->sub(new DateInterval('P'.Scalar::int($assoc['days']).'D')) : null;
+        $events = ($this->journal)()->find(new JournalQuery($type, $source, isset($assoc['user']) && ctype_digit(Scalar::string($assoc['user'])) ? Scalar::int($assoc['user']) : null, $since, Scalar::int($assoc['limit'] ?? 50)));
 
         if ($events === []) {
             $this->output->warning('The journal holds no such event.');

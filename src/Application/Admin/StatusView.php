@@ -22,6 +22,8 @@ use Pollora\Hornet\Domain\Scan\ScanState;
  * The text of a finding comes from the site (a file name, a plugin slug, a title from a feed): the script writes it as text, never as HTML.
  *
  * @internal
+ *
+ * @phpstan-type FindingRow array{check: string, label: string, status: string, outcome: string, severity: string, summary: string, details: list<string>, fix: ?string, ignored: ?string, ignored_by: ?string, ignored_login: ?string, ignored_at: ?int, can_set_aside: bool, can_restore: bool}
  */
 final class StatusView
 {
@@ -30,14 +32,14 @@ final class StatusView
      * @param  list<string>  $scanTasks  the ids of the tasks of the scan, in the order they run
      * @param  array<string, SetAside>  $setAside  the findings set aside from the screen, by check
      * @param  list<string>  $inFile  the checks that the settings file sets aside: they win, and the screen cannot change them
-     * @return array<string, mixed>
+     * @return array{counts: array<string, int>, score: array<string, mixed>, worst: ?string, findings: list<FindingRow>, scan: array<string, mixed>}
      */
     public static function build(Report $report, array $labels, ?ScanSnapshot $scan, ScanState $state, DateTimeImmutable $now, array $scanTasks, array $setAside = [], array $inFile = [], ?Translator $translator = null): array
     {
-        $findings = array_map(static fn (Finding $finding): array => self::finding($finding, $labels, $setAside, $inFile, $translator), $report->findings);
-
         // What asks for attention first: the open ones, the worst first; then what could not be verified; then the rest
-        usort($findings, static fn (array $a, array $b): int => [self::order($a['status']), -self::rank($a['severity'])] <=> [self::order($b['status']), -self::rank($b['severity'])]);
+        $sorted = $report->findings;
+        usort($sorted, static fn (Finding $a, Finding $b): int => [self::order(self::status($a)), -self::rank($a->severity->value)] <=> [self::order(self::status($b)), -self::rank($b->severity->value)]);
+        $findings = array_values(array_map(static fn (Finding $finding): array => self::finding($finding, $labels, $setAside, $inFile, $translator), $sorted));
 
         $now = $now->getTimestamp();
 
@@ -62,7 +64,7 @@ final class StatusView
      * @param  array<string, string>  $labels
      * @param  array<string, SetAside>  $setAside
      * @param  list<string>  $inFile
-     * @return array<string, mixed>
+     * @return FindingRow
      */
     private static function finding(Finding $finding, array $labels, array $setAside, array $inFile, ?Translator $translator): array
     {

@@ -104,7 +104,8 @@ final class RestAccessModule implements Module
     private static function route(): ?string
     {
         $wp = $GLOBALS['wp'] ?? null;
-        $route = is_object($wp) && isset($wp->query_vars['rest_route']) ? $wp->query_vars['rest_route'] : null;
+        $vars = is_object($wp) && isset($wp->query_vars) ? $wp->query_vars : null;
+        $route = is_array($vars) ? ($vars['rest_route'] ?? null) : null;
 
         if (! is_string($route) || $route === '') {
             return null;

@@ -9,6 +9,7 @@ use Pollora\Hornet\Domain\Notification\Channel;
 use Pollora\Hornet\Domain\Notification\HttpClient;
 use Pollora\Hornet\Domain\Notification\Mailer;
 use Pollora\Hornet\Domain\Notification\Secret;
+use Pollora\Hornet\Domain\Scalar;
 use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
 use Pollora\Hornet\Infrastructure\Config\ChannelType;
 use Pollora\Hornet\Infrastructure\Notification\Channels\DiscordChannel;
@@ -51,7 +52,7 @@ final readonly class ChannelFactory
             ChannelType::Slack => new SlackChannel($spec->name, $spec->minSeverity, $this->http, self::secret($options['url'] ?? null)),
             ChannelType::Teams => new TeamsChannel($spec->name, $spec->minSeverity, $this->http, self::secret($options['url'] ?? null)),
             ChannelType::Discord => new DiscordChannel($spec->name, $spec->minSeverity, $this->http, self::secret($options['url'] ?? null)),
-            ChannelType::Telegram => new TelegramChannel($spec->name, $spec->minSeverity, $this->http, self::secret($options['token'] ?? null), (string) ($options['chat_id'] ?? '')),
+            ChannelType::Telegram => new TelegramChannel($spec->name, $spec->minSeverity, $this->http, self::secret($options['token'] ?? null), Scalar::string($options['chat_id'] ?? null)),
             ChannelType::Ntfy => new NtfyChannel($spec->name, $spec->minSeverity, $this->http, self::secret($options['url'] ?? null), ($options['token'] ?? null) instanceof Secret ? $options['token'] : null, $private),
             ChannelType::Webhook => new WebhookChannel($spec->name, $spec->minSeverity, $this->http, self::secret($options['url'] ?? null), self::secret($options['secret'] ?? null), $this->clock, $private),
         };

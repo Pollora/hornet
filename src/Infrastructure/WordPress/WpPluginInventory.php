@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress;
 
+use Pollora\Hornet\Domain\Scalar;
 use Pollora\Hornet\Domain\Scan\InstalledPlugin;
 use Pollora\Hornet\Domain\Scan\PluginInventory;
 
@@ -24,10 +25,10 @@ final class WpPluginInventory implements PluginInventory
 
         foreach (get_plugins() as $file => $data) {
             $slug = dirname($file);
-            $version = $data['Version'];
+            $version = Scalar::string($data['Version'] ?? null);
 
             if ($slug !== '.' && $version !== '' && ! isset($plugins[$slug])) {
-                $plugins[$slug] = new InstalledPlugin($slug, $version, $data['Name'], $data['UpdateURI'] ?? '');
+                $plugins[$slug] = new InstalledPlugin($slug, $version, Scalar::string($data['Name'] ?? null), Scalar::string($data['UpdateURI'] ?? null));
             }
         }
 
