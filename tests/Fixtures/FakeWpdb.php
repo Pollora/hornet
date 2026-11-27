@@ -7,8 +7,9 @@ namespace Pollora\Hornet\Tests\Fixtures;
 /**
  * The part of `wpdb` that Hornet uses. `prepare()` substitutes its placeholders, so that a test reads the query that would run;
  * every query is kept, and each read answers with the next value the test queued (nothing queued: null).
+ * Not final, and `prepare()` may give null as the real one does: a test can mock it.
  */
-final class FakeWpdb
+class FakeWpdb
 {
     public string $prefix = 'wp_';
 
@@ -36,7 +37,7 @@ final class FakeWpdb
 
     public int|false $insertAnswer = 1;
 
-    public function prepare(string $query, mixed ...$args): string
+    public function prepare(string $query, mixed ...$args): ?string
     {
         if (count($args) === 1 && is_array($args[0])) {
             $args = array_values($args[0]);

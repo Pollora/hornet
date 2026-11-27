@@ -328,7 +328,7 @@ describe('the messages that wait to be sent again', function (): void {
         $this->db->answers = [[]];
         (new OptionRetryQueue)->count();
 
-        expect($this->db->ran[0])->toBe("SELECT option_name, option_value FROM wp_options WHERE option_name LIKE 'hornet\\\\_nq\\\\_%' ORDER BY option_id ASC LIMIT 150");
+        expect($this->db->ran[0])->toBe("SELECT option_name, option_value FROM `wp_options` WHERE option_name LIKE 'hornet\\\\_nq\\\\_%' ORDER BY option_id ASC LIMIT 150");
     });
 
     it('refuses an identifier that is not its own, for writing and for removing', function (string $id): void {
