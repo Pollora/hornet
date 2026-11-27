@@ -29,7 +29,8 @@ final readonly class OptionRunLock implements RunLock
 
         $since = get_option($this->option);
 
-        if (is_int($since) && $since < time() - self::STALE_AFTER) {
+        // The database gives the time back as text on any request but the one that wrote it
+        if (is_numeric($since) && (int) $since < time() - self::STALE_AFTER) {
             delete_option($this->option);
 
             return add_option($this->option, time(), '', false);
