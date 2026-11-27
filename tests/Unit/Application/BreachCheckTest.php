@@ -8,8 +8,6 @@ use Pollora\Hornet\Domain\Notification\HttpResponse;
 use Pollora\Hornet\Tests\Fixtures\FakeHttpClient;
 
 // The hash of the word "password", worked out here and not written down: a secrets scanner takes a hash for a key
-define('PASSWORD_PREFIX', substr(strtoupper(sha1('password')), 0, 5));
-define('PASSWORD_SUFFIX', substr(strtoupper(sha1('password')), 5));
 
 function breachCheck(string|TransportException $answer, int $status = 200): array
 {
