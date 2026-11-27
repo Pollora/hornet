@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Pollora\Hornet\Application\DefaultChecks;
-use Pollora\Hornet\Domain\Audit\LaravelApplication;
+use Pollora\Hornet\Infrastructure\Pollora\ConfiguredApplication;
 
 it('names every check for a person, each one differently', function (): void {
-    $laravel = Mockery::mock(LaravelApplication::class);
+    $laravel = new ConfiguredApplication(static fn (string $key): mixed => null);
     $checks = DefaultChecks::all(true, $laravel, true);
     $labels = array_map(static fn ($check): string => $check->label(), $checks);
 
