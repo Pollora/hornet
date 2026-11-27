@@ -72,7 +72,8 @@ final class NtfyChannel extends HttpChannel
     private static function serverRoot(Secret $topicUrl): Secret
     {
         $parts = parse_url($topicUrl->reveal());
-        $path = is_array($parts) ? (string) ($parts['path'] ?? '') : '';
+        // A trailing slash is not part of the topic: left there, the topic itself would be taken for the server's path
+        $path = is_array($parts) ? rtrim((string) ($parts['path'] ?? ''), '/') : '';
         $prefix = substr($path, 0, (int) strrpos($path, '/') + 1);
 
         return Secret::of(($parts['scheme'] ?? 'https').'://'.($parts['host'] ?? '').(isset($parts['port']) ? ':'.$parts['port'] : '').($prefix === '' ? '/' : $prefix));
