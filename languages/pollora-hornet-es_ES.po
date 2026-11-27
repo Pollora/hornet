@@ -1900,3 +1900,39 @@ msgstr "No se pudo leer la base de datos: no se puede decir nada de la parte no 
 #: src/Domain/Audit/Checks/TwoFactorCheck.php:37
 msgid "Install the Two-Factor plugin, then require it for the roles you choose with `two_factor.require_roles`."
 msgstr "Instale el plugin Two-Factor y exíjalo a los perfiles que elija con `two_factor.require_roles`."
+
+#: src/Infrastructure/WordPress/RestAccessModule.php:75
+msgid "The REST API of this site is closed to visitors who are not logged in."
+msgstr "La API REST de este sitio está cerrada a los visitantes que no han iniciado sesión."
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:38
+msgid "Close the REST API to visitors"
+msgstr "Cerrar la API REST a los visitantes"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:49
+msgid "Version"
+msgstr "Versión"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:50
+msgid "Turned on"
+msgstr "Activado"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:51
+msgid "Last scan"
+msgstr "Último análisis"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:86
+msgid "Nothing"
+msgstr "Nada"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:97
+msgid "Never"
+msgstr "Nunca"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:111
+msgid "%1$d out of 100, grade %2$s"
+msgstr "%1$d de 100, nota %2$s"
+
+#: src/Infrastructure/WordPress/SiteHealthInfo.php:114
+msgid "part of the audit could not be verified"
+msgstr "parte de la auditoría no se pudo verificar"

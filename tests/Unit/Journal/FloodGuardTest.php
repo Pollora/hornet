@@ -62,3 +62,13 @@ it('says its limits, so that the documentation and the events can quote them', f
 
     expect([$guard->perNetwork(), $guard->window(), $guard->perHour()])->toBe([5, 600, 120]);
 });
+
+it('counts a scope apart, so that one kind of failure cannot hide another', function (): void {
+    $counter = new InMemoryWindowCounter;
+    $logins = new FloodGuard($counter, perNetwork: 1);
+    $secondFactors = new FloodGuard($counter, perNetwork: 1, scope: 'journal:second-factor');
+    $logins->decide('203.0.113.0');
+    $logins->decide('203.0.113.0');
+
+    expect($secondFactors->decide('203.0.113.0'))->toBe(Decision::Write);
+});

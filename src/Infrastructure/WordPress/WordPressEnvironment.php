@@ -126,6 +126,12 @@ final class WordPressEnvironment implements Environment
      */
     public function usersListedToVisitors(): ?bool
     {
+        // The request below is an internal one, which a closed REST API does not stop: ask what a visitor's HTTP request would be told
+        if ($this->settings instanceof Settings && $this->settings->enabled && $this->settings->hardening->restrictRestApi
+            && ! $this->settings->hardening->restAllowList($this->isActive(Component::Headless))->allows('/wp/v2/users')) {
+            return false;
+        }
+
         $previous = get_current_user_id();
 
         try {
