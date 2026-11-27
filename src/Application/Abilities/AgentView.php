@@ -6,6 +6,7 @@ namespace Pollora\Hornet\Application\Abilities;
 
 use Pollora\Hornet\Domain\Journal\EventDetails;
 use Pollora\Hornet\Domain\Journal\IpAnonymizer;
+use Pollora\Hornet\Domain\Scalar;
 
 /**
  * What an agent is given: the same findings as the screen, but every piece of text cut short and cleaned of control and invisible
@@ -36,16 +37,18 @@ final class AgentView
     public static function summary(array $status): array
     {
         $scan = is_array($status['scan'] ?? null) ? $status['scan'] : [];
+        $score = is_array($status['score'] ?? null) ? $status['score'] : [];
+        $journal = is_array($status['journal'] ?? null) ? $status['journal'] : [];
 
         return [
             'counts' => self::counts($status['counts'] ?? []),
-            'score' => is_int($status['score']['value'] ?? null) ? $status['score']['value'] : null,
-            'grade' => is_string($status['score']['grade'] ?? null) ? self::text($status['score']['grade'], 1) : null,
+            'score' => is_int($score['value'] ?? null) ? $score['value'] : null,
+            'grade' => is_string($score['grade'] ?? null) ? self::text($score['grade'], 1) : null,
             'worst_severity' => is_string($status['worst'] ?? null) ? self::text($status['worst'], 20) : null,
             'last_scan_seconds_ago' => is_int($scan['age'] ?? null) ? $scan['age'] : null,
             'scan_running' => (bool) ($scan['running'] ?? false),
             'scan_task' => is_string($scan['task'] ?? null) ? self::text($scan['task'], 60) : null,
-            'journal_enabled' => (bool) ($status['journal']['enabled'] ?? false),
+            'journal_enabled' => (bool) ($journal['enabled'] ?? false),
         ];
     }
 
@@ -102,11 +105,11 @@ final class AgentView
 
             $events[] = [
                 'at' => is_int($event['at'] ?? null) ? $event['at'] : 0,
-                'type' => self::text((string) ($event['type'] ?? ''), 60),
-                'source' => self::text((string) ($event['source'] ?? ''), 20),
-                'actor' => self::text((string) ($event['actor'] ?? ''), 60),
-                'subject' => self::text((string) ($event['subject'] ?? ''), 120),
-                'network' => IpAnonymizer::truncate(self::text((string) ($event['ip'] ?? ''), 45)),
+                'type' => self::text(Scalar::string($event['type'] ?? null), 60),
+                'source' => self::text(Scalar::string($event['source'] ?? null), 20),
+                'actor' => self::text(Scalar::string($event['actor'] ?? null), 60),
+                'subject' => self::text(Scalar::string($event['subject'] ?? null), 120),
+                'network' => IpAnonymizer::truncate(self::text(Scalar::string($event['ip'] ?? null), 45)),
                 'details' => EventDetails::clean(is_array($event['details'] ?? null) ? $event['details'] : []),
             ];
         }
@@ -121,11 +124,11 @@ final class AgentView
     }
 
     /**
-     * @param  array<string, mixed>  $finding
+     * @param  array<mixed>  $finding
      */
     private static function matches(array $finding, string $show, ?string $severity): bool
     {
-        $status = (string) ($finding['status'] ?? '');
+        $status = Scalar::string($finding['status'] ?? null);
 
         $statusOk = match ($show) {
             'all' => true,
@@ -137,7 +140,7 @@ final class AgentView
     }
 
     /**
-     * @param  array<string, mixed>  $finding
+     * @param  array<mixed>  $finding
      * @return array<string, mixed>
      */
     private static function finding(array $finding): array
@@ -145,15 +148,15 @@ final class AgentView
         $details = [];
 
         foreach (array_slice(is_array($finding['details'] ?? null) ? array_values($finding['details']) : [], 0, self::LINES) as $line) {
-            $details[] = self::text((string) $line, self::LINE);
+            $details[] = self::text(Scalar::string($line), self::LINE);
         }
 
         return [
-            'check' => self::text((string) ($finding['check'] ?? ''), 60),
-            'label' => self::text((string) ($finding['label'] ?? ''), 100),
-            'status' => self::text((string) ($finding['status'] ?? ''), 20),
-            'severity' => self::text((string) ($finding['severity'] ?? ''), 20),
-            'summary' => self::text((string) ($finding['summary'] ?? ''), self::TEXT),
+            'check' => self::text(Scalar::string($finding['check'] ?? null), 60),
+            'label' => self::text(Scalar::string($finding['label'] ?? null), 100),
+            'status' => self::text(Scalar::string($finding['status'] ?? null), 20),
+            'severity' => self::text(Scalar::string($finding['severity'] ?? null), 20),
+            'summary' => self::text(Scalar::string($finding['summary'] ?? null), self::TEXT),
             'details' => $details,
             'set_aside_reason' => is_string($finding['ignored'] ?? null) ? self::text($finding['ignored'], self::TEXT) : null,
             'set_aside_by' => is_string($finding['ignored_by'] ?? null) ? self::text($finding['ignored_by'], 10) : null,

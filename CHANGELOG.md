@@ -4,6 +4,10 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+### Fixed
+
+- Damaged data is no longer read in part or ends in a fatal error: a damaged cache of the OSV answers is asked again instead of passing for fewer or no vulnerabilities; a journal line gives only the details an event may hold; a database row that cannot be read makes the content scan say so; a `pollora.hornet` configuration that is not an array is reported in Site Health.
+
 ## 0.10.0 - 2026-11-27
 
 ### Before you upgrade

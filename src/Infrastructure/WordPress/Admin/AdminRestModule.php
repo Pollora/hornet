@@ -8,6 +8,7 @@ use Pollora\Hornet\Domain\Exceptions\SetAsideException;
 use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\Source;
+use Pollora\Hornet\Domain\Scalar;
 use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
 use Pollora\Hornet\Infrastructure\WordPress\I18n\WpTranslator;
 use Pollora\Hornet\Infrastructure\WordPress\Module;
@@ -49,7 +50,7 @@ final readonly class AdminRestModule implements Module
         $data = $response->get_data();
 
         if (is_array($data) && is_array($data['namespaces'] ?? null)) {
-            $data['namespaces'] = array_values(array_diff($data['namespaces'], [self::NAMESPACE]));
+            $data['namespaces'] = array_values(array_filter($data['namespaces'], static fn (mixed $namespace): bool => $namespace !== self::NAMESPACE));
             $response->set_data($data);
         }
 
@@ -105,11 +106,11 @@ final readonly class AdminRestModule implements Module
     public function journal(WP_REST_Request $request): WP_REST_Response
     {
         return new WP_REST_Response($this->backend->journal([
-            'type' => (string) $request->get_param('type'),
-            'source' => (string) $request->get_param('source'),
-            'user' => (int) $request->get_param('user'),
-            'page' => (int) $request->get_param('page'),
-            'per_page' => (int) $request->get_param('per_page'),
+            'type' => Scalar::string($request->get_param('type')),
+            'source' => Scalar::string($request->get_param('source')),
+            'user' => Scalar::int($request->get_param('user')),
+            'page' => Scalar::int($request->get_param('page')),
+            'per_page' => Scalar::int($request->get_param('per_page')),
         ]));
     }
 
@@ -119,7 +120,7 @@ final readonly class AdminRestModule implements Module
     public function setAside(WP_REST_Request $request): WP_REST_Response
     {
         try {
-            $aside = $this->backend->setAside((string) $request->get_param('check'), (string) $request->get_param('reason'));
+            $aside = $this->backend->setAside(Scalar::string($request->get_param('check')), Scalar::string($request->get_param('reason')));
         } catch (SetAsideException $setAsideException) {
             return self::refused($setAsideException);
         }
@@ -130,7 +131,7 @@ final readonly class AdminRestModule implements Module
     public function restore(WP_REST_Request $request): WP_REST_Response
     {
         try {
-            $this->backend->restore((string) $request->get_param('check'));
+            $this->backend->restore(Scalar::string($request->get_param('check')));
         } catch (SetAsideException $setAsideException) {
             return self::refused($setAsideException);
         }

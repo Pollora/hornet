@@ -141,7 +141,7 @@ final readonly class OsvAdvisoryDatabase implements AdvisoryDatabase
         foreach (is_array($affected) ? $affected : [] as $entry) {
             $package = is_array($entry) && is_array($entry['package'] ?? null) ? $entry['package'] : [];
 
-            if (($package['ecosystem'] ?? null) !== self::ECOSYSTEM || ! is_string($package['name'] ?? null)) {
+            if (! is_array($entry) || ($package['ecosystem'] ?? null) !== self::ECOSYSTEM || ! is_string($package['name'] ?? null)) {
                 continue;
             }
 

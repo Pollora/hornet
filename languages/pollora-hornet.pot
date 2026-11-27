@@ -329,7 +329,7 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: admin/src/util.js:22 src/Infrastructure/WordPress/SiteHealthModule.php:113
+#: admin/src/util.js:22 src/Infrastructure/WordPress/SiteHealthModule.php:116
 msgid "Not verified"
 msgstr ""
 
@@ -437,7 +437,7 @@ msgstr ""
 msgid "At risk"
 msgstr ""
 
-#: src/Application/Admin/StatusView.php:106
+#: src/Application/Admin/StatusView.php:108
 msgid "Not scanned yet."
 msgstr ""
 
@@ -555,23 +555,23 @@ msgstr ""
 msgid "%s: closed by WordPress.org on %s (%s)"
 msgstr ""
 
-#: src/Application/Scan/AbandonedPluginsTask.php:174
+#: src/Application/Scan/AbandonedPluginsTask.php:183
 msgid "%d plugin has been closed by WordPress.org: %s."
 msgid_plural "%d plugins have been closed by WordPress.org: %s."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Application/Scan/AbandonedPluginsTask.php:178
+#: src/Application/Scan/AbandonedPluginsTask.php:187
 msgid "%d plugin has had no release on WordPress.org for two years or more: %s."
 msgid_plural "%d plugins have had no release on WordPress.org for two years or more: %s."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Application/Scan/AbandonedPluginsTask.php:182 src/Application/Scan/ComposerVulnerabilitiesTask.php:247 src/Application/Scan/DatabaseScriptsTask.php:251 src/Application/Scan/KnownVulnerabilitiesTask.php:116 src/Application/Scan/SuspiciousFilesTask.php:169 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:68 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:65 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:66 src/Domain/Audit/Checks/NewAdministratorsCheck.php:58 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:49 src/Domain/Audit/Checks/UpdatesCheck.php:78
+#: src/Application/Scan/AbandonedPluginsTask.php:191 src/Application/Scan/ComposerVulnerabilitiesTask.php:247 src/Application/Scan/DatabaseScriptsTask.php:251 src/Application/Scan/KnownVulnerabilitiesTask.php:116 src/Application/Scan/SuspiciousFilesTask.php:169 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:68 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:65 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:66 src/Domain/Audit/Checks/NewAdministratorsCheck.php:58 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:49 src/Domain/Audit/Checks/UpdatesCheck.php:78
 msgid "and %d more"
 msgstr ""
 
-#: src/Application/Scan/AbandonedPluginsTask.php:189
+#: src/Application/Scan/AbandonedPluginsTask.php:198
 msgid "Replace a closed plugin: it gets no more updates from WordPress.org, and WordPress does not warn about it. For one with no release for years, check that its author still answers, or plan its replacement. Hornet changes nothing."
 msgstr ""
 
@@ -1379,19 +1379,19 @@ msgstr ""
 msgid "Turn off \"Anyone can register\" in the general settings, or make Subscriber the default role. Then look at the accounts created while it was open."
 msgstr ""
 
-#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:53
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:52
 msgid "Anyone can register with the role \"%s\", which can take the site over."
 msgstr ""
 
-#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:54
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:53
 msgid "Anyone can register with the role \"%s\", which can change the content of others."
 msgstr ""
 
-#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:55
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:54
 msgid "Anyone can register with the role \"%s\", which can write or upload on the site."
 msgstr ""
 
-#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:56
+#: src/Domain/Audit/Checks/OpenRegistrationCheck.php:55
 msgid "Anyone can register, with the role \"%s\", which cannot write on the site."
 msgstr ""
 
@@ -1869,7 +1869,7 @@ msgstr ""
 msgid "reads like a web shell (score %d):"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/AdminBackend.php:151
+#: src/Infrastructure/WordPress/Admin/AdminBackend.php:153
 msgid "A scan is already in progress."
 msgstr ""
 
@@ -1885,11 +1885,11 @@ msgstr ""
 msgid "This screen needs JavaScript. The same information is given by `wp hornet status` and `wp hornet scan`."
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:93 src/Infrastructure/WordPress/SiteHealthModule.php:114 src/Infrastructure/WordPress/SiteHealthModule.php:115 src/Infrastructure/WordPress/SiteHealthModule.php:116
+#: src/Infrastructure/WordPress/Admin/AdminPageModule.php:93 src/Infrastructure/WordPress/SiteHealthModule.php:117 src/Infrastructure/WordPress/SiteHealthModule.php:118 src/Infrastructure/WordPress/SiteHealthModule.php:119
 msgid "Security"
 msgstr ""
 
-#: src/Infrastructure/WordPress/Admin/AdminRestModule.php:171
+#: src/Infrastructure/WordPress/Admin/AdminRestModule.php:172
 msgid "There is no such channel."
 msgstr ""
 
@@ -2109,22 +2109,22 @@ msgstr ""
 msgid "part of the audit could not be verified"
 msgstr ""
 
-#: src/Infrastructure/WordPress/SiteHealthModule.php:90
+#: src/Infrastructure/WordPress/SiteHealthModule.php:93
 msgid "The check did not run."
 msgstr ""
 
-#: src/Infrastructure/WordPress/SiteHealthModule.php:109
+#: src/Infrastructure/WordPress/SiteHealthModule.php:112
 msgid "Set aside on purpose: %s"
 msgstr ""
 
-#: src/Infrastructure/WordPress/TwoFactorGateModule.php:65
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:66
 msgid "Your role must set up two-factor authentication before %s."
 msgstr ""
 
-#: src/Infrastructure/WordPress/TwoFactorGateModule.php:66
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:67
 msgid "Your role must set up two-factor authentication. Choose a method below to continue."
 msgstr ""
 
-#: src/Infrastructure/WordPress/TwoFactorGateModule.php:72
+#: src/Infrastructure/WordPress/TwoFactorGateModule.php:73
 msgid "Set it up"
 msgstr ""

@@ -47,13 +47,21 @@ final readonly class OpenRegistrationCheck implements Check
 
         ['role' => $role, 'capabilities' => $capabilities] = $registration;
         $fix = Message::of('Turn off "Anyone can register" in the general settings, or make Subscriber the default role. Then look at the accounts created while it was open.');
-        $may = static fn (array $some): bool => array_intersect($some, $capabilities) !== [];
 
         return match (true) {
-            $may(self::TAKES_OVER) => Finding::fail($this->id(), Severity::Critical, Message::of('Anyone can register with the role "%s", which can take the site over.', $role), [], $fix),
-            $may(self::CHANGES_OTHERS) => Finding::fail($this->id(), Severity::High, Message::of('Anyone can register with the role "%s", which can change the content of others.', $role), [], $fix),
-            $may(self::WRITES) => Finding::fail($this->id(), Severity::Medium, Message::of('Anyone can register with the role "%s", which can write or upload on the site.', $role), [], $fix),
+            self::may($capabilities, self::TAKES_OVER) => Finding::fail($this->id(), Severity::Critical, Message::of('Anyone can register with the role "%s", which can take the site over.', $role), [], $fix),
+            self::may($capabilities, self::CHANGES_OTHERS) => Finding::fail($this->id(), Severity::High, Message::of('Anyone can register with the role "%s", which can change the content of others.', $role), [], $fix),
+            self::may($capabilities, self::WRITES) => Finding::fail($this->id(), Severity::Medium, Message::of('Anyone can register with the role "%s", which can write or upload on the site.', $role), [], $fix),
             default => Finding::pass($this->id(), Message::of('Anyone can register, with the role "%s", which cannot write on the site.', $role)),
         };
+    }
+
+    /**
+     * @param  list<string>  $capabilities  what the role may do
+     * @param  list<string>  $some
+     */
+    private static function may(array $capabilities, array $some): bool
+    {
+        return array_intersect($some, $capabilities) !== [];
     }
 }

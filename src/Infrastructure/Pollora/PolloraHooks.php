@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\Pollora;
 
+use Pollora\Hornet\Domain\Exceptions\HookServiceException;
 use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
 
 /**
@@ -22,11 +23,22 @@ final readonly class PolloraHooks implements HookRegistrar
 
     public function addAction(string $hook, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
     {
-        $this->action->add($hook, $callback, $priority, $acceptedArgs);
+        self::attach($this->action, $hook, $callback, $priority, $acceptedArgs);
     }
 
     public function addFilter(string $hook, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
     {
-        $this->filter->add($hook, $callback, $priority, $acceptedArgs);
+        self::attach($this->filter, $hook, $callback, $priority, $acceptedArgs);
+    }
+
+    private static function attach(object $service, string $hook, callable $callback, int $priority, int $acceptedArgs): void
+    {
+        $add = [$service, 'add'];
+
+        if (! is_callable($add)) {
+            throw HookServiceException::cannotAdd($service::class);
+        }
+
+        $add($hook, $callback, $priority, $acceptedArgs);
     }
 }

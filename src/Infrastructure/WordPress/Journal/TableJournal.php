@@ -9,9 +9,12 @@ use DateTimeZone;
 use JsonException;
 use Pollora\Hornet\Domain\Exceptions\JournalException;
 use Pollora\Hornet\Domain\Journal\Event;
+use Pollora\Hornet\Domain\Journal\EventDetails;
 use Pollora\Hornet\Domain\Journal\Journal;
 use Pollora\Hornet\Domain\Journal\JournalQuery;
 use Pollora\Hornet\Domain\Journal\Source;
+use Pollora\Hornet\Domain\Scalar;
+use Pollora\Hornet\Infrastructure\WordPress\Database;
 
 /**
  * The journal, in its table. Every value goes through `$wpdb->prepare()` or `$wpdb->insert()`: nothing is built by hand.
@@ -22,7 +25,7 @@ final readonly class TableJournal implements Journal
 {
     public function record(Event $event): void
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
         $done = $wpdb->insert(JournalSchema::table(), [
             'occurred_at' => $event->at->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
@@ -42,7 +45,7 @@ final readonly class TableJournal implements Journal
 
     public function find(JournalQuery $query): array
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
         [$where, $values] = $this->where($query);
 
@@ -53,25 +56,23 @@ final readonly class TableJournal implements Journal
 
     public function count(JournalQuery $query): int
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
         [$where, $values] = $this->where($query);
 
-        return (int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM %i '.$where, [JournalSchema::table(), ...$values]));
+        return Scalar::int($wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM %i '.$where, [JournalSchema::table(), ...$values])));
     }
 
     public function purgeBefore(DateTimeImmutable $cutoff): int
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
-        $removed = $wpdb->query($wpdb->prepare('DELETE FROM %i WHERE occurred_at < %s', JournalSchema::table(), $cutoff->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s')));
-
-        return is_int($removed) ? $removed : 0;
+        return $this->change($wpdb->prepare('DELETE FROM %i WHERE occurred_at < %s', JournalSchema::table(), $cutoff->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s')));
     }
 
     public function aboutUser(int $userId, int $limit, int $offset = 0): array
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
         $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM %i WHERE user_id = %d OR subject = %s ORDER BY occurred_at DESC, id DESC LIMIT %d OFFSET %d', JournalSchema::table(), $userId, 'user:'.$userId, max(1, $limit), max(0, $offset)), ARRAY_A);
 
@@ -80,21 +81,32 @@ final readonly class TableJournal implements Journal
 
     public function anonymizeUser(int $userId): int
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
-        $by = $wpdb->query($wpdb->prepare("UPDATE %i SET user_id = 0, actor = '', ip = '' WHERE user_id = %d", JournalSchema::table(), $userId));
+        $by = $this->change($wpdb->prepare("UPDATE %i SET user_id = 0, actor = '', ip = '' WHERE user_id = %d", JournalSchema::table(), $userId));
         // What was done to them: the number goes, the event stays
-        $to = $wpdb->query($wpdb->prepare('UPDATE %i SET subject = %s WHERE subject = %s', JournalSchema::table(), 'user:erased', 'user:'.$userId));
+        $to = $this->change($wpdb->prepare('UPDATE %i SET subject = %s WHERE subject = %s', JournalSchema::table(), 'user:erased', 'user:'.$userId));
 
-        return (is_int($by) ? $by : 0) + (is_int($to) ? $to : 0);
+        return $by + $to;
     }
 
     /**
-     * @return array{string, list<string|int>} the WHERE clause, and the values that go in it
+     * @param  string|null  $query  as `prepare()` gives it
+     * @return int how many lines changed
+     */
+    private function change(?string $query): int
+    {
+        $changed = $query === null ? false : Database::connection()->query($query);
+
+        return is_int($changed) ? $changed : 0;
+    }
+
+    /**
+     * @return array{literal-string, list<string|int>} the WHERE clause, and the values that go in it
      */
     private function where(JournalQuery $query): array
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
         $clauses = [];
         $values = [];
@@ -128,10 +140,14 @@ final readonly class TableJournal implements Journal
     }
 
     /**
-     * @param  array<string, mixed>  $row
+     * @param  mixed  $row  one line as `$wpdb` gives it
      */
-    private static function event(array $row): ?Event
+    private static function event(mixed $row): ?Event
     {
+        if (! is_array($row)) {
+            return null;
+        }
+
         $source = is_string($row['source'] ?? null) ? Source::tryFrom($row['source']) : null;
 
         if (! $source instanceof Source || ! is_string($row['occurred_at'] ?? null) || ! is_string($row['type'] ?? null)) {
@@ -148,12 +164,12 @@ final readonly class TableJournal implements Journal
             new DateTimeImmutable($row['occurred_at'], new DateTimeZone('UTC')),
             $row['type'],
             $source,
-            (int) ($row['user_id'] ?? 0),
+            Scalar::int($row['user_id'] ?? null),
             is_string($row['actor'] ?? null) ? $row['actor'] : '',
             is_string($row['subject'] ?? null) ? $row['subject'] : '',
             is_string($row['ip'] ?? null) ? $row['ip'] : '',
-            is_array($details) ? array_filter($details, is_scalar(...)) : [],
-            (int) ($row['id'] ?? 0),
+            EventDetails::clean(is_array($details) ? $details : []),
+            Scalar::int($row['id'] ?? null),
         );
     }
 }

@@ -20,6 +20,8 @@ final class EnvironmentSecrets implements SecretSource
 
     public function constant(string $name): ?string
     {
-        return defined($name) && is_string(constant($name)) && constant($name) !== '' ? constant($name) : null;
+        $value = defined($name) ? constant($name) : null;
+
+        return is_string($value) && $value !== '' ? $value : null;
     }
 }

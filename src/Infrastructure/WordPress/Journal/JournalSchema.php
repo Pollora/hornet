@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress\Journal;
 
+use Pollora\Hornet\Infrastructure\WordPress\Database;
+
 /**
  * The table of the journal, in the database of the site (`{prefix}hornet_journal`: one per site on a network), and the number of its version.
  *
@@ -21,9 +23,7 @@ final class JournalSchema
 
     public static function table(): string
     {
-        global $wpdb;
-
-        return $wpdb->prefix.'hornet_journal';
+        return Database::connection()->prefix.'hornet_journal';
     }
 
     /**
@@ -35,7 +35,7 @@ final class JournalSchema
             return;
         }
 
-        global $wpdb;
+        $wpdb = Database::connection();
         $table = self::table();
         $charset = $wpdb->get_charset_collate();
 
@@ -66,9 +66,14 @@ final class JournalSchema
      */
     public static function drop(): void
     {
-        global $wpdb;
+        $wpdb = Database::connection();
 
-        $wpdb->query($wpdb->prepare('DROP TABLE IF EXISTS %i', self::table()));
+        $query = $wpdb->prepare('DROP TABLE IF EXISTS %i', self::table());
+
+        if ($query !== null) {
+            $wpdb->query($query);
+        }
+
         delete_option(self::OPTION);
     }
 }

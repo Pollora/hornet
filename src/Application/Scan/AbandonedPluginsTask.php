@@ -161,21 +161,30 @@ final readonly class AbandonedPluginsTask implements ScanTask
     }
 
     /**
+     * The first folder names of a list.
+     *
+     * @param  list<array{string, Message}>  $found
+     */
+    private function names(array $found): string
+    {
+        return implode(', ', array_slice(array_column($found, 0), 0, 5));
+    }
+
+    /**
      * @param  list<array{string, Message}>  $closed
      * @param  list<array{string, Message}>  $abandoned
      * @param  list<Message>  $notes
      */
     private function failure(array $closed, array $abandoned, array $notes): Finding
     {
-        $names = static fn (array $found): string => implode(', ', array_slice(array_column($found, 0), 0, 5));
         $summary = [];
 
         if ($closed !== []) {
-            $summary[] = Message::plural('%d plugin has been closed by WordPress.org: %s.', '%d plugins have been closed by WordPress.org: %s.', count($closed), count($closed), $names($closed));
+            $summary[] = Message::plural('%d plugin has been closed by WordPress.org: %s.', '%d plugins have been closed by WordPress.org: %s.', count($closed), count($closed), $this->names($closed));
         }
 
         if ($abandoned !== []) {
-            $summary[] = Message::plural('%d plugin has had no release on WordPress.org for two years or more: %s.', '%d plugins have had no release on WordPress.org for two years or more: %s.', count($abandoned), count($abandoned), $names($abandoned));
+            $summary[] = Message::plural('%d plugin has had no release on WordPress.org for two years or more: %s.', '%d plugins have had no release on WordPress.org for two years or more: %s.', count($abandoned), count($abandoned), $this->names($abandoned));
         }
 
         $lines = array_column([...$closed, ...$abandoned], 1);

@@ -8,6 +8,7 @@ use Closure;
 use Pollora\Hornet\Domain\Clock;
 use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\I18n\Translator;
+use Pollora\Hornet\Domain\Scalar;
 use Pollora\Hornet\Infrastructure\Config\AccountSettings;
 
 /**
@@ -84,9 +85,9 @@ final class TwoFactorGateModule implements Module
             return false;
         }
 
-        $roles = is_array($user->roles ?? null) ? $user->roles : [];
+        $roles = is_array($user->roles ?? null) ? array_filter($user->roles, is_string(...)) : [];
 
-        return array_intersect($this->settings->requireRoles, $roles) !== [] && ! $this->enrollment->enrolled((int) ($user->ID ?? 0));
+        return array_intersect($this->settings->requireRoles, $roles) !== [] && ! $this->enrollment->enrolled(Scalar::int($user->ID ?? null));
     }
 
     private function inGrace(): bool
