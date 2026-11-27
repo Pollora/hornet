@@ -92,7 +92,7 @@ final class ScriptRules
                 $inputCall = $inputCall || ($isInput && $next[1] === '[' && ($tokens[self::end($tokens, $i + 2, ']', '[') + 1][1] ?? '') === '(');
             } elseif ($id === null && $text === '`') {
                 $backtick = true;
-            } elseif ($id === null && $text === '$' && ($next[0] === T_VARIABLE || $next[1] === '$')) {
+            } elseif ($id === null && $text === '$' && ($next[0] === T_VARIABLE || $next[1] === '$' || $next[1] === '{')) {
                 $varVar = true;
             } elseif ($id === T_CONSTANT_ENCAPSED_STRING && self::isBlob($text)) {
                 $blob = true;

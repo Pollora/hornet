@@ -96,6 +96,18 @@ it('hands no input to a callback when the input is elsewhere', function (string 
     'a callee that is not input, with an input argument' => 'call_user_func($fn, $_GET["x"]);',
 ]);
 
+it('sees a variable variable written between braces', function (): void {
+    expect(ScriptRules::score('<?php ${"a"} = 1;')->reasons)->toBe(['variable variables']);
+});
+
+it('does not take a variable inside a string for a variable variable', function (): void {
+    expect(ScriptRules::score('<?php echo "${a}";')->reasons)->toBe([]);
+});
+
+it('reports code that evaluates a variable named between braces', function (): void {
+    expect(ScriptRules::score('<?php eval(${"_POST"}["x"]);')->isSuspicious())->toBeTrue();
+});
+
 it('reads the name of a dangerous callback whatever its case', function (): void {
     expect(ScriptRules::score('<?php call_user_func("SYSTEM", $_GET["c"]);')->reasons)->toContain('hands request input to a callback that runs it');
 });
