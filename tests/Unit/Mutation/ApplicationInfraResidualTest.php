@@ -8,6 +8,8 @@ use Pollora\Hornet\Application\Auditor;
 use Pollora\Hornet\Application\Notification\NotificationService;
 use Pollora\Hornet\Application\Notification\Notifier;
 use Pollora\Hornet\Application\Scan\Scanner;
+use Pollora\Hornet\Application\Scan\ScanTask;
+use Pollora\Hornet\Application\Scan\TaskResult;
 use Pollora\Hornet\Domain\Audit\Environment;
 use Pollora\Hornet\Domain\Audit\Finding;
 use Pollora\Hornet\Domain\Audit\Report;
@@ -23,6 +25,7 @@ use Pollora\Hornet\Domain\Notification\HttpResponse;
 use Pollora\Hornet\Domain\Notification\Notification;
 use Pollora\Hornet\Domain\Notification\QueuedDelivery;
 use Pollora\Hornet\Domain\Notification\Secret;
+use Pollora\Hornet\Domain\Scan\Pins;
 use Pollora\Hornet\Infrastructure\Config\ChannelSpec;
 use Pollora\Hornet\Infrastructure\Config\ChannelType;
 use Pollora\Hornet\Infrastructure\Config\Settings;
@@ -32,6 +35,7 @@ use Pollora\Hornet\Infrastructure\Notification\Channels\SlackChannel;
 use Pollora\Hornet\Infrastructure\Notification\Channels\TeamsChannel;
 use Pollora\Hornet\Infrastructure\Notification\Channels\TelegramChannel;
 use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
+use Pollora\Hornet\Infrastructure\Notification\Text;
 use Pollora\Hornet\Infrastructure\Pollora\CorePatches;
 use Pollora\Hornet\Infrastructure\Pollora\HornetServiceProvider;
 use Pollora\Hornet\Infrastructure\WpCli\HornetCommand;
@@ -312,4 +316,36 @@ it('says that a hook service that is not an object cannot be used', function ():
 
 it('reads on after a file a patch deletes', function (): void {
     expect(CorePatches::touched("+++ /dev/null\n+++ b/wp-load.php"))->toBe(['wp-load.php']);
+});
+
+// A file name is bytes, not always text
+
+it('keeps a line of a message that holds a byte that is not text', function (): void {
+    expect(Text::clean("uploads/a\xE9b.php: x"))->toBe('uploads/a?b.php: x');
+});
+
+it('prints the JSON of a finding that names such a file', function (): void {
+    $finding = Finding::pass('a', "uploads/a\xE9b.php");
+    $status = mutAppColumns();
+    (new HornetCommand(static fn (): Report => new Report([$finding]), $status))->status([], ['format' => 'json', 'all' => true]);
+    $task = new class($finding) implements ScanTask
+    {
+        public function __construct(private readonly Finding $finding) {}
+
+        public function id(): string
+        {
+            return 'a';
+        }
+
+        public function run(?Pins $pinned, bool $repin): TaskResult
+        {
+            return new TaskResult($this->finding);
+        }
+    };
+    $scan = mutAppColumns();
+    (new ScanCommand(static fn (): Scanner => new Scanner([$task], new InMemoryScanStore, new FakeClock), $scan))([], ['format' => 'json']);
+
+    foreach ([$status, $scan] as $output) {
+        expect(json_decode($output->lines[0], true)['findings'][0]['summary'])->toBe("uploads/a\u{FFFD}b.php");
+    }
 });

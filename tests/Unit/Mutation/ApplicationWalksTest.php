@@ -714,3 +714,15 @@ it('names every plugin it had no time for', function (): void {
 
     expect($finding->summary)->toEndWith('Not checked: b (out of time), c (out of time)');
 });
+
+it('does not lose, between two runs, a file whose name is not valid text', function (): void {
+    $name = "uploads/0000-\xE9.php";
+    $files = new ArrayFileSystem([$name => '<?php echo 1;', ...mutAppUploads(60)]);
+
+    $first = mutAppWalk($files, budget: 1, takes: 'PT1S');
+    $rest = mutAppWalk($files, $first->pins);
+
+    expect($first->unfinished)->toBeTrue()
+        ->and($rest->finding->summary)->toBe('61 files in the content folder would not be left unsaid.')
+        ->and($rest->finding->details[0])->toStartWith('[high] uploads/0000-');
+});

@@ -31,7 +31,8 @@ final class Text
      */
     public static function clean(string $text): string
     {
-        $text = (string) preg_replace('/[\p{Cc}\p{Cf}\x{2028}\x{2029}]+/u', ' ', $text);
+        // A byte that is not UTF-8 (in a file name) is replaced: the patterns below would otherwise give nothing of the line back
+        $text = (string) preg_replace('/[\p{Cc}\p{Cf}\x{2028}\x{2029}]+/u', ' ', mb_scrub($text, 'UTF-8'));
 
         return trim((string) preg_replace('/\s+/u', ' ', $text));
     }

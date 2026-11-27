@@ -109,7 +109,8 @@ final readonly class SuspiciousFilesTask implements ScanTask
         $hashes = [];
 
         foreach (array_slice($found, 0, self::KEPT, true) as $path => $suspicion) {
-            $hashes[$path] = (string) json_encode($suspicion->toArray());
+            // A file name is bytes, not always text: an entry that cannot be encoded as it is must still be kept
+            $hashes[$path] = (string) json_encode($suspicion->toArray(), JSON_INVALID_UTF8_SUBSTITUTE);
         }
 
         // More than can be kept between two runs: they are counted, and said
