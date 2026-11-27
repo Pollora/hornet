@@ -191,7 +191,7 @@ it('lists the accounts that have no second factor, among the roles that must hav
 ]);
 
 it('gives the throttle problem and the display of errors that were noted', function (): void {
-    $this->site->options['hornet_login_throttle_problem'] = ['reason' => 'shared', 'at' => time()];
+    $this->site->options['hornet_throttle_problem'] = ['reason' => 'shared', 'at' => time()];
     $this->site->networkOptions['hornet_error_display'] = 'on';
     $environment = new WordPressEnvironment;
 
