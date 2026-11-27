@@ -6,6 +6,7 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ### Fixed
 
+- A journal the database cannot read is no longer taken for an empty one: the checks on new and dormant administrators say they could not run, and the screen, `wp hornet journal`, the ability and the privacy export report the failure.
 - The lock of a scan or of a notification run that died is taken over after ten minutes, as intended: it was only seen as old within the request that had set it, since the database gives the time back as text, so a crashed run could hold its job for good.
 - A waiting notification whose stored creation date is damaged is dropped like any other damaged entry, instead of making every retry fail.
 - Damaged data is no longer read in part or ends in a fatal error: a damaged cache of the OSV answers is asked again instead of passing for fewer or no vulnerabilities; a journal line gives only the details an event may hold; a database row that cannot be read makes the content scan say so; a `pollora.hornet` configuration that is not an array is reported in Site Health.

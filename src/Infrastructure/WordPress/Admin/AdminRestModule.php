@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pollora\Hornet\Infrastructure\WordPress\Admin;
 
+use Pollora\Hornet\Domain\Exceptions\JournalException;
 use Pollora\Hornet\Domain\Exceptions\SetAsideException;
 use Pollora\Hornet\Domain\I18n\Message;
 use Pollora\Hornet\Domain\Journal\EventTypes;
@@ -105,13 +106,18 @@ final readonly class AdminRestModule implements Module
 
     public function journal(WP_REST_Request $request): WP_REST_Response
     {
-        return new WP_REST_Response($this->backend->journal([
-            'type' => Scalar::string($request->get_param('type')),
-            'source' => Scalar::string($request->get_param('source')),
-            'user' => Scalar::int($request->get_param('user')),
-            'page' => Scalar::int($request->get_param('page')),
-            'per_page' => Scalar::int($request->get_param('per_page')),
-        ]));
+        try {
+            return new WP_REST_Response($this->backend->journal([
+                'type' => Scalar::string($request->get_param('type')),
+                'source' => Scalar::string($request->get_param('source')),
+                'user' => Scalar::int($request->get_param('user')),
+                'page' => Scalar::int($request->get_param('page')),
+                'per_page' => Scalar::int($request->get_param('per_page')),
+            ]));
+        } catch (JournalException) {
+            // No message: the screen says it in the language of the person who reads it
+            return new WP_REST_Response(['code' => 'hornet_journal_unreadable'], 500);
+        }
     }
 
     /**

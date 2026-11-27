@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pollora\Hornet\Domain\Journal;
 
 use DateTimeImmutable;
+use Pollora\Hornet\Domain\Exceptions\JournalException;
 
 /**
  * Where the events are kept.
@@ -17,9 +18,14 @@ interface Journal
 
     /**
      * @return list<Event> newest first
+     *
+     * @throws JournalException when it cannot be read
      */
     public function find(JournalQuery $query): array;
 
+    /**
+     * @throws JournalException when it cannot be read
+     */
     public function count(JournalQuery $query): int;
 
     /**
@@ -33,6 +39,8 @@ interface Journal
      * The events that name a person, as the one who did it or the one it was done to.
      *
      * @return list<Event>
+     *
+     * @throws JournalException when it cannot be read
      */
     public function aboutUser(int $userId, int $limit, int $offset = 0): array;
 

@@ -7,6 +7,7 @@ namespace Pollora\Hornet\Infrastructure\WpCli;
 use Closure;
 use DateInterval;
 use Pollora\Hornet\Domain\Clock;
+use Pollora\Hornet\Domain\Exceptions\JournalException;
 use Pollora\Hornet\Domain\Journal\Event;
 use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\Journal;
@@ -98,7 +99,13 @@ final readonly class JournalCommand
         }
 
         $since = isset($assoc['days']) && ctype_digit(Scalar::string($assoc['days'])) ? $this->clock->now()->sub(new DateInterval('P'.Scalar::int($assoc['days']).'D')) : null;
-        $events = ($this->journal)()->find(new JournalQuery($type, $source, isset($assoc['user']) && ctype_digit(Scalar::string($assoc['user'])) ? Scalar::int($assoc['user']) : null, $since, Scalar::int($assoc['limit'] ?? 50)));
+        try {
+            $events = ($this->journal)()->find(new JournalQuery($type, $source, isset($assoc['user']) && ctype_digit(Scalar::string($assoc['user'])) ? Scalar::int($assoc['user']) : null, $since, Scalar::int($assoc['limit'] ?? 50)));
+        } catch (JournalException $journalException) {
+            $this->output->error($journalException->getMessage());
+
+            return;
+        }
 
         if ($events === []) {
             $this->output->warning('The journal holds no such event.');

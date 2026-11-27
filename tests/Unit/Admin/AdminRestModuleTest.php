@@ -9,6 +9,7 @@ use Pollora\Hornet\Infrastructure\WordPress\OptionSetAsideStore;
 use Pollora\Hornet\Tests\Fixtures\AdminSite;
 use Pollora\Hornet\Tests\Fixtures\FakeRestRequest;
 use Pollora\Hornet\Tests\Fixtures\FakeRestResponse;
+use Pollora\Hornet\Tests\Fixtures\FakeWpdb;
 use Pollora\Hornet\Tests\Fixtures\RecordingHooks;
 
 beforeEach(function (): void {
@@ -186,3 +187,13 @@ it('answers the test of a channel, and 404 for one there is not', function (mixe
 
     expect($response->get_status())->toBe($status)->and($response->get_data()['status'])->toBe($status === 200 ? 'sent' : 'unknown');
 })->with([['team', 200], ['other', 404], [null, 404]]);
+
+it('answers an error, not an empty journal, when the database refuses the query', function (): void {
+    $database = $GLOBALS['wpdb'] = new FakeWpdb;
+    $database->failWith = 'refused';
+
+    $response = restModule($this, ['journal' => ['enabled' => true]])->journal(request([]));
+
+    expect($response->get_status())->toBe(500)
+        ->and($response->get_data())->toBe(['code' => 'hornet_journal_unreadable']);
+});
