@@ -19,6 +19,8 @@ require_once __DIR__.'/Stubs/doctor.php';
 require_once __DIR__.'/Stubs/wordpress.php';
 // Loaded here so that the suite is the same whether one file runs or all of them
 require_once __DIR__.'/Stubs/two-factor.php';
+// Constants that several test files read
+require_once __DIR__.'/Stubs/breached-password.php';
 
 // The unit suite has no WordPress: WP_Error is a small stand-in
 if (! class_exists('WP_Error', false)) {
