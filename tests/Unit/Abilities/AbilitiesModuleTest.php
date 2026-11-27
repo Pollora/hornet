@@ -250,8 +250,8 @@ it('leaves the worst findings to a person', function (string $check, FakeEnviron
     expect(error(run($this, 'hornet/set-aside-finding', ['check' => $check, 'reason' => 'Please hide this one.'])))->toBe(['hornet_needs_a_person', 403])
         ->and((new OptionSetAsideStore)->all())->toBe([]);
 })->with([
-    'high' => ['salts', fn () => new FakeEnvironment],
-    'critical' => ['debug-mode', fn () => new FakeEnvironment(constants: ['WP_DEBUG' => true, 'WP_DEBUG_DISPLAY' => true])],
+    'high' => ['salts', new FakeEnvironment],
+    'critical' => ['debug-mode', new FakeEnvironment(constants: ['WP_DEBUG' => true, 'WP_DEBUG_DISPLAY' => true])],
 ]);
 
 it('says with the right status why a finding cannot be set aside or brought back', function (string $ability, array $input, string $code, int $status): void {

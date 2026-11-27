@@ -262,12 +262,13 @@ describe('the lock of a run', function (): void {
     })->with(['the same request' => [false], 'a later request' => [true]]);
 
     it('leaves a lock that is recent, or that cannot be read as a time', function (mixed $held): void {
+        expect($held)->not->toBeInstanceOf(Closure::class);
         $this->site->likeTheDatabase = true;
         $this->site->options['hornet_notify_lock'] = $held;
 
         expect((new OptionRunLock)->acquire())->toBeFalse()->and($this->site->options['hornet_notify_lock'])->toBe($held);
     })->with([
-        'a minute old' => [fn () => time() - 60],
+        'a minute old' => [time() - 60],
         'not a number' => ['running'],
         'nothing at all' => [''],
     ]);

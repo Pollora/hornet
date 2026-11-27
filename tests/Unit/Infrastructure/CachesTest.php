@@ -272,8 +272,8 @@ describe('the note of a throttle problem', function (): void {
 
         expect((new ThrottleProblemNote)->read())->toBeNull();
     })->with([
-        'old' => [fn () => ['reason' => 'shared', 'at' => time() - 604801]],
-        'unknown reason' => [fn () => ['reason' => 'other', 'at' => time()]],
+        'old' => [['reason' => 'shared', 'at' => time() - 604801]],
+        'unknown reason' => [['reason' => 'other', 'at' => time()]],
         'no time' => [['reason' => 'shared']],
         'not an array' => ['shared'],
     ]);

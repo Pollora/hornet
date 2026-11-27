@@ -37,6 +37,7 @@ use Pollora\Hornet\Tests\Fixtures\FakeTheme;
 use Pollora\Hornet\Tests\Fixtures\FakeWpdb;
 use Pollora\Hornet\Tests\Fixtures\FakeWpError;
 use Pollora\Hornet\Tests\Fixtures\RecordingHooks;
+use Pollora\Hornet\Tests\Fixtures\Samples;
 use Pollora\Hornet\Tests\Fixtures\SentHeaders;
 
 describe('the HTTP client', function (): void {
@@ -357,6 +358,55 @@ describe('the channels', function (): void {
         [ChannelType::Telegram, TelegramChannel::class],
         [ChannelType::Ntfy, NtfyChannel::class],
         [ChannelType::Webhook, WebhookChannel::class],
+    ]);
+
+    it('sends where the settings say, and to a private address only when allow_private is literally true', function (ChannelType $type, mixed $allow, bool $private): void {
+        $http = new FakeHttpClient;
+        $url = 'https://push.example.com/alerts';
+        $options = ['url' => Secret::of($url), 'secret' => Secret::of('k')] + ($allow === null ? [] : ['allow_private' => $allow]);
+
+        (new ChannelFactory($http, new FakeMailer, new FakeClock))->channel(spec($type, $options))->send(Samples::notification());
+
+        expect($http->posts)->toHaveCount(1)
+            ->and($http->posts[0]['url'])->toBe($type === ChannelType::Ntfy ? 'https://push.example.com/' : $url)
+            ->and($http->posts[0]['private'])->toBe($private);
+    })->with([ChannelType::Webhook, ChannelType::Ntfy])->with([
+        'allowed' => [true, true],
+        'not said' => [null, false],
+        'the word true' => ['true', false],
+        'one' => [1, false],
+    ]);
+
+    it('gives ntfy its token only when there is one that is a secret', function (mixed $token, ?string $header): void {
+        $http = new FakeHttpClient;
+        $options = ['url' => Secret::of('https://push.example.com/alerts'), 'token' => $token];
+
+        (new ChannelFactory($http, new FakeMailer, new FakeClock))->channel(spec(ChannelType::Ntfy, $options))->send(Samples::notification());
+
+        expect($http->posts[0]['headers']['Authorization'] ?? null)->toBe($header);
+    })->with([
+        'a secret' => [Secret::of('abc'), 'Bearer abc'],
+        'none' => [null, null],
+        'plain text' => ['abc', null],
+    ]);
+
+    it('posts nowhere that was not wrapped as a secret by the settings', function (): void {
+        $http = new FakeHttpClient;
+
+        (new ChannelFactory($http, new FakeMailer, new FakeClock))->channel(spec(ChannelType::Slack, ['url' => 'https://plain.example.com']))->send(Samples::notification());
+
+        expect($http->posts[0]['url'])->toBe('');
+    });
+
+    it('mails only the recipients that are text', function (mixed $to, array $expected): void {
+        $mailer = new FakeMailer;
+
+        (new ChannelFactory(new FakeHttpClient, $mailer, new FakeClock))->channel(spec(ChannelType::Mail, ['to' => $to]))->send(Samples::notification());
+
+        expect($mailer->mails[0]['to'])->toBe($expected);
+    })->with([
+        'a list with a stray value' => [[5, 'a@example.com', null, 'b@example.com'], ['a@example.com', 'b@example.com']],
+        'not a list' => ['a@example.com', []],
     ]);
 });
 
