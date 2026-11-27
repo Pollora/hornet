@@ -4,7 +4,7 @@ Security for WordPress, from Pollora. Hornet audits the configuration of a site,
 
 It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on Laravel. By default it changes nothing on your site: it reads, and it tells you. Hardening and headers do nothing until you turn each one on.
 
-> **Version 0.9.** What is described here is in and tested. The public surface (settings, commands, hooks, abilities, REST routes, webhook payload) can still change before 1.0; the PHP classes are internal. Translations are machine-made. Nothing here is a firewall.
+> **Version 0.10.** What is described here is in and tested. The public surface (settings, commands, hooks, abilities, REST routes, webhook payload) can still change before 1.0; the PHP classes are internal. Translations are machine-made. Nothing here is a firewall.
 
 ## What it checks
 
