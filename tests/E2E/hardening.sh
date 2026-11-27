@@ -69,7 +69,7 @@ check "?author=1 still redirects to the author page" status_is 301 "$BASE/?autho
 check "the REST API still lists the users"          body_has '"slug":"admin"' "$BASE/wp-json/wp/v2/users"
 check "the pingback header is still there on a post"  header_present X-Pingback "$BASE/hello-world/"
 check "the generator tag is still there"            body_has 'name="generator"' "$BASE/"
-check "the REST index does not announce Hornet"                  body_lacks 'hornet/v1' "$BASE/wp-json/"
+check "the REST index does not announce Hornet"                  body_lacks 'hornet' "$BASE/wp-json/"
 check "XML-RPC still answers a pingback with a pingback error" sh -c "! curl -s -X POST -H 'Content-Type: text/xml' --data '$PINGBACK' '$BASE/xmlrpc.php' | grep -q -- '-32601'"
 
 # --- 2. hardening ------------------------------------------------------------------------------------------

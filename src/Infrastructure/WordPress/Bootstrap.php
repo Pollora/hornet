@@ -29,6 +29,7 @@ use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminRestModule;
 use Pollora\Hornet\Infrastructure\WordPress\I18n\WpTranslator;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\CacheWindowCounter;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\DroppedSiteModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalPrivacy;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
@@ -100,6 +101,10 @@ final class Bootstrap
         // Not on Pollora, where Laravel sets the display of errors itself and no check reads it
         if (! HostApplication::laravel() instanceof LaravelApplication && function_exists('is_admin') && is_admin()) {
             $modules[] = new ErrorDisplayModule(new ErrorDisplayNote);
+        }
+
+        if (function_exists('is_multisite') && is_multisite()) {
+            $modules[] = new DroppedSiteModule;
         }
 
         try {

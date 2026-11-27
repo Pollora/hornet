@@ -197,3 +197,10 @@ it('answers an error, not an empty journal, when the database refuses the query'
     expect($response->get_status())->toBe(500)
         ->and($response->get_data())->toBe(['code' => 'hornet_journal_unreadable']);
 });
+
+it('takes the route that WordPress makes for the namespace out of the index too', function (): void {
+    $this->can = [];
+    $index = new FakeRestResponse(['namespaces' => ['wp/v2', 'hornet/v1'], 'routes' => ['/wp/v2' => [], '/hornet/v1' => ['methods' => ['GET']]]]);
+
+    expect(restModule($this)->hideFromIndex($index)->get_data())->toBe(['namespaces' => ['wp/v2'], 'routes' => ['/wp/v2' => []]]);
+});

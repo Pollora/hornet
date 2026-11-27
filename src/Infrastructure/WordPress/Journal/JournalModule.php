@@ -16,7 +16,6 @@ use Pollora\Hornet\Domain\Journal\EventTypes;
 use Pollora\Hornet\Domain\Journal\IpAnonymizer;
 use Pollora\Hornet\Domain\Journal\Journal;
 use Pollora\Hornet\Domain\Scalar;
-use Pollora\Hornet\Infrastructure\WordPress\Database;
 use Pollora\Hornet\Infrastructure\WordPress\HookRegistrar;
 use Pollora\Hornet\Infrastructure\WordPress\Module;
 use Pollora\Hornet\Infrastructure\WordPress\OptionScanStore;
@@ -38,10 +37,13 @@ final class JournalModule implements Module
     /** Whether an account is being created: WordPress gives it its role before it says it exists. */
     private bool $creating = false;
 
+    /** @var array{string, int}|null the account that was just given a first role, and on which site */
+    private ?array $firstRole = null;
+
     /**
      * Roles added or removed, waiting to be written: `set_role()` removes the old role and adds the new one before it says it changed the role, and that is one change, not three.
      *
-     * @var list<array{string, string, array<string, string>}>
+     * @var list<array{string, string, array<string, string>, int}> the type, the subject, the details and the site it happened on
      */
     private array $pending = [];
 
@@ -71,8 +73,6 @@ final class JournalModule implements Module
     {
         // The table first: an event that comes before it would be lost
         $hooks->addAction('init', JournalSchema::ensure(...), 0);
-        // The table goes with the site that is deleted from a network
-        $hooks->addFilter('wpmu_drop_tables', $this->tablesOfDeletedSite(...), 10, 2);
         $hooks->addAction('init', $this->plan(...));
         $hooks->addAction(self::PURGE_HOOK, $this->purge(...));
 
@@ -83,6 +83,10 @@ final class JournalModule implements Module
         $hooks->addFilter('wp_pre_insert_user_data', $this->creating(...), 10, 2);
         $hooks->addAction('user_register', $this->userCreated(...), 10, 1);
         $hooks->addAction('delete_user', $this->userDeleted(...), 10, 1);
+        // On a network, an account is deleted by another door, and leaving a site is a thing of its own
+        $hooks->addAction('wpmu_delete_user', $this->networkUserDeleted(...), 10, 1);
+        $hooks->addAction('remove_user_from_blog', $this->removedFromSite(...), 10, 1);
+        $hooks->addAction('add_user_to_blog', $this->addedToSite(...), 10, 3);
         $hooks->addAction('set_user_role', $this->roleSet(...), 10, 3);
         // Written when the request ends, once it is known which of them were part of a change of role
         $hooks->addAction('shutdown', $this->flush(...), 0);
@@ -102,15 +106,6 @@ final class JournalModule implements Module
 
         $hooks->addAction('updated_option', $this->optionChanged(...), 10, 3);
         $hooks->addAction('pollora/hornet/scan_completed', $this->scanCompleted(...), 10, 0);
-    }
-
-    /**
-     * @param  mixed  $tables  the tables WordPress is about to drop with a site
-     * @return array<mixed>
-     */
-    public function tablesOfDeletedSite(mixed $tables, mixed $siteId = 0): array
-    {
-        return [...(is_array($tables) ? $tables : []), Database::connection()->get_blog_prefix(Scalar::int($siteId)).'hornet_journal'];
     }
 
     /**
@@ -202,23 +197,62 @@ final class JournalModule implements Module
 
     public function userDeleted(mixed $id): void
     {
+        // On a network `delete_user` only takes the account off one site: removedFromSite() says so
+        if (! is_multisite()) {
+            $this->networkUserDeleted($id);
+        }
+    }
+
+    public function networkUserDeleted(mixed $id): void
+    {
         $this->recorder->record(EventTypes::USER_DELETED, 'user:'.(is_scalar($id) ? (int) $id : 0));
     }
 
     /**
-     * @param  mixed  $oldRoles  the roles before: empty when the user has just been created, which is told by `user.created`
+     * An account given a role on a site of a network that it was not on: no `set_user_role` change tells it, since there was no role
+     * before. An account that already had a role is told by roleSet().
+     */
+    public function addedToSite(mixed $id, mixed $role, mixed $siteId): void
+    {
+        $subject = 'user:'.(is_numeric($id) ? (int) $id : 0);
+
+        if ($this->firstRole === [$subject, is_numeric($siteId) ? (int) $siteId : 0] && is_string($role)) {
+            $this->recorder->record(EventTypes::USER_ROLE, $subject, ['added' => $role]);
+        }
+
+        $this->firstRole = null;
+    }
+
+    /**
+     * An account taken off a site of a network. WordPress says it before it takes the roles away, and while it looks at that site.
+     */
+    public function removedFromSite(mixed $id): void
+    {
+        $user = is_numeric($id) ? get_userdata((int) $id) : false;
+
+        if ($user instanceof WP_User && $user->roles !== []) {
+            $this->recorder->record(EventTypes::USER_ROLE, 'user:'.$user->ID, ['removed' => implode(',', $user->roles)]);
+        }
+    }
+
+    /**
+     * @param  mixed  $oldRoles  the roles before: empty when the user has just been created, which is told by `user.created`, or had no role
      */
     public function roleSet(mixed $id, mixed $role, mixed $oldRoles = []): void
     {
         $subject = 'user:'.(is_scalar($id) ? (int) $id : 0);
         // The additions and removals that made this change are not told again
-        $this->pending = array_values(array_filter($this->pending, static fn (array $one): bool => $one[1] !== $subject));
+        $site = get_current_blog_id();
+        $this->pending = array_values(array_filter($this->pending, static fn (array $one): bool => $one[1] !== $subject || $one[3] !== $site));
 
         if (! is_array($oldRoles) || $oldRoles === []) {
+            // Kept for addedToSite(): a first role is how an account arrives on a site of a network
+            $this->firstRole = [$subject, $site];
+
             return;
         }
 
-        $this->recorder->record(EventTypes::USER_ROLE, 'user:'.(is_scalar($id) ? (int) $id : 0), ['from' => implode(',', array_filter($oldRoles, is_string(...))), 'to' => is_string($role) ? $role : '']);
+        $this->recorder->record(EventTypes::USER_ROLE, $subject, ['from' => implode(',', array_filter($oldRoles, is_string(...))), 'to' => is_string($role) ? $role : '']);
     }
 
     public function roleAdded(mixed $id, mixed $role): void
@@ -227,12 +261,12 @@ final class JournalModule implements Module
             return;
         }
 
-        $this->pending[] = [EventTypes::USER_ROLE, 'user:'.(is_scalar($id) ? (int) $id : 0), ['added' => is_string($role) ? $role : '']];
+        $this->pending[] = [EventTypes::USER_ROLE, 'user:'.(is_scalar($id) ? (int) $id : 0), ['added' => is_string($role) ? $role : ''], get_current_blog_id()];
     }
 
     public function roleRemoved(mixed $id, mixed $role): void
     {
-        $this->pending[] = [EventTypes::USER_ROLE, 'user:'.(is_scalar($id) ? (int) $id : 0), ['removed' => is_string($role) ? $role : '']];
+        $this->pending[] = [EventTypes::USER_ROLE, 'user:'.(is_scalar($id) ? (int) $id : 0), ['removed' => is_string($role) ? $role : ''], get_current_blog_id()];
     }
 
     /**
@@ -243,8 +277,19 @@ final class JournalModule implements Module
         $pending = $this->pending;
         $this->pending = [];
 
-        foreach ($pending as [$type, $subject, $details]) {
+        foreach ($pending as [$type, $subject, $details, $site]) {
+            // Written when the request ends, which on a network may not be the site it happened on
+            $elsewhere = $site !== get_current_blog_id();
+
+            if ($elsewhere) {
+                switch_to_blog($site);
+            }
+
             $this->recorder->record($type, $subject, $details);
+
+            if ($elsewhere) {
+                restore_current_blog();
+            }
         }
     }
 

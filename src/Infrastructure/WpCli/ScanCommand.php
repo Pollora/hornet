@@ -23,10 +23,12 @@ final readonly class ScanCommand
 
     /**
      * @param  Closure(): ?Scanner  $scanner  built when the command runs; null when Hornet is switched off, every scan is disabled or the install cannot be read
+     * @param  (Closure(): ?string)|null  $refusal  why the scan must not run here (a site of a network that is not the main one)
      */
     public function __construct(
         private Closure $scanner,
         private Output $output,
+        private ?Closure $refusal = null,
     ) {}
 
     /**
@@ -78,6 +80,14 @@ final readonly class ScanCommand
 
         if ($failOn !== 'none' && ! $threshold instanceof Severity) {
             $this->output->error(sprintf('Unknown severity "%s": use info, low, medium, high, critical or none.', $failOn));
+
+            return;
+        }
+
+        $refusal = $this->refusal instanceof Closure ? ($this->refusal)() : null;
+
+        if ($refusal !== null) {
+            $this->output->error($refusal);
 
             return;
         }

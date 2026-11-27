@@ -117,7 +117,24 @@ A Pollora project uses **`config/pollora/hornet.php`** (`php artisan vendor:publ
 - A key Hornet does not know is **refused**, and so is a check id that does not exist: a typo must not leave a protection off. The site keeps running, Hornet stays off, and **Site Health shows one critical test with the message**. `wp hornet status` prints it as an error.
 - A finding set aside stays visible, with its reason, in the output and in Site Health.
 - **Kill switch**: `define('HORNET_DISABLED', true);` attaches nothing. It is the way back if a rule ever locks someone out.
-- On a multisite network, `HORNET_CONFIG['sites'][<site id>]` overrides the shared settings for one site.
+- On a multisite network, `HORNET_CONFIG['sites'][<site id>]` overrides the shared settings for one site, one **top-level key at a time**: a key given for a site replaces the whole of the shared one. `'sites' => [2 => ['hardening' => ['xmlrpc' => false]]]` leaves site 2 with no other hardening, so repeat what it must keep. See [Multisite](#multisite).
+
+## Multisite
+
+Tried on a sub-directory and on a sub-domain network (`tests/E2E/run-multisite.sh`).
+
+| What | Scope |
+| --- | --- |
+| The screen, its REST routes, the abilities | the main site, for the super administrators only (the screen is in the network administration, under **Settings**) |
+| The scan, its result, the first looks of plugins and themes | the network: the main site schedules and runs it, once. `wp hornet scan --url=<another site>` is refused |
+| Login throttle: failures, locks, `wp hornet unlock` | the network, since the accounts are. The settings that apply are those of the site where the login is tried |
+| The audit (`wp hornet status`, Site Health), notifications, the journal | one site |
+| Findings set aside from the screen | the main site only |
+
+- **The audit is that of one site.** The screen shows the main site's: run `wp hornet status --url=<site>` for another. What the scan found is on every site's audit, so with notification channels shared by all the sites, each site tells them about the same file. Put the channels under `sites[<main site id>]` to be told once, if the other sites' own findings do not matter to you.
+- **A finding set aside from the screen is set aside for the main site.** Another site's status, Site Health and notifications still show it: use `ignore` in the settings file to set it aside everywhere.
+- **Super administrators** administer every site, with or without a role on it: `two_factor.require_roles => ['administrator']` applies to them, and the audit counts them among the administrators.
+- **Not judged:** what visitors may sign up for at the network level (the network's registration setting lets them make a site and administer it).
 
 ## Hardening
 
@@ -191,7 +208,7 @@ define('HORNET_CONFIG', [
 - **It never locks an address that many visitors share.** Behind a proxy or a load balancer that is not in `network.trusted_proxies`, every visitor would have the proxy's address and one attacker could lock everybody out. Hornet then steps aside, writes a note, and the audit raises a **high** finding. Declare the proxy: a forwarding header (`X-Forwarded-For`, `CF-Connecting-IP` or `X-Real-IP`, set with `network.forwarded_header`) is believed **only** when the connection comes from a listed proxy, and is read from the right, skipping the trusted proxies, so a forged left part counts for nothing.
 - **Adding a header does not dodge the lock.** A forwarding header from an address that is not a trusted proxy is ignored and the request is counted under the address that opened the connection. If a header arrives that way, the audit says so: if the site is behind a CDN, list it in `network.trusted_proxies`, or visitors behind the same edge address can lock each other out.
 - **On Pollora, the address is the one Laravel's request reports**, which already knows the proxies the application trusts: no second list to keep in step.
-- Addresses are stored as an HMAC, never in clear. With a persistent object cache (Redis, Memcached: [pollora/object-cache](https://github.com/Pollora/object-cache)) the counters live in the cache; without one they are transients, which are rows of the options table, so a flood of different addresses writes as many rows.
+- Addresses are stored as an HMAC, never in clear. With a persistent object cache (Redis, Memcached: [pollora/object-cache](https://github.com/Pollora/object-cache)) the counters live in the cache; without one they are transients, which are rows of the options table, so a flood of different addresses writes as many rows. On a [multisite](#multisite) network the counters are the network's (site transients).
 
 **The way back in.** A lock is never a one-way door:
 
@@ -459,7 +476,7 @@ What it records, each with the **source of the request** (`web`, `admin`, `rest`
 - **Retention**: `retention_days` (90 by default, 1 to 3650); a daily WP-Cron event (`pollora/hornet/purge_journal`) forgets what is older. `wp hornet journal purge` does it now.
 - **Privacy tools**: the journal is an exporter (Tools > Export Personal Data: the events that name a person, as the one who did it or the one it was done to) and an eraser (Tools > Erase Personal Data). Erasing **keeps the events** (a security journal that forgets what happened is no journal) and takes the person out of them: their number, their login and the address are blanked.
 - **WP-CLI**: `wp hornet journal list [--type=login.|user.|plugin.|theme.|core.|option.|hornet.|<a type>] [--source=] [--user=] [--days=] [--limit=] [--format=]`, `wp hornet journal purge`, and `wp hornet journal drop --yes` to remove the table and its option (what an uninstall should do).
-- **Multisite**: the journal is per site, and the table goes with the site when it is deleted. Accounts belong to the network, but the **eraser works on the table of the site it is run from**: erase a person on each site where they were active. A view of the whole network is not done.
+- **Multisite**: the journal is per site, and the table goes with the site when it is deleted. What is done to another site from the network administration (an account added, removed, given a role) is written in **that** site's journal, if the journal is on for the site it is done from. An account deleted from the network is written where it is deleted from. Accounts belong to the network, but the **eraser works on the table of the site it is run from**: erase a person on each site where they were active. A view of the whole network is not done.
 - **Not done yet**: a view of the journal on the screen and a network-wide view for a multisite (the journal is per site), the reports of a Content-Security-Policy (a public endpoint that anyone can write to is a risk of its own).
 
 ## Known vulnerabilities

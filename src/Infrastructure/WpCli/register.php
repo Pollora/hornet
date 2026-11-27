@@ -14,6 +14,7 @@ use Pollora\Hornet\Infrastructure\Notification\NotificationFactory;
 use Pollora\Hornet\Infrastructure\WordPress\AuditorFactory;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalSchema;
 use Pollora\Hornet\Infrastructure\WordPress\Journal\TableJournal;
+use Pollora\Hornet\Infrastructure\WordPress\NetworkScan;
 use Pollora\Hornet\Infrastructure\WordPress\ScannerFactory;
 use Pollora\Hornet\Infrastructure\WordPress\WordPressEnvironment;
 use Pollora\Hornet\Infrastructure\WpCli\HornetCommand;
@@ -62,6 +63,7 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
             return $settings->enabled ? ScannerFactory::forWordPress($settings) : null;
         },
         new WpCliOutput,
+        NetworkScan::refusal(...),
     ));
 
     WP_CLI::add_command('hornet journal', new JournalCommand(

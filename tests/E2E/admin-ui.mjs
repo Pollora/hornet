@@ -3,11 +3,15 @@
 // It needs a WordPress with Hornet at BASE (admin / pass) and Playwright, which the package does not depend on:
 //     npm install --no-save playwright && npx playwright install chromium
 //     BASE=http://127.0.0.1:8085 node tests/E2E/admin-ui.mjs
+// On a network (BASE is the main site, a super administrator), set NETWORK=1: the screen is in the network administration, under Settings.
 // Exit code 1 when an assertion fails. It starts a real scan, which asks WordPress.org: the server must run several PHP workers
 // (PHP_CLI_SERVER_WORKERS=4 with `php -S`), or the page cannot ask how the scan goes while it runs.
 import { chromium } from 'playwright';
 
 const BASE = process.env.BASE || 'http://127.0.0.1:8085';
+const NETWORK = process.env.NETWORK === '1';
+const SCREEN = NETWORK ? '/wp-admin/network/settings.php?page=hornet-security' : '/wp-admin/tools.php?page=hornet-security';
+const MENU = NETWORK ? '#menu-settings' : '#menu-tools';
 let failed = 0;
 const check = (description, ok, more = '') => {
 	console.log(`  ${ ok ? 'ok  ' : 'FAIL' }  ${ description }${ ok ? '' : ' ' + more }`);
@@ -31,9 +35,9 @@ await page.click( '#wp-submit' );
 await page.waitForURL( /wp-admin/ );
 
 console.log( 'the page' );
-await page.goto( `${ BASE }/wp-admin/tools.php?page=hornet-security` );
+await page.goto( `${ BASE }${ SCREEN }` );
 await page.getByRole( 'button', { name: 'Scan now' } ).waitFor( { timeout: 20000 } ).catch( () => {} );
-check( 'the entry is in the Tools menu, not a menu of its own', ( await page.locator( '#menu-tools a[href*="hornet-security"]' ).count() ) === 1 && ( await page.locator( '#adminmenu a[href*="hornet-security"]' ).count() ) === 1 );
+check( `the entry is in the ${ NETWORK ? 'network Settings' : 'Tools' } menu, not a menu of its own`, ( await page.locator( `${ MENU } a[href*="hornet-security"]` ).count() ) === 1 && ( await page.locator( '#adminmenu a[href*="hornet-security"]' ).count() ) === 1 );
 let t = await text();
 check( 'it shows the headline and the five tabs', /open findings|Nothing needs|could not be verified/.test( t ) && [ 'Overview', 'Findings', 'Settings', 'Notifications', 'Journal' ].every( ( tab ) => t.includes( tab ) ), t.slice( 0, 160 ) );
 check( 'it says when the site was last scanned, or that it never was', /Last scan: /.test( t ), t.slice( 0, 200 ) );

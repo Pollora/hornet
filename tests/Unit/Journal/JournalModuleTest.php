@@ -16,7 +16,6 @@ use Pollora\Hornet\Tests\Fixtures\FakeClock;
 use Pollora\Hornet\Tests\Fixtures\FakeRequestContext;
 use Pollora\Hornet\Tests\Fixtures\FakeSite;
 use Pollora\Hornet\Tests\Fixtures\FakeTheme;
-use Pollora\Hornet\Tests\Fixtures\FakeWpdb;
 use Pollora\Hornet\Tests\Fixtures\FakeWpError;
 use Pollora\Hornet\Tests\Fixtures\FakeWpUser;
 use Pollora\Hornet\Tests\Fixtures\InMemoryJournal;
@@ -24,6 +23,8 @@ use Pollora\Hornet\Tests\Fixtures\InMemoryWindowCounter;
 use Pollora\Hornet\Tests\Fixtures\RecordingHooks;
 
 beforeEach(function (): void {
+    Functions\when('is_multisite')->justReturn(false);
+    Functions\when('get_current_blog_id')->justReturn(1);
     $this->site = FakeSite::install();
     $this->journal = new InMemoryJournal;
     $this->clock = new FakeClock('2026-11-26 10:00:00');
@@ -60,7 +61,7 @@ it('makes the table before anything can happen, and purges once a day', function
     journalModule($this)->register($hooks);
 
     expect($hooks->registered[0]['hook'])->toBe('init')->and($hooks->registered[0]['priority'])->toBe(0)
-        ->and(array_column($hooks->registered, 'hook'))->toContain('wpmu_drop_tables', JournalModule::PURGE_HOOK, 'wp_login', 'wp_login_failed', 'after_password_reset', 'wp_pre_insert_user_data', 'user_register', 'delete_user', 'set_user_role', 'shutdown', 'add_user_role', 'remove_user_role', 'grant_super_admin', 'revoke_super_admin', 'wp_create_application_password', 'wp_delete_application_password', 'activated_plugin', 'deactivated_plugin', 'deleted_plugin', 'switch_theme', 'deleted_theme', 'upgrader_process_complete', 'updated_option', 'pollora/hornet/scan_completed');
+        ->and(array_column($hooks->registered, 'hook'))->toContain('wpmu_delete_user', 'remove_user_from_blog', 'add_user_to_blog', JournalModule::PURGE_HOOK, 'wp_login', 'wp_login_failed', 'after_password_reset', 'wp_pre_insert_user_data', 'user_register', 'delete_user', 'set_user_role', 'shutdown', 'add_user_role', 'remove_user_role', 'grant_super_admin', 'revoke_super_admin', 'wp_create_application_password', 'wp_delete_application_password', 'activated_plugin', 'deactivated_plugin', 'deleted_plugin', 'switch_theme', 'deleted_theme', 'upgrader_process_complete', 'updated_option', 'pollora/hornet/scan_completed');
 });
 
 it('writes the changes of who runs the site and of its plugins, through the hooks it attaches', function (): void {
@@ -78,13 +79,6 @@ it('writes the changes of who runs the site and of its plugins, through the hook
         ['plugin.activated', 'plugin:akismet', []],
         ['plugin.deactivated', 'plugin:hello', []],
     ]);
-});
-
-it('adds the journal table of a deleted site to those WordPress drops', function (): void {
-    $GLOBALS['wpdb'] = new FakeWpdb;
-
-    expect(journalModule($this)->tablesOfDeletedSite(['a' => 'wp_7_posts'], '7'))->toBe(['a' => 'wp_7_posts', 'wp_7_hornet_journal'])
-        ->and(journalModule($this)->tablesOfDeletedSite(null, null))->toBe(['wp_hornet_journal']);
 });
 
 it('plans the purge only when none is planned', function (mixed $next, int $times): void {

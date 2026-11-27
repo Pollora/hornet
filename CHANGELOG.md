@@ -4,6 +4,22 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+Fixes for multisite networks, tried on one for the first time. **Upgrade if you run Hornet on a network.**
+
+### Changed
+
+- On a network, the login throttle counts, locks and unlocks for the whole network. Locks made before the upgrade are forgotten.
+- On a network, `two_factor.require_roles` with `administrator` applies to the super administrators, with or without a role on the site, and the audit counts them (second factor, application passwords).
+- On a network, `wp hornet scan` is refused on a site that is not the main one.
+
+### Fixed
+
+- On a network, the `file-editor` check said that the editor was disabled whatever the settings.
+- On a network, a scan run as another site wrote what it saw of that site over the result of the network.
+- On a network, the journal now says that an account was added to a site, removed from one or deleted from the network, and writes what is done to another site in that site's journal. Taking an account off a site is no longer written as its deletion.
+- On a network, the journal table of a deleted site is dropped even when the journal is off on the site it is deleted from.
+- The index of the REST API (`/wp-json/`) no longer lists the route of the `hornet/v1` namespace itself.
+
 ## 0.10.1 - 2026-11-27
 
 Bug fixes. **Upgrade if you rely on the scheduled scan or on notifications:** in 0.9.0 and 0.10.0 a run that died could stop all the following ones. A lock left that way is taken over by the first run after the upgrade; there is nothing to do by hand.
