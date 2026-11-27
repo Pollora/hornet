@@ -35,11 +35,13 @@ It runs on a classic WordPress, on Bedrock and on Pollora, with no dependency on
 | `application-passwords` | application passwords of administrators unused for 90 days (only their dates are read) |
 | `core-integrity` | what the last [scan](#scan-the-files) found about the WordPress core files (it reads the result: it never scans) |
 | `plugin-integrity` | what the last scan found about the files of the plugins |
+| `abandoned-plugins` | what the last scan found: a plugin WordPress.org has closed (high), or with no release there for two years or more (low) |
 | `theme-integrity` | what the last scan found about the files of the themes |
 | `suspicious-files` | what the last scan found in the content folder (scripts in the uploads, web shells) |
 | `database-scripts` | what the last scan found of **disguised JavaScript in the database** (see [Scan the files](#scan-the-files)) |
 | `exposed-files` | what the site gave away when the last scan asked it (a `.env`, a repository, a backup, a log) |
 | `security-headers` | in production, the headers of the home page as the last scan received them, whoever set them: `nosniff`, a protection against framing, HSTS on HTTPS. And the headers Hornet is set to send that do not arrive. Content-Security-Policy and Referrer-Policy are not judged. Off with `scanner.probes` |
+| `vulnerabilities`, `composer-vulnerabilities` | what the last scan found about [known vulnerabilities](#known-vulnerabilities); only when you turned the lookup on |
 
 Site Health shows these checks too, except the four on plugins and themes, which it tests itself.
 
@@ -313,6 +315,13 @@ It is built for large databases: the tables are read in ranges of primary keys, 
 
 A plugin WordPress.org has no list for (a premium plugin, one installed from elsewhere, a version it never had) has no reference. Its files are hashed **the first time they are seen** and compared afterwards; a plugin that was bad from the very first look cannot be told from a good one, and the finding says "first look kept" rather than "ok". An update is a new version, so a new first look. After you reinstall a plugin on purpose, `wp hornet scan --repin` takes the plugins as they are now. The first looks are kept in one option without autoload (`hornet_baseline`); a plugin of more than 5000 files is not kept. The scan stops asking after four minutes and names the plugins it did not reach. A plugin that is a single file (`hello.php`) is not looked at.
 
+**Closed and abandoned plugins.** WordPress says nothing when a plugin you run is closed on WordPress.org: no more updates come, and the reason is often a security flaw. For each plugin that has a folder of its own, the scan asks `api.wordpress.org` about the **folder name, and nothing else** (not the version, not the address of the site). It is part of the scan, like the plugin checksums; `'disabled_checks' => ['abandoned-plugins']` stops it. A plugin whose `Update URI` header points anywhere else than WordPress.org is not asked about at all.
+
+- **Closed**: high, with the day and the reason WordPress.org publishes (it holds the reason back for sixty days).
+- **No release for two years or more**: low. A small plugin can simply be finished.
+- A folder name proves nothing, since a premium or home-made plugin may use one that WordPress.org gave to something else. A finding needs the **name** of the plugin to match the listing too (with or without the slogan after it), and the installed version not to be above the latest one listed. Otherwise the folder is named in a note and not counted. A plugin that was renamed since you installed it ends up in that note.
+- A plugin WordPress.org could not be asked about makes the result "not verified", never a pass. Answers are kept a day (a week for a closed plugin) and a failure is not kept. When the time runs out, the next run goes on where it stopped.
+
 **Suspicious files.** The content folder (uploads, themes, mu-plugins, drop-ins; the plugins are left to the plugin scan, and `node_modules`, `.git` and cache folders are skipped) is walked for:
 
 | Signal | Severity |
@@ -453,7 +462,23 @@ Each result is a finding with the CVE number when there is one, a severity from 
 - The answers are kept six hours in a transient, so that a scan every hour does not ask forty questions every hour. If the feed is down, a copy of up to three days old is used, and the finding says so.
 - What the feed writes is data from outside: it is cleaned, cut to a length, never taken as an instruction, and a link is kept only if it is an https address.
 - WPVulnerability is a public aggregator: its data is published under CC0, the sources it gathers keep their own terms, and it has no service level. It knows what it knows: **a plugin that is absent from it is not a plugin without a vulnerability**. It is not a substitute for updating.
-- Not done yet: the Composer packages of the project, the adapters for Wordfence, Patchstack and WPScan (they need your key), and an import without the network.
+- Not done yet: the adapters for Wordfence, Patchstack and WPScan (they need your key), and an import without the network.
+
+### The Composer packages of the project
+
+```php
+'vulnerabilities' => ['enabled' => true, 'composer' => true],
+```
+
+On Bedrock and Pollora much of the code of a site is Composer packages. A **second switch** turns their lookup on, because `enabled` alone only ever meant plugins and themes sent to WPVulnerability. `composer` without `enabled` does nothing.
+
+**What is sent, and to whom.** The scan asks [OSV](https://osv.dev) (`api.osv.dev`, run by Google, free, no key) about the **name and the version** of each package installed from packagist.org, development packages included when they are installed, a hundred per request; then asks for each record that concerns one, by its identifier. Never the address of the site, the name of your project, nor a package that does not come from Packagist: a private repository, a Satis or Private Packagist mirror, a `path` or `artifact` repository, wpackagist. Those are **counted, not named**. "From Packagist" is read from the `notification-url` Composer records, so a public package installed through a mirror is not checked either, and the count includes it. A **private** package that was nevertheless published on packagist.org is public by then.
+
+- The list read is `vendor/composer/installed.json` of the project whose autoloader loads Hornet (what is on the disk), else its `composer.lock` without the development section.
+- **Development packages** are checked when they are installed, and marked: their files are on the server, and test tools left on production have been the door before. `composer install --no-dev` removes them, and the findings with them.
+- A package installed from a branch (`dev-main`) has no release to ask about: it is named in a note.
+- The severity is the word the record gives (GitHub advisories have one); without it, medium. "Fixed in" comes from the range of the record the installed version is in.
+- Which records concern a release is kept six hours, a record a week. If OSV does not answer, the result is "not verified", never a pass. When the time runs out, the next run goes on where it stopped.
 
 ## Design
 

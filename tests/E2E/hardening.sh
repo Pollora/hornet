@@ -490,6 +490,60 @@ check "disabled_checks stops the lookup and the check"               sh -c "! ph
 reset
 cli option delete hornet_scan >/dev/null 2>&1
 
+# --- 8g. plugins WordPress.org has closed or left behind: the real api.wordpress.org ---------------------------
+echo "8g. closed and abandoned plugins"
+plugins="$WP_DIR/wp-content/plugins"
+# fake_plugin <folder> <name> <version> [extra header line]
+fake_plugin() { mkdir -p "$plugins/$1"; printf '<?php\n/*\nPlugin Name: %s\nVersion: %s\n%s\n*/\n' "$2" "$3" "${4:-}" > "$plugins/$1/$1.php"; }
+# The first look of these made-up plugins is not what this is about (WordPress.org may even have checksums for their version)
+quiet="array('disabled_checks' => array('plugin-integrity'))"
+configure "$quiet"
+forget() { cli eval "delete_site_transient('hornet_wporg_' . md5('$1'));" >/dev/null 2>&1; }
+cached() { php -d memory_limit=1G /usr/local/bin/wp --allow-root --path="$WP_DIR" eval "echo get_site_transient('hornet_wporg_' . md5('$1')) ? 'cached' : 'none';" | grep -q "^cached"; }
+for slug in display-widgets tinymce-spellcheck akismet; do forget "$slug"; done
+check "the plugins of a fresh site are open and recent"               scan_says 'recognised on WordPress.org'
+check "the audit shows the check"                                     sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'pass.*abandoned-plugins'"
+check "the answer is kept"                                            cached akismet
+fake_plugin display-widgets 'Display Widgets' 2.07
+check "a plugin WordPress.org closed fails the scan"                  scan_fails_with 'display-widgets: closed by WordPress.org on 2021-01-30 (security issue)'
+fake_plugin display-widgets 'Acme Widgets' 2.07
+check "another plugin in a folder of that name is not called closed"  scan_says 'so probably another plugin and not counted: display-widgets'
+forget display-widgets
+fake_plugin display-widgets 'Display Widgets' 2.07 'Update URI: https://example.test/updates'
+check "a plugin updated from somewhere else is not counted"           scan_says 'updated from somewhere else'
+check "and its folder name was not asked about"                       sh -c "php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' eval 'echo get_site_transient(\"hornet_wporg_\" . md5(\"display-widgets\")) ? \"cached\" : \"none\";' | grep -q '^none'"
+rm -f "$plugins/display-widgets/display-widgets.php"; rmdir "$plugins/display-widgets"
+fake_plugin tinymce-spellcheck 'TinyMCE Spellcheck' 1.3
+check "no release for years is told, and does not fail the scan"      scan_says 'tinymce-spellcheck: no release on WordPress.org since 2017-11-28'
+rm -f "$plugins/tinymce-spellcheck/tinymce-spellcheck.php"; rmdir "$plugins/tinymce-spellcheck"
+reset
+cli option delete hornet_scan >/dev/null 2>&1
+
+# --- 8h. the Composer packages of the project: the real api.osv.dev, behind a second switch -------------------
+echo "8h. composer packages"
+project=/tmp/hornet-e2e-project
+mkdir -p "$project/vendor/composer"
+cat > "$project/vendor/composer/installed.json" <<'JSON'
+{"packages": [
+  {"name": "guzzlehttp/guzzle", "version": "7.4.0", "notification-url": "https://packagist.org/downloads/"},
+  {"name": "acme/private-client", "version": "1.0.0"}
+], "dev": false, "dev-package-names": []}
+JSON
+# A second autoloader, in front, that loads Hornet from a project of its own: what Hornet reads as "the project"
+printf '<?php\n$loader = new Composer\\Autoload\\ClassLoader("%s/vendor");\n$loader->addPsr4("Pollora\\\\Hornet\\\\", "%s/src");\n$loader->register(true);\n' "$project" "$PKG" > "$WP_DIR/wp-content/mu-plugins/zz-e2e-project.php"
+configure "array('vulnerabilities' => array('enabled' => true))"
+check "the first switch alone does not look at the packages"          sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'composer-vulnerabilities'"
+configure "array('vulnerabilities' => array('composer' => true))"
+check "the second alone does not either"                              sh -c "! php -d memory_limit=1G /usr/local/bin/wp --allow-root --path='$WP_DIR' hornet status --all --fail-on=none | grep -q 'composer-vulnerabilities'"
+configure "array('vulnerabilities' => array('enabled' => true, 'composer' => true))"
+check "an old package: the real database says its vulnerability"      scan_fails_with 'guzzlehttp/guzzle 7.4.0'
+check "with its number and where to update to"                        grep -qE 'CVE-2022-[0-9]+\), fixed in 7\.' /tmp/hornet-scan.out
+check "the private package is counted"                                grep -q '1 package does not come from Packagist' /tmp/hornet-scan.out
+check "and never named"                                               sh -c "! grep -q 'private-client' /tmp/hornet-scan.out"
+rm -f "$WP_DIR/wp-content/mu-plugins/zz-e2e-project.php" "$project/vendor/composer/installed.json"
+reset
+cli option delete hornet_scan >/dev/null 2>&1
+
 # --- 8f. the screen's "Scan now" when the cron cannot start by itself: the system cron runs it --------------------
 echo "8f. scan now, system cron"
 configure "array('scanner' => array('probes' => false))"

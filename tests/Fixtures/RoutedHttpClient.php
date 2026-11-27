@@ -28,7 +28,7 @@ final class RoutedHttpClient implements HttpClient
         public ?\Closure $onAsk = null,
     ) {}
 
-    public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false): HttpResponse
+    public function post(Secret $url, array $headers, string $body, bool $allowPrivate = false, int $maxBytes = 4096, int $timeout = 10): HttpResponse
     {
         throw new \LogicException('The probes never post.');
     }

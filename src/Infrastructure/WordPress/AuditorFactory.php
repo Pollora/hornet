@@ -28,7 +28,7 @@ final class AuditorFactory
      */
     public static function checks(Settings $settings): array
     {
-        return DefaultChecks::all($settings->vulnerabilities->enabled, HostApplication::laravel());
+        return DefaultChecks::all($settings->vulnerabilities->enabled, HostApplication::laravel(), $settings->vulnerabilities->auditsPackages());
     }
 
     public static function forWordPress(Settings $settings): Auditor

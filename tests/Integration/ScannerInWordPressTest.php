@@ -162,5 +162,5 @@ it('builds the scanner of the site from the settings, without asking the network
     $scanner = ScannerFactory::forWordPress(Settings::fromArray(['scanner' => ['allow_modified' => ['wp-includes/l10n.php']]]));
 
     expect($scanner)->toBeInstanceOf(Scanner::class)
-        ->and($scanner?->tasks())->toBe(['core-integrity', 'plugin-integrity', 'theme-integrity', 'suspicious-files', 'database-scripts', 'exposed-files', 'security-headers']);
+        ->and($scanner?->tasks())->toBe(['core-integrity', 'plugin-integrity', 'abandoned-plugins', 'theme-integrity', 'suspicious-files', 'database-scripts', 'exposed-files', 'security-headers']);
 });

@@ -1906,3 +1906,156 @@ msgstr "%1$d 分（满分 100），等级 %2$s"
 #: src/Infrastructure/WordPress/SiteHealthInfo.php:114
 msgid "part of the audit could not be verified"
 msgstr "部分审计项目无法核实"
+
+#: src/Application/DefaultChecks.php:86
+msgid "Closed or abandoned plugins"
+msgstr "已关闭或无人维护的插件"
+
+#: src/Application/DefaultChecks.php:94
+msgid "Known vulnerabilities in Composer packages"
+msgstr "Composer 包中的已知漏洞"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:106
+msgid "%s: no release on WordPress.org since %s"
+msgstr "%s：自 %s 起在 WordPress.org 上没有发布新版本"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:115
+msgid "WordPress.org could not be asked about: %s"
+msgstr "无法向 WordPress.org 查询：%s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:116
+msgid "%d plugin was not reached in the time allowed."
+msgid_plural "%d plugins were not reached in the time allowed."
+msgstr[0] "有 %d 个插件未能在限定时间内检查。"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:119
+msgid "Same folder name as a plugin that is closed or old on WordPress.org, under another name or version, so probably another plugin and not counted: %s"
+msgstr "与 WordPress.org 上某个已关闭或过旧插件的文件夹名相同，但名称或版本不同，很可能是另一个插件，未计入：%s"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:120
+msgid "%d plugin says it is updated from somewhere else and was not asked about."
+msgid_plural "%d plugins say they are updated from somewhere else and were not asked about."
+msgstr[0] "有 %d 个插件声明从其他来源更新，未进行查询。"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:132
+msgid "No plugin of this site was recognised on WordPress.org: nothing to say about closed or old plugins."
+msgstr "本站没有任何插件在 WordPress.org 上被识别：关于已关闭或过旧的插件无可报告。"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:133
+msgid "The %d plugin recognised on WordPress.org is open and has had a release in the last two years."
+msgid_plural "The %d plugins recognised on WordPress.org are open and have had a release in the last two years."
+msgstr[0] "在 WordPress.org 上识别出的 %d 个插件均处于开放状态，且近两年内有版本发布。"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:149
+msgid "security issue"
+msgstr "安全问题"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:150
+msgid "at the request of its author"
+msgstr "应作者要求"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:151
+msgid "it broke the rules of the directory"
+msgstr "违反了目录规则"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:152
+msgid "licence or trademark violation"
+msgstr "违反许可或商标"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:153
+msgid "now part of WordPress"
+msgstr "已并入 WordPress"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:154
+msgid "not used"
+msgstr "无人使用"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:155
+msgid "reason not published"
+msgstr "原因未公布"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:159
+msgid "%s: closed by WordPress.org (%s)"
+msgstr "%s：已被 WordPress.org 关闭（%s）"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:160
+msgid "%s: closed by WordPress.org on %s (%s)"
+msgstr "%s：已于 %s 被 WordPress.org 关闭（%s）"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:174
+msgid "%d plugin has been closed by WordPress.org: %s."
+msgid_plural "%d plugins have been closed by WordPress.org: %s."
+msgstr[0] "有 %d 个插件已被 WordPress.org 关闭：%s。"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:178
+msgid "%d plugin has had no release on WordPress.org for two years or more: %s."
+msgid_plural "%d plugins have had no release on WordPress.org for two years or more: %s."
+msgstr[0] "有 %d 个插件两年或更久未在 WordPress.org 上发布版本：%s。"
+
+#: src/Application/Scan/AbandonedPluginsTask.php:189
+msgid "Replace a closed plugin: it gets no more updates from WordPress.org, and WordPress does not warn about it. For one with no release for years, check that its author still answers, or plan its replacement. Hornet changes nothing."
+msgstr "请替换已关闭的插件：它不会再从 WordPress.org 获得更新，而 WordPress 不会就此发出警告。对于多年未发布版本的插件，请确认作者是否仍在回应，或计划替换。Hornet 不做任何更改。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:61
+msgid "No list of installed Composer packages could be read: nothing was checked."
+msgstr "无法读取已安装的 Composer 包列表：未做任何检查。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:126
+msgid "api.osv.dev did not answer for %d package."
+msgid_plural "api.osv.dev did not answer for %d packages."
+msgstr[0] "api.osv.dev 未对 %d 个包作出响应。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:127
+msgid "Not everything was read in the time allowed."
+msgstr "未能在限定时间内读取全部内容。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:128
+msgid "Some records could not be read: their severity and their fix are not known."
+msgstr "部分记录无法读取：其严重程度和修复版本未知。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:142
+msgid "The project has no Composer package installed."
+msgstr "该项目没有安装任何 Composer 包。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:143
+msgid "No Composer package could be asked about."
+msgstr "没有可查询的 Composer 包。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:146
+msgid "No known vulnerability in the %d Composer package asked about."
+msgid_plural "No known vulnerability in the %d Composer packages asked about."
+msgstr[0] "查询的 %d 个 Composer 包中没有已知漏洞。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:207
+msgid "%s %s (development package)"
+msgstr "%s %s（开发依赖包）"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:208
+msgid "a vulnerability the database does not describe"
+msgstr "数据库未描述的漏洞"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:219
+msgid "Installed from a branch, so not checked: %s"
+msgstr "从分支安装，因此未检查：%s"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:220
+msgid "%d package does not come from Packagist: its name was not sent and it was not checked."
+msgid_plural "%d packages do not come from Packagist: their names were not sent and they were not checked."
+msgstr[0] "有 %d 个包并非来自 Packagist：未发送其名称，也未检查。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:236
+msgid "%d known vulnerability in the Composer packages of the project."
+msgid_plural "%d known vulnerabilities in the Composer packages of the project."
+msgstr[0] "项目的 Composer 包中有 %d 个已知漏洞。"
+
+#: src/Application/Scan/ComposerVulnerabilitiesTask.php:238
+msgid "Run `composer update` for the packages listed, to a release that fixes them, then test and deploy. A development package has no place on a production server: install with `composer install --no-dev`. Hornet changes nothing."
+msgstr "对列出的包运行 `composer update`，升级到已修复的版本，然后测试并部署。开发依赖包不应出现在生产服务器上：请用 `composer install --no-dev` 安装。Hornet 不做任何更改。"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "Look up Composer packages"
+msgstr "查询 Composer 包"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php:56
+msgid "name and version of each Packagist package of the project go to api.osv.dev"
+msgstr "项目中每个 Packagist 包的名称和版本会发送到 api.osv.dev"

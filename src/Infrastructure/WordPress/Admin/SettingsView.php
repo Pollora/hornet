@@ -53,6 +53,7 @@ final class SettingsView
         $add(Message::mark('Scanner'), 'scanner.probes', Message::mark('Ask the site what it gives away'), $settings->scanner->probes);
         $add(Message::mark('Scanner'), 'scanner.probe_uploads', Message::mark('Try to run PHP in the uploads'), $settings->scanner->probeUploads);
         $add(Message::mark('Scanner'), 'vulnerabilities.enabled', Message::mark('Look up known vulnerabilities'), $settings->vulnerabilities->enabled, $settings->vulnerabilities->enabled ? Message::of('name and version of each plugin and theme go to www.wpvulnerability.net') : '');
+        $add(Message::mark('Scanner'), 'vulnerabilities.composer', Message::mark('Look up Composer packages'), $settings->vulnerabilities->auditsPackages(), $settings->vulnerabilities->auditsPackages() ? Message::of('name and version of each Packagist package of the project go to api.osv.dev') : '');
 
         $add(Message::mark('Journal'), 'journal.enabled', Message::mark('Security journal'), $settings->journal->enabled, $settings->journal->enabled ? Message::plural('kept %d day', 'kept %d days', $settings->journal->retentionDays, $settings->journal->retentionDays) : '');
         $add(Message::mark('Agents'), 'abilities.enabled', Message::mark('Abilities for AI agents (read)'), $settings->abilities->enabled);
