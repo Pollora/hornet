@@ -4,6 +4,10 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+## 0.10.1 - 2026-11-27
+
+Bug fixes. **Upgrade if you rely on the scheduled scan or on notifications:** in 0.9.0 and 0.10.0 a run that died could stop all the following ones. A lock left that way is taken over by the first run after the upgrade; there is nothing to do by hand.
+
 ### Fixed
 
 - A journal the database cannot read is no longer taken for an empty one: the checks on new and dormant administrators say they could not run, and the screen, `wp hornet journal`, the ability and the privacy export report the failure.
