@@ -2059,3 +2059,24 @@ msgstr "查询 Composer 包"
 #: src/Infrastructure/WordPress/Admin/SettingsView.php:56
 msgid "name and version of each Packagist package of the project go to api.osv.dev"
 msgstr "项目中每个 Packagist 包的名称和版本会发送到 api.osv.dev"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "%d channel"
+msgid_plural "%d channels"
+msgstr[0] "%d 个渠道"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit every hour"
+msgstr "每小时审计一次"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit twice a day"
+msgstr "每天审计两次"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit once a day"
+msgstr "每天审计一次"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "no scheduled audit"
+msgstr "未安排定期审计"

@@ -1891,3 +1891,26 @@ msgstr "Sprawdzaj pakiety Composer"
 #: src/Infrastructure/WordPress/Admin/SettingsView.php:56
 msgid "name and version of each Packagist package of the project go to api.osv.dev"
 msgstr "nazwa i wersja każdego pakietu Packagist projektu trafiają do api.osv.dev"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "%d channel"
+msgid_plural "%d channels"
+msgstr[0] "%d kanał"
+msgstr[1] "%d kanały"
+msgstr[2] "%d kanałów"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit every hour"
+msgstr "audyt co godzinę"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit twice a day"
+msgstr "audyt dwa razy dziennie"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit once a day"
+msgstr "audyt raz dziennie"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "no scheduled audit"
+msgstr "brak zaplanowanego audytu"

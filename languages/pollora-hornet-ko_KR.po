@@ -2059,3 +2059,24 @@ msgstr "Composer 패키지 조회"
 #: src/Infrastructure/WordPress/Admin/SettingsView.php:56
 msgid "name and version of each Packagist package of the project go to api.osv.dev"
 msgstr "프로젝트의 각 Packagist 패키지 이름과 버전이 api.osv.dev로 전송됩니다"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "%d channel"
+msgid_plural "%d channels"
+msgstr[0] "채널 %d개"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit every hour"
+msgstr "매시간 감사"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit twice a day"
+msgstr "하루 두 번 감사"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "audit once a day"
+msgstr "하루 한 번 감사"
+
+#: src/Infrastructure/WordPress/Admin/SettingsView.php
+msgid "no scheduled audit"
+msgstr "예약된 감사 없음"

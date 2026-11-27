@@ -53,6 +53,24 @@ it('says what is on, with the number that matters', function (): void {
 it('never shows where a channel goes: not a URL, not a token', function (): void {
     $rows = settingsRows(['notifications' => ['channels' => ['slack' => ['type' => 'slack', 'url' => ['env' => 'SLACK']]]]]);
 
-    expect($rows['notifications.channels'])->toMatchArray(['on' => true, 'detail' => '1, daily'])
+    expect($rows['notifications.channels'])->toMatchArray(['on' => true, 'detail' => '1 channel, audit once a day'])
         ->and(json_encode($rows))->not->toContain('hooks.slack')->not->toContain('SECRETSECRET');
+});
+
+it('says in words how often the channels are fed, so that no schedule does not read as a channel turned off', function (string $schedule, string $detail): void {
+    $rows = settingsRows(['notifications' => ['schedule' => $schedule, 'channels' => [
+        'ops' => ['type' => 'mail', 'to' => ['ops@example.com']],
+        'team' => ['type' => 'mail', 'to' => ['team@example.com']],
+    ]]]);
+
+    expect($rows['notifications.channels']['detail'])->toBe($detail);
+})->with([
+    ['off', '2 channels, no scheduled audit'],
+    ['hourly', '2 channels, audit every hour'],
+    ['twicedaily', '2 channels, audit twice a day'],
+    ['daily', '2 channels, audit once a day'],
+]);
+
+it('says nothing more about notifications when no channel is set', function (): void {
+    expect(settingsRows()['notifications.channels'])->toMatchArray(['on' => false, 'detail' => '']);
 });
