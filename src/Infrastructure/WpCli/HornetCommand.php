@@ -91,7 +91,7 @@ final readonly class HornetCommand
         $findings = $all ? $report->findings : $this->shown($report);
 
         if ($format === 'json') {
-            $this->output->line((string) json_encode(['counts' => $report->counts(), 'findings' => array_map(static fn (Finding $finding): array => $finding->toArray(), $findings)], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $this->output->line((string) json_encode(['counts' => $report->counts(), 'findings' => array_map(static fn (Finding $finding): array => $finding->toArray(), $findings)], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE));
         } elseif ($findings !== []) {
             $this->output->items(array_map($this->row(...), $findings), ['status', 'severity', 'check', 'summary'], $format);
         }

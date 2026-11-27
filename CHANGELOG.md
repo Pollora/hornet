@@ -8,6 +8,8 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 - The PHP rules of the file scan read the different ways of writing a function or a variable name consistently, request input included.
 - Development only: `antecedent/patchwork` is required at commit `d588654` of its `master` branch (antecedent/patchwork#235), aliased as 2.2.6, so that a mutation run no longer counts crashing tests as caught mutants. Temporary, until the next Patchwork release.
+- An ntfy topic address written with a trailing slash now posts to the server, not to the topic's own address.
+- A file name that is not valid UTF-8 is now kept between two runs of a scan, and shown in notifications and in the JSON output of the commands.
 
 ## 0.10.2 - 2026-11-27
 

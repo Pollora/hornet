@@ -567,7 +567,7 @@ msgid_plural "%d plugins have had no release on WordPress.org for two years or m
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Application/Scan/AbandonedPluginsTask.php:191 src/Application/Scan/ComposerVulnerabilitiesTask.php:247 src/Application/Scan/DatabaseScriptsTask.php:251 src/Application/Scan/KnownVulnerabilitiesTask.php:116 src/Application/Scan/SuspiciousFilesTask.php:169 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:68 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:65 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:66 src/Domain/Audit/Checks/NewAdministratorsCheck.php:58 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:49 src/Domain/Audit/Checks/UpdatesCheck.php:78
+#: src/Application/Scan/AbandonedPluginsTask.php:191 src/Application/Scan/ComposerVulnerabilitiesTask.php:247 src/Application/Scan/DatabaseScriptsTask.php:251 src/Application/Scan/KnownVulnerabilitiesTask.php:116 src/Application/Scan/SuspiciousFilesTask.php:170 src/Domain/Audit/Checks/ApplicationPasswordsCheck.php:68 src/Domain/Audit/Checks/DormantAdministratorsCheck.php:65 src/Domain/Audit/Checks/InactiveExtensionsCheck.php:66 src/Domain/Audit/Checks/NewAdministratorsCheck.php:58 src/Domain/Audit/Checks/TwoFactorCoverageCheck.php:49 src/Domain/Audit/Checks/UpdatesCheck.php:78
 msgid "and %d more"
 msgstr ""
 
@@ -717,7 +717,7 @@ msgstr ""
 msgid "Scripts are loaded from: %s (not judged)."
 msgstr ""
 
-#: src/Application/Scan/DatabaseScriptsTask.php:235 src/Application/Scan/SuspiciousFilesTask.php:166
+#: src/Application/Scan/DatabaseScriptsTask.php:235 src/Application/Scan/SuspiciousFilesTask.php:167
 msgid "[%s] %s: "
 msgstr ""
 
@@ -981,25 +981,25 @@ msgstr ""
 msgid "The content folder cannot be listed from here (open_basedir or permissions)."
 msgstr ""
 
-#: src/Application/Scan/SuspiciousFilesTask.php:123
+#: src/Application/Scan/SuspiciousFilesTask.php:124
 msgid "The walk of the content folder is not finished: %d files looked at in this run, it goes on from %s next time."
 msgstr ""
 
-#: src/Application/Scan/SuspiciousFilesTask.php:160
+#: src/Application/Scan/SuspiciousFilesTask.php:161
 msgid "Nothing suspicious in the %d files of the content folder that were looked at."
 msgstr ""
 
-#: src/Application/Scan/SuspiciousFilesTask.php:173
+#: src/Application/Scan/SuspiciousFilesTask.php:174
 msgid "and %d more were found in an earlier run and not kept: run `wp hornet scan` from the command line to list them all"
 msgstr ""
 
-#: src/Application/Scan/SuspiciousFilesTask.php:179
+#: src/Application/Scan/SuspiciousFilesTask.php:180
 msgid "%d file in the content folder would not be left unsaid."
 msgid_plural "%d files in the content folder would not be left unsaid."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Application/Scan/SuspiciousFilesTask.php:181
+#: src/Application/Scan/SuspiciousFilesTask.php:182
 msgid "Look at each file before anything else, and do not open it in a browser. A file you know and trust can be left alone with scanner.ignore_paths. If you do not know it, find how it came there (an old plugin, a form that accepts uploads) before you remove it. Hornet never changes a file."
 msgstr ""
 

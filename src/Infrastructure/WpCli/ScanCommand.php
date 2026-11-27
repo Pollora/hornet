@@ -104,7 +104,7 @@ final readonly class ScanCommand
         $report = $scanner->report($snapshot);
 
         if ($format === 'json') {
-            $this->output->line((string) json_encode(['scanned_at' => $snapshot->at->format('c'), 'counts' => $report->counts(), 'findings' => array_map(static fn (Finding $finding): array => $finding->toArray(), $report->findings)], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $this->output->line((string) json_encode(['scanned_at' => $snapshot->at->format('c'), 'counts' => $report->counts(), 'findings' => array_map(static fn (Finding $finding): array => $finding->toArray(), $report->findings)], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE));
         } else {
             $this->output->items(array_map($this->row(...), $report->findings), ['status', 'severity', 'check', 'summary'], $format);
             $this->say($report);
