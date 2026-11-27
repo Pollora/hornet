@@ -4,6 +4,10 @@ All notable changes are listed here. The project follows [Semantic Versioning](h
 
 ## Unreleased
 
+### Fixed
+
+- Development only: `antecedent/patchwork` is required at commit `d588654` of its `master` branch (antecedent/patchwork#235), aliased as 2.2.6, so that a mutation run no longer counts crashing tests as caught mutants. Temporary, until the next Patchwork release.
+
 ## 0.10.2 - 2026-11-27
 
 **Upgrade if Hornet runs on a multisite network.** Two things change there: the login locks made before the upgrade are forgotten, and super administrators are now covered by `two_factor.require_roles` when it names `administrator`, so one without a second factor is sent to set it up.
