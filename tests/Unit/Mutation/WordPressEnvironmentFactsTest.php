@@ -180,12 +180,13 @@ it('asks for the administrators with what it needs of them, and skips what is no
 
         return [(object) ['ID' => 'x'], 'text', (object) ['ID' => '4', 'user_registered' => '2025-01-01 00:00:00']];
     });
+    $zone = date_default_timezone_get();
     date_default_timezone_set('Pacific/Auckland');
 
     try {
         $administrators = (new WordPressEnvironment(Settings::fromArray([])))->administrators();
     } finally {
-        date_default_timezone_set('UTC');
+        date_default_timezone_set($zone);
     }
 
     expect($query)->toBe(['capability' => 'manage_options', 'fields' => ['ID', 'user_registered'], 'number' => 500])

@@ -193,3 +193,33 @@ it('ends the request after saying that there is no such file', function (): void
         unset($_GET['hornet-asset']);
     }
 });
+
+it('hands WordPress the dependencies of the script as a list', function (): void {
+    $assets = sys_get_temp_dir().'/hornet-mut-assets-'.bin2hex(random_bytes(4));
+    mkdir($assets);
+    file_put_contents($assets.'/index.asset.php', "<?php return ['dependencies' => [5, 'wp-element'], 'version' => '1'];");
+    file_put_contents($assets.'/index.js', '');
+    $dependencies = null;
+    Functions\when('add_management_page')->justReturn('the-screen');
+    Functions\when('wp_script_is')->justReturn(true);
+    Functions\when('admin_url')->justReturn('https://example.com/admin.php');
+    Functions\when('add_query_arg')->justReturn('https://example.com/file');
+    Functions\when('wp_enqueue_script')->alias(function (string $handle, string $url, array $given) use (&$dependencies): void {
+        $dependencies = $given;
+    });
+    Functions\when('wp_set_script_translations')->justReturn(true);
+    Functions\when('wp_enqueue_style')->justReturn(null);
+    Functions\when('is_rtl')->justReturn(false);
+
+    try {
+        $module = mutWpPage($assets);
+        $module->menu();
+        $module->enqueue('the-screen');
+    } finally {
+        unlink($assets.'/index.asset.php');
+        unlink($assets.'/index.js');
+        rmdir($assets);
+    }
+
+    expect($dependencies)->toBe(['wp-element']);
+});

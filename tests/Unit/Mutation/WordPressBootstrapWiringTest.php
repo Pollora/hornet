@@ -5,13 +5,18 @@ declare(strict_types=1);
 use Brain\Monkey\Functions;
 use Pollora\Hornet\Domain\Network\ClientIp;
 use Pollora\Hornet\Infrastructure\Config\Settings;
+use Pollora\Hornet\Infrastructure\Pollora\ConfiguredApplication;
 use Pollora\Hornet\Infrastructure\WordPress\Admin\AdminPageModule;
 use Pollora\Hornet\Infrastructure\WordPress\Bootstrap;
+use Pollora\Hornet\Infrastructure\WordPress\ErrorDisplayModule;
+use Pollora\Hornet\Infrastructure\WordPress\HostApplication;
+use Pollora\Hornet\Infrastructure\WordPress\Journal\JournalModule;
 use Pollora\Hornet\Infrastructure\WordPress\LoginThrottleModule;
 use Pollora\Hornet\Infrastructure\WordPress\Module;
 use Pollora\Hornet\Infrastructure\WordPress\TwoFactorGateModule;
 use Pollora\Hornet\Tests\Fixtures\FakeEnvironment;
 use Pollora\Hornet\Tests\Fixtures\FakeSite;
+use Pollora\Hornet\Tests\Fixtures\FakeWpdb;
 use Pollora\Hornet\Tests\Fixtures\FakeWpUser;
 
 /*
@@ -70,4 +75,29 @@ it('serves the files of the screen from the assets of the package', function ():
     $module = mutWpModule(AdminPageModule::class, []);
 
     expect((new ReflectionProperty($module, 'assets'))->getValue($module))->toBe(dirname(__DIR__, 3).'/assets/admin');
+});
+
+it('journals the address that the host says, when it knows better than the server variables', function (): void {
+    $GLOBALS['wpdb'] = $database = new FakeWpdb;
+    Functions\when('wp_doing_ajax')->justReturn(false);
+    Functions\when('get_current_user_id')->justReturn(0);
+    Functions\when('wp_get_current_user')->justReturn(new FakeWpUser);
+    Functions\when('get_user_by')->justReturn(false);
+    $module = mutWpModule(JournalModule::class, ['journal' => ['enabled' => true]], static fn (): ClientIp => new ClientIp('198.51.100.9', '10.0.0.1'));
+
+    $module->loginFailed('someone');
+
+    expect($database->inserted)->toHaveCount(1)->and($database->inserted[0]['data']['ip'])->toBe('198.51.100.0');
+});
+
+it('does not watch the display of errors where Laravel sets it', function (): void {
+    HostApplication::set(new ConfiguredApplication(static fn (): mixed => null));
+
+    expect(array_map(static fn (Module $module): string => $module::class, Bootstrap::modules(Settings::fromArray([]), new FakeEnvironment)))
+        ->not->toContain(ErrorDisplayModule::class);
+
+    HostApplication::set(null);
+
+    expect(array_map(static fn (Module $module): string => $module::class, Bootstrap::modules(Settings::fromArray([]), new FakeEnvironment)))
+        ->toContain(ErrorDisplayModule::class);
 });
